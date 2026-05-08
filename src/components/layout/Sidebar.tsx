@@ -1,0 +1,134 @@
+import React from 'react';
+import { 
+  LayoutDashboard, 
+  Briefcase, 
+  User, 
+  FileText, 
+  FileEdit, 
+  Send, 
+  Bookmark, 
+  Settings,
+  LogOut,
+  Sparkles
+} from 'lucide-react';
+import { NavLink } from 'react-router-dom';
+
+const navItems = [
+  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+  { icon: Briefcase, label: 'Opportunities', path: '/opportunities' },
+  { icon: User, label: 'Profile', path: '/profile' },
+  { icon: FileText, label: 'CV Builder', path: '/cv-builder' },
+  { icon: FileEdit, label: 'Cover Letter', path: '/cover-letter' },
+  { icon: Send, label: 'Proposal', path: '/proposal' },
+  { icon: Bookmark, label: 'Saved Items', path: '/saved' },
+  { icon: Settings, label: 'Settings', path: '/settings' },
+];
+
+export const Sidebar: React.FC = () => {
+  return (
+    <aside style={sidebarStyle}>
+      <div style={logoContainerStyle}>
+        <div style={logoIconStyle}>
+          <Sparkles size={20} color="var(--accent-primary)" />
+        </div>
+        <span style={logoTextStyle}>Herpath</span>
+      </div>
+
+      <nav style={navStyle}>
+        {navItems.map((item) => (
+          <NavLink 
+            key={item.path} 
+            to={item.path}
+            style={({ isActive }) => ({
+              ...navItemStyle,
+              backgroundColor: isActive ? 'var(--bg-tertiary)' : 'transparent',
+              color: isActive ? 'var(--accent-primary)' : 'var(--text-secondary)',
+            })}
+          >
+            <item.icon size={20} />
+            <span style={{ fontWeight: 500 }}>{item.label}</span>
+          </NavLink>
+        ))}
+      </nav>
+
+      <div style={footerStyle}>
+        <button style={logoutButtonStyle}>
+          <LogOut size={20} />
+          <span>Logout</span>
+        </button>
+      </div>
+    </aside>
+  );
+};
+
+const sidebarStyle: React.CSSProperties = {
+  width: '260px',
+  height: '100vh',
+  backgroundColor: 'var(--bg-secondary)',
+  borderRight: '1px solid var(--border-color)',
+  display: 'flex',
+  flexDirection: 'column',
+  position: 'fixed',
+  left: 0,
+  top: 0,
+  zIndex: 100,
+};
+
+const logoContainerStyle: React.CSSProperties = {
+  padding: '24px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '12px',
+};
+
+const logoIconStyle: React.CSSProperties = {
+  width: '32px',
+  height: '32px',
+  borderRadius: '8px',
+  backgroundColor: 'var(--bg-tertiary)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  boxShadow: 'var(--shadow-sm)',
+};
+
+const logoTextStyle: React.CSSProperties = {
+  fontSize: '1.25rem',
+  fontWeight: 800,
+  color: 'var(--text-primary)',
+  letterSpacing: '-0.025em',
+};
+
+const navStyle: React.CSSProperties = {
+  padding: '12px',
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '4px',
+};
+
+const navItemStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '12px',
+  padding: '12px 16px',
+  borderRadius: 'var(--radius-md)',
+  transition: 'all 0.2s ease',
+  textDecoration: 'none',
+};
+
+const footerStyle: React.CSSProperties = {
+  padding: '24px',
+  borderTop: '1px solid var(--border-color)',
+};
+
+const logoutButtonStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '12px',
+  color: 'var(--text-secondary)',
+  width: '100%',
+  padding: '12px 16px',
+  borderRadius: 'var(--radius-md)',
+  transition: 'all 0.2s ease',
+};
