@@ -14,9 +14,9 @@ export const LandingPage: React.FC = () => {
           <img src={logo} alt="PATHEW Logo" style={{ height: '40px', objectFit: 'contain' }} />
         </div>
         <div style={navLinksStyle}>
-          <a href="#features">Features</a>
-          <a href="#how-it-works">How it works</a>
-          <a href="#pricing">Pricing</a>
+          <a href="#features" style={navLinkStyle}>Features</a>
+          <a href="#how-it-works" style={navLinkStyle}>How it works</a>
+          <a href="#pricing" style={navLinkStyle}>Pricing</a>
         </div>
         <div style={navActionsStyle}>
           <Link to="/login"><Button variant="ghost">Login</Button></Link>
@@ -26,45 +26,61 @@ export const LandingPage: React.FC = () => {
 
       {/* Hero Section */}
       <header style={heroSectionStyle}>
+        <div style={heroBackgroundGlow}></div>
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.8 }}
           style={heroContentStyle}
         >
-          <Badge text="Powered by Assistance & Rules Engine" />
+          <Badge text="Powered by Pathew Assistance" />
           <h1 style={heroTitleStyle}>
-            Discover Your Next <span className="text-gradient">Opportunity</span> with Precision.
+            Discover Your Next <span style={{ color: 'var(--accent-primary)' }}>Opportunity</span> with Precision.
           </h1>
           <p style={heroSubtitleStyle}>
             The ultimate platform for professionals to find, match, and apply for high-impact opportunities worldwide. 
-            Stop searching, start matching.
+            Stop searching, start matching with Pathew Assistance.
           </p>
           <div style={heroActionsStyle}>
             <Link to="/signup">
-              <Button size="lg" style={{ gap: '12px' }}>
+              <Button size="lg" style={{ gap: '12px', padding: '16px 32px' }}>
                 Create Your Profile <ArrowRight size={20} />
               </Button>
             </Link>
-            <Button size="lg" variant="outline">Watch Demo</Button>
+            <Button size="lg" variant="outline" style={{ padding: '16px 32px' }}>Watch Demo</Button>
+          </div>
+          
+          <div style={statsRowStyle}>
+            <StatItem count="50k+" label="Opportunities" />
+            <StatItem count="98%" label="Match Accuracy" />
+            <StatItem count="120+" label="Countries" />
           </div>
         </motion.div>
         
         <motion.div 
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+          initial={{ opacity: 0, scale: 0.9, x: 50 }}
+          animate={{ opacity: 1, scale: 1, x: 0 }}
+          transition={{ duration: 1, delay: 0.2 }}
           style={heroImageContainerStyle}
         >
           <div style={heroImagePlaceholderStyle}>
+            <img 
+              src="/landing_hero_image_1778606171429.png" 
+              alt="Platform Dashboard" 
+              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+            />
             <div style={heroImageOverlayStyle}>
-              <div style={floatingCardStyle}>
+              <motion.div 
+                animate={{ y: [0, -10, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                style={floatingCardStyle}
+              >
                 <Zap size={24} color="var(--accent-primary)" />
                 <div>
                   <div style={{ fontWeight: 700 }}>98% Match</div>
                   <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>Senior Architect</div>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </motion.div>
@@ -79,7 +95,7 @@ export const LandingPage: React.FC = () => {
         <div style={featuresGridStyle}>
           <FeatureCard 
             icon={Globe} 
-            title="Global RSS Discovery" 
+            title="Global Discovery" 
             description="Aggregated opportunities from thousands of premium sources worldwide."
           />
           <FeatureCard 
@@ -100,15 +116,83 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* How It Works */}
+      <section id="how-it-works" style={howItWorksSectionStyle}>
+        <div style={sectionHeaderStyle}>
+          <h2 style={sectionTitleStyle}>How it Works</h2>
+          <p style={sectionSubtitleStyle}>Your journey to a better career in three simple steps.</p>
+        </div>
+        <div style={stepsContainerStyle}>
+          <StepItem 
+            number="01" 
+            title="Complete Your Profile" 
+            description="Share your story, achievements, and goals through our intuitive onboarding wizard." 
+          />
+          <StepItem 
+            number="02" 
+            title="Get Matched" 
+            description="Our Assistance engine scans thousands of opportunities to find your perfect fit." 
+          />
+          <StepItem 
+            number="03" 
+            title="Apply with Confidence" 
+            description="Use smart-generated documents to stand out and land your dream role." 
+          />
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section id="pricing" style={pricingSectionStyle}>
+        <div style={sectionHeaderStyle}>
+          <h2 style={sectionTitleStyle}>Simple, Transparent Pricing</h2>
+          <p style={sectionSubtitleStyle}>Choose the plan that fits your professional needs.</p>
+        </div>
+        <div style={pricingGridStyle}>
+          <PricingCard 
+            title="Free" 
+            price="$0" 
+            features={['Basic matching', '3 applications/mo', 'Email support']} 
+          />
+          <PricingCard 
+            title="Professional" 
+            price="$19" 
+            isPopular 
+            features={['Unlimited matching', 'Unlimited applications', 'Assistance Polish', 'Priority support']} 
+          />
+          <PricingCard 
+            title="Enterprise" 
+            price="Custom" 
+            features={['Team management', 'API access', 'Custom branding', 'Dedicated manager']} 
+          />
+        </div>
+      </section>
+
       {/* Footer */}
       <footer style={footerStyle}>
-        <div style={footerContentStyle}>
-          <div style={logoStyle}>
-            <img src={logo} alt="PATHEW Logo" style={{ height: '32px', objectFit: 'contain' }} />
+        <div style={footerMainStyle}>
+          <div style={footerBrandColStyle}>
+            <div style={logoStyle}>
+              <img src={logo} alt="PATHEW Logo" style={{ height: '32px', objectFit: 'contain' }} />
+            </div>
+            <p style={{ color: 'var(--text-secondary)', marginTop: '20px', lineHeight: 1.6 }}>
+              The premium platform for global opportunity matching. Empowering professionals with Pathew Assistance.
+            </p>
           </div>
-          <p style={{ color: 'var(--text-muted)', marginTop: '12px' }}>
-            © 2024 PATHEW. All rights reserved.
-          </p>
+          
+          <div style={footerLinksGridStyle}>
+            <FooterCol title="Product" links={['Features', 'How it works', 'Pricing', 'API']} />
+            <FooterCol title="Company" links={['About', 'Careers', 'Blog', 'Contact']} />
+            <FooterCol title="Legal" links={['Privacy', 'Terms', 'Security', 'Cookies']} />
+          </div>
+        </div>
+        
+        <div style={footerBottomStyle}>
+          <p>© 2024 PATHEW. All rights reserved.</p>
+          <div style={socialLinksStyle}>
+            <span>Twitter</span>
+            <span>LinkedIn</span>
+            <span>GitHub</span>
+          </div>
         </div>
       </footer>
     </div>
@@ -128,8 +212,57 @@ const FeatureCard = ({ icon: Icon, title, description }: any) => (
     <div style={featureIconWrapperStyle}>
       <Icon size={24} color="var(--accent-primary)" />
     </div>
-    <h3 style={{ marginBottom: '12px', fontSize: '1.25rem' }}>{title}</h3>
+    <h3 style={{ marginBottom: '12px', fontSize: '1.25rem', fontWeight: 700 }}>{title}</h3>
     <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>{description}</p>
+  </div>
+);
+
+const StatItem = ({ count, label }: { count: string, label: string }) => (
+  <div style={statItemStyle}>
+    <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>{count}</div>
+    <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{label}</div>
+  </div>
+);
+
+const StepItem = ({ number, title, description }: { number: string, title: string, description: string }) => (
+  <div style={stepItemCardStyle}>
+    <div style={stepNumberStyle}>{number}</div>
+    <h3 style={{ marginBottom: '12px', fontSize: '1.5rem', fontWeight: 700 }}>{title}</h3>
+    <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>{description}</p>
+  </div>
+);
+
+const PricingCard = ({ title, price, features, isPopular }: any) => (
+  <div style={{
+    ...pricingCardStyle,
+    borderColor: isPopular ? 'var(--accent-primary)' : 'var(--border-color)',
+    transform: isPopular ? 'scale(1.05)' : 'scale(1)',
+    zIndex: isPopular ? 1 : 0
+  }}>
+    {isPopular && <div style={popularBadgeStyle}>Most Popular</div>}
+    <h3 style={{ fontSize: '1.25rem', marginBottom: '8px' }}>{title}</h3>
+    <div style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '24px' }}>
+      {price}<span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--text-muted)' }}>{price !== 'Custom' ? '/mo' : ''}</span>
+    </div>
+    <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', flex: 1 }}>
+      {features.map((f: string) => (
+        <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', color: 'var(--text-secondary)' }}>
+          <CheckCircle size={16} color="var(--accent-primary)" /> {f}
+        </li>
+      ))}
+    </ul>
+    <Button variant={isPopular ? 'primary' : 'outline'} style={{ width: '100%' }}>Get Started</Button>
+  </div>
+);
+
+const FooterCol = ({ title, links }: { title: string, links: string[] }) => (
+  <div style={footerColStyle}>
+    <h4 style={{ color: 'var(--text-primary)', marginBottom: '20px', fontSize: '1rem', fontWeight: 700 }}>{title}</h4>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      {links.map(l => (
+        <a key={l} href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.875rem' }}>{l}</a>
+      ))}
+    </div>
   </div>
 );
 
@@ -137,6 +270,7 @@ const FeatureCard = ({ icon: Icon, title, description }: any) => (
 const landingStyle: React.CSSProperties = {
   backgroundColor: 'var(--bg-primary)',
   minHeight: '100vh',
+  color: 'var(--text-primary)',
 };
 
 const navStyle: React.CSSProperties = {
@@ -149,8 +283,9 @@ const navStyle: React.CSSProperties = {
   left: 0,
   right: 0,
   backgroundColor: 'rgba(15, 23, 42, 0.8)',
-  backdropFilter: 'blur(10px)',
+  backdropFilter: 'blur(20px)',
   zIndex: 1000,
+  borderBottom: '1px solid var(--border-color)',
 };
 
 const logoStyle: React.CSSProperties = {
@@ -159,15 +294,19 @@ const logoStyle: React.CSSProperties = {
   gap: '12px',
   fontSize: '1.5rem',
   fontWeight: 800,
-  letterSpacing: '-0.025em',
 };
 
 const navLinksStyle: React.CSSProperties = {
   display: 'flex',
   gap: '40px',
+};
+
+const navLinkStyle: React.CSSProperties = {
   fontSize: '0.875rem',
   fontWeight: 500,
   color: 'var(--text-secondary)',
+  textDecoration: 'none',
+  transition: 'color 0.2s ease',
 };
 
 const navActionsStyle: React.CSSProperties = {
@@ -176,36 +315,63 @@ const navActionsStyle: React.CSSProperties = {
 };
 
 const heroSectionStyle: React.CSSProperties = {
-  padding: '180px 80px 100px',
+  padding: '220px 80px 140px',
   display: 'flex',
   alignItems: 'center',
   gap: '80px',
   maxWidth: '1400px',
   margin: '0 auto',
+  position: 'relative',
+};
+
+const heroBackgroundGlow: React.CSSProperties = {
+  position: 'absolute',
+  top: '20%',
+  left: '10%',
+  width: '400px',
+  height: '400px',
+  background: 'radial-gradient(circle, rgba(245, 158, 11, 0.15) 0%, transparent 70%)',
+  filter: 'blur(60px)',
+  zIndex: -1,
 };
 
 const heroContentStyle: React.CSSProperties = {
-  flex: 1,
+  flex: 1.2,
 };
 
 const heroTitleStyle: React.CSSProperties = {
-  fontSize: '4.5rem',
-  lineHeight: 1.1,
-  marginBottom: '24px',
+  fontSize: '5rem',
+  lineHeight: 1.05,
+  marginBottom: '32px',
   fontWeight: 800,
+  letterSpacing: '-0.04em',
 };
 
 const heroSubtitleStyle: React.CSSProperties = {
   fontSize: '1.25rem',
   color: 'var(--text-secondary)',
-  marginBottom: '40px',
+  marginBottom: '48px',
   lineHeight: 1.6,
-  maxWidth: '600px',
+  maxWidth: '650px',
 };
 
 const heroActionsStyle: React.CSSProperties = {
   display: 'flex',
-  gap: '20px',
+  gap: '24px',
+  marginBottom: '64px',
+};
+
+const statsRowStyle: React.CSSProperties = {
+  display: 'flex',
+  gap: '48px',
+  borderTop: '1px solid var(--border-color)',
+  paddingTop: '32px',
+};
+
+const statItemStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '4px',
 };
 
 const heroImageContainerStyle: React.CSSProperties = {
@@ -215,109 +381,224 @@ const heroImageContainerStyle: React.CSSProperties = {
 
 const heroImagePlaceholderStyle: React.CSSProperties = {
   width: '100%',
-  height: '500px',
+  height: '600px',
   backgroundColor: 'var(--bg-secondary)',
-  borderRadius: '24px',
+  borderRadius: '32px',
   border: '1px solid var(--border-color)',
   position: 'relative',
   overflow: 'hidden',
-  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
+  boxShadow: '0 40px 80px -20px rgba(0, 0, 0, 0.6)',
 };
 
 const heroImageOverlayStyle: React.CSSProperties = {
   position: 'absolute',
   inset: 0,
-  background: 'linear-gradient(45deg, rgba(245, 158, 11, 0.1), transparent)',
+  background: 'linear-gradient(to top, rgba(15, 23, 42, 0.8), transparent)',
 };
 
 const floatingCardStyle: React.CSSProperties = {
   position: 'absolute',
-  top: '40px',
-  left: '-20px',
+  top: '60px',
+  left: '-30px',
   backgroundColor: 'var(--bg-tertiary)',
-  padding: '20px',
-  borderRadius: '16px',
-  border: '1px solid var(--accent-glow)',
+  padding: '24px',
+  borderRadius: '20px',
+  border: '1px solid rgba(245, 158, 11, 0.3)',
   display: 'flex',
   alignItems: 'center',
   gap: '16px',
-  boxShadow: 'var(--shadow-lg)',
+  boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
+  backdropFilter: 'blur(10px)',
 };
 
 const badgeStyle: React.CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
-  gap: '8px',
-  padding: '6px 12px',
-  backgroundColor: 'var(--bg-tertiary)',
+  gap: '10px',
+  padding: '8px 16px',
+  backgroundColor: 'rgba(245, 158, 11, 0.1)',
   borderRadius: '30px',
   fontSize: '0.875rem',
   fontWeight: 600,
   color: 'var(--accent-primary)',
-  marginBottom: '24px',
+  marginBottom: '32px',
+  border: '1px solid rgba(245, 158, 11, 0.2)',
 };
 
 const badgeDotStyle: React.CSSProperties = {
-  width: '6px',
-  height: '6px',
+  width: '8px',
+  height: '8px',
   backgroundColor: 'var(--accent-primary)',
   borderRadius: '50%',
+  boxShadow: '0 0 10px var(--accent-primary)',
 };
 
 const featuresSectionStyle: React.CSSProperties = {
-  padding: '100px 80px',
+  padding: '140px 80px',
   backgroundColor: 'var(--bg-secondary)',
+};
+
+const howItWorksSectionStyle: React.CSSProperties = {
+  padding: '140px 80px',
+  backgroundColor: 'var(--bg-primary)',
+};
+
+const stepsContainerStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(3, 1fr)',
+  gap: '40px',
+  maxWidth: '1200px',
+  margin: '0 auto',
+};
+
+const stepItemCardStyle: React.CSSProperties = {
+  padding: '48px',
+  backgroundColor: 'var(--bg-secondary)',
+  borderRadius: '32px',
+  border: '1px solid var(--border-color)',
+  position: 'relative',
+};
+
+const stepNumberStyle: React.CSSProperties = {
+  fontSize: '4rem',
+  fontWeight: 900,
+  color: 'rgba(245, 158, 11, 0.1)',
+  position: 'absolute',
+  top: '20px',
+  right: '30px',
+};
+
+const pricingSectionStyle: React.CSSProperties = {
+  padding: '140px 80px',
+  backgroundColor: 'var(--bg-secondary)',
+};
+
+const pricingGridStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(3, 1fr)',
+  gap: '32px',
+  maxWidth: '1200px',
+  margin: '0 auto',
+  alignItems: 'center',
+};
+
+const pricingCardStyle: React.CSSProperties = {
+  padding: '48px',
+  backgroundColor: 'var(--bg-primary)',
+  borderRadius: '32px',
+  border: '2px solid var(--border-color)',
+  display: 'flex',
+  flexDirection: 'column',
+  position: 'relative',
+  transition: 'all 0.3s ease',
+};
+
+const popularBadgeStyle: React.CSSProperties = {
+  position: 'absolute',
+  top: '-16px',
+  left: '50%',
+  transform: 'translateX(-50%)',
+  backgroundColor: 'var(--accent-primary)',
+  color: '#000',
+  padding: '6px 16px',
+  borderRadius: '20px',
+  fontSize: '0.875rem',
+  fontWeight: 700,
+};
+
+const footerStyle: React.CSSProperties = {
+  padding: '100px 80px 40px',
+  backgroundColor: 'var(--bg-primary)',
+  borderTop: '1px solid var(--border-color)',
+};
+
+const footerMainStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  gap: '80px',
+  marginBottom: '80px',
+  maxWidth: '1400px',
+  margin: '0 auto 80px',
+};
+
+const footerBrandColStyle: React.CSSProperties = {
+  flex: 1.5,
+  maxWidth: '400px',
+};
+
+const footerLinksGridStyle: React.CSSProperties = {
+  flex: 2,
+  display: 'grid',
+  gridTemplateColumns: 'repeat(3, 1fr)',
+  gap: '40px',
+};
+
+const footerColStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+};
+
+const footerBottomStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  paddingTop: '40px',
+  borderTop: '1px solid var(--border-color)',
+  color: 'var(--text-muted)',
+  fontSize: '0.875rem',
+  maxWidth: '1400px',
+  margin: '0 auto',
+};
+
+const socialLinksStyle: React.CSSProperties = {
+  display: 'flex',
+  gap: '24px',
 };
 
 const sectionHeaderStyle: React.CSSProperties = {
   textAlign: 'center',
-  marginBottom: '64px',
+  marginBottom: '80px',
 };
 
 const sectionTitleStyle: React.CSSProperties = {
-  fontSize: '2.5rem',
-  marginBottom: '16px',
+  fontSize: '3.5rem',
+  fontWeight: 800,
+  marginBottom: '20px',
+  letterSpacing: '-0.02em',
 };
 
 const sectionSubtitleStyle: React.CSSProperties = {
   color: 'var(--text-secondary)',
-  fontSize: '1.125rem',
+  fontSize: '1.25rem',
+  maxWidth: '700px',
+  margin: '0 auto',
 };
 
 const featuresGridStyle: React.CSSProperties = {
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-  gap: '32px',
+  gap: '40px',
   maxWidth: '1200px',
   margin: '0 auto',
 };
 
 const featureCardStyle: React.CSSProperties = {
-  padding: '40px',
+  padding: '48px',
   backgroundColor: 'var(--bg-primary)',
-  borderRadius: '24px',
+  borderRadius: '32px',
   border: '1px solid var(--border-color)',
-  transition: 'transform 0.3s ease',
+  transition: 'all 0.3s ease',
+  cursor: 'default',
 };
 
 const featureIconWrapperStyle: React.CSSProperties = {
-  width: '56px',
-  height: '56px',
-  backgroundColor: 'var(--bg-tertiary)',
-  borderRadius: '16px',
+  width: '64px',
+  height: '64px',
+  backgroundColor: 'rgba(245, 158, 11, 0.05)',
+  borderRadius: '20px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  marginBottom: '24px',
-};
-
-const footerStyle: React.CSSProperties = {
-  padding: '80px',
-  borderTop: '1px solid var(--border-color)',
-};
-
-const footerContentStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
+  marginBottom: '32px',
+  border: '1px solid rgba(245, 158, 11, 0.1)',
 };
