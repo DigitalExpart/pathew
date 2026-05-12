@@ -65,6 +65,21 @@ export const LandingPage: React.FC = () => {
               <Button size="lg" variant="outline" style={{ padding: '16px 32px' }}>Watch Demo</Button>
             </motion.div>
           </div>
+
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1 }}
+            style={trustBarHeroStyle}
+          >
+            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Trusted by professionals at</span>
+            <div style={heroLogosStyle}>
+              <span style={heroLogoPlaceholderStyle}>UNDP</span>
+              <span style={heroLogoPlaceholderStyle}>WHO</span>
+              <span style={heroLogoPlaceholderStyle}>UNESCO</span>
+              <span style={heroLogoPlaceholderStyle}>WORLD BANK</span>
+            </div>
+          </motion.div>
           
           <motion.div 
             initial={{ opacity: 0 }}
@@ -109,6 +124,49 @@ export const LandingPage: React.FC = () => {
           </div>
         </motion.div>
       </header>
+
+      {/* Problem/Solution Narrative */}
+      <section style={problemSectionStyle}>
+        <div style={problemContentStyle}>
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            style={{ flex: 1 }}
+          >
+            <h2 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '24px', lineHeight: 1.2 }}>
+              Stop Applying into <span style={{ color: 'var(--accent-primary)' }}>the Dark</span>.
+            </h2>
+            <p style={{ fontSize: '1.25rem', color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: 1.6 }}>
+              You've spent weeks on proposals. You've sent countless emails. You've waited for months only to get a generic rejection with no feedback. 
+              The problem isn't your vision—it's the language of funders you haven't mastered.
+            </p>
+            <div style={benefitListStyle}>
+              <BenefitItem text="Stop wasting time on mismatched opportunities." />
+              <BenefitItem text="Master the specific language of global funders." />
+              <BenefitItem text="Apply 10x faster with AI-trained success patterns." />
+            </div>
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            style={problemImageStyle}
+          >
+            <Card style={{ padding: '40px', border: '1px solid rgba(239, 68, 68, 0.2)', backgroundColor: 'rgba(239, 68, 68, 0.02)' }}>
+              <h4 style={{ color: '#ef4444', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Shield size={18} /> The Old Way
+              </h4>
+              <ul style={{ listStyle: 'none', padding: 0, color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <li>❌ 40+ hours per proposal</li>
+                <li>❌ 80% rejection rate</li>
+                <li>❌ Generic ChatGPT drafts</li>
+                <li>❌ No match intelligence</li>
+              </ul>
+            </Card>
+          </motion.div>
+        </div>
+      </section>
 
       {/* Features Section */}
       <section id="features" style={featuresSectionStyle}>
@@ -178,6 +236,41 @@ export const LandingPage: React.FC = () => {
         </motion.div>
       </section>
 
+      {/* Comparison Section */}
+      <section style={comparisonSectionStyle}>
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          style={sectionHeaderStyle}
+        >
+          <h2 style={sectionTitleStyle}>ChatGPT learned from the internet. <br/> <span style={{ color: 'var(--accent-primary)' }}>PATHEW learned from winners.</span></h2>
+          <p style={sectionSubtitleStyle}>Unlike generic AI, our system is trained on over $50M in successful global opportunity applications.</p>
+        </motion.div>
+
+        <div style={comparisonGridStyle}>
+          <ComparisonColumn 
+            title="Generic AI" 
+            items={[
+              'Bloated, generic drafts',
+              'No context of funder history',
+              'Hallucinates impact data',
+              'Standard internet knowledge'
+            ]} 
+          />
+          <ComparisonColumn 
+            title="PATHEW Assistance" 
+            highlight 
+            items={[
+              'Precision match scoring',
+              'Success-pattern training',
+              'Verifiable impact narrative',
+              'Built for global standards'
+            ]} 
+          />
+        </div>
+      </section>
+
       {/* Pricing Section */}
       <section id="pricing" style={pricingSectionStyle}>
         <motion.div 
@@ -206,6 +299,34 @@ export const LandingPage: React.FC = () => {
             title="Enterprise" 
             price="Custom" 
             features={['Team management', 'API access', 'Custom branding', 'Dedicated manager']} 
+          />
+        </div>
+      </section>
+
+      {/* Social Proof Section */}
+      <section style={socialProofSectionStyle}>
+        <motion.div 
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          style={sectionHeaderStyle}
+        >
+          <h2 style={sectionTitleStyle}>Built for Visionaries Like You</h2>
+        </motion.div>
+        <div style={testimonialsGridStyle}>
+          <TestimonialCard 
+            quote="PATHEW helped our NGO secure a $150k grant from the World Bank in just 3 weeks. The match score was spot on." 
+            author="Dr. Sarah Chen" 
+            role="Director, GreenGrowth Foundation" 
+          />
+          <TestimonialCard 
+            quote="I used to spend months on fellowships. With Pathew, I found and landed the Vital Voices fellowship mid-way through my setup." 
+            author="Amina Bello" 
+            role="Social Entrepreneur" 
+          />
+          <TestimonialCard 
+            quote="The document generation is magic. It doesn't just write; it understands the soul of our mission." 
+            author="James Wilson" 
+            role="Founder, TechAfrica" 
           />
         </div>
       </section>
@@ -441,6 +562,50 @@ const FAQItem = ({ question, answer }: { question: string, answer: string }) => 
     </div>
   );
 };
+
+const ComparisonColumn = ({ title, items, highlight }: any) => (
+  <motion.div 
+    whileHover={{ y: -5 }}
+    style={{
+      ...comparisonColStyle,
+      borderColor: highlight ? 'var(--accent-primary)' : 'var(--border-color)',
+      backgroundColor: highlight ? 'rgba(245, 158, 11, 0.03)' : 'var(--bg-secondary)',
+    }}
+  >
+    <h3 style={{ fontSize: '1.5rem', marginBottom: '24px', color: highlight ? 'var(--accent-primary)' : 'var(--text-primary)' }}>{title}</h3>
+    <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      {items.map((item: string) => (
+        <li key={item} style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-secondary)' }}>
+          {highlight ? <CheckCircle size={18} color="var(--accent-primary)" /> : <Shield size={18} color="var(--text-muted)" />}
+          {item}
+        </li>
+      ))}
+    </ul>
+  </motion.div>
+);
+
+const TestimonialCard = ({ quote, author, role }: any) => (
+  <motion.div 
+    whileHover={{ scale: 1.02 }}
+    style={testimonialCardStyle}
+  >
+    <div style={{ color: 'var(--accent-primary)', fontSize: '3rem', lineHeight: 1, marginBottom: '20px' }}>"</div>
+    <p style={{ fontSize: '1.125rem', lineHeight: 1.7, marginBottom: '32px', color: 'var(--text-primary)', fontStyle: 'italic' }}>{quote}</p>
+    <div>
+      <div style={{ fontWeight: 700, fontSize: '1rem' }}>{author}</div>
+      <div style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{role}</div>
+    </div>
+  </motion.div>
+);
+
+const BenefitItem = ({ text }: { text: string }) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
+    <div style={{ width: '24px', height: '24px', backgroundColor: 'rgba(245, 158, 11, 0.2)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <CheckCircle size={14} color="var(--accent-primary)" />
+    </div>
+    <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>{text}</span>
+  </div>
+);
 
 // Styles
 const landingStyle: React.CSSProperties = {
@@ -829,4 +994,90 @@ const faqAnswerStyle: React.CSSProperties = {
   padding: '0 32px 24px',
   color: 'var(--text-secondary)',
   lineHeight: 1.6,
+};
+
+const trustBarHeroStyle: React.CSSProperties = {
+  marginTop: '40px',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '16px',
+};
+
+const heroLogosStyle: React.CSSProperties = {
+  display: 'flex',
+  gap: '32px',
+  opacity: 0.6,
+  alignItems: 'center',
+};
+
+const heroLogoPlaceholderStyle: React.CSSProperties = {
+  fontSize: '0.875rem',
+  fontWeight: 700,
+  letterSpacing: '0.05em',
+};
+
+const problemSectionStyle: React.CSSProperties = {
+  padding: '100px 80px',
+  backgroundColor: 'var(--bg-primary)',
+};
+
+const problemContentStyle: React.CSSProperties = {
+  maxWidth: '1200px',
+  margin: '0 auto',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '80px',
+};
+
+const benefitListStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  marginTop: '40px',
+};
+
+const problemImageStyle: React.CSSProperties = {
+  flex: 0.8,
+};
+
+const comparisonSectionStyle: React.CSSProperties = {
+  padding: '140px 80px',
+  backgroundColor: 'var(--bg-secondary)',
+};
+
+const comparisonGridStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: '1fr 1fr',
+  gap: '32px',
+  maxWidth: '1000px',
+  margin: '0 auto',
+};
+
+const comparisonColStyle: React.CSSProperties = {
+  padding: '48px',
+  borderRadius: '32px',
+  border: '2px solid var(--border-color)',
+  transition: 'all 0.3s ease',
+};
+
+const socialProofSectionStyle: React.CSSProperties = {
+  padding: '140px 80px',
+  backgroundColor: 'var(--bg-primary)',
+};
+
+const testimonialsGridStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(3, 1fr)',
+  gap: '32px',
+  maxWidth: '1200px',
+  margin: '0 auto',
+};
+
+const testimonialCardStyle: React.CSSProperties = {
+  padding: '48px',
+  backgroundColor: 'var(--bg-secondary)',
+  borderRadius: '32px',
+  border: '1px solid var(--border-color)',
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
 };
