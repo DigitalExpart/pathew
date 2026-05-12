@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Play, 
   CheckCircle, 
@@ -9,7 +9,9 @@ import {
   Search, 
   FileText, 
   Award,
-  Mail
+  Mail,
+  ArrowLeft,
+  ArrowRight
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
@@ -59,25 +61,8 @@ export const HowItWorksPage: React.FC = () => {
           </p>
         </motion.div>
 
-        {/* Video Placeholder */}
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.2 }}
-          style={videoContainerStyle}
-        >
-          <div style={videoPlaceholderStyle}>
-            <div style={playButtonStyle}>
-              <Play size={40} fill="currentColor" />
-            </div>
-            <div style={videoOverlayStyle}>
-              <div style={{ padding: '40px' }}>
-                <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '8px' }}>Platform Demo</h3>
-                <p style={{ opacity: 0.8 }}>Watch how to apply for your next opportunity in minutes.</p>
-              </div>
-            </div>
-          </div>
-        </motion.div>
+        {/* Video Slider */}
+        <VideoSlider />
       </section>
 
       {/* Process Section */}
@@ -290,6 +275,111 @@ const TikTokIcon = ({ size = 20 }: { size?: number }) => (
     <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
   </svg>
 );
+
+const VideoSlider = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const slides = [
+    {
+      title: "Platform Overview",
+      desc: "Learn how PATHEW Assistant helps you discover global opportunities in minutes.",
+      id: "overview"
+    },
+    {
+      title: "Assistant Analysis",
+      desc: "Watch how the AI analyzes your profile to find the perfect matching opportunities.",
+      id: "analysis"
+    },
+    {
+      title: "Application Boost",
+      desc: "See the Assistant in action generating tailored documents for your next role.",
+      id: "boost"
+    }
+  ];
+
+  const next = () => setCurrentIndex((prev) => (prev + 1) % slides.length);
+  const prev = () => setCurrentIndex((prev) => (prev - 1 + slides.length) % slides.length);
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ delay: 0.2 }}
+      style={{...videoContainerStyle, position: 'relative'}}
+    >
+      <AnimatePresence mode="wait">
+        <motion.div 
+          key={currentIndex}
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -20 }}
+          style={videoPlaceholderStyle}
+        >
+          <div style={playButtonStyle}>
+            <Play size={40} fill="currentColor" />
+          </div>
+          <div style={videoOverlayStyle}>
+            <div style={{ padding: '40px' }}>
+              <h3 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '8px' }}>{slides[currentIndex].title}</h3>
+              <p style={{ opacity: 0.8 }}>{slides[currentIndex].desc}</p>
+            </div>
+          </div>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Controls */}
+      <div style={sliderControlsStyle}>
+        <button onClick={prev} style={sliderArrowStyle}>←</button>
+        <div style={dotsContainerStyle}>
+          {slides.map((_, i) => (
+            <div 
+              key={i} 
+              style={{
+                ...dotStyle,
+                backgroundColor: i === currentIndex ? 'var(--accent-primary)' : 'rgba(255,255,255,0.2)',
+                width: i === currentIndex ? '24px' : '8px'
+              }} 
+            />
+          ))}
+        </div>
+        <button onClick={next} style={sliderArrowStyle}>→</button>
+      </div>
+    </motion.div>
+  );
+};
+
+const sliderControlsStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '32px',
+  marginTop: '40px',
+};
+
+const sliderArrowStyle: React.CSSProperties = {
+  width: '48px',
+  height: '48px',
+  borderRadius: '50%',
+  backgroundColor: 'var(--bg-secondary)',
+  border: '1px solid var(--border-color)',
+  color: 'var(--text-primary)',
+  fontSize: '1.25rem',
+  cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  transition: 'all 0.2s ease',
+};
+
+const dotsContainerStyle: React.CSSProperties = {
+  display: 'flex',
+  gap: '12px',
+};
+
+const dotStyle: React.CSSProperties = {
+  height: '8px',
+  borderRadius: '4px',
+  transition: 'all 0.3s ease',
+};
 
 const ProcessCard = ({ number, icon: Icon, title, desc }: any) => (
   <motion.div 
