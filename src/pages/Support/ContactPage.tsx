@@ -23,13 +23,27 @@ export const ContactPage: React.FC = () => {
 
   return (
     <div style={pageStyle}>
-      {/* Simple Navbar */}
-      <nav style={navStyle}>
-        <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
-          <img src={logo} alt="PATHEW Logo" style={{ height: '32px' }} />
-        </Link>
-        <Link to="/"><Button variant="ghost">Back to Home</Button></Link>
-      </nav>
+      {/* Navbar */}
+      <motion.nav 
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.6, type: 'spring' }}
+        style={navStyle}
+      >
+        <div style={logoStyle}>
+          <img src={logo} alt="PATHEW Logo" style={{ height: '40px', objectFit: 'contain' }} />
+        </div>
+        <div style={navLinksStyle}>
+          <Link to="/" style={navLinkStyle}>Features</Link>
+          <Link to="/" style={navLinkStyle}>How it works</Link>
+          <Link to="/" style={navLinkStyle}>Pricing</Link>
+          <Link to="/contact" style={navLinkStyle}>Contact</Link>
+        </div>
+        <div style={navActionsStyle}>
+          <Link to="/login"><Button variant="ghost">Login</Button></Link>
+          <Link to="/signup"><Button>Get Started</Button></Link>
+        </div>
+      </motion.nav>
 
       <main style={mainStyle}>
         <div style={containerStyle}>
@@ -190,15 +204,48 @@ const pageStyle: React.CSSProperties = {
 };
 
 const navStyle: React.CSSProperties = {
-  padding: '24px 80px',
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
+  padding: '24px 80px',
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  backgroundColor: 'rgba(15, 23, 42, 0.8)',
+  backdropFilter: 'blur(20px)',
+  zIndex: 1000,
   borderBottom: '1px solid var(--border-color)',
 };
 
+const logoStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '12px',
+  fontSize: '1.5rem',
+  fontWeight: 800,
+};
+
+const navLinksStyle: React.CSSProperties = {
+  display: 'flex',
+  gap: '40px',
+};
+
+const navLinkStyle: React.CSSProperties = {
+  fontSize: '0.875rem',
+  fontWeight: 500,
+  color: 'var(--text-secondary)',
+  textDecoration: 'none',
+  transition: 'color 0.2s ease',
+};
+
+const navActionsStyle: React.CSSProperties = {
+  display: 'flex',
+  gap: '16px',
+};
+
 const mainStyle: React.CSSProperties = {
-  padding: '80px 20px',
+  padding: '160px 20px 80px',
 };
 
 const containerStyle: React.CSSProperties = {
