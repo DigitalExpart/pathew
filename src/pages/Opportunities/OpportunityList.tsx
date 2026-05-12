@@ -36,7 +36,6 @@ export const OpportunityList: React.FC = () => {
           </Button>
           <div style={dividerStyle}></div>
           <select style={selectStyle}>
-            <option>Sort by: Match Score</option>
             <option>Sort by: Newest</option>
             <option>Sort by: Deadline</option>
           </select>
@@ -48,9 +47,8 @@ export const OpportunityList: React.FC = () => {
         {mockOpportunities.map(opp => (
           <Card key={opp.id} style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={cardHeaderStyle}>
-              <div style={matchBadgeStyle}>
-                <span style={matchScoreStyle}>{opp.matchScore}%</span>
-                <span style={matchTextStyle}>Match</span>
+              <div style={companyShortLogoStyle}>
+                {opp.company.charAt(0)}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
                 <div style={{ display: 'flex', gap: '8px' }}>
@@ -189,27 +187,17 @@ const cardHeaderStyle: React.CSSProperties = {
   alignItems: 'flex-start',
 };
 
-const matchBadgeStyle: React.CSSProperties = {
+const companyShortLogoStyle: React.CSSProperties = {
+  width: '40px',
+  height: '40px',
+  backgroundColor: 'var(--bg-tertiary)',
+  borderRadius: '10px',
   display: 'flex',
-  flexDirection: 'column',
   alignItems: 'center',
-  backgroundColor: 'rgba(245, 158, 11, 0.1)',
-  padding: '8px 12px',
-  borderRadius: '12px',
-  border: '1px solid var(--accent-glow)',
-};
-
-const matchScoreStyle: React.CSSProperties = {
+  justifyContent: 'center',
   fontSize: '1.25rem',
   fontWeight: 800,
   color: 'var(--accent-primary)',
-};
-
-const matchTextStyle: React.CSSProperties = {
-  fontSize: '0.625rem',
-  textTransform: 'uppercase',
-  fontWeight: 700,
-  color: 'var(--accent-secondary)',
 };
 
 const oppTitleStyle: React.CSSProperties = {

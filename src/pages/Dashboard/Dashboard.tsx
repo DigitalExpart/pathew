@@ -33,7 +33,6 @@ export const Dashboard: React.FC = () => {
 
       {/* Stats Grid */}
       <div style={statsGridStyle}>
-        <StatCard icon={TrendingUp} label="Match Score" value="92%" trend="+5%" />
         <StatCard icon={Users} label="Opportunities" value="128" trend="+12" />
         <StatCard icon={Briefcase} label="Jobs" value="84" trend="+8" />
         <StatCard icon={GraduationCap} label="Fellowships" value="44" trend="+4" />
@@ -105,7 +104,7 @@ export const Dashboard: React.FC = () => {
           {/* Recent Matches */}
           <div>
             <div style={sectionHeaderStyle}>
-              <h2 style={sectionTitleStyle}>Top Matches</h2>
+              <h2 style={sectionTitleStyle}>Recent Opportunities</h2>
               <Button variant="ghost" size="sm">View all <ArrowRight size={14} /></Button>
             </div>
           <div style={matchesListStyle}>
@@ -121,10 +120,7 @@ export const Dashboard: React.FC = () => {
                     </div>
                   </div>
                   <div style={oppMatchStyle}>
-                    <div style={matchCircleStyle}>
-                      <span style={matchValueStyle}>{opp.matchScore}%</span>
-                    </div>
-                    <span style={matchLabelStyle}>Match</span>
+                    <Button variant="secondary" size="sm">Details</Button>
                   </div>
                 </div>
               </Card>

@@ -27,7 +27,7 @@ export const AIAssistantPanel: React.FC = () => {
     if (isAIPanelOpen && responses.length === 0) {
       setResponses([{ 
         type: 'ai', 
-        text: `I'm PATHEW AI, ready to help with your ${aiContext}. I have access to your current document context. How can I assist you?` 
+        text: `I'm your Pathew Assistant, ready to help with your ${aiContext}. I have access to your current document context. How can I assist you?` 
       }]);
     }
   }, [isAIPanelOpen, aiContext]);
@@ -79,7 +79,7 @@ export const AIAssistantPanel: React.FC = () => {
           <div style={iconBoxStyle}>
             <Sparkles size={18} color="var(--accent-primary)" />
           </div>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 700 }}>PATHEW AI</h2>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 700 }}>PATHEW Assistance</h2>
         </div>
         <button onClick={() => setAIPanelOpen(false)} style={closeButtonStyle}>
           <X size={20} />
@@ -190,7 +190,7 @@ const ThinkingState = () => (
       <div className="pulse" style={pulseDotStyle}></div>
       <div className="pulse" style={{ ...pulseDotStyle, animationDelay: '0.2s' }}></div>
       <div className="pulse" style={{ ...pulseDotStyle, animationDelay: '0.4s' }}></div>
-      <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>PATHEW is thinking...</span>
+      <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>PATHEW is working...</span>
     </div>
     <style>{`
       @keyframes pulse {

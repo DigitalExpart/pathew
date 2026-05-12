@@ -22,8 +22,6 @@ const navGroups = [
     items: [
       { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
       { icon: Briefcase, label: 'Opportunities', path: '/opportunities' },
-      { icon: GraduationCap, label: 'Fellowships', path: '/fellowships' },
-      { icon: Award, label: 'Grants', path: '/grants' },
       { icon: Bookmark, label: 'Saved Items', path: '/saved' },
     ]
   },

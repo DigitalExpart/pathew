@@ -20,10 +20,10 @@ export const TopBar: React.FC = () => {
       <div style={actionsStyle}>
         <button 
           style={aiButtonStyle}
-          onClick={() => openAIAssistant('General Assistant', ['How can I improve my profile?', 'What opportunities are trending?', 'Help me write a document'])}
+          onClick={() => openAIAssistant('Pathew Assistance', ['How can I improve my profile?', 'What opportunities are trending?', 'Help me write a document'])}
         >
           <Sparkles size={16} />
-          <span>Ask PATHEW AI</span>
+          <span>Pathew Assistance</span>
         </button>
 
         <button style={iconButtonStyle}>

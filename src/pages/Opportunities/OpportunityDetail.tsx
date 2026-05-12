@@ -22,9 +22,9 @@ export const OpportunityDetail: React.FC = () => {
   const opp = mockOpportunities.find(o => o.id === id) || mockOpportunities[0];
   const { openAIAssistant } = useAI();
 
-  const handleAIMatchExplanation = () => {
-    openAIAssistant('Opportunity Analysis', [
-      'Explain the match score',
+  const handleFitAnalysis = () => {
+    openAIAssistant('Pathew Assistance', [
+      'Explain my compatibility',
       'Generate a readiness plan',
       'Identify my strengths and gaps',
       'Suggest next steps'
@@ -99,30 +99,20 @@ export const OpportunityDetail: React.FC = () => {
 
         <div style={sidebarColStyle}>
           <Card style={{ marginBottom: '24px', textAlign: 'center' }}>
-            <h3 style={matchScoreTitleStyle}>Match Score</h3>
-            <div style={matchCircleLargeStyle}>
-              <span style={matchValueLargeStyle}>{opp.matchScore}%</span>
-            </div>
+            <h3 style={matchScoreTitleStyle}>Assistant Analysis</h3>
             <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '12px' }}>
-              High compatibility with your profile.
+              Get a detailed analysis of your fit for this opportunity.
             </p>
             
             <Button 
               variant="outline" 
               size="sm" 
               style={{ marginTop: '20px', width: '100%', gap: '8px', color: 'var(--accent-primary)', borderColor: 'rgba(245, 158, 11, 0.2)' }}
-              onClick={handleAIMatchExplanation}
+              onClick={handleFitAnalysis}
             >
               <Sparkles size={14} />
-              AI Analysis
+              Analyze Fit
             </Button>
-            
-            <div style={breakdownGridStyle}>
-              <BreakdownItem label="Skills" value={opp.matchBreakdown.skills} />
-              <BreakdownItem label="Exp." value={opp.matchBreakdown.experience} />
-              <BreakdownItem label="Edu." value={opp.matchBreakdown.education} />
-              <BreakdownItem label="Goals" value={opp.matchBreakdown.goals} />
-            </div>
           </Card>
 
           <Card title="At a Glance">
