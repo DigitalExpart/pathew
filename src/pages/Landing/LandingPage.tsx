@@ -3,7 +3,14 @@ import { motion } from 'framer-motion';
 import { Button } from '../../components/ui/Button';
 import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import logo from '../../assets/images/logo.png';
+import { useNavigate } from 'react-router-dom';
+
+const features = [
+  { icon: Globe, title: "Global Discovery", description: "Aggregated opportunities from thousands of premium sources worldwide." },
+  { icon: Zap, title: "Assistance Match Scoring", description: "Know exactly how well you fit before you even click apply." },
+  { icon: CheckCircle, title: "Smart Document Generation", description: "Auto-generate CVs and cover letters tailored to each opportunity." },
+  { icon: Shield, title: "Privacy First", description: "Your data is encrypted and only shared when you choose to apply." },
+];
 
 export const LandingPage: React.FC = () => {
   return (
@@ -116,24 +123,28 @@ export const LandingPage: React.FC = () => {
           <p style={sectionSubtitleStyle}>Powerful tools designed to accelerate your career growth.</p>
         </motion.div>
         
-        <motion.div 
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true, margin: "-100px" }}
-          variants={{
-            hidden: { opacity: 0 },
-            show: {
-              opacity: 1,
-              transition: { staggerChildren: 0.15 }
-            }
-          }}
-          style={featuresGridStyle}
-        >
-          <FeatureCard icon={Globe} title="Global Discovery" description="Aggregated opportunities from thousands of premium sources worldwide." />
-          <FeatureCard icon={Zap} title="Assistance Match Scoring" description="Know exactly how well you fit before you even click apply." />
-          <FeatureCard icon={CheckCircle} title="Smart Document Generation" description="Auto-generate CVs and cover letters tailored to each opportunity." />
-          <FeatureCard icon={Shield} title="Privacy First" description="Your data is encrypted and only shared when you choose to apply." />
-        </motion.div>
+        <div style={carouselContainerStyle}>
+          <motion.div 
+            animate={{ 
+              x: [0, -1200], // Adjust based on total width
+            }}
+            transition={{
+              duration: 20,
+              repeat: Infinity,
+              ease: "linear"
+            }}
+            style={carouselTrackStyle}
+          >
+            {[...features, ...features].map((f, i) => (
+              <FeatureCard 
+                key={`${f.title}-${i}`}
+                icon={f.icon} 
+                title={f.title} 
+                description={f.description} 
+              />
+            ))}
+          </motion.div>
+        </div>
       </section>
 
       {/* How It Works */}
@@ -251,7 +262,7 @@ const FeatureCard = ({ icon: Icon, title, description }: any) => (
       show: { opacity: 1, y: 0 }
     }}
     whileHover={{ y: -10, borderColor: 'var(--accent-primary)', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}
-    style={featureCardStyle}
+    style={{...featureCardStyle, flexShrink: 0, width: '350px'}}
   >
     <div style={featureIconWrapperStyle}>
       <Icon size={24} color="var(--accent-primary)" />
@@ -644,6 +655,19 @@ const sectionSubtitleStyle: React.CSSProperties = {
   fontSize: '1.25rem',
   maxWidth: '700px',
   margin: '0 auto',
+};
+
+const carouselContainerStyle: React.CSSProperties = {
+  overflow: 'hidden',
+  width: '100%',
+  padding: '20px 0',
+  position: 'relative',
+};
+
+const carouselTrackStyle: React.CSSProperties = {
+  display: 'flex',
+  gap: '32px',
+  width: 'max-content',
 };
 
 const featuresGridStyle: React.CSSProperties = {
