@@ -9,7 +9,9 @@ import {
   Clock, 
   ArrowRight,
   Zap,
-  Target
+  Target,
+  Briefcase,
+  GraduationCap
 } from 'lucide-react';
 import { mockOpportunities, mockUser, mockPrepPlan } from '../../data/mockData';
 
@@ -33,6 +35,8 @@ export const Dashboard: React.FC = () => {
       <div style={statsGridStyle}>
         <StatCard icon={TrendingUp} label="Match Score" value="92%" trend="+5%" />
         <StatCard icon={Users} label="Opportunities" value="128" trend="+12" />
+        <StatCard icon={Briefcase} label="Jobs" value="84" trend="+8" />
+        <StatCard icon={GraduationCap} label="Fellowships" value="44" trend="+4" />
         <StatCard icon={FileCheck} label="Docs Generated" value="14" trend="+2" />
         <StatCard icon={Clock} label="Pending Reviews" value="3" />
       </div>
@@ -208,7 +212,8 @@ const subtitleStyle: React.CSSProperties = {
 };
 
 const statsGridStyle: React.CSSProperties = {
-  display: 'flex',
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
   gap: '24px',
   marginBottom: '32px',
 };

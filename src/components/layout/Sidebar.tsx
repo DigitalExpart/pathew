@@ -10,7 +10,9 @@ import {
   Settings,
   LogOut,
   Sparkles,
-  Wallet
+  Wallet,
+  GraduationCap,
+  Award
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
@@ -20,6 +22,8 @@ const navGroups = [
     items: [
       { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
       { icon: Briefcase, label: 'Opportunities', path: '/opportunities' },
+      { icon: GraduationCap, label: 'Fellowships', path: '/fellowships' },
+      { icon: Award, label: 'Grants', path: '/grants' },
       { icon: Bookmark, label: 'Saved Items', path: '/saved' },
     ]
   },

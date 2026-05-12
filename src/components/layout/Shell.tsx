@@ -1,6 +1,8 @@
 import React from 'react';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
+import { AIProvider } from '../../context/AIContext';
+import { AIAssistantPanel } from '../ai/AIAssistantPanel';
 
 interface ShellProps {
   children: React.ReactNode;

@@ -3,6 +3,23 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Sparkles, User, BookOpen, Briefcase, Target, ChevronRight, ChevronLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAI } from '../../context/AIContext';
+
+const aiLinkButtonStyle: React.CSSProperties = {
+  background: 'none',
+  border: 'none',
+  color: 'var(--accent-primary)',
+  fontSize: '0.75rem',
+  fontWeight: 600,
+  cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+  padding: '4px 8px',
+  borderRadius: '4px',
+  backgroundColor: 'rgba(245, 158, 11, 0.05)',
+  transition: 'all 0.2s ease',
+};
 
 const steps = [
   { id: 'story', title: 'Your Story', icon: User },
@@ -92,21 +109,40 @@ export const ProfileSetup: React.FC = () => {
 };
 
 // Step Components
-const StoryStep = () => (
-  <div style={formGridStyle}>
-    <div style={inputGroupStyle}>
-      <label style={labelStyle}>Bio / Personal Story</label>
-      <textarea 
-        placeholder="Share your background, passions, and what drives you professionally..." 
-        style={textareaStyle}
-      />
+const StoryStep = () => {
+  const { openAIAssistant } = useAI();
+  return (
+    <div style={formGridStyle}>
+      <div style={inputGroupStyle}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+          <label style={labelStyle}>Bio / Personal Story</label>
+          <button 
+            style={aiLinkButtonStyle}
+            onClick={() => openAIAssistant('Personal Story', ['Rewrite this to be more professional', 'Turn my notes into a story', 'Polish this summary'])}
+          >
+            <Sparkles size={14} /> Polish with AI
+          </button>
+        </div>
+        <textarea 
+          placeholder="Share your background, passions, and what drives you professionally..." 
+          style={textareaStyle}
+        />
+      </div>
+      <div style={inputGroupStyle}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+          <label style={labelStyle}>Skills (Comma separated)</label>
+          <button 
+            style={aiLinkButtonStyle}
+            onClick={() => openAIAssistant('Skills Assistant', ['Suggest skills based on my bio', 'Group my skills by category', 'Improve this list'])}
+          >
+            <Sparkles size={14} /> Suggest Skills
+          </button>
+        </div>
+        <input type="text" placeholder="React, TypeScript, Project Management..." style={inputStyle} />
+      </div>
     </div>
-    <div style={inputGroupStyle}>
-      <label style={labelStyle}>Skills (Comma separated)</label>
-      <input type="text" placeholder="React, TypeScript, Project Management..." style={inputStyle} />
-    </div>
-  </div>
-);
+  );
+};
 
 const EducationStep = () => (
   <div style={formGridStyle}>
@@ -127,22 +163,33 @@ const EducationStep = () => (
   </div>
 );
 
-const ExperienceStep = () => (
-  <div style={formGridStyle}>
-    <div style={inputGroupStyle}>
-      <label style={labelStyle}>Most Recent Company</label>
-      <input type="text" placeholder="TechFlow Inc." style={inputStyle} />
+const ExperienceStep = () => {
+  const { openAIAssistant } = useAI();
+  return (
+    <div style={formGridStyle}>
+      <div style={inputGroupStyle}>
+        <label style={labelStyle}>Most Recent Company</label>
+        <input type="text" placeholder="TechFlow Inc." style={inputStyle} />
+      </div>
+      <div style={inputGroupStyle}>
+        <label style={labelStyle}>Job Title</label>
+        <input type="text" placeholder="Senior Frontend Engineer" style={inputStyle} />
+      </div>
+      <div style={inputGroupStyle}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+          <label style={labelStyle}>Description</label>
+          <button 
+            style={aiLinkButtonStyle}
+            onClick={() => openAIAssistant('Experience Assistant', ['Improve this description', 'Turn into bullet points', 'Make it more achievement-oriented'])}
+          >
+            <Sparkles size={14} /> Rewrite with AI
+          </button>
+        </div>
+        <textarea placeholder="What were your key responsibilities?" style={textareaStyle} />
+      </div>
     </div>
-    <div style={inputGroupStyle}>
-      <label style={labelStyle}>Job Title</label>
-      <input type="text" placeholder="Senior Frontend Engineer" style={inputStyle} />
-    </div>
-    <div style={inputGroupStyle}>
-      <label style={labelStyle}>Description</label>
-      <textarea placeholder="What were your key responsibilities?" style={textareaStyle} />
-    </div>
-  </div>
-);
+  );
+};
 
 const GoalsStep = () => (
   <div style={formGridStyle}>

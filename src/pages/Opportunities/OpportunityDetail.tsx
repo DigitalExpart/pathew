@@ -14,10 +14,22 @@ import {
 } from 'lucide-react';
 import { useParams, Link } from 'react-router-dom';
 import { mockOpportunities } from '../../data/mockData';
+import { useAI } from '../../context/AIContext';
+import { Sparkles } from 'lucide-react';
 
 export const OpportunityDetail: React.FC = () => {
   const { id } = useParams();
   const opp = mockOpportunities.find(o => o.id === id) || mockOpportunities[0];
+  const { openAIAssistant } = useAI();
+
+  const handleAIMatchExplanation = () => {
+    openAIAssistant('Opportunity Analysis', [
+      'Explain the match score',
+      'Generate a readiness plan',
+      'Identify my strengths and gaps',
+      'Suggest next steps'
+    ]);
+  };
 
   return (
     <div style={containerStyle}>
@@ -94,6 +106,16 @@ export const OpportunityDetail: React.FC = () => {
             <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '12px' }}>
               High compatibility with your profile.
             </p>
+            
+            <Button 
+              variant="outline" 
+              size="sm" 
+              style={{ marginTop: '20px', width: '100%', gap: '8px', color: 'var(--accent-primary)', borderColor: 'rgba(245, 158, 11, 0.2)' }}
+              onClick={handleAIMatchExplanation}
+            >
+              <Sparkles size={14} />
+              AI Analysis
+            </Button>
             
             <div style={breakdownGridStyle}>
               <BreakdownItem label="Skills" value={opp.matchBreakdown.skills} />

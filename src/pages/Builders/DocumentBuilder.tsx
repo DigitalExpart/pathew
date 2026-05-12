@@ -9,8 +9,10 @@ import {
   List, 
   Save,
   CheckCircle,
-  FileDown
+  FileDown,
+  Sparkles
 } from 'lucide-react';
+import { useAI } from '../../context/AIContext';
 
 interface DocumentBuilderProps {
   type: 'CV' | 'Cover Letter' | 'Proposal';
@@ -25,10 +27,20 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
 }) => {
   const [content, setContent] = useState(initialContent);
   const [isSaved, setIsSaved] = useState(false);
+  const { openAIAssistant } = useAI();
 
   const handleSave = () => {
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 2000);
+  };
+
+  const openAIDocumentHelp = () => {
+    const prompts = {
+      'CV': ['Write a professional summary', 'Improve my bullet points', 'Tailor to a role', 'Shorten this section'],
+      'Cover Letter': ['Write from scratch', 'Make it more formal', 'Rewrite for InnovateX', 'Make it personal'],
+      'Proposal': ['Generate proposal draft', 'Outline the structure', 'Improve clarity', 'Make it concise']
+    };
+    openAIAssistant(`${type} Builder`, prompts[type]);
   };
 
   return (
@@ -62,6 +74,14 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
             <ToolbarButton icon={List} />
             <div style={toolbarDividerStyle}></div>
             <ToolbarButton icon={Type} label="Heading" />
+            <div style={toolbarDividerStyle}></div>
+            <button 
+              style={aiToolbarButtonStyle}
+              onClick={openAIDocumentHelp}
+            >
+              <Sparkles size={16} />
+              <span>AI Assistant</span>
+            </button>
           </div>
           
           <div style={editorWrapperStyle}>
@@ -178,6 +198,16 @@ const toolbarButtonStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   transition: 'all 0.2s ease',
+};
+
+const aiToolbarButtonStyle: React.CSSProperties = {
+  ...toolbarButtonStyle,
+  color: 'var(--accent-primary)',
+  fontWeight: 600,
+  fontSize: '0.75rem',
+  gap: '6px',
+  backgroundColor: 'rgba(245, 158, 11, 0.05)',
+  border: '1px solid rgba(245, 158, 11, 0.1)',
 };
 
 const toolbarDividerStyle: React.CSSProperties = {

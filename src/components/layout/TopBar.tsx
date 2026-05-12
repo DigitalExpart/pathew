@@ -1,8 +1,11 @@
 import React from 'react';
-import { Search, Bell, HelpCircle, ChevronDown, Coins } from 'lucide-react';
+import { Search, Bell, HelpCircle, ChevronDown, Coins, Sparkles } from 'lucide-react';
 import { mockUser } from '../../data/mockData';
+import { useAI } from '../../context/AIContext';
 
 export const TopBar: React.FC = () => {
+  const { openAIAssistant } = useAI();
+
   return (
     <header style={headerStyle}>
       <div style={searchContainerStyle}>
@@ -15,6 +18,14 @@ export const TopBar: React.FC = () => {
       </div>
 
       <div style={actionsStyle}>
+        <button 
+          style={aiButtonStyle}
+          onClick={() => openAIAssistant('General Assistant', ['How can I improve my profile?', 'What opportunities are trending?', 'Help me write a document'])}
+        >
+          <Sparkles size={16} />
+          <span>Ask PATHEW AI</span>
+        </button>
+
         <button style={iconButtonStyle}>
           <HelpCircle size={20} color="var(--text-secondary)" />
         </button>
@@ -164,4 +175,20 @@ const creditTextStyle: React.CSSProperties = {
   fontSize: '0.875rem',
   fontWeight: 700,
   color: 'var(--accent-primary)',
+};
+
+const aiButtonStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+  padding: '8px 16px',
+  backgroundColor: 'rgba(245, 158, 11, 0.1)',
+  border: '1px solid var(--accent-glow)',
+  borderRadius: '20px',
+  color: 'var(--accent-primary)',
+  fontSize: '0.875rem',
+  fontWeight: 600,
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
+  marginRight: '8px',
 };

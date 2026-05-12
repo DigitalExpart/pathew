@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
@@ -7,6 +8,7 @@ import { mockOpportunities } from '../../data/mockData';
 
 export const SavedOpportunities: React.FC = () => {
   const savedOpps = mockOpportunities.filter(o => o.status === 'Saved');
+  const navigate = useNavigate();
 
   return (
     <div style={containerStyle}>
@@ -64,7 +66,10 @@ export const SavedOpportunities: React.FC = () => {
 
               <div style={cardFooterStyle}>
                 <Button variant="outline" style={{ flex: 1 }}>Remove</Button>
-                <Button style={{ flex: 1, gap: '4px' }}>
+                <Button 
+                  style={{ flex: 1, gap: '4px' }}
+                  onClick={() => navigate(`/opportunities/${opp.id}`)}
+                >
                   Prepare <ChevronRight size={16} />
                 </Button>
               </div>

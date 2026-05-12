@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { Download, Eye, Save, Settings2, X } from 'lucide-react';
+import { Download, Eye, Save, Settings2, X, Sparkles } from 'lucide-react';
+import { useAI } from '../../context/AIContext';
 
 export const GrantBuilderPage: React.FC = () => {
   const [docType, setDocType] = useState('Full Grant Proposal');
@@ -9,9 +10,19 @@ export const GrantBuilderPage: React.FC = () => {
   const [previewMode, setPreviewMode] = useState(false);
   const [content, setContent] = useState('Start drafting your proposal here...');
   const [questions, setQuestions] = useState([{ id: 1, text: 'Project Abstract', limit: 250 }]);
+  const { openAIAssistant } = useAI();
 
   const addQuestion = () => {
     setQuestions([...questions, { id: Date.now(), text: '', limit: 500 }]);
+  };
+
+  const openAIGrantHelp = () => {
+    openAIAssistant('Grant Builder', [
+      'Draft an answer',
+      'Shorten to word limit',
+      'Make this more persuasive',
+      'Use my achievements to strengthen this answer'
+    ]);
   };
 
   return (
@@ -104,9 +115,17 @@ export const GrantBuilderPage: React.FC = () => {
         {/* Editor Area */}
         <div style={editorAreaStyle}>
           <div style={editorToolbarStyle}>
-            <div style={{ display: 'flex', gap: '12px' }}>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
               <span style={{ fontWeight: 600 }}>{docType}</span>
               <span style={{ color: 'var(--text-muted)' }}>• {content.split(' ').length} words</span>
+              <div style={toolbarDividerStyle}></div>
+              <button 
+                style={aiToolbarButtonStyle}
+                onClick={openAIGrantHelp}
+              >
+                <Sparkles size={14} />
+                <span>AI Assistant</span>
+              </button>
             </div>
             <div style={{ display: 'flex', gap: '12px' }}>
               <Button variant="outline" size="sm">
@@ -267,6 +286,28 @@ const editorToolbarStyle: React.CSSProperties = {
   padding: '16px 24px',
   borderBottom: '1px solid var(--border-color)',
   backgroundColor: 'var(--bg-primary)',
+};
+
+const toolbarDividerStyle: React.CSSProperties = {
+  width: '1px',
+  height: '20px',
+  backgroundColor: 'var(--border-color)',
+  margin: '0 4px',
+};
+
+const aiToolbarButtonStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+  padding: '6px 12px',
+  borderRadius: '20px',
+  backgroundColor: 'rgba(245, 158, 11, 0.05)',
+  border: '1px solid rgba(245, 158, 11, 0.1)',
+  color: 'var(--accent-primary)',
+  fontSize: '0.75rem',
+  fontWeight: 600,
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
 };
 
 const editorContainerStyle: React.CSSProperties = {
