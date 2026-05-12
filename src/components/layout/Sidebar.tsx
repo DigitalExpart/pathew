@@ -15,6 +15,7 @@ import {
   Award
 } from 'lucide-react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 
 const navGroups = [
   {
@@ -52,10 +53,11 @@ const navGroups = [
 import logo from '../../assets/images/logo.png';
 
 export const Sidebar: React.FC = () => {
+  const { signOut } = useAuth();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    // In a real app, clear tokens here
+  const handleLogout = async () => {
+    await signOut();
     navigate('/login');
   };
 
