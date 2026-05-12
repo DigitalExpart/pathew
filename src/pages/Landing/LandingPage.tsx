@@ -566,22 +566,77 @@ const FAQItem = ({ question, answer }: { question: string, answer: string }) => 
 
 const ComparisonColumn = ({ title, items, highlight }: any) => (
   <motion.div 
-    whileHover={{ y: -5 }}
+    whileHover={{ 
+      y: -10,
+      scale: 1.02,
+      boxShadow: highlight 
+        ? '0 20px 40px rgba(245, 158, 11, 0.2)' 
+        : '0 20px 40px rgba(0, 0, 0, 0.4)'
+    }}
+    transition={{ type: 'spring', stiffness: 300 }}
     style={{
       ...comparisonColStyle,
-      borderColor: highlight ? 'var(--accent-primary)' : 'var(--border-color)',
-      backgroundColor: highlight ? 'rgba(245, 158, 11, 0.03)' : 'var(--bg-secondary)',
+      position: 'relative',
+      overflow: 'hidden',
+      borderColor: highlight ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.1)',
+      background: highlight 
+        ? 'linear-gradient(145deg, rgba(245, 158, 11, 0.05) 0%, rgba(15, 23, 42, 0.9) 100%)' 
+        : 'linear-gradient(145deg, rgba(255, 255, 255, 0.02) 0%, rgba(15, 23, 42, 0.9) 100%)',
+      backdropFilter: 'blur(10px)',
     }}
   >
-    <h3 style={{ fontSize: '1.5rem', marginBottom: '24px', color: highlight ? 'var(--accent-primary)' : 'var(--text-primary)' }}>{title}</h3>
-    <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '16px' }}>
-      {items.map((item: string) => (
-        <li key={item} style={{ display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-secondary)' }}>
-          {highlight ? <CheckCircle size={18} color="var(--accent-primary)" /> : <Shield size={18} color="var(--text-muted)" />}
-          {item}
-        </li>
-      ))}
-    </ul>
+    {highlight && (
+      <div style={badgeStyle}>
+        <Sparkles size={12} /> RECOMMENDED
+      </div>
+    )}
+
+    <div style={{ position: 'relative', zIndex: 1 }}>
+      <h3 style={{ 
+        fontSize: '1.75rem', 
+        fontWeight: 800,
+        marginBottom: '32px', 
+        color: highlight ? 'var(--accent-primary)' : 'var(--text-primary)',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '12px'
+      }}>
+        {highlight ? <Zap size={24} /> : <Shield size={24} />}
+        {title}
+      </h3>
+      
+      <ul style={{ listStyle: 'none', padding: 0, display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        {items.map((item: string, idx: number) => (
+          <motion.li 
+            key={item} 
+            initial={{ opacity: 0, x: -10 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ delay: idx * 0.1 }}
+            style={{ 
+              display: 'flex', 
+              alignItems: 'center', 
+              gap: '16px', 
+              color: highlight ? 'var(--text-primary)' : 'var(--text-secondary)',
+              fontSize: '1.05rem'
+            }}
+          >
+            {highlight ? (
+              <div style={checkCircleBoxStyle}>
+                <CheckCircle size={16} color="var(--accent-primary)" />
+              </div>
+            ) : (
+              <div style={xCircleBoxStyle}>
+                <Plus size={16} style={{ transform: 'rotate(45deg)' }} />
+              </div>
+            )}
+            {item}
+          </motion.li>
+        ))}
+      </ul>
+    </div>
+
+    {/* Decorative Glow */}
+    {highlight && <div style={columnGlowStyle} />}
   </motion.div>
 );
 
@@ -1081,4 +1136,51 @@ const testimonialCardStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
+};
+
+const badgeStyle: React.CSSProperties = {
+  position: 'absolute',
+  top: '24px',
+  right: '24px',
+  backgroundColor: 'var(--accent-primary)',
+  color: 'black',
+  padding: '6px 12px',
+  borderRadius: '20px',
+  fontSize: '0.65rem',
+  fontWeight: 800,
+  letterSpacing: '0.1em',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '6px',
+};
+
+const checkCircleBoxStyle: React.CSSProperties = {
+  width: '32px',
+  height: '32px',
+  backgroundColor: 'rgba(245, 158, 11, 0.15)',
+  borderRadius: '10px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
+const xCircleBoxStyle: React.CSSProperties = {
+  width: '32px',
+  height: '32px',
+  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  borderRadius: '10px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  color: 'rgba(255, 255, 255, 0.3)',
+};
+
+const columnGlowStyle: React.CSSProperties = {
+  position: 'absolute',
+  bottom: '-50px',
+  right: '-50px',
+  width: '200px',
+  height: '200px',
+  background: 'radial-gradient(circle, rgba(245, 158, 11, 0.1) 0%, transparent 70%)',
+  zIndex: 0,
 };
