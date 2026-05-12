@@ -8,11 +8,14 @@ import {
   FileCheck, 
   Clock, 
   ArrowRight,
-  Zap
+  Zap,
+  Target
 } from 'lucide-react';
-import { mockOpportunities, mockUser } from '../../data/mockData';
+import { mockOpportunities, mockUser, mockPrepPlan } from '../../data/mockData';
 
 export const Dashboard: React.FC = () => {
+  const [prepHorizon, setPrepHorizon] = React.useState('90-day');
+
   return (
     <div style={containerStyle}>
       <header style={headerStyle}>
@@ -35,12 +38,72 @@ export const Dashboard: React.FC = () => {
       </div>
 
       <div style={mainGridStyle}>
-        {/* Recent Matches */}
-        <section style={{ flex: 2 }}>
-          <div style={sectionHeaderStyle}>
-            <h2 style={sectionTitleStyle}>Top Matches</h2>
-            <Button variant="ghost" size="sm">View all <ArrowRight size={14} /></Button>
+        {/* Main Content Area */}
+        <section style={{ flex: 2, display: 'flex', flexDirection: 'column', gap: '32px' }}>
+          
+          {/* Preparation Plan */}
+          <div>
+            <div style={sectionHeaderStyle}>
+              <h2 style={sectionTitleStyle}>Preparation Plan</h2>
+              <div style={horizonSelectorStyle}>
+                {['Quick', '90-day', '180-day', '365-day'].map(horizon => (
+                  <button 
+                    key={horizon} 
+                    style={{
+                      ...horizonButtonStyle,
+                      ...(prepHorizon === horizon ? horizonButtonActiveStyle : {})
+                    }}
+                    onClick={() => setPrepHorizon(horizon)}
+                  >
+                    {horizon}
+                  </button>
+                ))}
+              </div>
+            </div>
+            
+            <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
+              <Card style={{ flex: 1, backgroundColor: 'var(--bg-tertiary)' }}>
+                <p style={statLabelStyle}>Readiness Score</p>
+                <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', marginTop: '8px' }}>
+                  <h3 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--accent-primary)' }}>{mockPrepPlan.readinessScore}%</h3>
+                  <span style={{ color: 'var(--text-muted)', marginBottom: '6px' }}>/ 100</span>
+                </div>
+              </Card>
+              <Card style={{ flex: 2 }}>
+                <p style={statLabelStyle}>Strengths</p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
+                  {mockPrepPlan.strengths.map((s, i) => <Badge key={i} variant="primary">{s}</Badge>)}
+                </div>
+              </Card>
+              <Card style={{ flex: 2 }}>
+                <p style={statLabelStyle}>Key Gaps</p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
+                  {mockPrepPlan.gaps.map((g, i) => <Badge key={i} variant="secondary">{g}</Badge>)}
+                </div>
+              </Card>
+            </div>
+
+            <Card title="Next Steps" icon={Target}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {mockPrepPlan.nextSteps.map(step => (
+                  <div key={step.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2px solid var(--accent-primary)' }} />
+                      <span style={{ fontWeight: 500 }}>{step.title}</span>
+                    </div>
+                    <Badge variant="outline">{step.timeframe}</Badge>
+                  </div>
+                ))}
+              </div>
+            </Card>
           </div>
+
+          {/* Recent Matches */}
+          <div>
+            <div style={sectionHeaderStyle}>
+              <h2 style={sectionTitleStyle}>Top Matches</h2>
+              <Button variant="ghost" size="sm">View all <ArrowRight size={14} /></Button>
+            </div>
           <div style={matchesListStyle}>
             {mockOpportunities.map(opp => (
               <Card key={opp.id} style={{ marginBottom: '16px' }}>
@@ -62,6 +125,7 @@ export const Dashboard: React.FC = () => {
                 </div>
               </Card>
             ))}
+            </div>
           </div>
         </section>
 
@@ -178,6 +242,31 @@ const trendStyle: React.CSSProperties = {
 const mainGridStyle: React.CSSProperties = {
   display: 'flex',
   gap: '32px',
+};
+
+const horizonSelectorStyle: React.CSSProperties = {
+  display: 'flex',
+  backgroundColor: 'var(--bg-secondary)',
+  padding: '4px',
+  borderRadius: 'var(--radius-lg)',
+};
+
+const horizonButtonStyle: React.CSSProperties = {
+  padding: '6px 12px',
+  borderRadius: 'var(--radius-md)',
+  fontSize: '0.75rem',
+  fontWeight: 600,
+  color: 'var(--text-secondary)',
+  transition: 'all 0.2s',
+  border: 'none',
+  background: 'transparent',
+  cursor: 'pointer',
+};
+
+const horizonButtonActiveStyle: React.CSSProperties = {
+  backgroundColor: 'var(--bg-tertiary)',
+  color: 'var(--text-primary)',
+  boxShadow: 'var(--shadow-sm)',
 };
 
 const sectionHeaderStyle: React.CSSProperties = {

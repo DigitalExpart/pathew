@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Bell, HelpCircle, ChevronDown } from 'lucide-react';
+import { Search, Bell, HelpCircle, ChevronDown, Coins } from 'lucide-react';
 import { mockUser } from '../../data/mockData';
 
 export const TopBar: React.FC = () => {
@@ -22,6 +22,11 @@ export const TopBar: React.FC = () => {
           <div style={notificationBadgeStyle}></div>
           <Bell size={20} color="var(--text-secondary)" />
         </button>
+
+        <div style={creditBadgeStyle}>
+          <Coins size={16} color="var(--accent-primary)" />
+          <span style={creditTextStyle}>1,250 Credits</span>
+        </div>
         
         <div style={dividerStyle}></div>
 
@@ -141,4 +146,22 @@ const avatarStyle: React.CSSProperties = {
   borderRadius: '50%',
   objectFit: 'cover',
   border: '2px solid var(--bg-tertiary)',
+};
+
+const creditBadgeStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+  padding: '6px 12px',
+  backgroundColor: 'rgba(245, 158, 11, 0.1)',
+  borderRadius: 'var(--radius-full)',
+  border: '1px solid var(--accent-glow)',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
+};
+
+const creditTextStyle: React.CSSProperties = {
+  fontSize: '0.875rem',
+  fontWeight: 700,
+  color: 'var(--accent-primary)',
 };

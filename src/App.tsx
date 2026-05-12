@@ -7,6 +7,14 @@ import { OpportunityList } from './pages/Opportunities/OpportunityList';
 import { OpportunityDetail } from './pages/Opportunities/OpportunityDetail';
 import { ProfileSetup } from './pages/Profile/ProfileSetup';
 import { CVBuilderPage, CoverLetterPage, ProposalPage } from './pages/Builders/Pages';
+import { WalletPage } from './pages/Credits/WalletPage';
+import { PricingPage } from './pages/Credits/PricingPage';
+import { SavedOpportunities } from './pages/Opportunities/SavedOpportunities';
+import { GrantBuilderPage } from './pages/Builders/GrantBuilderPage';
+import { SettingsPage } from './pages/Settings/SettingsPage';
+import { PrivacyPage } from './pages/Settings/PrivacyPage';
+import { AccountDeletionPage } from './pages/Settings/AccountDeletionPage';
+import { ConsentPage } from './pages/Settings/ConsentPage';
 
 function App() {
   return (
@@ -26,6 +34,16 @@ function App() {
         <Route path="/cv-builder" element={<Shell><CVBuilderPage /></Shell>} />
         <Route path="/cover-letter" element={<Shell><CoverLetterPage /></Shell>} />
         <Route path="/proposal" element={<Shell><ProposalPage /></Shell>} />
+        
+        {/* New Routes */}
+        <Route path="/wallet" element={<Shell><WalletPage /></Shell>} />
+        <Route path="/pricing" element={<Shell><PricingPage /></Shell>} />
+        <Route path="/saved" element={<Shell><SavedOpportunities /></Shell>} />
+        <Route path="/grant-builder" element={<Shell><GrantBuilderPage /></Shell>} />
+        <Route path="/settings" element={<Shell><SettingsPage /></Shell>} />
+        <Route path="/privacy" element={<Shell><PrivacyPage /></Shell>} />
+        <Route path="/delete-account" element={<Shell><AccountDeletionPage /></Shell>} />
+        <Route path="/preferences" element={<Shell><ConsentPage /></Shell>} />
         
         {/* Fallback */}
         <Route path="*" element={<Navigate to="/" replace />} />

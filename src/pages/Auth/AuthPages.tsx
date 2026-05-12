@@ -21,7 +21,7 @@ export const LoginPage: React.FC = () => {
       <div style={authContentStyle}>
         <div style={logoWrapperStyle}>
           <Sparkles size={32} color="var(--accent-primary)" />
-          <h1 style={{ fontSize: '1.75rem' }}>Herpath</h1>
+          <h1 style={{ fontSize: '1.75rem' }}>PATHEW</h1>
         </div>
 
         <Card style={{ padding: '40px' }}>
@@ -99,7 +99,7 @@ export const SignUpPage: React.FC = () => {
       <div style={authContentStyle}>
         <div style={logoWrapperStyle}>
           <Sparkles size={32} color="var(--accent-primary)" />
-          <h1 style={{ fontSize: '1.75rem' }}>Herpath</h1>
+          <h1 style={{ fontSize: '1.75rem' }}>PATHEW</h1>
         </div>
 
         <Card style={{ padding: '40px' }}>

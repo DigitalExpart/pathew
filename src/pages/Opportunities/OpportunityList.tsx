@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
-import { Search, Filter, Calendar, MapPin, ChevronRight } from 'lucide-react';
+import { Search, Filter, Calendar, MapPin, ChevronRight, Activity, Wifi } from 'lucide-react';
 import { mockOpportunities } from '../../data/mockData';
 
 export const OpportunityList: React.FC = () => {
@@ -50,7 +50,21 @@ export const OpportunityList: React.FC = () => {
                 <span style={matchScoreStyle}>{opp.matchScore}%</span>
                 <span style={matchTextStyle}>Match</span>
               </div>
-              <Badge variant="primary">{opp.source}</Badge>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  {opp.status && (
+                    <Badge variant="outline" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      <Activity size={12} /> {opp.status}
+                    </Badge>
+                  )}
+                  <Badge variant="primary">{opp.source}</Badge>
+                </div>
+                {opp.rssStatus && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: opp.rssStatus === 'Live' ? '#22c55e' : (opp.rssStatus === 'Error' ? '#ef4444' : '#f59e0b') }}>
+                    <Wifi size={12} /> {opp.rssStatus}
+                  </div>
+                )}
+              </div>
             </div>
 
             <div style={{ flex: 1, marginTop: '20px' }}>

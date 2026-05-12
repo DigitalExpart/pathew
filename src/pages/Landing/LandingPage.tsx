@@ -11,7 +11,7 @@ export const LandingPage: React.FC = () => {
       <nav style={navStyle}>
         <div style={logoStyle}>
           <Sparkles size={24} color="var(--accent-primary)" />
-          <span>Herpath</span>
+          <span>PATHEW</span>
         </div>
         <div style={navLinksStyle}>
           <a href="#features">Features</a>
@@ -73,7 +73,7 @@ export const LandingPage: React.FC = () => {
       {/* Features Section */}
       <section id="features" style={featuresSectionStyle}>
         <div style={sectionHeaderStyle}>
-          <h2 style={sectionTitleStyle}>Why Professionals Choose Herpath</h2>
+          <h2 style={sectionTitleStyle}>Why Professionals Choose PATHEW</h2>
           <p style={sectionSubtitleStyle}>Powerful tools designed to accelerate your career growth.</p>
         </div>
         <div style={featuresGridStyle}>
@@ -105,10 +105,10 @@ export const LandingPage: React.FC = () => {
         <div style={footerContentStyle}>
           <div style={logoStyle}>
             <Sparkles size={20} color="var(--accent-primary)" />
-            <span>Herpath</span>
+            <span>PATHEW</span>
           </div>
           <p style={{ color: 'var(--text-muted)', marginTop: '12px' }}>
-            © 2024 Herpath. All rights reserved.
+            © 2024 PATHEW. All rights reserved.
           </p>
         </div>
       </footer>

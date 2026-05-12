@@ -1,5 +1,28 @@
 import type { Opportunity, UserProfile, Document } from '../types';
 
+export const mockTransactions = [
+  { id: 't1', date: '2024-05-10', description: 'Grant Proposal Review', amount: -150, type: 'usage' },
+  { id: 't2', date: '2024-05-01', description: 'Monthly Pro Plan Credits', amount: 1000, type: 'credit' },
+  { id: 't3', date: '2024-04-28', description: 'CV Tailoring - InnovateX', amount: -50, type: 'usage' },
+];
+
+export const mockPricingTiers = [
+  { id: 'free', name: 'Explorer', price: '$0', credits: 100, features: ['Basic CV Builder', 'Public Opportunities'] },
+  { id: 'pro', name: 'Professional', price: '$29', credits: 1500, features: ['Advanced Grant Builder', 'Unlimited CVs', 'Priority Support'] },
+  { id: 'elite', name: 'Elite', price: '$99', credits: 5000, features: ['Expert Review', 'Custom Branding', '1-on-1 Coaching'] }
+];
+
+export const mockPrepPlan = {
+  readinessScore: 78,
+  strengths: ['Frontend Architecture', 'React Performance', 'Team Leadership'],
+  gaps: ['WebGL Experience', 'Advanced Backend Scaling'],
+  nextSteps: [
+    { id: 's1', title: 'Complete WebGL Crash Course', timeframe: 'Week 1', status: 'pending' },
+    { id: 's2', title: 'Update Portfolio with 3D elements', timeframe: 'Week 2', status: 'pending' },
+    { id: 's3', title: 'Schedule mock technical interview', timeframe: 'Week 3', status: 'pending' }
+  ]
+};
+
 export const mockUser: UserProfile = {
   id: 'u1',
   name: 'Alex Johnson',
@@ -54,7 +77,9 @@ export const mockOpportunities: Opportunity[] = [
       'Knowledge of web performance optimization'
     ],
     missingRequirements: ['Experience with WebGL'],
-    description: 'We are looking for a Senior Frontend Developer to join our core team. You will be responsible for building and optimizing the user interface of our flagship product.'
+    description: 'We are looking for a Senior Frontend Developer to join our core team. You will be responsible for building and optimizing the user interface of our flagship product.',
+    status: 'Reviewing',
+    rssStatus: 'Live'
   },
   {
     id: 'o2',
@@ -78,7 +103,9 @@ export const mockOpportunities: Opportunity[] = [
       'Experience with design systems'
     ],
     missingRequirements: ['Experience with Framer Motion'],
-    description: 'Join our design team to create beautiful and intuitive user experiences for our enterprise clients.'
+    description: 'Join our design team to create beautiful and intuitive user experiences for our enterprise clients.',
+    status: 'Saved',
+    rssStatus: 'Syncing'
   }
 ];
 

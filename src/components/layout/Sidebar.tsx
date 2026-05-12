@@ -9,19 +9,41 @@ import {
   Bookmark, 
   Settings,
   LogOut,
-  Sparkles
+  Sparkles,
+  Wallet
 } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 
-const navItems = [
-  { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-  { icon: Briefcase, label: 'Opportunities', path: '/opportunities' },
-  { icon: User, label: 'Profile', path: '/profile' },
-  { icon: FileText, label: 'CV Builder', path: '/cv-builder' },
-  { icon: FileEdit, label: 'Cover Letter', path: '/cover-letter' },
-  { icon: Send, label: 'Proposal', path: '/proposal' },
-  { icon: Bookmark, label: 'Saved Items', path: '/saved' },
-  { icon: Settings, label: 'Settings', path: '/settings' },
+const navGroups = [
+  {
+    title: 'Pathway',
+    items: [
+      { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+      { icon: Briefcase, label: 'Opportunities', path: '/opportunities' },
+      { icon: Bookmark, label: 'Saved Items', path: '/saved' },
+    ]
+  },
+  {
+    title: 'CV Builder',
+    items: [
+      { icon: FileText, label: 'CV Builder', path: '/cv-builder' },
+      { icon: FileEdit, label: 'Cover Letter', path: '/cover-letter' },
+    ]
+  },
+  {
+    title: 'Grant Builder',
+    items: [
+      { icon: Send, label: 'Grant Builder', path: '/grant-builder' },
+    ]
+  },
+  {
+    title: 'Account',
+    items: [
+      { icon: Wallet, label: 'Wallet & Credits', path: '/wallet' },
+      { icon: User, label: 'Profile', path: '/profile' },
+      { icon: Settings, label: 'Settings', path: '/settings' },
+    ]
+  }
 ];
 
 export const Sidebar: React.FC = () => {
@@ -31,23 +53,28 @@ export const Sidebar: React.FC = () => {
         <div style={logoIconStyle}>
           <Sparkles size={20} color="var(--accent-primary)" />
         </div>
-        <span style={logoTextStyle}>Herpath</span>
+        <span style={logoTextStyle}>PATHEW</span>
       </div>
 
       <nav style={navStyle}>
-        {navItems.map((item) => (
-          <NavLink 
-            key={item.path} 
-            to={item.path}
-            style={({ isActive }) => ({
-              ...navItemStyle,
-              backgroundColor: isActive ? 'var(--bg-tertiary)' : 'transparent',
-              color: isActive ? 'var(--accent-primary)' : 'var(--text-secondary)',
-            })}
-          >
-            <item.icon size={20} />
-            <span style={{ fontWeight: 500 }}>{item.label}</span>
-          </NavLink>
+        {navGroups.map((group, idx) => (
+          <div key={idx} style={groupStyle}>
+            <div style={groupTitleStyle}>{group.title}</div>
+            {group.items.map((item) => (
+              <NavLink 
+                key={item.path} 
+                to={item.path}
+                style={({ isActive }) => ({
+                  ...navItemStyle,
+                  backgroundColor: isActive ? 'var(--bg-tertiary)' : 'transparent',
+                  color: isActive ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                })}
+              >
+                <item.icon size={20} />
+                <span style={{ fontWeight: 500 }}>{item.label}</span>
+              </NavLink>
+            ))}
+          </div>
         ))}
       </nav>
 
@@ -104,7 +131,24 @@ const navStyle: React.CSSProperties = {
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
+  gap: '16px',
+  overflowY: 'auto',
+};
+
+const groupStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
   gap: '4px',
+};
+
+const groupTitleStyle: React.CSSProperties = {
+  fontSize: '0.75rem',
+  textTransform: 'uppercase',
+  fontWeight: 700,
+  color: 'var(--text-muted)',
+  padding: '0 16px',
+  marginBottom: '4px',
+  letterSpacing: '0.05em',
 };
 
 const navItemStyle: React.CSSProperties = {

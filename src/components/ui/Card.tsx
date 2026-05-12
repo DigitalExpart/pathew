@@ -6,9 +6,10 @@ interface CardProps {
   subtitle?: string;
   style?: React.CSSProperties;
   glass?: boolean;
+  icon?: React.ElementType;
 }
 
-export const Card: React.FC<CardProps> = ({ children, title, subtitle, style, glass }) => {
+export const Card: React.FC<CardProps> = ({ children, title, subtitle, style, glass, icon: Icon }) => {
   return (
     <div 
       className={glass ? 'glass' : ''}
@@ -21,10 +22,17 @@ export const Card: React.FC<CardProps> = ({ children, title, subtitle, style, gl
         ...style
       }}
     >
-      {(title || subtitle) && (
-        <div style={{ marginBottom: '20px' }}>
-          {title && <h3 style={{ fontSize: '1.25rem', marginBottom: '4px' }}>{title}</h3>}
-          {subtitle && <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{subtitle}</p>}
+      {(title || subtitle || Icon) && (
+        <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+          {Icon && (
+            <div style={{ padding: '8px', backgroundColor: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)' }}>
+              <Icon size={20} color="var(--accent-primary)" />
+            </div>
+          )}
+          <div>
+            {title && <h3 style={{ fontSize: '1.25rem', marginBottom: '4px' }}>{title}</h3>}
+            {subtitle && <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{subtitle}</p>}
+          </div>
         </div>
       )}
       {children}

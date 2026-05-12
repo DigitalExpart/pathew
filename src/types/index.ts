@@ -47,6 +47,8 @@ export interface Opportunity {
   missingRequirements: string[];
   postedDate: string;
   deadline: string;
+  status?: 'Saved' | 'Researching' | 'Drafting' | 'Reviewing' | 'Submitted' | 'Decided';
+  rssStatus?: 'Live' | 'Syncing' | 'Error';
 }
 
 export interface Document {

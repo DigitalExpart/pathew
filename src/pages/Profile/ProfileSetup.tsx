@@ -34,7 +34,7 @@ export const ProfileSetup: React.FC = () => {
       <header style={headerStyle}>
         <div style={logoStyle}>
           <Sparkles size={24} color="var(--accent-primary)" />
-          <span>Herpath</span>
+          <span>PATHEW</span>
         </div>
         <div style={stepperStyle}>
           {steps.map((step, idx) => (
