@@ -586,7 +586,7 @@ const ComparisonColumn = ({ title, items, highlight }: any) => (
     }}
   >
     {highlight && (
-      <div style={badgeStyle}>
+      <div style={comparisonBadgeStyle}>
         <Sparkles size={12} /> RECOMMENDED
       </div>
     )}
@@ -1138,7 +1138,7 @@ const testimonialCardStyle: React.CSSProperties = {
   justifyContent: 'space-between',
 };
 
-const badgeStyle: React.CSSProperties = {
+const comparisonBadgeStyle: React.CSSProperties = {
   position: 'absolute',
   top: '24px',
   right: '24px',
