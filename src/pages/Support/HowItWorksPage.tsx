@@ -189,7 +189,6 @@ export const HowItWorksPage: React.FC = () => {
           </div>
         </Card>
       </section>
-      </section>
 
       {/* Footer */}
       <footer style={footerStyle}>
