@@ -48,7 +48,7 @@ export const LandingPage: React.FC = () => {
         >
           <Badge text="Powered by Pathew Assistant" />
           <h1 style={heroTitleStyle}>
-            Discover Your Next <span style={{ color: 'var(--accent-primary)' }}>Opportunity</span> with Precision.
+            Apply for Your Next <span style={{ color: 'var(--accent-primary)' }}>Opportunity</span> with Precision.
           </h1>
           <p style={heroSubtitleStyle}>
             The ultimate platform for professionals to find, match, and apply for high-impact opportunities worldwide. 
