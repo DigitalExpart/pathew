@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Send, Sparkles, RefreshCw, Check, Trash2, History, AlertCircle, Download } from 'lucide-react';
-import { useAssistance } from '../../context/AIContext';
+import { useAssistance } from '../../context/AssistanceContext';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { assistanceService } from '../../services/aiService';

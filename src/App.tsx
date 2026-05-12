@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Shell } from './components/layout/Shell';
 import { AssistanceProvider } from './context/AssistanceContext';
-import { AIAssistantPanel } from './components/ai/AIAssistantPanel';
+import { AssistancePanel } from './components/ai/AssistancePanel';
 import { LandingPage } from './pages/Landing/LandingPage';
 import { LoginPage, SignUpPage } from './pages/Auth/AuthPages';
 import { Dashboard } from './pages/Dashboard/Dashboard';
@@ -53,7 +53,7 @@ function App() {
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-        <AssistancePanel />
+          <AssistancePanel />
       </Router>
     </AssistanceProvider>
   );

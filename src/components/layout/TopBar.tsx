@@ -1,7 +1,7 @@
 import React from 'react';
 import { Search, Bell, HelpCircle, ChevronDown, Coins, Sparkles } from 'lucide-react';
 import { mockUser } from '../../data/mockData';
-import { useAssistance } from '../../context/AIContext';
+import { useAssistance } from '../../context/AssistanceContext';
 
 import { useNavigate } from 'react-router-dom';
 
