@@ -34,6 +34,7 @@ export const Dashboard: React.FC = () => {
       {/* Stats Grid */}
       <div style={statsGridStyle}>
         <StatCard icon={Users} label="Opportunities" value="128" trend="+12" />
+        <StatCard icon={Briefcase} label="Jobs" value="84" trend="+8" />
         <StatCard icon={FileCheck} label="Docs Generated" value="14" trend="+2" />
         <StatCard icon={Clock} label="Pending Reviews" value="3" />
       </div>
