@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../../components/ui/Button';
+import { Card } from '../../components/ui/Card';
 import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
