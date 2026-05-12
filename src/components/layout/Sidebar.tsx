@@ -9,10 +9,7 @@ import {
   Bookmark, 
   Settings,
   LogOut,
-  Sparkles,
-  Wallet,
-  GraduationCap,
-  Award
+  Wallet
 } from 'lucide-react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -119,23 +116,6 @@ const logoContainerStyle: React.CSSProperties = {
   gap: '12px',
 };
 
-const logoIconStyle: React.CSSProperties = {
-  width: '32px',
-  height: '32px',
-  borderRadius: '8px',
-  backgroundColor: 'var(--bg-tertiary)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  boxShadow: 'var(--shadow-sm)',
-};
-
-const logoTextStyle: React.CSSProperties = {
-  fontSize: '1.25rem',
-  fontWeight: 800,
-  color: 'var(--text-primary)',
-  letterSpacing: '-0.025em',
-};
 
 const navStyle: React.CSSProperties = {
   padding: '12px',

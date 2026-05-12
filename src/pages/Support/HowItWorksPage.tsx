@@ -438,20 +438,6 @@ const pageStyle: React.CSSProperties = {
   color: 'var(--text-primary)',
 };
 
-const navStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  padding: '24px 80px',
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  right: 0,
-  backgroundColor: 'rgba(15, 23, 42, 0.8)',
-  backdropFilter: 'blur(20px)',
-  zIndex: 1000,
-  borderBottom: '1px solid var(--border-color)',
-};
 
 const logoStyle: React.CSSProperties = {
   display: 'flex',
@@ -461,23 +447,8 @@ const logoStyle: React.CSSProperties = {
   fontWeight: 800,
 };
 
-const navLinksStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: '40px',
-};
 
-const navLinkStyle: React.CSSProperties = {
-  fontSize: '0.875rem',
-  fontWeight: 500,
-  color: 'var(--text-secondary)',
-  textDecoration: 'none',
-  transition: 'color 0.2s ease',
-};
 
-const navActionsStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: '16px',
-};
 
 const heroSectionStyle: React.CSSProperties = {
   padding: '180px 20px 100px',
