@@ -126,20 +126,18 @@ export const ProfileSetup: React.FC = () => {
                       {isPast ? '✓' : idx + 1}
                     </div>
                     
-                    {(isFirst || isCurrent) && (
-                      <motion.span
-                        initial={{ opacity: 0, width: 0 }}
-                        animate={{ opacity: 1, width: 'auto' }}
-                        style={{
-                          ...stepLabelStyle,
-                          color: idx <= currentStep ? 'var(--text-primary)' : 'var(--text-muted)',
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
-                        }}
-                      >
-                        {step.title}
-                      </motion.span>
-                    )}
+                    <motion.span
+                      initial={{ opacity: 0, width: 0 }}
+                      animate={{ opacity: 1, width: 'auto' }}
+                      style={{
+                        ...stepLabelStyle,
+                        color: idx <= currentStep ? 'var(--text-primary)' : 'var(--text-muted)',
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                      }}
+                    >
+                      {step.title}
+                    </motion.span>
                   </motion.div>
 
                   {/* Standard Line between consecutive rendered steps */}
@@ -586,7 +584,7 @@ const containerStyle: React.CSSProperties = {
 };
 
 const headerStyle: React.CSSProperties = {
-  padding: '24px 80px',
+  padding: '24px 40px',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
@@ -604,7 +602,7 @@ const logoStyle: React.CSSProperties = {
 const stepperStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
-  gap: '20px',
+  gap: '12px',
   transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 };
 
