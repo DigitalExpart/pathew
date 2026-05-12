@@ -40,7 +40,13 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
       'Cover Letter': ['Write from scratch', 'Make it more formal', 'Rewrite for InnovateX', 'Make it personal'],
       'Proposal': ['Generate proposal draft', 'Outline the structure', 'Improve clarity', 'Make it concise']
     };
-    openAIAssistant(`${type} Builder`, prompts[type]);
+    openAIAssistant(`${type} Builder`, prompts[type], (text) => {
+      setContent(prev => prev + '\n\n' + text);
+    }, {
+      title: initialTitle,
+      content: content,
+      type: type
+    });
   };
 
   return (

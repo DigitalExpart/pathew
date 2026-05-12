@@ -111,6 +111,9 @@ export const ProfileSetup: React.FC = () => {
 // Step Components
 const StoryStep = () => {
   const { openAIAssistant } = useAI();
+  const [bio, setBio] = useState('');
+  const [skills, setSkills] = useState('');
+
   return (
     <div style={formGridStyle}>
       <div style={inputGroupStyle}>
@@ -118,7 +121,7 @@ const StoryStep = () => {
           <label style={labelStyle}>Bio / Personal Story</label>
           <button 
             style={aiLinkButtonStyle}
-            onClick={() => openAIAssistant('Personal Story', ['Rewrite this to be more professional', 'Turn my notes into a story', 'Polish this summary'])}
+            onClick={() => openAIAssistant('Personal Story', ['Rewrite this to be more professional', 'Turn my notes into a story', 'Polish this summary'], (text) => setBio(text))}
           >
             <Sparkles size={14} /> Polish with AI
           </button>
@@ -126,6 +129,8 @@ const StoryStep = () => {
         <textarea 
           placeholder="Share your background, passions, and what drives you professionally..." 
           style={textareaStyle}
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
         />
       </div>
       <div style={inputGroupStyle}>
@@ -133,12 +138,18 @@ const StoryStep = () => {
           <label style={labelStyle}>Skills (Comma separated)</label>
           <button 
             style={aiLinkButtonStyle}
-            onClick={() => openAIAssistant('Skills Assistant', ['Suggest skills based on my bio', 'Group my skills by category', 'Improve this list'])}
+            onClick={() => openAIAssistant('Skills Assistant', ['Suggest skills based on my bio', 'Group my skills by category', 'Improve this list'], (text) => setSkills(text))}
           >
             <Sparkles size={14} /> Suggest Skills
           </button>
         </div>
-        <input type="text" placeholder="React, TypeScript, Project Management..." style={inputStyle} />
+        <input 
+          type="text" 
+          placeholder="React, TypeScript, Project Management..." 
+          style={inputStyle} 
+          value={skills}
+          onChange={(e) => setSkills(e.target.value)}
+        />
       </div>
     </div>
   );
@@ -165,6 +176,7 @@ const EducationStep = () => (
 
 const ExperienceStep = () => {
   const { openAIAssistant } = useAI();
+  const [desc, setDesc] = useState('');
   return (
     <div style={formGridStyle}>
       <div style={inputGroupStyle}>
@@ -180,12 +192,17 @@ const ExperienceStep = () => {
           <label style={labelStyle}>Description</label>
           <button 
             style={aiLinkButtonStyle}
-            onClick={() => openAIAssistant('Experience Assistant', ['Improve this description', 'Turn into bullet points', 'Make it more achievement-oriented'])}
+            onClick={() => openAIAssistant('Experience Assistant', ['Improve this description', 'Turn into bullet points', 'Make it more achievement-oriented'], (text) => setDesc(text))}
           >
             <Sparkles size={14} /> Rewrite with AI
           </button>
         </div>
-        <textarea placeholder="What were your key responsibilities?" style={textareaStyle} />
+        <textarea 
+          placeholder="What were your key responsibilities?" 
+          style={textareaStyle} 
+          value={desc}
+          onChange={(e) => setDesc(e.target.value)}
+        />
       </div>
     </div>
   );

@@ -22,7 +22,13 @@ export const GrantBuilderPage: React.FC = () => {
       'Shorten to word limit',
       'Make this more persuasive',
       'Use my achievements to strengthen this answer'
-    ]);
+    ], (text) => {
+      setContent(prev => prev + '\n\n' + text);
+    }, {
+      docType: docType,
+      content: content,
+      questions: questions
+    });
   };
 
   return (
