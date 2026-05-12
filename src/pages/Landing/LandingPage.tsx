@@ -1,7 +1,7 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../../components/ui/Button';
-import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap } from 'lucide-react';
+import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
 
