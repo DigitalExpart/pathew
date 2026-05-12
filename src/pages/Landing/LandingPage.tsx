@@ -30,6 +30,7 @@ export const LandingPage: React.FC = () => {
           <a href="#features" style={navLinkStyle}>Features</a>
           <a href="#how-it-works" style={navLinkStyle}>How it works</a>
           <a href="#pricing" style={navLinkStyle}>Pricing</a>
+          <Link to="/contact" style={navLinkStyle}>Contact</Link>
         </div>
         <div style={navActionsStyle}>
           <Link to="/login"><Button variant="ghost">Login</Button></Link>

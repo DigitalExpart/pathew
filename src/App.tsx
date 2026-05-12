@@ -19,6 +19,7 @@ import { AccountDeletionPage } from './pages/Settings/AccountDeletionPage';
 import { ConsentPage } from './pages/Settings/ConsentPage';
 import { TermsPage as PublicTermsPage } from './pages/Legal/TermsPage';
 import { PrivacyPage as PublicPrivacyPage } from './pages/Legal/PrivacyPage';
+import { ContactPage } from './pages/Support/ContactPage';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/terms" element={<PublicTermsPage />} />
           <Route path="/privacy-policy" element={<PublicPrivacyPage />} />
+          <Route path="/contact" element={<ContactPage />} />
           <Route path="/profile-setup" element={<ProfileSetup />} />
           
           {/* Protected Routes (Authenticated) */}
