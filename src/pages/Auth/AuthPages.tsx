@@ -166,7 +166,7 @@ export const SignUpPage: React.FC = () => {
         <Card style={{ padding: '40px' }}>
           <h2 style={{ marginBottom: '8px' }}>Create an account</h2>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>
-            Start your journey with Pathew Assistance.
+            Start your journey with Pathew Assistant.
           </p>
 
           <form onSubmit={handleSignUp} style={formStyle}>

@@ -1,34 +1,34 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Send, Sparkles, RefreshCw, Check, Trash2, History, AlertCircle, Download } from 'lucide-react';
-import { useAssistance } from '../../context/AssistanceContext';
+import { useAssistant } from '../../context/AssistantContext';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
-import { assistanceService } from '../../services/aiService';
+import { AssistantService } from '../../services/aiService';
 import { mockUser } from '../../data/mockData';
 
-export const AssistancePanel: React.FC = () => {
+export const AssistantPanel: React.FC = () => {
   const { 
-    isAssistancePanelOpen, 
-    setAssistancePanelOpen, 
-    assistanceContext, 
+    isAssistantPanelOpen, 
+    setAssistantPanelOpen, 
+    activeContext, 
     suggestedPrompts, 
     onInsert, 
     fullContextData,
     isGenerating,
     setIsGenerating
-  } = useAssistance();
+  } = useAssistant();
 
   const [input, setInput] = useState('');
-  const [responses, setResponses] = useState<{ type: 'user' | 'assistance', text: string, error?: boolean }[]>([]);
+  const [responses, setResponses] = useState<{ type: 'user' | 'Assistant', text: string, error?: boolean }[]>([]);
   const [history, setHistory] = useState<{ text: string, date: string }[]>([]);
   const [activeTab, setActiveTab] = useState<'chat' | 'history'>('chat');
   const initialTriggerRef = useRef(false);
 
   useEffect(() => {
-    if (isAssistancePanelOpen && responses.length === 0) {
+    if (isAssistantPanelOpen && responses.length === 0) {
       setResponses([{ 
-        type: 'assistance', 
-        text: `I'm your Pathew Assistant, ready to help with your ${assistanceContext}. I have access to your current document context. How can I assist you?` 
+        type: 'Assistant', 
+        text: `I'm your Pathew Assistant, ready to help with your ${activeContext}. I have access to your current document context. How can I assist you?` 
       }]);
 
       // Auto-trigger for preparation plan
@@ -38,14 +38,14 @@ export const AssistancePanel: React.FC = () => {
       }
     }
 
-    if (!isAssistancePanelOpen) {
+    if (!isAssistantPanelOpen) {
       initialTriggerRef.current = false;
     }
-  }, [isAssistancePanelOpen, assistanceContext, fullContextData]);
+  }, [isAssistantPanelOpen, activeContext, fullContextData]);
 
   const handleDownload = (text: string) => {
     const element = document.createElement("a");
-    const file = new Blob([text.replace('[ASSISTANCE GENERATED SUCCESS] \n\n', '')], {type: 'text/plain'});
+    const file = new Blob([text.replace('[Assistant GENERATED SUCCESS] \n\n', '')], {type: 'text/plain'});
     element.href = URL.createObjectURL(file);
     element.download = "Pathew_Preparation_Plan.txt";
     document.body.appendChild(element);
@@ -60,19 +60,19 @@ export const AssistancePanel: React.FC = () => {
     setInput('');
     setIsGenerating(true);
 
-    const result = await assistanceService.generateResponse({
-      type: assistanceContext,
+    const result = await AssistantService.generateResponse({
+      type: activeContext,
       action: text,
       data: fullContextData,
       userCredits: mockUser.credits
     });
 
     if (result.success) {
-      const assistanceMsg = { type: 'assistance' as const, text: result.text! };
-      setResponses(prev => [...prev, assistanceMsg]);
+      const AssistantMsg = { type: 'Assistant' as const, text: result.text! };
+      setResponses(prev => [...prev, AssistantMsg]);
       setHistory(prev => [{ text: result.text!, date: new Date().toLocaleTimeString() }, ...prev]);
     } else {
-      const errorMsg = { type: 'assistance' as const, text: result.error!, error: true };
+      const errorMsg = { type: 'Assistant' as const, text: result.error!, error: true };
       setResponses(prev => [...prev, errorMsg]);
     }
     
@@ -84,13 +84,13 @@ export const AssistancePanel: React.FC = () => {
     
     // Extract the text within quotes for the mock response, or just use the text if no quotes
     const match = fullText.match(/"([^"]+)"/);
-    const textToInsert = match ? match[1] : (fullText.includes('[ASSISTANCE GENERATED SUCCESS]') ? fullText.split('\n\n')[1] : fullText);
+    const textToInsert = match ? match[1] : (fullText.includes('[Assistant GENERATED SUCCESS]') ? fullText.split('\n\n')[1] : fullText);
     
     onInsert(textToInsert);
-    setAssistancePanelOpen(false);
+    setAssistantPanelOpen(false);
   };
 
-  if (!isAssistancePanelOpen) return null;
+  if (!isAssistantPanelOpen) return null;
 
   return (
     <div style={drawerStyle}>
@@ -99,9 +99,9 @@ export const AssistancePanel: React.FC = () => {
           <div style={iconBoxStyle}>
             <Sparkles size={18} color="var(--accent-primary)" />
           </div>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 700 }}>PATHEW Assistance</h2>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 700 }}>PATHEW Assistant</h2>
         </div>
-        <button onClick={() => setAssistancePanelOpen(false)} style={closeButtonStyle}>
+        <button onClick={() => setAssistantPanelOpen(false)} style={closeButtonStyle}>
           <X size={20} />
         </button>
       </div>
@@ -125,15 +125,15 @@ export const AssistancePanel: React.FC = () => {
         {activeTab === 'chat' ? (
           <div style={messagesStyle}>
             {responses.map((res, i) => (
-              <div key={i} style={res.type === 'user' ? userMsgWrapperStyle : assistanceMsgWrapperStyle}>
+              <div key={i} style={res.type === 'user' ? userMsgWrapperStyle : AssistantMsgWrapperStyle}>
                 <div style={{
-                  ...(res.type === 'user' ? userMsgStyle : assistanceMsgStyle),
+                  ...(res.type === 'user' ? userMsgStyle : AssistantMsgStyle),
                   ...(res.error ? errorMsgStyle : {})
                 }}>
                   {res.error && <AlertCircle size={16} style={{ marginBottom: '8px', display: 'block' }} />}
                   {res.text}
-                  {res.type === 'assistance' && i > 0 && !res.error && (
-                    <div style={assistanceActionStyle}>
+                  {res.type === 'Assistant' && i > 0 && !res.error && (
+                    <div style={AssistantActionStyle}>
                       <Button 
                         variant="outline" 
                         size="sm" 
@@ -213,8 +213,8 @@ export const AssistancePanel: React.FC = () => {
 };
 
 const ThinkingState = () => (
-  <div style={assistanceMsgWrapperStyle}>
-    <div style={{ ...assistanceMsgStyle, display: 'flex', gap: '8px', alignItems: 'center' }}>
+  <div style={AssistantMsgWrapperStyle}>
+    <div style={{ ...AssistantMsgStyle, display: 'flex', gap: '8px', alignItems: 'center' }}>
       <div className="pulse" style={pulseDotStyle}></div>
       <div className="pulse" style={{ ...pulseDotStyle, animationDelay: '0.2s' }}></div>
       <div className="pulse" style={{ ...pulseDotStyle, animationDelay: '0.4s' }}></div>
@@ -291,7 +291,7 @@ const userMsgWrapperStyle: React.CSSProperties = {
   justifyContent: 'flex-end',
 };
 
-const assistanceMsgWrapperStyle: React.CSSProperties = {
+const AssistantMsgWrapperStyle: React.CSSProperties = {
   display: 'flex',
   justifyContent: 'flex-start',
 };
@@ -306,7 +306,7 @@ const userMsgStyle: React.CSSProperties = {
   fontWeight: 500,
 };
 
-const assistanceMsgStyle: React.CSSProperties = {
+const AssistantMsgStyle: React.CSSProperties = {
   maxWidth: '85%',
   padding: '12px 16px',
   backgroundColor: 'var(--bg-tertiary)',
@@ -363,7 +363,7 @@ const creditWarningStyle: React.CSSProperties = {
   borderRadius: '8px',
 };
 
-const assistanceActionStyle: React.CSSProperties = {
+const AssistantActionStyle: React.CSSProperties = {
   display: 'flex',
   gap: '8px',
   marginTop: '12px',

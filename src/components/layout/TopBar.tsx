@@ -1,12 +1,12 @@
 import React from 'react';
 import { Search, Bell, HelpCircle, ChevronDown, Coins, Sparkles } from 'lucide-react';
 import { mockUser } from '../../data/mockData';
-import { useAssistance } from '../../context/AssistanceContext';
+import { useAssistant } from '../../context/AssistantContext';
 
 import { useNavigate } from 'react-router-dom';
 
 export const TopBar: React.FC = () => {
-  const { openAssistance } = useAssistance();
+  const { openAssistant } = useAssistant();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -26,11 +26,11 @@ export const TopBar: React.FC = () => {
 
       <div style={actionsStyle}>
         <button 
-          style={assistanceButtonStyle}
-          onClick={() => openAssistance('Pathew Assistance', ['How can I improve my profile?', 'What opportunities are trending?', 'Help me write a document'])}
+          style={AssistantButtonStyle}
+          onClick={() => openAssistant('Pathew Assistant', ['How can I improve my profile?', 'What opportunities are trending?', 'Help me write a document'])}
         >
           <Sparkles size={16} />
-          <span>Pathew Assistance</span>
+          <span>Pathew Assistant</span>
         </button>
 
         <button style={iconButtonStyle}>
@@ -184,7 +184,7 @@ const creditTextStyle: React.CSSProperties = {
   color: 'var(--accent-primary)',
 };
 
-const assistanceButtonStyle: React.CSSProperties = {
+const AssistantButtonStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: '8px',

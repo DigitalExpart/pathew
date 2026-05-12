@@ -24,7 +24,7 @@ export const TermsPage: React.FC = () => {
             <section style={sectionStyle}>
               <h2 style={sectionTitleStyle}>1. Acceptance of Terms</h2>
               <p style={paragraphStyle}>
-                By accessing and using PATHEW Assistance, you agree to be bound by these Terms and Conditions. 
+                By accessing and using PATHEW Assistant, you agree to be bound by these Terms and Conditions. 
                 If you do not agree with any part of these terms, you must not use our services.
               </p>
             </section>

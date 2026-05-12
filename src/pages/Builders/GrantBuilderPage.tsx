@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Download, Eye, Save, Settings2, X, Sparkles } from 'lucide-react';
-import { useAssistance } from '../../context/AssistanceContext';
+import { useAssistant } from '../../context/AssistantContext';
 
 export const GrantBuilderPage: React.FC = () => {
   const [docType, setDocType] = useState('Full Grant Proposal');
@@ -10,14 +10,14 @@ export const GrantBuilderPage: React.FC = () => {
   const [previewMode, setPreviewMode] = useState(false);
   const [content, setContent] = useState('Start drafting your proposal here...');
   const [questions, setQuestions] = useState([{ id: 1, text: 'Project Abstract', limit: 250 }]);
-  const { openAssistance } = useAssistance();
+  const { openAssistant } = useAssistant();
 
   const addQuestion = () => {
     setQuestions([...questions, { id: Date.now(), text: '', limit: 500 }]);
   };
 
   const openAIGrantHelp = () => {
-    openAssistance('Grant Builder', [
+    openAssistant('Grant Builder', [
       'Draft an answer',
       'Shorten to word limit',
       'Make this more persuasive',
@@ -126,11 +126,11 @@ export const GrantBuilderPage: React.FC = () => {
               <span style={{ color: 'var(--text-muted)' }}>• {content.split(' ').length} words</span>
               <div style={toolbarDividerStyle}></div>
               <button 
-                style={assistanceGrantHelpButtonStyle}
+                style={AssistantGrantHelpButtonStyle}
                 onClick={openAIGrantHelp}
               >
                 <Sparkles size={14} />
-                <span>Assistance</span>
+                <span>Assistant</span>
               </button>
             </div>
             <div style={{ display: 'flex', gap: '12px' }}>
@@ -301,7 +301,7 @@ const toolbarDividerStyle: React.CSSProperties = {
   margin: '0 4px',
 };
 
-const assistanceGrantHelpButtonStyle: React.CSSProperties = {
+const AssistantGrantHelpButtonStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: '6px',

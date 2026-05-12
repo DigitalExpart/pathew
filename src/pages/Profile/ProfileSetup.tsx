@@ -19,10 +19,10 @@ import {
   Check
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAssistance } from '../../context/AssistanceContext';
+import { useAssistant } from '../../context/AssistantContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
-const assistanceLinkButtonStyle: React.CSSProperties = {
+const AssistantLinkButtonStyle: React.CSSProperties = {
   background: 'none',
   border: 'none',
   color: 'var(--accent-primary)',
@@ -160,7 +160,7 @@ export const ProfileSetup: React.FC = () => {
           <div style={{ marginBottom: '32px' }}>
             <h1 style={{ fontSize: '2rem', marginBottom: '8px' }}>{steps[currentStep].title}</h1>
             <p style={{ color: 'var(--text-secondary)' }}>
-              Tell us more about yourself to help our Assistance find the best matches.
+              Tell us more about yourself to help our Assistant find the best matches.
             </p>
           </div>
 
@@ -196,7 +196,7 @@ export const ProfileSetup: React.FC = () => {
 
 // Step Components
 const StoryStep = () => {
-  const { openAssistance } = useAssistance();
+  const { openAssistant } = useAssistant();
   const [bio, setBio] = useState('');
   const [skills, setSkills] = useState('');
 
@@ -206,10 +206,10 @@ const StoryStep = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
           <label style={labelStyle}>Bio / Personal Story</label>
           <button 
-            style={assistanceLinkButtonStyle}
-            onClick={() => openAssistance('Personal Story', ['Rewrite this to be more professional', 'Turn my notes into a story', 'Polish this summary'], (text) => setBio(text), { bio })}
+            style={AssistantLinkButtonStyle}
+            onClick={() => openAssistant('Personal Story', ['Rewrite this to be more professional', 'Turn my notes into a story', 'Polish this summary'], (text) => setBio(text), { bio })}
           >
-            <Sparkles size={14} /> Polish with Assistance
+            <Sparkles size={14} /> Polish with Assistant
           </button>
         </div>
         <textarea 
@@ -223,8 +223,8 @@ const StoryStep = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
           <label style={labelStyle}>Skills (Comma separated)</label>
           <button 
-            style={assistanceLinkButtonStyle}
-            onClick={() => openAssistance('Skills Assistant', ['Suggest skills based on my bio', 'Group my skills by category', 'Improve this list'], (text) => setSkills(text), { bio, skills })}
+            style={AssistantLinkButtonStyle}
+            onClick={() => openAssistant('Skills Assistant', ['Suggest skills based on my bio', 'Group my skills by category', 'Improve this list'], (text) => setSkills(text), { bio, skills })}
           >
             <Sparkles size={14} /> Suggest Skills
           </button>
@@ -261,7 +261,7 @@ const EducationStep = () => (
 );
 
 const ExperienceStep = () => {
-  const { openAssistance } = useAssistance();
+  const { openAssistant } = useAssistant();
   const [desc, setDesc] = useState('');
   return (
     <div style={formGridStyle}>
@@ -277,10 +277,10 @@ const ExperienceStep = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
           <label style={labelStyle}>Description</label>
           <button 
-            style={assistanceLinkButtonStyle}
-            onClick={() => openAssistance('Experience Assistant', ['Improve this description', 'Turn into bullet points', 'Make it more achievement-oriented'], (text) => setDesc(text), { description: desc })}
+            style={AssistantLinkButtonStyle}
+            onClick={() => openAssistant('Experience Assistant', ['Improve this description', 'Turn into bullet points', 'Make it more achievement-oriented'], (text) => setDesc(text), { description: desc })}
           >
-            <Sparkles size={14} /> Rewrite with Assistance
+            <Sparkles size={14} /> Rewrite with Assistant
           </button>
         </div>
         <textarea 
@@ -338,7 +338,7 @@ const GoalsStep = () => {
 };
 
 const AchievementStep = () => {
-  const { openAssistance } = useAssistance();
+  const { openAssistant } = useAssistant();
   const [achievements, setAchievements] = useState<string[]>(['']);
 
   const addAchievement = () => setAchievements([...achievements, '']);
@@ -361,14 +361,14 @@ const AchievementStep = () => {
             <label style={labelStyle}>Achievement #{index + 1}</label>
             <div style={{ display: 'flex', gap: '8px' }}>
               <button 
-                style={assistanceLinkButtonStyle}
-                onClick={() => openAssistance('Achievement Assistant', ['Make this more impactful', 'Quantify this accomplishment'], (text) => updateAchievement(index, text), { achievement: ach })}
+                style={AssistantLinkButtonStyle}
+                onClick={() => openAssistant('Achievement Assistant', ['Make this more impactful', 'Quantify this accomplishment'], (text) => updateAchievement(index, text), { achievement: ach })}
               >
-                <Sparkles size={14} /> Assistance Polish
+                <Sparkles size={14} /> Assistant Polish
               </button>
               {achievements.length > 1 && (
                 <button 
-                  style={{ ...assistanceLinkButtonStyle, color: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.05)' }}
+                  style={{ ...AssistantLinkButtonStyle, color: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.05)' }}
                   onClick={() => removeAchievement(index)}
                 >
                   Remove
@@ -438,7 +438,7 @@ const ProjectsStep = () => {
             <div style={{ display: 'flex', gap: '8px' }}>
               <button 
                 style={{ 
-                  ...assistanceLinkButtonStyle, 
+                  ...AssistantLinkButtonStyle, 
                   padding: '2px 8px', 
                   fontSize: '0.7rem',
                   backgroundColor: proj.isSaved ? 'var(--accent-primary)' : 'rgba(245, 158, 11, 0.1)',

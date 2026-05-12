@@ -1,33 +1,33 @@
 import { promptTemplates } from '../data/promptTemplates';
 
-export interface AssistanceRequestContext {
+export interface AssistantRequestContext {
   type: string;
   action: string;
   data: any;
   userCredits: number;
 }
 
-export interface AssistanceResponse {
+export interface AssistantResponse {
   success: boolean;
   text?: string;
   error?: string;
   creditsDeducted?: number;
 }
 
-export const assistanceService = {
-  async generateResponse(context: AssistanceRequestContext): Promise<AssistanceResponse> {
+export const AssistantService = {
+  async generateResponse(context: AssistantRequestContext): Promise<AssistantResponse> {
     // 1. Credit Check
     if (context.userCredits < 10) {
       return { 
         success: false, 
-        error: "Insufficient credits. You need at least 10 credits to generate Assistance content." 
+        error: "Insufficient credits. You need at least 10 credits to generate Assistant content." 
       };
     }
 
     // 2. Simulate Network Latency
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // 3. Simulate Assistance Generation Logic
+    // 3. Simulate Assistant Generation Logic
     try {
       // In a real app, this would be an API call to OpenAI/Anthropic/Gemini
       // Here we simulate successful generation using our templates
@@ -36,7 +36,7 @@ export const assistanceService = {
       const { type, action, data } = context;
       const title = data?.title || 'the field';
       
-      if (type === 'Pathew Assistance' && (action.toLowerCase().includes('preparation plan') || data?.duration)) {
+      if (type === 'Pathew Assistant' && (action.toLowerCase().includes('preparation plan') || data?.duration)) {
         const duration = data?.duration || '90-day';
         const weeks = duration === 'Quick' ? 1 : (duration === '90-day' ? 12 : (duration === '180-day' ? 24 : 52));
         
@@ -59,9 +59,9 @@ export const assistanceService = {
           planRows += `### Week ${i}: ${focus}\n${desc}\n\n`;
         }
 
-        generatedText = `[ASSISTANCE GENERATED SUCCESS] \n\n# ${duration} FULL ROADMAP: ${data?.opportunity || 'Bridge the Gap'}\n\nTotal Duration: ${weeks} Weeks\n\n${planRows}\n\nThis comprehensive breakdown is tailored to ensure you are fully prepared for ${data?.opportunity || 'this opportunity'}.`;
+        generatedText = `[Assistant GENERATED SUCCESS] \n\n# ${duration} FULL ROADMAP: ${data?.opportunity || 'Bridge the Gap'}\n\nTotal Duration: ${weeks} Weeks\n\n${planRows}\n\nThis comprehensive breakdown is tailored to ensure you are fully prepared for ${data?.opportunity || 'this opportunity'}.`;
       } else {
-        generatedText = `[ASSISTANCE GENERATED SUCCESS] \n\nThis is a production-ready simulation of the ${action} task for your ${type}. It has analyzed your provided context and tailored the output to meet the highest professional standards. \n\n"Results-driven professional with specialized expertise in ${title}. Proven track record of delivering innovative solutions and exceeding targets."`;
+        generatedText = `[Assistant GENERATED SUCCESS] \n\nThis is a production-ready simulation of the ${action} task for your ${type}. It has analyzed your provided context and tailored the output to meet the highest professional standards. \n\n"Results-driven professional with specialized expertise in ${title}. Proven track record of delivering innovative solutions and exceeding targets."`;
       }
 
       return {
@@ -72,7 +72,7 @@ export const assistanceService = {
     } catch (err) {
       return {
         success: false,
-        error: "An error occurred while communicating with the Assistance service. Please try again."
+        error: "An error occurred while communicating with the Assistant service. Please try again."
       };
     }
   }

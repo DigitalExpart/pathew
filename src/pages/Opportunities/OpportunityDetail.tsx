@@ -14,17 +14,17 @@ import {
 } from 'lucide-react';
 import { useParams, Link } from 'react-router-dom';
 import { mockOpportunities } from '../../data/mockData';
-import { useAssistance } from '../../context/AssistanceContext';
+import { useAssistant } from '../../context/AssistantContext';
 import { Sparkles } from 'lucide-react';
 
 export const OpportunityDetail: React.FC = () => {
   const { id } = useParams();
   const opp = mockOpportunities.find(o => o.id === id) || mockOpportunities[0];
-  const { openAssistance } = useAssistance();
+  const { openAssistant } = useAssistant();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const handleFitAnalysis = () => {
-    openAssistance('Pathew Assistance', [
+    openAssistant('Pathew Assistant', [
       'Explain my compatibility',
       'Generate a readiness plan',
       'Identify my strengths and gaps',
@@ -34,7 +34,7 @@ export const OpportunityDetail: React.FC = () => {
 
   const handleCreatePlan = (duration: string) => {
     setIsModalOpen(false);
-    openAssistance('Pathew Assistance', [
+    openAssistant('Pathew Assistant', [
       `Generate a ${duration} preparation plan`,
       `How to gain ${opp.missingRequirements[0]} in ${duration}`,
       'Suggest resources for this plan'

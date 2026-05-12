@@ -8,7 +8,7 @@ import logo from '../../assets/images/logo.png';
 
 const features = [
   { icon: Globe, title: "Global Discovery", description: "Aggregated opportunities from thousands of premium sources worldwide." },
-  { icon: Zap, title: "Assistance Match Scoring", description: "Know exactly how well you fit before you even click apply." },
+  { icon: Zap, title: "Assistant Match Scoring", description: "Know exactly how well you fit before you even click apply." },
   { icon: CheckCircle, title: "Smart Document Generation", description: "Auto-generate CVs and cover letters tailored to each opportunity." },
   { icon: Shield, title: "Privacy First", description: "Your data is encrypted and only shared when you choose to apply." },
 ];
@@ -46,13 +46,13 @@ export const LandingPage: React.FC = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           style={heroContentStyle}
         >
-          <Badge text="Powered by Pathew Assistance" />
+          <Badge text="Powered by Pathew Assistant" />
           <h1 style={heroTitleStyle}>
             Discover Your Next <span style={{ color: 'var(--accent-primary)' }}>Opportunity</span> with Precision.
           </h1>
           <p style={heroSubtitleStyle}>
             The ultimate platform for professionals to find, match, and apply for high-impact opportunities worldwide. 
-            Stop searching, start matching with Pathew Assistance.
+            Stop searching, start matching with Pathew Assistant.
           </p>
           <div style={heroActionsStyle}>
             <Link to="/signup">
@@ -232,7 +232,7 @@ export const LandingPage: React.FC = () => {
           style={stepsContainerStyle}
         >
           <StepItem number="01" title="Complete Your Profile" description="Share your story, achievements, and goals through our intuitive onboarding wizard." />
-          <StepItem number="02" title="Get Matched" description="Our Assistance engine scans thousands of opportunities to find your perfect fit." />
+          <StepItem number="02" title="Get Matched" description="Our Assistant engine scans thousands of opportunities to find your perfect fit." />
           <StepItem number="03" title="Apply with Confidence" description="Use smart-generated documents to stand out and land your dream role." />
         </motion.div>
       </section>
@@ -260,7 +260,7 @@ export const LandingPage: React.FC = () => {
             ]} 
           />
           <ComparisonColumn 
-            title="PATHEW Assistance" 
+            title="PATHEW Assistant" 
             highlight 
             items={[
               'Precision match scoring',
@@ -294,7 +294,7 @@ export const LandingPage: React.FC = () => {
             title="Professional" 
             price="$19" 
             isPopular 
-            features={['Unlimited matching', 'Unlimited applications', 'Assistance Polish', 'Priority support']} 
+            features={['Unlimited matching', 'Unlimited applications', 'Assistant Polish', 'Priority support']} 
           />
           <PricingCard 
             title="Enterprise" 
@@ -341,12 +341,12 @@ export const LandingPage: React.FC = () => {
           style={sectionHeaderStyle}
         >
           <h2 style={sectionTitleStyle}>Frequently Asked Questions</h2>
-          <p style={sectionSubtitleStyle}>Everything you need to know about Pathew Assistance.</p>
+          <p style={sectionSubtitleStyle}>Everything you need to know about Pathew Assistant.</p>
         </motion.div>
         
         <div style={faqContainerStyle}>
           <FAQItem 
-            question="How does Pathew Assistance match me to opportunities?" 
+            question="How does Pathew Assistant match me to opportunities?" 
             answer="Our advanced AI engine analyzes your profile against thousands of data points in opportunity descriptions to provide a precision match score." 
           />
           <FAQItem 
@@ -396,7 +396,7 @@ export const LandingPage: React.FC = () => {
               <img src={logo} alt="PATHEW Logo" style={{ height: '32px', objectFit: 'contain' }} />
             </div>
             <p style={{ color: 'var(--text-secondary)', marginTop: '20px', lineHeight: 1.6 }}>
-              The premium platform for global opportunity matching. Empowering professionals with Pathew Assistance.
+              The premium platform for global opportunity matching. Empowering professionals with Pathew Assistant.
             </p>
           </div>
           
