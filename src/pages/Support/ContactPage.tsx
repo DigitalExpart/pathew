@@ -35,7 +35,7 @@ export const ContactPage: React.FC = () => {
         </div>
         <div style={navLinksStyle}>
           <Link to="/" style={navLinkStyle}>Features</Link>
-          <Link to="/" style={navLinkStyle}>How it works</Link>
+          <Link to="/how-it-works" style={navLinkStyle}>How it works</Link>
           <Link to="/" style={navLinkStyle}>Pricing</Link>
           <Link to="/contact" style={navLinkStyle}>Contact</Link>
         </div>
