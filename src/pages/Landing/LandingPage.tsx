@@ -210,6 +210,38 @@ export const LandingPage: React.FC = () => {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <section id="faq" style={faqSectionStyle}>
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          style={sectionHeaderStyle}
+        >
+          <h2 style={sectionTitleStyle}>Frequently Asked Questions</h2>
+          <p style={sectionSubtitleStyle}>Everything you need to know about Pathew Assistance.</p>
+        </motion.div>
+        
+        <div style={faqContainerStyle}>
+          <FAQItem 
+            question="How does Pathew Assistance match me to opportunities?" 
+            answer="Our advanced AI engine analyzes your profile against thousands of data points in opportunity descriptions to provide a precision match score." 
+          />
+          <FAQItem 
+            question="Is my personal data secure?" 
+            answer="Yes, we use industry-standard encryption. Your full profile is only shared with recruiters when you explicitly choose to apply." 
+          />
+          <FAQItem 
+            question="Can I use the platform for free?" 
+            answer="Absolutely! Our Free plan allows you to explore matches and make up to 3 applications per month." 
+          />
+          <FAQItem 
+            question="How does the smart document generation work?" 
+            answer="Based on the specific requirements of an opportunity, our engine tailors your CV and cover letter to highlight your most relevant skills." 
+          />
+        </div>
+      </section>
+
       {/* Footer */}
       <footer style={footerStyle}>
         <div style={footerMainStyle}>
@@ -348,6 +380,43 @@ const FooterCol = ({ title, links }: { title: string, links: string[] }) => (
     </div>
   </div>
 );
+
+const FAQItem = ({ question, answer }: { question: string, answer: string }) => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  
+  return (
+    <div style={faqItemStyle}>
+      <button 
+        onClick={() => setIsOpen(!isOpen)}
+        style={faqQuestionButtonStyle}
+      >
+        <span style={{ fontWeight: 600, fontSize: '1.125rem' }}>{question}</span>
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <Plus size={20} color={isOpen ? 'var(--accent-primary)' : 'var(--text-muted)'} />
+        </motion.div>
+      </button>
+      
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            style={{ overflow: 'hidden' }}
+          >
+            <div style={faqAnswerStyle}>
+              {answer}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+};
 
 // Styles
 const landingStyle: React.CSSProperties = {
@@ -697,4 +766,43 @@ const featureIconWrapperStyle: React.CSSProperties = {
   justifyContent: 'center',
   marginBottom: '32px',
   border: '1px solid rgba(245, 158, 11, 0.1)',
+};
+
+const faqSectionStyle: React.CSSProperties = {
+  padding: '140px 80px',
+  backgroundColor: 'var(--bg-primary)',
+};
+
+const faqContainerStyle: React.CSSProperties = {
+  maxWidth: '800px',
+  margin: '0 auto',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '16px',
+};
+
+const faqItemStyle: React.CSSProperties = {
+  backgroundColor: 'var(--bg-secondary)',
+  borderRadius: '24px',
+  border: '1px solid var(--border-color)',
+  overflow: 'hidden',
+};
+
+const faqQuestionButtonStyle: React.CSSProperties = {
+  width: '100%',
+  padding: '24px 32px',
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  background: 'none',
+  border: 'none',
+  color: 'var(--text-primary)',
+  cursor: 'pointer',
+  textAlign: 'left',
+};
+
+const faqAnswerStyle: React.CSSProperties = {
+  padding: '0 32px 24px',
+  color: 'var(--text-secondary)',
+  lineHeight: 1.6,
 };
