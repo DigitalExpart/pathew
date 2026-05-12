@@ -132,6 +132,7 @@ export const SignUpPage: React.FC = () => {
   });
   const [loading, setLoading] = React.useState(false);
   const [authError, setAuthError] = React.useState<string | null>(null);
+  const [errors, setErrors] = React.useState<Record<string, string>>({});
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
