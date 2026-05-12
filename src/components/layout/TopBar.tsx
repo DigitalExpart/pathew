@@ -1,12 +1,12 @@
 import React from 'react';
 import { Search, Bell, HelpCircle, ChevronDown, Coins, Sparkles } from 'lucide-react';
 import { mockUser } from '../../data/mockData';
-import { useAI } from '../../context/AIContext';
+import { useAssistance } from '../../context/AIContext';
 
 import { useNavigate } from 'react-router-dom';
 
 export const TopBar: React.FC = () => {
-  const { openAIAssistant } = useAI();
+  const { openAssistance } = useAssistance();
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -26,8 +26,8 @@ export const TopBar: React.FC = () => {
 
       <div style={actionsStyle}>
         <button 
-          style={aiButtonStyle}
-          onClick={() => openAIAssistant('Pathew Assistance', ['How can I improve my profile?', 'What opportunities are trending?', 'Help me write a document'])}
+          style={assistanceButtonStyle}
+          onClick={() => openAssistance('Pathew Assistance', ['How can I improve my profile?', 'What opportunities are trending?', 'Help me write a document'])}
         >
           <Sparkles size={16} />
           <span>Pathew Assistance</span>
@@ -184,7 +184,7 @@ const creditTextStyle: React.CSSProperties = {
   color: 'var(--accent-primary)',
 };
 
-const aiButtonStyle: React.CSSProperties = {
+const assistanceButtonStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: '8px',

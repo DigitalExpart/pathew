@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Shell } from './components/layout/Shell';
-import { AIProvider } from './context/AIContext';
+import { AssistanceProvider } from './context/AssistanceContext';
 import { AIAssistantPanel } from './components/ai/AIAssistantPanel';
 import { LandingPage } from './pages/Landing/LandingPage';
 import { LoginPage, SignUpPage } from './pages/Auth/AuthPages';
@@ -20,7 +20,7 @@ import { ConsentPage } from './pages/Settings/ConsentPage';
 
 function App() {
   return (
-    <AIProvider>
+    <AssistanceProvider>
       <Router>
         <Routes>
           {/* Public Routes */}
@@ -53,9 +53,9 @@ function App() {
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-        <AIAssistantPanel />
+        <AssistancePanel />
       </Router>
-    </AIProvider>
+    </AssistanceProvider>
   );
 }
 

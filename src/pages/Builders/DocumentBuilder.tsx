@@ -12,7 +12,7 @@ import {
   FileDown,
   Sparkles
 } from 'lucide-react';
-import { useAI } from '../../context/AIContext';
+import { useAssistance } from '../../context/AssistanceContext';
 
 interface DocumentBuilderProps {
   type: 'CV' | 'Cover Letter' | 'Proposal';
@@ -27,7 +27,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
 }) => {
   const [content, setContent] = useState(initialContent);
   const [isSaved, setIsSaved] = useState(false);
-  const { openAIAssistant } = useAI();
+  const { openAssistance } = useAssistance();
 
   const handleSave = () => {
     setIsSaved(true);
@@ -40,7 +40,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
       'Cover Letter': ['Write from scratch', 'Make it more formal', 'Rewrite for InnovateX', 'Make it personal'],
       'Proposal': ['Generate proposal draft', 'Outline the structure', 'Improve clarity', 'Make it concise']
     };
-    openAIAssistant(`${type} Builder`, prompts[type], (text) => {
+    openAssistance(`${type} Builder`, prompts[type], (text) => {
       setContent(prev => prev + '\n\n' + text);
     }, {
       title: initialTitle,
@@ -82,11 +82,11 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
             <ToolbarButton icon={Type} label="Heading" />
             <div style={toolbarDividerStyle}></div>
             <button 
-              style={aiToolbarButtonStyle}
+              style={assistanceToolbarButtonStyle}
               onClick={openAIDocumentHelp}
             >
               <Sparkles size={16} />
-              <span>AI Assistant</span>
+              <span>Assistance</span>
             </button>
           </div>
           
@@ -206,7 +206,7 @@ const toolbarButtonStyle: React.CSSProperties = {
   transition: 'all 0.2s ease',
 };
 
-const aiToolbarButtonStyle: React.CSSProperties = {
+const assistanceToolbarButtonStyle: React.CSSProperties = {
   ...toolbarButtonStyle,
   color: 'var(--accent-primary)',
   fontWeight: 600,

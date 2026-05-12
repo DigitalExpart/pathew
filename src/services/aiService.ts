@@ -1,33 +1,33 @@
 import { promptTemplates } from '../data/promptTemplates';
 
-export interface AIRequestContext {
+export interface AssistanceRequestContext {
   type: string;
   action: string;
   data: any;
   userCredits: number;
 }
 
-export interface AIResponse {
+export interface AssistanceResponse {
   success: boolean;
   text?: string;
   error?: string;
   creditsDeducted?: number;
 }
 
-export const aiService = {
-  async generateResponse(context: AIRequestContext): Promise<AIResponse> {
+export const assistanceService = {
+  async generateResponse(context: AssistanceRequestContext): Promise<AssistanceResponse> {
     // 1. Credit Check
     if (context.userCredits < 10) {
       return { 
         success: false, 
-        error: "Insufficient credits. You need at least 10 credits to generate AI content." 
+        error: "Insufficient credits. You need at least 10 credits to generate Assistance content." 
       };
     }
 
     // 2. Simulate Network Latency
     await new Promise(resolve => setTimeout(resolve, 2000));
 
-    // 3. Simulate AI Generation Logic
+    // 3. Simulate Assistance Generation Logic
     try {
       // In a real app, this would be an API call to OpenAI/Anthropic/Gemini
       // Here we simulate successful generation using our templates
@@ -59,9 +59,9 @@ export const aiService = {
           planRows += `### Week ${i}: ${focus}\n${desc}\n\n`;
         }
 
-        generatedText = `[AI GENERATED SUCCESS] \n\n# ${duration} FULL ROADMAP: ${data?.opportunity || 'Bridge the Gap'}\n\nTotal Duration: ${weeks} Weeks\n\n${planRows}\n\nThis comprehensive breakdown is tailored to ensure you are fully prepared for ${data?.opportunity || 'this opportunity'}.`;
+        generatedText = `[ASSISTANCE GENERATED SUCCESS] \n\n# ${duration} FULL ROADMAP: ${data?.opportunity || 'Bridge the Gap'}\n\nTotal Duration: ${weeks} Weeks\n\n${planRows}\n\nThis comprehensive breakdown is tailored to ensure you are fully prepared for ${data?.opportunity || 'this opportunity'}.`;
       } else {
-        generatedText = `[AI GENERATED SUCCESS] \n\nThis is a production-ready simulation of the ${action} task for your ${type}. It has analyzed your provided context and tailored the output to meet the highest professional standards. \n\n"Results-driven professional with specialized expertise in ${title}. Proven track record of delivering innovative solutions and exceeding targets."`;
+        generatedText = `[ASSISTANCE GENERATED SUCCESS] \n\nThis is a production-ready simulation of the ${action} task for your ${type}. It has analyzed your provided context and tailored the output to meet the highest professional standards. \n\n"Results-driven professional with specialized expertise in ${title}. Proven track record of delivering innovative solutions and exceeding targets."`;
       }
 
       return {
@@ -72,7 +72,7 @@ export const aiService = {
     } catch (err) {
       return {
         success: false,
-        error: "An error occurred while communicating with the AI service. Please try again."
+        error: "An error occurred while communicating with the Assistance service. Please try again."
       };
     }
   }

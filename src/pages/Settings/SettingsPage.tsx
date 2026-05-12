@@ -21,7 +21,7 @@ export const SettingsPage: React.FC = () => {
     { id: 'profile', label: 'Profile', icon: User },
     { id: 'notifications', label: 'Notifications', icon: Bell },
     { id: 'security', label: 'Security', icon: Lock },
-    { id: 'ai', label: 'AI Preferences', icon: Sparkles },
+    { id: 'assistance', label: 'Assistance', icon: Sparkles },
     { id: 'billing', label: 'Billing', icon: CreditCard },
   ];
 
@@ -129,7 +129,7 @@ export const SettingsPage: React.FC = () => {
             </Card>
           )}
 
-          {activeTab === 'ai' && (
+          {activeTab === 'assistance' && (
             <Card title="Pathew Assistance Settings" icon={Sparkles}>
               <div style={formGroupStyle}>
                 <label style={labelStyle}>Default Tone of Voice</label>
@@ -152,7 +152,7 @@ export const SettingsPage: React.FC = () => {
               </div>
               <div style={toggleItemStyle}>
                 <div>
-                  <p style={{ fontWeight: 600 }}>Auto-Save AI History</p>
+                  <p style={{ fontWeight: 600 }}>Auto-Save Assistance History</p>
                   <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Save all generated content to your account history automatically.</p>
                 </div>
                 <input type="checkbox" defaultChecked />

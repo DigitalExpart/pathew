@@ -3,9 +3,9 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Sparkles, User, BookOpen, Briefcase, Target, ChevronRight, ChevronLeft, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useAI } from '../../context/AIContext';
+import { useAssistance } from '../../context/AssistanceContext';
 
-const aiLinkButtonStyle: React.CSSProperties = {
+const assistanceLinkButtonStyle: React.CSSProperties = {
   background: 'none',
   border: 'none',
   color: 'var(--accent-primary)',
@@ -79,7 +79,7 @@ export const ProfileSetup: React.FC = () => {
           <div style={{ marginBottom: '32px' }}>
             <h1 style={{ fontSize: '2rem', marginBottom: '8px' }}>{steps[currentStep].title}</h1>
             <p style={{ color: 'var(--text-secondary)' }}>
-              Tell us more about yourself to help our AI find the best matches.
+              Tell us more about yourself to help our Assistance find the best matches.
             </p>
           </div>
 
@@ -112,7 +112,7 @@ export const ProfileSetup: React.FC = () => {
 
 // Step Components
 const StoryStep = () => {
-  const { openAIAssistant } = useAI();
+  const { openAssistance } = useAssistance();
   const [bio, setBio] = useState('');
   const [skills, setSkills] = useState('');
 
@@ -122,10 +122,10 @@ const StoryStep = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
           <label style={labelStyle}>Bio / Personal Story</label>
           <button 
-            style={aiLinkButtonStyle}
-            onClick={() => openAIAssistant('Personal Story', ['Rewrite this to be more professional', 'Turn my notes into a story', 'Polish this summary'], (text) => setBio(text), { bio })}
+            style={assistanceLinkButtonStyle}
+            onClick={() => openAssistance('Personal Story', ['Rewrite this to be more professional', 'Turn my notes into a story', 'Polish this summary'], (text) => setBio(text), { bio })}
           >
-            <Sparkles size={14} /> Polish with AI
+            <Sparkles size={14} /> Polish with Assistance
           </button>
         </div>
         <textarea 
@@ -139,8 +139,8 @@ const StoryStep = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
           <label style={labelStyle}>Skills (Comma separated)</label>
           <button 
-            style={aiLinkButtonStyle}
-            onClick={() => openAIAssistant('Skills Assistant', ['Suggest skills based on my bio', 'Group my skills by category', 'Improve this list'], (text) => setSkills(text), { bio, skills })}
+            style={assistanceLinkButtonStyle}
+            onClick={() => openAssistance('Skills Assistant', ['Suggest skills based on my bio', 'Group my skills by category', 'Improve this list'], (text) => setSkills(text), { bio, skills })}
           >
             <Sparkles size={14} /> Suggest Skills
           </button>
@@ -177,7 +177,7 @@ const EducationStep = () => (
 );
 
 const ExperienceStep = () => {
-  const { openAIAssistant } = useAI();
+  const { openAssistance } = useAssistance();
   const [desc, setDesc] = useState('');
   return (
     <div style={formGridStyle}>
@@ -193,10 +193,10 @@ const ExperienceStep = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
           <label style={labelStyle}>Description</label>
           <button 
-            style={aiLinkButtonStyle}
-            onClick={() => openAIAssistant('Experience Assistant', ['Improve this description', 'Turn into bullet points', 'Make it more achievement-oriented'], (text) => setDesc(text), { description: desc })}
+            style={assistanceLinkButtonStyle}
+            onClick={() => openAssistance('Experience Assistant', ['Improve this description', 'Turn into bullet points', 'Make it more achievement-oriented'], (text) => setDesc(text), { description: desc })}
           >
-            <Sparkles size={14} /> Rewrite with AI
+            <Sparkles size={14} /> Rewrite with Assistance
           </button>
         </div>
         <textarea 
@@ -254,7 +254,7 @@ const GoalsStep = () => {
 };
 
 const AchievementStep = () => {
-  const { openAIAssistant } = useAI();
+  const { openAssistance } = useAssistance();
   const [achievements, setAchievements] = useState<string[]>(['']);
 
   const addAchievement = () => setAchievements([...achievements, '']);
@@ -277,14 +277,14 @@ const AchievementStep = () => {
             <label style={labelStyle}>Achievement #{index + 1}</label>
             <div style={{ display: 'flex', gap: '8px' }}>
               <button 
-                style={aiLinkButtonStyle}
-                onClick={() => openAIAssistant('Achievement Assistant', ['Make this more impactful', 'Quantify this accomplishment'], (text) => updateAchievement(index, text), { achievement: ach })}
+                style={assistanceLinkButtonStyle}
+                onClick={() => openAssistance('Achievement Assistant', ['Make this more impactful', 'Quantify this accomplishment'], (text) => updateAchievement(index, text), { achievement: ach })}
               >
-                <Sparkles size={14} /> AI Polish
+                <Sparkles size={14} /> Assistance Polish
               </button>
               {achievements.length > 1 && (
                 <button 
-                  style={{ ...aiLinkButtonStyle, color: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.05)' }}
+                  style={{ ...assistanceLinkButtonStyle, color: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.05)' }}
                   onClick={() => removeAchievement(index)}
                 >
                   Remove

@@ -32,7 +32,7 @@ export const LandingPage: React.FC = () => {
           transition={{ duration: 0.6 }}
           style={heroContentStyle}
         >
-          <Badge text="Powered by AI & Rules Engine" />
+          <Badge text="Powered by Assistance & Rules Engine" />
           <h1 style={heroTitleStyle}>
             Discover Your Next <span className="text-gradient">Opportunity</span> with Precision.
           </h1>
@@ -84,7 +84,7 @@ export const LandingPage: React.FC = () => {
           />
           <FeatureCard 
             icon={Zap} 
-            title="AI Match Scoring" 
+            title="Assistance Match Scoring" 
             description="Know exactly how well you fit before you even click apply."
           />
           <FeatureCard 
@@ -105,7 +105,7 @@ export const LandingPage: React.FC = () => {
         <div style={footerContentStyle}>
           <div style={logoStyle}>
             <Sparkles size={20} color="var(--accent-primary)" />
-            <span>PATHEW</span>
+            <span>Assistance</span>
           </div>
           <p style={{ color: 'var(--text-muted)', marginTop: '12px' }}>
             © 2024 PATHEW. All rights reserved.

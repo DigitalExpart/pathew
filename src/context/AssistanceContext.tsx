@@ -1,10 +1,10 @@
 import React, { createContext, useContext, useState } from 'react';
 
-interface AIContextType {
-  isAIPanelOpen: boolean;
-  setAIPanelOpen: (open: boolean) => void;
-  aiContext: string;
-  setAIContext: (context: string) => void;
+interface AssistanceContextType {
+  isAssistancePanelOpen: boolean;
+  setAssistancePanelOpen: (open: boolean) => void;
+  assistanceContext: string;
+  setAssistanceContext: (context: string) => void;
   suggestedPrompts: string[];
   setSuggestedPrompts: (prompts: string[]) => void;
   onInsert?: (text: string) => void;
@@ -12,7 +12,7 @@ interface AIContextType {
   setFullContextData: (data: any) => void;
   isGenerating: boolean;
   setIsGenerating: (generating: boolean) => void;
-  openAIAssistant: (
+  openAssistance: (
     context: string, 
     prompts?: string[], 
     insertCallback?: (text: string) => void,
@@ -20,35 +20,35 @@ interface AIContextType {
   ) => void;
 }
 
-const AIContext = createContext<AIContextType | undefined>(undefined);
+const AssistanceContext = createContext<AssistanceContextType | undefined>(undefined);
 
-export const AIProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [isAIPanelOpen, setAIPanelOpen] = useState(false);
-  const [aiContext, setAIContext] = useState('');
+export const AssistanceProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [isAssistancePanelOpen, setAssistancePanelOpen] = useState(false);
+  const [assistanceContext, setAssistanceContext] = useState('');
   const [suggestedPrompts, setSuggestedPrompts] = useState<string[]>([]);
   const [onInsert, setOnInsert] = useState<((text: string) => void) | undefined>(undefined);
   const [fullContextData, setFullContextData] = useState<any>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  const openAIAssistant = (
+  const openAssistance = (
     context: string, 
     prompts: string[] = [], 
     insertCallback?: (text: string) => void,
     data: any = null
   ) => {
-    setAIContext(context);
+    setAssistanceContext(context);
     setSuggestedPrompts(prompts);
     setOnInsert(() => insertCallback);
     setFullContextData(data);
-    setAIPanelOpen(true);
+    setAssistancePanelOpen(true);
   };
 
   return (
-    <AIContext.Provider value={{ 
-      isAIPanelOpen, 
-      setAIPanelOpen, 
-      aiContext, 
-      setAIContext, 
+    <AssistanceContext.Provider value={{ 
+      isAssistancePanelOpen, 
+      setAssistancePanelOpen, 
+      assistanceContext, 
+      setAssistanceContext, 
       suggestedPrompts, 
       setSuggestedPrompts,
       onInsert,
@@ -56,17 +56,17 @@ export const AIProvider: React.FC<{ children: React.ReactNode }> = ({ children }
       setFullContextData,
       isGenerating,
       setIsGenerating,
-      openAIAssistant
+      openAssistance
     }}>
       {children}
-    </AIContext.Provider>
+    </AssistanceContext.Provider>
   );
 };
 
-export const useAI = () => {
-  const context = useContext(AIContext);
+export const useAssistance = () => {
+  const context = useContext(AssistanceContext);
   if (context === undefined) {
-    throw new Error('useAI must be used within an AIProvider');
+    throw new Error('useAssistance must be used within an AssistanceProvider');
   }
   return context;
 };

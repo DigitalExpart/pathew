@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Download, Eye, Save, Settings2, X, Sparkles } from 'lucide-react';
-import { useAI } from '../../context/AIContext';
+import { useAssistance } from '../../context/AssistanceContext';
 
 export const GrantBuilderPage: React.FC = () => {
   const [docType, setDocType] = useState('Full Grant Proposal');
@@ -10,14 +10,14 @@ export const GrantBuilderPage: React.FC = () => {
   const [previewMode, setPreviewMode] = useState(false);
   const [content, setContent] = useState('Start drafting your proposal here...');
   const [questions, setQuestions] = useState([{ id: 1, text: 'Project Abstract', limit: 250 }]);
-  const { openAIAssistant } = useAI();
+  const { openAssistance } = useAssistance();
 
   const addQuestion = () => {
     setQuestions([...questions, { id: Date.now(), text: '', limit: 500 }]);
   };
 
   const openAIGrantHelp = () => {
-    openAIAssistant('Grant Builder', [
+    openAssistance('Grant Builder', [
       'Draft an answer',
       'Shorten to word limit',
       'Make this more persuasive',
@@ -126,11 +126,11 @@ export const GrantBuilderPage: React.FC = () => {
               <span style={{ color: 'var(--text-muted)' }}>• {content.split(' ').length} words</span>
               <div style={toolbarDividerStyle}></div>
               <button 
-                style={aiToolbarButtonStyle}
+                style={assistanceGrantHelpButtonStyle}
                 onClick={openAIGrantHelp}
               >
                 <Sparkles size={14} />
-                <span>AI Assistant</span>
+                <span>Assistance</span>
               </button>
             </div>
             <div style={{ display: 'flex', gap: '12px' }}>
@@ -301,7 +301,7 @@ const toolbarDividerStyle: React.CSSProperties = {
   margin: '0 4px',
 };
 
-const aiToolbarButtonStyle: React.CSSProperties = {
+const assistanceGrantHelpButtonStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: '6px',
