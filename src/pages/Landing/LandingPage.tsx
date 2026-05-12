@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
-import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap, Plus } from 'lucide-react';
+import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap, Plus, Facebook, Instagram } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
 
@@ -410,9 +410,9 @@ export const LandingPage: React.FC = () => {
         <div style={footerBottomStyle}>
           <p>© 2024 PATHEW. All rights reserved.</p>
           <div style={socialLinksStyle}>
-            <SocialIcon label="Twitter" />
-            <SocialIcon label="LinkedIn" />
-            <SocialIcon label="GitHub" />
+            <SocialIcon icon={Facebook} label="Facebook" />
+            <SocialIcon icon={Instagram} label="Instagram" />
+            <SocialIcon icon={TikTokIcon} label="TikTok" />
           </div>
         </div>
       </footer>
@@ -507,13 +507,30 @@ const PricingCard = ({ title, price, features, isPopular }: any) => (
   </motion.div>
 );
 
-const SocialIcon = ({ label }: { label: string }) => (
-  <motion.span 
+const SocialIcon = ({ icon: Icon, label }: { icon: any, label: string }) => (
+  <motion.a 
+    href="#"
     whileHover={{ color: 'var(--accent-primary)', y: -2 }}
-    style={{ cursor: 'pointer', transition: 'color 0.2s ease' }}
+    style={{ color: 'var(--text-muted)', transition: 'color 0.2s ease', display: 'flex', alignItems: 'center' }}
+    aria-label={label}
   >
-    {label}
-  </motion.span>
+    <Icon size={20} />
+  </motion.a>
+);
+
+const TikTokIcon = ({ size = 20 }: { size?: number }) => (
+  <svg 
+    width={size} 
+    height={size} 
+    viewBox="0 0 24 24" 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round"
+  >
+    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
+  </svg>
 );
 
 const FooterCol = ({ title, links }: { title: string, links: string[] }) => (
