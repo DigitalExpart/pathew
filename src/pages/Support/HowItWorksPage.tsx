@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
+import { Navbar } from '../../components/layout/Navbar';
 import logo from '../../assets/images/logo.png';
 import { Link } from 'react-router-dom';
 
@@ -21,26 +22,7 @@ const team3 = 'file:///C:/Users/Shilley%20Pc/.gemini/antigravity/brain/0068f4c0-
 export const HowItWorksPage: React.FC = () => {
   return (
     <div style={pageStyle}>
-      {/* Navbar */}
-      <motion.nav 
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        style={navStyle}
-      >
-        <Link to="/" style={logoStyle}>
-          <img src={logo} alt="PATHEW Logo" style={{ height: '40px', objectFit: 'contain' }} />
-        </Link>
-        <div style={navLinksStyle}>
-          <Link to="/" style={navLinkStyle}>Features</Link>
-          <Link to="/how-it-works" style={{...navLinkStyle, color: 'var(--accent-primary)'}}>How it works</Link>
-          <Link to="/" style={navLinkStyle}>Pricing</Link>
-          <Link to="/contact" style={navLinkStyle}>Contact</Link>
-        </div>
-        <div style={navActionsStyle}>
-          <Link to="/login"><Button variant="ghost">Login</Button></Link>
-          <Link to="/signup"><Button>Get Started</Button></Link>
-        </div>
-      </motion.nav>
+      <Navbar activePage="how-it-works" />
 
       {/* Hero Section */}
       <section style={heroSectionStyle}>

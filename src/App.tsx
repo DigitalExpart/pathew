@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Shell } from './components/layout/Shell';
 import { AssistantProvider } from './context/AssistantContext';
+import { AuthProvider } from './context/AuthContext';
 import { AssistantPanel } from './components/ai/AssistantPanel';
 import { LandingPage } from './pages/Landing/LandingPage';
 import { LoginPage, SignUpPage } from './pages/Auth/AuthPages';
@@ -24,7 +25,8 @@ import { HowItWorksPage } from './pages/Support/HowItWorksPage';
 
 function App() {
   return (
-    <AssistantProvider>
+    <AuthProvider>
+      <AssistantProvider>
       <Router>
         <Routes>
           {/* Public Routes */}
@@ -63,7 +65,8 @@ function App() {
         </Routes>
           <AssistantPanel />
       </Router>
-    </AssistantProvider>
+      </AssistantProvider>
+    </AuthProvider>
   );
 }
 

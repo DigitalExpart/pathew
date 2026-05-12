@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
+import { Navbar } from '../../components/layout/Navbar';
 import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
@@ -16,27 +17,7 @@ const features = [
 export const LandingPage: React.FC = () => {
   return (
     <div style={landingStyle}>
-      {/* Navbar */}
-      <motion.nav 
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, type: 'spring' }}
-        style={navStyle}
-      >
-        <Link to="/" style={logoStyle}>
-          <img src={logo} alt="PATHEW Logo" style={{ height: '40px', objectFit: 'contain' }} />
-        </Link>
-        <div style={navLinksStyle}>
-          <a href="#features" style={navLinkStyle}>Features</a>
-          <Link to="/how-it-works" style={navLinkStyle}>How it works</Link>
-          <a href="#pricing" style={navLinkStyle}>Pricing</a>
-          <Link to="/contact" style={navLinkStyle}>Contact</Link>
-        </div>
-        <div style={navActionsStyle}>
-          <Link to="/login"><Button variant="ghost">Login</Button></Link>
-          <Link to="/signup"><Button>Get Started</Button></Link>
-        </div>
-      </motion.nav>
+      <Navbar />
 
       {/* Hero Section */}
       <header style={heroSectionStyle}>

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Mail, Phone, MapPin, Send, MessageSquare, Clock, Globe } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
+import { Navbar } from '../../components/layout/Navbar';
 import logo from '../../assets/images/logo.png';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
@@ -46,27 +47,7 @@ export const ContactPage: React.FC = () => {
 
   return (
     <div style={pageStyle}>
-      {/* Navbar */}
-      <motion.nav 
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, type: 'spring' }}
-        style={navStyle}
-      >
-        <Link to="/" style={logoStyle}>
-          <img src={logo} alt="PATHEW Logo" style={{ height: '40px', objectFit: 'contain' }} />
-        </Link>
-        <div style={navLinksStyle}>
-          <Link to="/" style={navLinkStyle}>Features</Link>
-          <Link to="/how-it-works" style={navLinkStyle}>How it works</Link>
-          <Link to="/" style={navLinkStyle}>Pricing</Link>
-          <Link to="/contact" style={navLinkStyle}>Contact</Link>
-        </div>
-        <div style={navActionsStyle}>
-          <Link to="/login"><Button variant="ghost">Login</Button></Link>
-          <Link to="/signup"><Button>Get Started</Button></Link>
-        </div>
-      </motion.nav>
+      <Navbar activePage="contact" />
 
       <main style={mainStyle}>
         <div style={containerStyle}>
