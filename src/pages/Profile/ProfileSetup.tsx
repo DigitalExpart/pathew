@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAssistance } from '../../context/AssistanceContext';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const assistanceLinkButtonStyle: React.CSSProperties = {
   background: 'none',
@@ -71,22 +72,76 @@ export const ProfileSetup: React.FC = () => {
     <div style={containerStyle}>
       <header style={headerStyle}>
         <div style={stepperStyle}>
-          {steps.map((step, idx) => (
-            <div key={step.id} style={stepItemStyle}>
-              <div style={{
-                ...stepCircleStyle,
-                backgroundColor: idx <= currentStep ? 'var(--accent-primary)' : 'var(--bg-tertiary)',
-                color: idx <= currentStep ? '#000' : 'var(--text-muted)',
-              }}>
-                {idx < currentStep ? '✓' : idx + 1}
-              </div>
-              <span style={{
-                ...stepLabelStyle,
-                color: idx <= currentStep ? 'var(--text-primary)' : 'var(--text-muted)',
-              }}>{step.title}</span>
-              {idx < steps.length - 1 && <div style={stepLineStyle}></div>}
-            </div>
-          ))}
+          <AnimatePresence mode="popLayout">
+            {steps.map((step, idx) => {
+              const isFirst = idx === 0;
+              const isCurrent = idx === currentStep;
+              const isPast = idx < currentStep;
+              const isNext = idx === currentStep + 1;
+
+              // Logic: Always show Step 1. Show current step. Hide everything else (except next hint circle).
+              const shouldRender = isFirst || isCurrent || isNext;
+              if (!shouldRender) return null;
+
+              return (
+                <React.Fragment key={step.id}>
+                  {/* Line before current step (if not first) */}
+                  {isCurrent && !isFirst && (
+                    <motion.div 
+                      initial={{ width: 0, opacity: 0 }}
+                      animate={{ width: 40, opacity: 0.3 }}
+                      style={{ ...stepLineStyle, borderStyle: 'dashed', backgroundColor: 'transparent', borderBottom: '1px dashed var(--border-color)' }}
+                    />
+                  )}
+
+                  <motion.div
+                    layout
+                    initial={{ opacity: 0, scale: 0.8, x: 20 }}
+                    animate={{ opacity: isNext ? 0.4 : 1, scale: isCurrent ? 1.1 : 1, x: 0 }}
+                    exit={{ opacity: 0, scale: 0.8, x: -20 }}
+                    transition={{ duration: 0.4 }}
+                    style={{
+                      ...stepItemStyle,
+                      pointerEvents: 'none', // Disable interaction for now
+                    }}
+                  >
+                    <div style={{
+                      ...stepCircleStyle,
+                      backgroundColor: idx <= currentStep ? 'var(--accent-primary)' : 'var(--bg-tertiary)',
+                      color: idx <= currentStep ? '#000' : 'var(--text-muted)',
+                      boxShadow: isCurrent ? '0 0 20px var(--accent-glow)' : 'none',
+                    }}>
+                      {isPast ? '✓' : idx + 1}
+                    </div>
+                    
+                    {(isFirst || isCurrent) && (
+                      <motion.span
+                        initial={{ opacity: 0, width: 0 }}
+                        animate={{ opacity: 1, width: 'auto' }}
+                        style={{
+                          ...stepLabelStyle,
+                          color: idx <= currentStep ? 'var(--text-primary)' : 'var(--text-muted)',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        {step.title}
+                      </motion.span>
+                    )}
+                  </motion.div>
+
+                  {/* Line after current step (if next exists) */}
+                  {isCurrent && isNext && (
+                    <motion.div 
+                      initial={{ width: 0, opacity: 0 }}
+                      animate={{ width: 32, opacity: 1 }}
+                      style={stepLineStyle}
+                    />
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </AnimatePresence>
         </div>
       </header>
 
@@ -478,14 +533,14 @@ const logoStyle: React.CSSProperties = {
 const stepperStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
-  gap: '40px',
+  gap: '20px',
+  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 };
 
 const stepItemStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: '12px',
-  position: 'relative',
 };
 
 const stepCircleStyle: React.CSSProperties = {
@@ -505,11 +560,10 @@ const stepLabelStyle: React.CSSProperties = {
 };
 
 const stepLineStyle: React.CSSProperties = {
-  position: 'absolute',
-  right: '-30px',
-  width: '20px',
+  width: '32px',
   height: '1px',
   backgroundColor: 'var(--border-color)',
+  margin: '0 8px',
 };
 
 const mainStyle: React.CSSProperties = {
