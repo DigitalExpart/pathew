@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from '../../components/ui/Button';
 import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useNavigate } from 'react-router-dom';
+import logo from '../../assets/images/logo.png';
 
 const features = [
   { icon: Globe, title: "Global Discovery", description: "Aggregated opportunities from thousands of premium sources worldwide." },
@@ -86,7 +86,7 @@ export const LandingPage: React.FC = () => {
         >
           <div style={heroImagePlaceholderStyle}>
             <img 
-              src="/landing_hero_image_1778606171429.png" 
+              src="/hero.png" 
               alt="Platform Dashboard" 
               style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
             />
