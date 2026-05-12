@@ -30,9 +30,9 @@ export const ContactPage: React.FC = () => {
         transition={{ duration: 0.6, type: 'spring' }}
         style={navStyle}
       >
-        <div style={logoStyle}>
+        <Link to="/" style={logoStyle}>
           <img src={logo} alt="PATHEW Logo" style={{ height: '40px', objectFit: 'contain' }} />
-        </div>
+        </Link>
         <div style={navLinksStyle}>
           <Link to="/" style={navLinkStyle}>Features</Link>
           <Link to="/how-it-works" style={navLinkStyle}>How it works</Link>
@@ -175,9 +175,9 @@ export const ContactPage: React.FC = () => {
       <footer style={footerStyle}>
         <div style={footerMainStyle}>
           <div style={footerBrandColStyle}>
-            <div style={logoStyle}>
+            <Link to="/" style={logoStyle}>
               <img src={logo} alt="PATHEW Logo" style={{ height: '32px', objectFit: 'contain' }} />
-            </div>
+            </Link>
             <p style={{ color: 'var(--text-secondary)', marginTop: '20px', lineHeight: 1.6 }}>
               The premium platform for global opportunity matching. Empowering professionals with Pathew Assistant.
             </p>
