@@ -387,79 +387,83 @@ const AchievementStep = () => {
 };
 
 const ProjectsStep = () => {
-  const [projects, setProjects] = useState<string[]>(['', '', '', '']); // Default to 4 projects
-  const addProject = () => setProjects([...projects, '']);
-  const removeProject = (index: number) => {
-    const newProjects = [...projects];
-    newProjects.splice(index, 1);
-    setProjects(newProjects);
+  const [projects, setProjects] = useState([
+    { id: 1, title: '', description: '', isSaved: false },
+    { id: 2, title: '', description: '', isSaved: false },
+    { id: 3, title: '', description: '', isSaved: false },
+    { id: 4, title: '', description: '', isSaved: false },
+  ]);
+
+  const addProject = () => setProjects([...projects, { id: Date.now(), title: '', description: '', isSaved: false }]);
+  
+  const removeProject = (id: number) => {
+    if (projects.length > 1) {
+      setProjects(projects.filter(p => p.id !== id));
+    }
   };
-  const updateProject = (index: number, value: string) => {
-    const newProjects = [...projects];
-    newProjects[index] = value;
-    setProjects(newProjects);
+
+  const updateProject = (id: number, field: string, value: any) => {
+    setProjects(projects.map(p => p.id === id ? { ...p, [field]: value } : p));
   };
 
   return (
     <div style={{ ...formGridStyle, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', maxWidth: '1000px', width: '100%' }}>
-      {projects.map((proj, index) => {
-        const [isSaved, setIsSaved] = useState(false);
-        
-        return (
-          <div key={index} style={{ 
-            ...listItemStyle, 
-            display: 'flex', 
-            flexDirection: 'column', 
-            height: '100%',
-            borderColor: isSaved ? 'var(--accent-primary)' : 'var(--border-color)',
-            boxShadow: isSaved ? '0 0 10px rgba(245, 158, 11, 0.1)' : 'none',
-            transition: 'all 0.3s ease'
-          }}>
-            <div style={{ ...listHeaderStyle, marginBottom: '12px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <label style={{ ...labelStyle, color: isSaved ? 'var(--accent-primary)' : 'var(--text-secondary)' }}>
-                  Project #{index + 1}
-                </label>
-                {isSaved && <Check size={14} color="var(--accent-primary)" />}
-              </div>
-              <div style={{ display: 'flex', gap: '8px' }}>
-                <button 
-                  style={{ 
-                    ...assistanceLinkButtonStyle, 
-                    padding: '2px 8px', 
-                    fontSize: '0.7rem',
-                    backgroundColor: isSaved ? 'var(--accent-primary)' : 'rgba(245, 158, 11, 0.1)',
-                    color: isSaved ? '#000' : 'var(--accent-primary)'
-                  }} 
-                  onClick={() => setIsSaved(!isSaved)}
-                >
-                  {isSaved ? 'Saved' : 'Save'}
-                </button>
-                {projects.length > 1 && (
-                  <button style={removeBtnStyle} onClick={() => removeProject(index)}>
-                    <Trash2 size={14} />
-                  </button>
-                )}
-              </div>
+      {projects.map((proj, index) => (
+        <div key={proj.id} style={{ 
+          ...listItemStyle, 
+          display: 'flex', 
+          flexDirection: 'column', 
+          height: '100%',
+          borderColor: proj.isSaved ? 'var(--accent-primary)' : 'var(--border-color)',
+          boxShadow: proj.isSaved ? '0 0 10px rgba(245, 158, 11, 0.1)' : 'none',
+          transition: 'all 0.3s ease'
+        }}>
+          <div style={{ ...listHeaderStyle, marginBottom: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <label style={{ ...labelStyle, color: proj.isSaved ? 'var(--accent-primary)' : 'var(--text-secondary)' }}>
+                Project #{index + 1}
+              </label>
+              {proj.isSaved && <Check size={14} color="var(--accent-primary)" />}
             </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
-              <input 
-                type="text" 
-                placeholder="Project Title" 
-                style={inputStyle}
-                disabled={isSaved}
-              />
-              <textarea 
-                placeholder="Brief description of the project and your role..." 
-                style={{ ...textareaStyle, flex: 1, minHeight: '100px' }}
-                value={proj}
-                onChange={(e) => updateProject(index, e.target.value)}
-                disabled={isSaved}
-              />
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button 
+                style={{ 
+                  ...assistanceLinkButtonStyle, 
+                  padding: '2px 8px', 
+                  fontSize: '0.7rem',
+                  backgroundColor: proj.isSaved ? 'var(--accent-primary)' : 'rgba(245, 158, 11, 0.1)',
+                  color: proj.isSaved ? '#000' : 'var(--accent-primary)'
+                }} 
+                onClick={() => updateProject(proj.id, 'isSaved', !proj.isSaved)}
+              >
+                {proj.isSaved ? 'Saved' : 'Save'}
+              </button>
+              {projects.length > 1 && (
+                <button style={removeBtnStyle} onClick={() => removeProject(proj.id)}>
+                  <Trash2 size={14} />
+                </button>
+              )}
             </div>
           </div>
-        );
-      })}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
+            <input 
+              type="text" 
+              placeholder="Project Title" 
+              style={inputStyle}
+              disabled={proj.isSaved}
+              value={proj.title}
+              onChange={(e) => updateProject(proj.id, 'title', e.target.value)}
+            />
+            <textarea 
+              placeholder="Brief description of the project and your role..." 
+              style={{ ...textareaStyle, flex: 1, minHeight: '100px' }}
+              value={proj.description}
+              onChange={(e) => updateProject(proj.id, 'description', e.target.value)}
+              disabled={proj.isSaved}
+            />
+          </div>
+        </div>
+      ))}
       <Button 
         variant="outline" 
         onClick={addProject} 
