@@ -70,9 +70,6 @@ export const ProfileSetup: React.FC = () => {
   return (
     <div style={containerStyle}>
       <header style={headerStyle}>
-        <div style={logoStyle}>
-          <img src={logo} alt="PATHEW Logo" style={{ height: '32px', objectFit: 'contain' }} />
-        </div>
         <div style={stepperStyle}>
           {steps.map((step, idx) => (
             <div key={step.id} style={stepItemStyle}>
@@ -465,7 +462,7 @@ const containerStyle: React.CSSProperties = {
 const headerStyle: React.CSSProperties = {
   padding: '24px 80px',
   display: 'flex',
-  justifyContent: 'space-between',
+  justifyContent: 'center',
   alignItems: 'center',
   borderBottom: '1px solid var(--border-color)',
 };
