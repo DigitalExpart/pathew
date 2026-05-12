@@ -1,16 +1,36 @@
 import React from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { Sparkles, Mail, Lock, Globe, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, Globe, ArrowLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
+import { supabase } from '../../lib/supabase';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
   
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/dashboard');
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+      navigate('/dashboard');
+    } catch (err: any) {
+      setError(err.message || 'Failed to sign in');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -35,9 +55,18 @@ export const LoginPage: React.FC = () => {
               <label style={labelStyle}>Email Address</label>
               <div style={inputWrapperStyle}>
                 <Mail size={18} color="var(--text-muted)" />
-                <input type="email" placeholder="name@company.com" style={inputStyle} required />
+                <input 
+                  type="email" 
+                  placeholder="name@company.com" 
+                  style={inputStyle} 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required 
+                />
               </div>
             </div>
+
+            {error && <p style={errorTextStyle}>{error}</p>}
 
             <div style={inputGroupStyle}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -46,12 +75,19 @@ export const LoginPage: React.FC = () => {
               </div>
               <div style={inputWrapperStyle}>
                 <Lock size={18} color="var(--text-muted)" />
-                <input type="password" placeholder="••••••••" style={inputStyle} required />
+                <input 
+                  type="password" 
+                  placeholder="••••••••" 
+                  style={inputStyle} 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required 
+                />
               </div>
             </div>
 
-            <Button type="submit" style={{ width: '100%', marginTop: '12px' }}>
-              Sign In
+            <Button type="submit" style={{ width: '100%', marginTop: '12px' }} disabled={loading}>
+              {loading ? 'Signing in...' : 'Sign In'}
             </Button>
           </form>
 
@@ -94,7 +130,8 @@ export const SignUpPage: React.FC = () => {
     termsAccepted: false,
     privacyAccepted: false,
   });
-  const [errors, setErrors] = React.useState<Record<string, string>>({});
+  const [loading, setLoading] = React.useState(false);
+  const [authError, setAuthError] = React.useState<string | null>(null);
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -114,16 +151,30 @@ export const SignUpPage: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSignUp = (e: React.FormEvent) => {
+  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      // Mock saving state
-      console.log('Registration Data:', {
-        ...formData,
-        timestamp: new Date().toISOString(),
-        privacyVersion: '1.0.0'
-      });
-      setIsSubmitted(true);
+      setLoading(true);
+      setAuthError(null);
+      
+      try {
+        const { error } = await supabase.auth.signUp({
+          email: formData.email,
+          password: formData.password,
+          options: {
+            data: {
+              full_name: formData.fullName,
+            }
+          }
+        });
+
+        if (error) throw error;
+        setIsSubmitted(true);
+      } catch (err: any) {
+        setAuthError(err.message || 'Failed to sign up');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
@@ -266,8 +317,10 @@ export const SignUpPage: React.FC = () => {
               {errors.privacy && <p style={errorTextStyle}>{errors.privacy}</p>}
             </div>
 
-            <Button type="submit" style={{ width: '100%', marginTop: '12px' }}>
-              Create Account
+            {authError && <p style={errorTextStyle}>{authError}</p>}
+
+            <Button type="submit" style={{ width: '100%', marginTop: '12px' }} disabled={loading}>
+              {loading ? 'Creating account...' : 'Create Account'}
             </Button>
           </form>
 
