@@ -41,18 +41,25 @@ export const aiService = {
         const weeks = duration === 'Quick' ? 1 : (duration === '90-day' ? 12 : (duration === '180-day' ? 24 : 52));
         
         let planRows = "";
-        for (let i = 1; i <= Math.min(weeks, 4); i++) {
-          planRows += `### Week ${i}: Foundation & Core Skills\nFocus on mastering ${data?.gaps?.[0] || 'the core requirements'}. Complete introductory modules and setup development environment.\n\n`;
-        }
-        
-        if (weeks > 4) {
-          planRows += `... [Continues for ${weeks - 4} more weeks of advanced implementation, project building, and interview prep] ...\n\n`;
-          planRows += `### Final Week (Week ${weeks}): Review & Application\nFinalize portfolio, conduct mock interviews, and submit application for ${data?.opportunity || 'this role'}.`;
-        } else if (weeks === 1) {
-          planRows = `### Day 1-2: Intensive Research\n### Day 3-5: Implementation\n### Day 6-7: Review & Polish`;
+        for (let i = 1; i <= weeks; i++) {
+          let focus = "Foundation & Theory";
+          let desc = `Mastering the basics of ${data?.gaps?.[0] || 'core requirements'}.`;
+          
+          if (i > weeks * 0.75) {
+            focus = "Showcase & Application";
+            desc = `Finalizing portfolio pieces and preparing for ${data?.opportunity || 'the role'}.`;
+          } else if (i > weeks * 0.5) {
+            focus = "Advanced Implementation";
+            desc = `Building complex features and troubleshooting edge cases with ${data?.gaps?.[0] || 'new skills'}.`;
+          } else if (i > weeks * 0.25) {
+            focus = "Hands-on Practice";
+            desc = `Working on real-world scenarios and small projects involving ${data?.gaps?.[0] || 'requirements'}.`;
+          }
+          
+          planRows += `### Week ${i}: ${focus}\n${desc}\n\n`;
         }
 
-        generatedText = `[AI GENERATED SUCCESS] \n\n# ${duration} WEEKLY ROADMAP: ${data?.opportunity || 'Bridge the Gap'}\n\nTotal Duration: ${weeks} Weeks\n\n${planRows}\n\nThis weekly breakdown is optimized for your profile and the ${data?.opportunity || 'selected'} role.`;
+        generatedText = `[AI GENERATED SUCCESS] \n\n# ${duration} FULL ROADMAP: ${data?.opportunity || 'Bridge the Gap'}\n\nTotal Duration: ${weeks} Weeks\n\n${planRows}\n\nThis comprehensive breakdown is tailored to ensure you are fully prepared for ${data?.opportunity || 'this opportunity'}.`;
       } else {
         generatedText = `[AI GENERATED SUCCESS] \n\nThis is a production-ready simulation of the ${action} task for your ${type}. It has analyzed your provided context and tailored the output to meet the highest professional standards. \n\n"Results-driven professional with specialized expertise in ${title}. Proven track record of delivering innovative solutions and exceeding targets."`;
       }
