@@ -657,7 +657,7 @@ const navActionsStyle: React.CSSProperties = {
 };
 
 const heroSectionStyle: React.CSSProperties = {
-  padding: '220px 80px 140px',
+  padding: '160px 80px 100px',
   display: 'flex',
   alignItems: 'center',
   gap: '80px',
