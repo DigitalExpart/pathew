@@ -79,15 +79,16 @@ export const ProfileSetup: React.FC = () => {
               const isCurrent = idx === currentStep;
               const isPast = idx < currentStep;
               const isNext = idx === currentStep + 1;
+              const isRecentPast = idx >= currentStep - 2 && idx < currentStep;
 
-              // Logic: Always show Step 1. Show current step. Hide everything else (except next hint circle).
-              const shouldRender = isFirst || isCurrent || isNext;
+              // Logic: Always show Step 1. Show recent 2 steps. Show current. Show next hint.
+              const shouldRender = isFirst || isCurrent || isNext || isRecentPast;
               if (!shouldRender) return null;
 
               return (
                 <React.Fragment key={step.id}>
-                  {/* Line before current step (if not first) */}
-                  {isCurrent && !isFirst && (
+                  {/* Line before step if it's not the first one rendered in this view */}
+                  {((isCurrent && !isFirst && !isRecentPast) || (isRecentPast && idx === currentStep - 2 && !isFirst)) && (
                     <motion.div 
                       initial={{ width: 0, opacity: 0 }}
                       animate={{ width: 40, opacity: 0.3 }}
@@ -98,12 +99,16 @@ export const ProfileSetup: React.FC = () => {
                   <motion.div
                     layout
                     initial={{ opacity: 0, scale: 0.8, x: 20 }}
-                    animate={{ opacity: isNext ? 0.4 : 1, scale: isCurrent ? 1.1 : 1, x: 0 }}
+                    animate={{ 
+                      opacity: isNext ? 0.4 : 1, 
+                      scale: isCurrent ? 1.1 : 1, 
+                      x: 0 
+                    }}
                     exit={{ opacity: 0, scale: 0.8, x: -20 }}
                     transition={{ duration: 0.4 }}
                     style={{
                       ...stepItemStyle,
-                      pointerEvents: 'none', // Disable interaction for now
+                      pointerEvents: 'none',
                     }}
                   >
                     <div style={{
@@ -131,11 +136,11 @@ export const ProfileSetup: React.FC = () => {
                     )}
                   </motion.div>
 
-                  {/* Line after current step (if next exists) */}
-                  {isCurrent && isNext && (
+                  {/* Standard Line between consecutive rendered steps */}
+                  {( (isRecentPast && (idx === currentStep - 1 || idx === currentStep - 2)) || (isCurrent && isNext) ) && (
                     <motion.div 
                       initial={{ width: 0, opacity: 0 }}
-                      animate={{ width: 32, opacity: 1 }}
+                      animate={{ width: 32, opacity: idx < currentStep ? 0.6 : 1 }}
                       style={stepLineStyle}
                     />
                   )}
