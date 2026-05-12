@@ -22,6 +22,7 @@ const navGroups = [
     items: [
       { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
       { icon: Briefcase, label: 'Opportunities', path: '/opportunities' },
+      { icon: Briefcase, label: 'Jobs', path: '/jobs' },
       { icon: Bookmark, label: 'Saved Items', path: '/saved' },
     ]
   },
