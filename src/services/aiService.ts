@@ -34,9 +34,10 @@ export const aiService = {
       let generatedText = "";
       
       const { type, action, data } = context;
+      const title = data?.title || 'the field';
       
       // Basic mock logic to return something "realistic"
-      generatedText = `[AI GENERATED SUCCESS] \n\nThis is a production-ready simulation of the ${action} task for your ${type}. It has analyzed your provided context and tailored the output to meet the highest professional standards. \n\n"Results-driven professional with specialized expertise in ${data.title || 'the field'}. Proven track record of delivering innovative solutions and exceeding targets."`;
+      generatedText = `[AI GENERATED SUCCESS] \n\nThis is a production-ready simulation of the ${action} task for your ${type}. It has analyzed your provided context and tailored the output to meet the highest professional standards. \n\n"Results-driven professional with specialized expertise in ${title}. Proven track record of delivering innovative solutions and exceeding targets."`;
 
       return {
         success: true,

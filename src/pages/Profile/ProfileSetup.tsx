@@ -121,7 +121,7 @@ const StoryStep = () => {
           <label style={labelStyle}>Bio / Personal Story</label>
           <button 
             style={aiLinkButtonStyle}
-            onClick={() => openAIAssistant('Personal Story', ['Rewrite this to be more professional', 'Turn my notes into a story', 'Polish this summary'], (text) => setBio(text))}
+            onClick={() => openAIAssistant('Personal Story', ['Rewrite this to be more professional', 'Turn my notes into a story', 'Polish this summary'], (text) => setBio(text), { bio })}
           >
             <Sparkles size={14} /> Polish with AI
           </button>
@@ -138,7 +138,7 @@ const StoryStep = () => {
           <label style={labelStyle}>Skills (Comma separated)</label>
           <button 
             style={aiLinkButtonStyle}
-            onClick={() => openAIAssistant('Skills Assistant', ['Suggest skills based on my bio', 'Group my skills by category', 'Improve this list'], (text) => setSkills(text))}
+            onClick={() => openAIAssistant('Skills Assistant', ['Suggest skills based on my bio', 'Group my skills by category', 'Improve this list'], (text) => setSkills(text), { bio, skills })}
           >
             <Sparkles size={14} /> Suggest Skills
           </button>
@@ -192,7 +192,7 @@ const ExperienceStep = () => {
           <label style={labelStyle}>Description</label>
           <button 
             style={aiLinkButtonStyle}
-            onClick={() => openAIAssistant('Experience Assistant', ['Improve this description', 'Turn into bullet points', 'Make it more achievement-oriented'], (text) => setDesc(text))}
+            onClick={() => openAIAssistant('Experience Assistant', ['Improve this description', 'Turn into bullet points', 'Make it more achievement-oriented'], (text) => setDesc(text), { description: desc })}
           >
             <Sparkles size={14} /> Rewrite with AI
           </button>
