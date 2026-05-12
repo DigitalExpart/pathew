@@ -14,7 +14,7 @@ import {
   GraduationCap,
   Award
 } from 'lucide-react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 
 const navGroups = [
   {
@@ -50,6 +50,13 @@ const navGroups = [
 ];
 
 export const Sidebar: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // In a real app, clear tokens here
+    navigate('/login');
+  };
+
   return (
     <aside style={sidebarStyle}>
       <div style={logoContainerStyle}>
@@ -82,7 +89,7 @@ export const Sidebar: React.FC = () => {
       </nav>
 
       <div style={footerStyle}>
-        <button style={logoutButtonStyle}>
+        <button style={logoutButtonStyle} onClick={handleLogout}>
           <LogOut size={20} />
           <span>Logout</span>
         </button>

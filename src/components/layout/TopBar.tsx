@@ -3,8 +3,15 @@ import { Search, Bell, HelpCircle, ChevronDown, Coins, Sparkles } from 'lucide-r
 import { mockUser } from '../../data/mockData';
 import { useAI } from '../../context/AIContext';
 
+import { useNavigate } from 'react-router-dom';
+
 export const TopBar: React.FC = () => {
   const { openAIAssistant } = useAI();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    navigate('/login');
+  };
 
   return (
     <header style={headerStyle}>
@@ -41,7 +48,7 @@ export const TopBar: React.FC = () => {
         
         <div style={dividerStyle}></div>
 
-        <div style={userProfileStyle}>
+        <div style={userProfileStyle} onClick={handleLogout}>
           <div style={userInfoStyle}>
             <span style={userNameStyle}>{mockUser.name}</span>
             <span style={userRoleStyle}>Pro Plan</span>
