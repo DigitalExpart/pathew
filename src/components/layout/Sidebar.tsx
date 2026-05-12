@@ -14,7 +14,7 @@ import {
   GraduationCap,
   Award
 } from 'lucide-react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
 
 const navGroups = [
   {
