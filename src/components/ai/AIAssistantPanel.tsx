@@ -1,13 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, Send, Sparkles, RefreshCw, Check, Trash2 } from 'lucide-react';
-import { useAI } from '../../context/AIContext';
-import { Button } from '../ui/Button';
-import { Card } from '../ui/Card';
-
-import React, { useState, useEffect } from 'react';
 import { X, Send, Sparkles, RefreshCw, Check, Trash2, History, AlertCircle } from 'lucide-react';
 import { useAI } from '../../context/AIContext';
 import { Button } from '../ui/Button';
+import { Card } from '../ui/Card';
 import { aiService } from '../../services/aiService';
 import { mockUser } from '../../data/mockData';
 
