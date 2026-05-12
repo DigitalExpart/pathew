@@ -387,7 +387,7 @@ const AchievementStep = () => {
 };
 
 const ProjectsStep = () => {
-  const [projects, setProjects] = useState<string[]>(['']);
+  const [projects, setProjects] = useState<string[]>(['', '', '', '']); // Default to 4 projects
   const addProject = () => setProjects([...projects, '']);
   const removeProject = (index: number) => {
     const newProjects = [...projects];
@@ -401,43 +401,57 @@ const ProjectsStep = () => {
   };
 
   return (
-    <div style={formGridStyle}>
+    <div style={{ ...formGridStyle, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', maxWidth: '1000px', width: '100%' }}>
       {projects.map((proj, index) => (
-        <div key={index} style={listItemStyle}>
-          <div style={listHeaderStyle}>
-            <label style={labelStyle}>Project #{index + 1}</label>
+        <div key={index} style={{ ...listItemStyle, display: 'flex', flexDirection: 'column', height: '100%' }}>
+          <div style={{ ...listHeaderStyle, marginBottom: '12px' }}>
+            <label style={{ ...labelStyle, color: 'var(--accent-primary)' }}>Project #{index + 1}</label>
             {projects.length > 1 && (
               <button style={removeBtnStyle} onClick={() => removeProject(index)}>
                 <Trash2 size={14} />
               </button>
             )}
           </div>
-          <input 
-            type="text" 
-            placeholder="Project Title" 
-            style={{ ...inputStyle, marginBottom: '8px' }}
-          />
-          <textarea 
-            placeholder="Brief description of the project and your role..." 
-            style={{ ...textareaStyle, minHeight: '80px' }}
-            value={proj}
-            onChange={(e) => updateProject(index, e.target.value)}
-          />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
+            <input 
+              type="text" 
+              placeholder="Project Title" 
+              style={inputStyle}
+            />
+            <textarea 
+              placeholder="Brief description of the project and your role..." 
+              style={{ ...textareaStyle, flex: 1, minHeight: '100px' }}
+              value={proj}
+              onChange={(e) => updateProject(index, e.target.value)}
+            />
+          </div>
         </div>
       ))}
-      <Button variant="outline" onClick={addProject} style={addBtnStyle}>
-        <Plus size={16} /> Add Another Project
+      <Button 
+        variant="outline" 
+        onClick={addProject} 
+        style={{ ...addBtnStyle, height: '100%', minHeight: '180px', borderStyle: 'dashed', gridColumn: 'span 1' }}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+          <Plus size={24} />
+          <span>Add Project</span>
+        </div>
       </Button>
     </div>
   );
 };
 
 const OrganisationStep = () => {
-  const [orgs, setOrgs] = useState<string[]>(['']);
+  const [orgs, setOrgs] = useState<string[]>(['', '', '']); // Default to 3 affiliated orgs
   const addOrg = () => setOrgs([...orgs, '']);
   const removeOrg = (index: number) => {
     const newOrgs = [...orgs];
     newOrgs.splice(index, 1);
+    setOrgs(newOrgs);
+  };
+  const updateOrg = (index: number, value: string) => {
+    const newOrgs = [...orgs];
+    newOrgs[index] = value;
     setOrgs(newOrgs);
   };
 
@@ -448,28 +462,36 @@ const OrganisationStep = () => {
         <input type="text" placeholder="Current Company or Institution" style={inputStyle} />
       </div>
       
-      <div style={{ marginTop: '16px' }}>
+      <div style={inputGroupStyle}>
         <label style={labelStyle}>Affiliated Organisations</label>
-        {orgs.map((org, index) => (
-          <div key={index} style={{ ...listItemStyle, marginTop: '12px' }}>
-            <div style={listHeaderStyle}>
-              <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>Affiliation #{index + 1}</span>
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+          {orgs.map((org, index) => (
+            <div key={index} style={{ position: 'relative' }}>
+              <input 
+                type="text" 
+                placeholder={`Affiliation #${index + 1}`} 
+                style={{ ...inputStyle, paddingRight: '40px' }}
+                value={org}
+                onChange={(e) => updateOrg(index, e.target.value)}
+              />
               {orgs.length > 1 && (
-                <button style={removeBtnStyle} onClick={() => removeOrg(index)}>
-                  <Trash2 size={14} />
+                <button 
+                  style={{ ...removeBtnStyle, position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none' }} 
+                  onClick={() => removeOrg(index)}
+                >
+                  <Trash2 size={14} color="#ef4444" />
                 </button>
               )}
             </div>
-            <input 
-              type="text" 
-              placeholder="Organisation Name" 
-              style={inputStyle}
-            />
-          </div>
-        ))}
-        <Button variant="outline" onClick={addOrg} style={{ ...addBtnStyle, marginTop: '12px' }}>
-          <Plus size={16} /> Add Affiliation
-        </Button>
+          ))}
+          <Button 
+            variant="outline" 
+            onClick={addOrg} 
+            style={{ borderStyle: 'dashed', height: '42px' }}
+          >
+            <Plus size={14} /> Add More
+          </Button>
+        </div>
       </div>
     </div>
   );
@@ -576,7 +598,7 @@ const mainStyle: React.CSSProperties = {
 
 const contentWrapperStyle: React.CSSProperties = {
   width: '100%',
-  maxWidth: '640px',
+  maxWidth: '800px',
 };
 
 const formGridStyle: React.CSSProperties = {
