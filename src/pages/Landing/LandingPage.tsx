@@ -9,7 +9,12 @@ export const LandingPage: React.FC = () => {
   return (
     <div style={landingStyle}>
       {/* Navbar */}
-      <nav style={navStyle}>
+      <motion.nav 
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.6, type: 'spring' }}
+        style={navStyle}
+      >
         <div style={logoStyle}>
           <img src={logo} alt="PATHEW Logo" style={{ height: '40px', objectFit: 'contain' }} />
         </div>
@@ -22,15 +27,15 @@ export const LandingPage: React.FC = () => {
           <Link to="/login"><Button variant="ghost">Login</Button></Link>
           <Link to="/signup"><Button>Get Started</Button></Link>
         </div>
-      </nav>
+      </motion.nav>
 
       {/* Hero Section */}
       <header style={heroSectionStyle}>
         <div style={heroBackgroundGlow}></div>
         <motion.div 
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          initial={{ opacity: 0, x: -50 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
           style={heroContentStyle}
         >
           <Badge text="Powered by Pathew Assistance" />
@@ -43,24 +48,33 @@ export const LandingPage: React.FC = () => {
           </p>
           <div style={heroActionsStyle}>
             <Link to="/signup">
-              <Button size="lg" style={{ gap: '12px', padding: '16px 32px' }}>
-                Create Your Profile <ArrowRight size={20} />
-              </Button>
+              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                <Button size="lg" style={{ gap: '12px', padding: '16px 32px' }}>
+                  Create Your Profile <ArrowRight size={20} />
+                </Button>
+              </motion.div>
             </Link>
-            <Button size="lg" variant="outline" style={{ padding: '16px 32px' }}>Watch Demo</Button>
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button size="lg" variant="outline" style={{ padding: '16px 32px' }}>Watch Demo</Button>
+            </motion.div>
           </div>
           
-          <div style={statsRowStyle}>
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8 }}
+            style={statsRowStyle}
+          >
             <StatItem count="50k+" label="Opportunities" />
             <StatItem count="98%" label="Match Accuracy" />
             <StatItem count="120+" label="Countries" />
-          </div>
+          </motion.div>
         </motion.div>
         
         <motion.div 
           initial={{ opacity: 0, scale: 0.9, x: 50 }}
           animate={{ opacity: 1, scale: 1, x: 0 }}
-          transition={{ duration: 1, delay: 0.2 }}
+          transition={{ duration: 1, delay: 0.2, type: 'spring' }}
           style={heroImageContainerStyle}
         >
           <div style={heroImagePlaceholderStyle}>
@@ -71,8 +85,11 @@ export const LandingPage: React.FC = () => {
             />
             <div style={heroImageOverlayStyle}>
               <motion.div 
-                animate={{ y: [0, -10, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                animate={{ 
+                  y: [0, -15, 0],
+                  rotate: [0, 1, 0]
+                }}
+                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
                 style={floatingCardStyle}
               >
                 <Zap size={24} color="var(--accent-primary)" />
@@ -88,65 +105,80 @@ export const LandingPage: React.FC = () => {
 
       {/* Features Section */}
       <section id="features" style={featuresSectionStyle}>
-        <div style={sectionHeaderStyle}>
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.6 }}
+          style={sectionHeaderStyle}
+        >
           <h2 style={sectionTitleStyle}>Why Professionals Choose PATHEW</h2>
           <p style={sectionSubtitleStyle}>Powerful tools designed to accelerate your career growth.</p>
-        </div>
-        <div style={featuresGridStyle}>
-          <FeatureCard 
-            icon={Globe} 
-            title="Global Discovery" 
-            description="Aggregated opportunities from thousands of premium sources worldwide."
-          />
-          <FeatureCard 
-            icon={Zap} 
-            title="Assistance Match Scoring" 
-            description="Know exactly how well you fit before you even click apply."
-          />
-          <FeatureCard 
-            icon={CheckCircle} 
-            title="Smart Document Generation" 
-            description="Auto-generate CVs and cover letters tailored to each opportunity."
-          />
-          <FeatureCard 
-            icon={Shield} 
-            title="Privacy First" 
-            description="Your data is encrypted and only shared when you choose to apply."
-          />
-        </div>
+        </motion.div>
+        
+        <motion.div 
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            show: {
+              opacity: 1,
+              transition: { staggerChildren: 0.15 }
+            }
+          }}
+          style={featuresGridStyle}
+        >
+          <FeatureCard icon={Globe} title="Global Discovery" description="Aggregated opportunities from thousands of premium sources worldwide." />
+          <FeatureCard icon={Zap} title="Assistance Match Scoring" description="Know exactly how well you fit before you even click apply." />
+          <FeatureCard icon={CheckCircle} title="Smart Document Generation" description="Auto-generate CVs and cover letters tailored to each opportunity." />
+          <FeatureCard icon={Shield} title="Privacy First" description="Your data is encrypted and only shared when you choose to apply." />
+        </motion.div>
       </section>
 
       {/* How It Works */}
       <section id="how-it-works" style={howItWorksSectionStyle}>
-        <div style={sectionHeaderStyle}>
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          style={sectionHeaderStyle}
+        >
           <h2 style={sectionTitleStyle}>How it Works</h2>
           <p style={sectionSubtitleStyle}>Your journey to a better career in three simple steps.</p>
-        </div>
-        <div style={stepsContainerStyle}>
-          <StepItem 
-            number="01" 
-            title="Complete Your Profile" 
-            description="Share your story, achievements, and goals through our intuitive onboarding wizard." 
-          />
-          <StepItem 
-            number="02" 
-            title="Get Matched" 
-            description="Our Assistance engine scans thousands of opportunities to find your perfect fit." 
-          />
-          <StepItem 
-            number="03" 
-            title="Apply with Confidence" 
-            description="Use smart-generated documents to stand out and land your dream role." 
-          />
-        </div>
+        </motion.div>
+        
+        <motion.div 
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true }}
+          variants={{
+            hidden: { opacity: 0 },
+            show: {
+              opacity: 1,
+              transition: { staggerChildren: 0.2 }
+            }
+          }}
+          style={stepsContainerStyle}
+        >
+          <StepItem number="01" title="Complete Your Profile" description="Share your story, achievements, and goals through our intuitive onboarding wizard." />
+          <StepItem number="02" title="Get Matched" description="Our Assistance engine scans thousands of opportunities to find your perfect fit." />
+          <StepItem number="03" title="Apply with Confidence" description="Use smart-generated documents to stand out and land your dream role." />
+        </motion.div>
       </section>
 
       {/* Pricing Section */}
       <section id="pricing" style={pricingSectionStyle}>
-        <div style={sectionHeaderStyle}>
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          style={sectionHeaderStyle}
+        >
           <h2 style={sectionTitleStyle}>Simple, Transparent Pricing</h2>
           <p style={sectionSubtitleStyle}>Choose the plan that fits your professional needs.</p>
-        </div>
+        </motion.div>
+        
         <div style={pricingGridStyle}>
           <PricingCard 
             title="Free" 
@@ -189,9 +221,9 @@ export const LandingPage: React.FC = () => {
         <div style={footerBottomStyle}>
           <p>© 2024 PATHEW. All rights reserved.</p>
           <div style={socialLinksStyle}>
-            <span>Twitter</span>
-            <span>LinkedIn</span>
-            <span>GitHub</span>
+            <SocialIcon label="Twitter" />
+            <SocialIcon label="LinkedIn" />
+            <SocialIcon label="GitHub" />
           </div>
         </div>
       </footer>
@@ -201,44 +233,75 @@ export const LandingPage: React.FC = () => {
 
 // Sub-components
 const Badge = ({ text }: { text: string }) => (
-  <div style={badgeStyle}>
+  <motion.div 
+    initial={{ opacity: 0, y: -20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: 0.5 }}
+    style={badgeStyle}
+  >
     <div style={badgeDotStyle}></div>
     <span>{text}</span>
-  </div>
+  </motion.div>
 );
 
 const FeatureCard = ({ icon: Icon, title, description }: any) => (
-  <div style={featureCardStyle}>
+  <motion.div 
+    variants={{
+      hidden: { opacity: 0, y: 20 },
+      show: { opacity: 1, y: 0 }
+    }}
+    whileHover={{ y: -10, borderColor: 'var(--accent-primary)', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}
+    style={featureCardStyle}
+  >
     <div style={featureIconWrapperStyle}>
       <Icon size={24} color="var(--accent-primary)" />
     </div>
     <h3 style={{ marginBottom: '12px', fontSize: '1.25rem', fontWeight: 700 }}>{title}</h3>
     <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>{description}</p>
-  </div>
+  </motion.div>
 );
 
 const StatItem = ({ count, label }: { count: string, label: string }) => (
   <div style={statItemStyle}>
-    <div style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>{count}</div>
+    <motion.div 
+      initial={{ scale: 0.8 }}
+      whileInView={{ scale: 1 }}
+      style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}
+    >
+      {count}
+    </motion.div>
     <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{label}</div>
   </div>
 );
 
 const StepItem = ({ number, title, description }: { number: string, title: string, description: string }) => (
-  <div style={stepItemCardStyle}>
+  <motion.div 
+    variants={{
+      hidden: { opacity: 0, scale: 0.9 },
+      show: { opacity: 1, scale: 1 }
+    }}
+    whileHover={{ scale: 1.02 }}
+    style={stepItemCardStyle}
+  >
     <div style={stepNumberStyle}>{number}</div>
     <h3 style={{ marginBottom: '12px', fontSize: '1.5rem', fontWeight: 700 }}>{title}</h3>
     <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>{description}</p>
-  </div>
+  </motion.div>
 );
 
 const PricingCard = ({ title, price, features, isPopular }: any) => (
-  <div style={{
-    ...pricingCardStyle,
-    borderColor: isPopular ? 'var(--accent-primary)' : 'var(--border-color)',
-    transform: isPopular ? 'scale(1.05)' : 'scale(1)',
-    zIndex: isPopular ? 1 : 0
-  }}>
+  <motion.div 
+    initial={{ opacity: 0, y: 30 }}
+    whileInView={{ opacity: 1, y: 0 }}
+    viewport={{ once: true }}
+    whileHover={{ y: -15 }}
+    style={{
+      ...pricingCardStyle,
+      borderColor: isPopular ? 'var(--accent-primary)' : 'var(--border-color)',
+      boxShadow: isPopular ? '0 30px 60px -15px rgba(245, 158, 11, 0.2)' : 'none',
+      zIndex: isPopular ? 1 : 0
+    }}
+  >
     {isPopular && <div style={popularBadgeStyle}>Most Popular</div>}
     <h3 style={{ fontSize: '1.25rem', marginBottom: '8px' }}>{title}</h3>
     <div style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '24px' }}>
@@ -252,7 +315,16 @@ const PricingCard = ({ title, price, features, isPopular }: any) => (
       ))}
     </ul>
     <Button variant={isPopular ? 'primary' : 'outline'} style={{ width: '100%' }}>Get Started</Button>
-  </div>
+  </motion.div>
+);
+
+const SocialIcon = ({ label }: { label: string }) => (
+  <motion.span 
+    whileHover={{ color: 'var(--accent-primary)', y: -2 }}
+    style={{ cursor: 'pointer', transition: 'color 0.2s ease' }}
+  >
+    {label}
+  </motion.span>
 );
 
 const FooterCol = ({ title, links }: { title: string, links: string[] }) => (
