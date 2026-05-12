@@ -239,6 +239,30 @@ export const LandingPage: React.FC = () => {
             question="How does the smart document generation work?" 
             answer="Based on the specific requirements of an opportunity, our engine tailors your CV and cover letter to highlight your most relevant skills." 
           />
+          <FAQItem 
+            question="Can I export my generated documents?" 
+            answer="Yes, all generated CVs, cover letters, and proposals can be exported as professional PDF or Word documents with one click." 
+          />
+          <FAQItem 
+            question="What types of opportunities are available?" 
+            answer="We aggregate fellowships, grants, scholarships, and professional roles from premium global sources across all sectors." 
+          />
+          <FAQItem 
+            question="How often are new opportunities added?" 
+            answer="Our discovery engine updates the database every 6 hours to ensure you never miss a deadline for a high-impact role." 
+          />
+          <FAQItem 
+            question="Can I manage multiple applications at once?" 
+            answer="Yes, the dashboard provides a centralized tracker to manage the status of all your active, saved, and submitted applications." 
+          />
+          <FAQItem 
+            question="Do you offer team or enterprise plans?" 
+            answer="We do! Our Enterprise plan includes team collaboration tools, custom branding for documents, and dedicated account management." 
+          />
+          <FAQItem 
+            question="How do I cancel my subscription?" 
+            answer="You can manage or cancel your subscription at any time directly from the Settings page. There are no long-term contracts." 
+          />
         </div>
       </section>
 
