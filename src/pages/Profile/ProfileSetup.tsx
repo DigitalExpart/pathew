@@ -1,7 +1,22 @@
 import React, { useState } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { Sparkles, User, BookOpen, Briefcase, Target, ChevronRight, ChevronLeft, Award } from 'lucide-react';
+import { 
+  Sparkles, 
+  User, 
+  BookOpen, 
+  Briefcase, 
+  Target, 
+  ChevronRight, 
+  ChevronLeft, 
+  Award,
+  Layers,
+  Building,
+  FileUp,
+  Plus,
+  Trash2,
+  Upload
+} from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAssistance } from '../../context/AssistanceContext';
 
@@ -27,6 +42,9 @@ const steps = [
   { id: 'experience', title: 'Experience', icon: Briefcase },
   { id: 'goals', title: 'Goals', icon: Target },
   { id: 'achievements', title: 'Achievements', icon: Award },
+  { id: 'projects', title: 'Projects', icon: Layers },
+  { id: 'organisation', title: 'Organisation', icon: Building },
+  { id: 'portfolio', title: 'Portfolio', icon: FileUp },
 ];
 
 export const ProfileSetup: React.FC = () => {
@@ -89,6 +107,9 @@ export const ProfileSetup: React.FC = () => {
             {currentStep === 2 && <ExperienceStep />}
             {currentStep === 3 && <GoalsStep />}
             {currentStep === 4 && <AchievementStep />}
+            {currentStep === 5 && <ProjectsStep />}
+            {currentStep === 6 && <OrganisationStep />}
+            {currentStep === 7 && <PortfolioStep />}
 
             <div style={actionsStyle}>
               <Button 
@@ -312,6 +333,119 @@ const AchievementStep = () => {
   );
 };
 
+const ProjectsStep = () => {
+  const [projects, setProjects] = useState<string[]>(['']);
+  const addProject = () => setProjects([...projects, '']);
+  const removeProject = (index: number) => {
+    const newProjects = [...projects];
+    newProjects.splice(index, 1);
+    setProjects(newProjects);
+  };
+  const updateProject = (index: number, value: string) => {
+    const newProjects = [...projects];
+    newProjects[index] = value;
+    setProjects(newProjects);
+  };
+
+  return (
+    <div style={formGridStyle}>
+      {projects.map((proj, index) => (
+        <div key={index} style={listItemStyle}>
+          <div style={listHeaderStyle}>
+            <label style={labelStyle}>Project #{index + 1}</label>
+            {projects.length > 1 && (
+              <button style={removeBtnStyle} onClick={() => removeProject(index)}>
+                <Trash2 size={14} />
+              </button>
+            )}
+          </div>
+          <input 
+            type="text" 
+            placeholder="Project Title" 
+            style={{ ...inputStyle, marginBottom: '8px' }}
+          />
+          <textarea 
+            placeholder="Brief description of the project and your role..." 
+            style={{ ...textareaStyle, minHeight: '80px' }}
+            value={proj}
+            onChange={(e) => updateProject(index, e.target.value)}
+          />
+        </div>
+      ))}
+      <Button variant="outline" onClick={addProject} style={addBtnStyle}>
+        <Plus size={16} /> Add Another Project
+      </Button>
+    </div>
+  );
+};
+
+const OrganisationStep = () => {
+  const [orgs, setOrgs] = useState<string[]>(['']);
+  const addOrg = () => setOrgs([...orgs, '']);
+  const removeOrg = (index: number) => {
+    const newOrgs = [...orgs];
+    newOrgs.splice(index, 1);
+    setOrgs(newOrgs);
+  };
+
+  return (
+    <div style={formGridStyle}>
+      <div style={inputGroupStyle}>
+        <label style={labelStyle}>Primary Organisation</label>
+        <input type="text" placeholder="Current Company or Institution" style={inputStyle} />
+      </div>
+      
+      <div style={{ marginTop: '16px' }}>
+        <label style={labelStyle}>Affiliated Organisations</label>
+        {orgs.map((org, index) => (
+          <div key={index} style={{ ...listItemStyle, marginTop: '12px' }}>
+            <div style={listHeaderStyle}>
+              <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>Affiliation #{index + 1}</span>
+              {orgs.length > 1 && (
+                <button style={removeBtnStyle} onClick={() => removeOrg(index)}>
+                  <Trash2 size={14} />
+                </button>
+              )}
+            </div>
+            <input 
+              type="text" 
+              placeholder="Organisation Name" 
+              style={inputStyle}
+            />
+          </div>
+        ))}
+        <Button variant="outline" onClick={addOrg} style={{ ...addBtnStyle, marginTop: '12px' }}>
+          <Plus size={16} /> Add Affiliation
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+const PortfolioStep = () => (
+  <div style={formGridStyle}>
+    <div style={uploadContainerStyle}>
+      <div style={uploadIconStyle}>
+        <Upload size={32} color="var(--accent-primary)" />
+      </div>
+      <h3 style={{ fontSize: '1.125rem', marginBottom: '8px' }}>Upload your Portfolio</h3>
+      <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '24px', textAlign: 'center' }}>
+        Support for PDF, DOCX, and high-quality images. Max file size 10MB.
+      </p>
+      <input type="file" id="portfolio-upload" style={{ display: 'none' }} />
+      <Button onClick={() => document.getElementById('portfolio-upload')?.click()}>
+        <FileUp size={18} style={{ marginRight: '8px' }} />
+        Select Files
+      </Button>
+    </div>
+    
+    <div style={inputGroupStyle}>
+      <label style={labelStyle}>Portfolio Link (Optional)</label>
+      <input type="url" placeholder="https://yourportfolio.com" style={inputStyle} />
+    </div>
+  </div>
+);
+
 const GoalOption = ({ label }: { label: string }) => (
   <div style={goalOptionStyle}>
     <input type="checkbox" id={label} />
@@ -451,4 +585,60 @@ const goalOptionStyle: React.CSSProperties = {
   borderRadius: 'var(--radius-md)',
   border: '1px solid var(--border-color)',
   cursor: 'pointer',
+};
+
+const listItemStyle: React.CSSProperties = {
+  padding: '16px',
+  backgroundColor: 'var(--bg-secondary)',
+  borderRadius: 'var(--radius-lg)',
+  border: '1px solid var(--border-color)',
+};
+
+const listHeaderStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '12px',
+};
+
+const removeBtnStyle: React.CSSProperties = {
+  background: 'none',
+  border: 'none',
+  color: '#ef4444',
+  cursor: 'pointer',
+  padding: '4px',
+  borderRadius: '4px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  transition: 'background 0.2s',
+};
+
+const addBtnStyle: React.CSSProperties = {
+  width: '100%',
+  borderStyle: 'dashed',
+  marginTop: '8px',
+  gap: '8px',
+};
+
+const uploadContainerStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  padding: '40px',
+  backgroundColor: 'rgba(245, 158, 11, 0.02)',
+  border: '2px dashed var(--border-color)',
+  borderRadius: 'var(--radius-xl)',
+  marginBottom: '24px',
+};
+
+const uploadIconStyle: React.CSSProperties = {
+  width: '64px',
+  height: '64px',
+  backgroundColor: 'rgba(245, 158, 11, 0.1)',
+  borderRadius: '50%',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  marginBottom: '16px',
 };
