@@ -2,16 +2,11 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Play, 
-  CheckCircle, 
-  Target, 
   Users, 
   Zap, 
   Search, 
-  FileText, 
   Award,
-  Mail,
-  ArrowLeft,
-  ArrowRight
+  Mail
 } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
