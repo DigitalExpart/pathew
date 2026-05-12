@@ -17,9 +17,9 @@ import logo from '../../assets/images/logo.png';
 import { Link } from 'react-router-dom';
 
 // Team Images (Using absolute paths to generated artifacts)
-const team1 = 'file:///C:/Users/Shilley%20Pc/.gemini/antigravity/brain/0068f4c0-8b20-4cdc-bf1e-10e3acf79c97/team_member_1_1778619959522.png';
+const team1 = 'file:///C:/Users/Shilley%20Pc/.gemini/antigravity/brain/0068f4c0-8b20-4cdc-bf1e-10e3acf79c97/founder_headshot_1778620506067.png';
 const team2 = 'file:///C:/Users/Shilley%20Pc/.gemini/antigravity/brain/0068f4c0-8b20-4cdc-bf1e-10e3acf79c97/team_member_2_1778619980682.png';
-const team3 = 'file:///C:/Users/Shilley%20Pc/.gemini/antigravity/brain/0068f4c0-8b20-4cdc-bf1e-10e3acf79c97/team_member_3_1778620007301.png';
+const team3 = 'file:///C:/Users/Shilley%20Pc/.gemini/antigravity/brain/0068f4c0-8b20-4cdc-bf1e-10e3acf79c97/growth_manager_headshot_1778620524895.png';
 
 export const HowItWorksPage: React.FC = () => {
   return (
@@ -158,21 +158,21 @@ export const HowItWorksPage: React.FC = () => {
           <div style={teamGridStyle}>
             <TeamMember 
               image={team1} 
-              name="Marcus Chen" 
-              role="Chief Executive Officer" 
-              desc="Former UNDP strategist with a passion for democratizing global opportunity access."
+              name="Julieth Agbo" 
+              role="Founder" 
+              desc="The visionary behind PATHEW, dedicated to breaking down geographical barriers for talent worldwide."
             />
             <TeamMember 
               image={team2} 
               name="Sarah Jenkins" 
-              role="Chief Technology Officer" 
-              desc="AI systems architect specializing in NLP and automated document optimization."
+              role="Head of Product" 
+              desc="Product strategist focused on building intuitive AI tools that empower professional growth."
             />
             <TeamMember 
               image={team3} 
-              name="Dr. Robert Vogel" 
-              role="Head of Strategy" 
-              desc="20+ years experience in international grant management and fellowship design."
+              name="Marcus Chen" 
+              role="Growth Manager" 
+              desc="Strategic lead for global expansion, ensuring the PATHEW Assistant reaches every corner of the globe."
             />
           </div>
         </div>
