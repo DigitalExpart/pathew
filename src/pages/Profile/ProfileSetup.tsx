@@ -78,17 +78,23 @@ export const ProfileSetup: React.FC = () => {
               const isFirst = idx === 0;
               const isCurrent = idx === currentStep;
               const isPast = idx < currentStep;
-              const isNext = idx === currentStep + 1;
-              const isRecentPast = idx >= currentStep - 2 && idx < currentStep;
+              
+              // Define a window of 5 steps around the current step
+              // We want to show a few before and a few after
+              const windowSize = 5;
+              const startWindow = Math.max(0, Math.min(currentStep - 1, steps.length - windowSize));
+              const endWindow = startWindow + windowSize;
+              
+              const isInWindow = idx >= startWindow && idx < endWindow;
 
-              // Logic: Always show Step 1. Show recent 2 steps. Show current. Show next hint.
-              const shouldRender = isFirst || isCurrent || isNext || isRecentPast;
+              // Logic: Always show Step 1. Show the window of 5 steps.
+              const shouldRender = isFirst || isInWindow;
               if (!shouldRender) return null;
 
               return (
                 <React.Fragment key={step.id}>
-                  {/* Line before step if it's not the first one rendered in this view */}
-                  {((isCurrent && !isFirst && !isRecentPast) || (isRecentPast && idx === currentStep - 2 && !isFirst)) && (
+                  {/* Line before step if it's the first one rendered in this view and it's not the actual first step */}
+                  {idx === startWindow && idx > 0 && !isFirst && (
                     <motion.div 
                       initial={{ width: 0, opacity: 0 }}
                       animate={{ width: 40, opacity: 0.3 }}
@@ -100,7 +106,7 @@ export const ProfileSetup: React.FC = () => {
                     layout
                     initial={{ opacity: 0, scale: 0.8, x: 20 }}
                     animate={{ 
-                      opacity: isNext ? 0.4 : 1, 
+                      opacity: idx > currentStep ? 0.4 : 1, 
                       scale: isCurrent ? 1.1 : 1, 
                       x: 0 
                     }}
@@ -137,10 +143,10 @@ export const ProfileSetup: React.FC = () => {
                   </motion.div>
 
                   {/* Standard Line between consecutive rendered steps */}
-                  {( (isRecentPast && (idx === currentStep - 1 || idx === currentStep - 2)) || (isCurrent && isNext) ) && (
+                  {idx < steps.length - 1 && ( (idx >= startWindow && idx < endWindow - 1) || (isFirst && startWindow === 1) ) && (
                     <motion.div 
                       initial={{ width: 0, opacity: 0 }}
-                      animate={{ width: 32, opacity: idx < currentStep ? 0.6 : 1 }}
+                      animate={{ width: 32, opacity: idx < currentStep ? 0.6 : 0.2 }}
                       style={stepLineStyle}
                     />
                   )}
