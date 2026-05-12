@@ -61,9 +61,9 @@ export const Sidebar: React.FC = () => {
 
   return (
     <aside style={sidebarStyle}>
-      <div style={logoContainerStyle}>
+      <Link to="/" style={logoContainerStyle}>
         <img src={logo} alt="PATHEW Logo" style={{ height: '40px', objectFit: 'contain' }} />
-      </div>
+      </Link>
 
       <nav style={navStyle}>
         {navGroups.map((group, idx) => (

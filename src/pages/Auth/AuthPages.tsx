@@ -20,9 +20,9 @@ export const LoginPage: React.FC = () => {
       </Link>
       
       <div style={authContentStyle}>
-        <div style={logoWrapperStyle}>
+        <Link to="/" style={logoWrapperStyle}>
           <img src={logo} alt="PATHEW Logo" style={{ height: '48px', objectFit: 'contain' }} />
-        </div>
+        </Link>
 
         <Card style={{ padding: '40px' }}>
           <h2 style={{ marginBottom: '8px' }}>Welcome back</h2>
@@ -159,9 +159,9 @@ export const SignUpPage: React.FC = () => {
       </Link>
       
       <div style={authContentStyle}>
-        <div style={logoWrapperStyle}>
+        <Link to="/" style={logoWrapperStyle}>
           <img src={logo} alt="PATHEW Logo" style={{ height: '48px', objectFit: 'contain' }} />
-        </div>
+        </Link>
 
         <Card style={{ padding: '40px' }}>
           <h2 style={{ marginBottom: '8px' }}>Create an account</h2>
