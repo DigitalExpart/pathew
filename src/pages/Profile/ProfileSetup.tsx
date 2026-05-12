@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { Sparkles, User, BookOpen, Briefcase, Target, ChevronRight, ChevronLeft } from 'lucide-react';
+import { Sparkles, User, BookOpen, Briefcase, Target, ChevronRight, ChevronLeft, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAI } from '../../context/AIContext';
 
@@ -26,6 +26,7 @@ const steps = [
   { id: 'education', title: 'Education', icon: BookOpen },
   { id: 'experience', title: 'Experience', icon: Briefcase },
   { id: 'goals', title: 'Goals', icon: Target },
+  { id: 'achievements', title: 'Achievements', icon: Award },
 ];
 
 export const ProfileSetup: React.FC = () => {
@@ -87,6 +88,7 @@ export const ProfileSetup: React.FC = () => {
             {currentStep === 1 && <EducationStep />}
             {currentStep === 2 && <ExperienceStep />}
             {currentStep === 3 && <GoalsStep />}
+            {currentStep === 4 && <AchievementStep />}
 
             <div style={actionsStyle}>
               <Button 
@@ -247,6 +249,36 @@ const GoalsStep = () => {
           />
         </div>
       )}
+    </div>
+  );
+};
+
+const AchievementStep = () => {
+  const { openAIAssistant } = useAI();
+  const [achievements, setAchievements] = useState('');
+
+  return (
+    <div style={formGridStyle}>
+      <div style={inputGroupStyle}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+          <label style={labelStyle}>Your Key Achievements</label>
+          <button 
+            style={aiLinkButtonStyle}
+            onClick={() => openAIAssistant('Achievement Assistant', ['Make my achievements more impactful', 'Highlight my leadership skills', 'Polish this list'], (text) => setAchievements(text), { achievements })}
+          >
+            <Sparkles size={14} /> Quantify with AI
+          </button>
+        </div>
+        <textarea 
+          placeholder="List your key accomplishments, awards, certifications, or major milestones..." 
+          style={textareaStyle}
+          value={achievements}
+          onChange={(e) => setAchievements(e.target.value)}
+        />
+        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '8px' }}>
+          Tip: Use numbers where possible (e.g., "Increased sales by 20%").
+        </p>
+      </div>
     </div>
   );
 };
