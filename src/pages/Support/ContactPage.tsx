@@ -5,6 +5,7 @@ import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import logo from '../../assets/images/logo.png';
 import { Link } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 
 export const ContactPage: React.FC = () => {
   const [formState, setFormState] = useState({
@@ -14,11 +15,33 @@ export const ContactPage: React.FC = () => {
     message: ''
   });
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitted(true);
-    // Simulation of form submission
+    setIsSubmitting(true);
+    
+    try {
+      const { error } = await supabase
+        .from('contacts')
+        .insert([
+          { 
+            name: formState.name, 
+            email: formState.email, 
+            subject: formState.subject, 
+            message: formState.message 
+          }
+        ]);
+
+      if (error) throw error;
+      
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error('Error submitting form:', error);
+      alert('There was an error sending your message. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -114,8 +137,8 @@ export const ContactPage: React.FC = () => {
                         onChange={(e) => setFormState({...formState, message: e.target.value})}
                       />
                     </div>
-                    <Button type="submit" style={{ width: '100%', gap: '10px' }}>
-                      <Send size={18} /> Send Message
+                    <Button type="submit" disabled={isSubmitting} style={{ width: '100%', gap: '10px' }}>
+                      <Send size={18} /> {isSubmitting ? 'Sending...' : 'Send Message'}
                     </Button>
                   </form>
                 ) : (
