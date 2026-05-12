@@ -661,7 +661,7 @@ const heroSectionStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   gap: '80px',
-  maxWidth: '1400px',
+  maxWidth: '1600px',
   margin: '0 auto',
   position: 'relative',
 };
@@ -717,13 +717,13 @@ const statItemStyle: React.CSSProperties = {
 };
 
 const heroImageContainerStyle: React.CSSProperties = {
-  flex: 1,
+  flex: 1.5,
   position: 'relative',
 };
 
 const heroImagePlaceholderStyle: React.CSSProperties = {
   width: '100%',
-  height: '600px',
+  height: '750px',
   backgroundColor: 'var(--bg-secondary)',
   borderRadius: '32px',
   border: '1px solid var(--border-color)',
