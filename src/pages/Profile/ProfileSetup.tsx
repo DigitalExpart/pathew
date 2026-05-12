@@ -208,19 +208,48 @@ const ExperienceStep = () => {
   );
 };
 
-const GoalsStep = () => (
-  <div style={formGridStyle}>
-    <div style={inputGroupStyle}>
-      <label style={labelStyle}>What are you looking for?</label>
-      <div style={goalsGridStyle}>
-        <GoalOption label="Full-time Roles" />
-        <GoalOption label="Contract Work" />
-        <GoalOption label="Freelance Projects" />
-        <GoalOption label="Leadership Positions" />
+const GoalsStep = () => {
+  const [showManual, setShowManual] = useState(false);
+  const [manualGoal, setManualGoal] = useState('');
+
+  return (
+    <div style={formGridStyle}>
+      <div style={inputGroupStyle}>
+        <label style={labelStyle}>What are you looking for?</label>
+        <div style={goalsGridStyle}>
+          <GoalOption label="Full-time Roles" />
+          <GoalOption label="Contract Work" />
+          <GoalOption label="Freelance Projects" />
+          <GoalOption label="Fellowships" />
+          <GoalOption label="Grants" />
+          <GoalOption label="Leadership Positions" />
+          <div style={{ ...goalOptionStyle, gridColumn: 'span 2' }}>
+             <input 
+              type="checkbox" 
+              id="manual" 
+              checked={showManual} 
+              onChange={(e) => setShowManual(e.target.checked)} 
+            />
+            <label htmlFor="manual" style={{ flex: 1 }}>Others (Add manually)</label>
+          </div>
+        </div>
       </div>
+      
+      {showManual && (
+        <div style={inputGroupStyle}>
+          <label style={labelStyle}>Specify your custom goal</label>
+          <input 
+            type="text" 
+            placeholder="e.g. Academic Research, Mentorship..." 
+            style={inputStyle}
+            value={manualGoal}
+            onChange={(e) => setManualGoal(e.target.value)}
+          />
+        </div>
+      )}
     </div>
-  </div>
-);
+  );
+};
 
 const GoalOption = ({ label }: { label: string }) => (
   <div style={goalOptionStyle}>
