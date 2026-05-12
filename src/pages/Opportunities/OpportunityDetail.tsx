@@ -21,6 +21,7 @@ export const OpportunityDetail: React.FC = () => {
   const { id } = useParams();
   const opp = mockOpportunities.find(o => o.id === id) || mockOpportunities[0];
   const { openAIAssistant } = useAI();
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const handleFitAnalysis = () => {
     openAIAssistant('Pathew Assistance', [
@@ -29,6 +30,19 @@ export const OpportunityDetail: React.FC = () => {
       'Identify my strengths and gaps',
       'Suggest next steps'
     ]);
+  };
+
+  const handleCreatePlan = (duration: string) => {
+    setIsModalOpen(false);
+    openAIAssistant('Pathew Assistance', [
+      `Generate a ${duration} preparation plan`,
+      `How to gain ${opp.missingRequirements[0]} in ${duration}`,
+      'Suggest resources for this plan'
+    ], undefined, {
+      duration,
+      opportunity: opp.title,
+      gaps: opp.missingRequirements
+    });
   };
 
   return (
@@ -134,13 +148,42 @@ export const OpportunityDetail: React.FC = () => {
               </p>
               <ul style={{ paddingLeft: '20px', fontSize: '0.875rem' }}>
                 {opp.missingRequirements.map((req, i) => (
-                  <li key={i} style={{ marginBottom: '4px' }}>{req}</li>
+                   <li key={i} style={{ marginBottom: '4px' }}>{req}</li>
                 ))}
               </ul>
+              <Button 
+                variant="primary" 
+                size="sm" 
+                style={{ marginTop: '20px', width: '100%', gap: '8px' }}
+                onClick={() => setIsModalOpen(true)}
+              >
+                Create a Plan
+              </Button>
             </Card>
           )}
         </div>
       </div>
+
+      {isModalOpen && (
+        <div style={modalOverlayStyle}>
+          <Card style={modalContentStyle}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+              <h3 style={{ fontSize: '1.25rem' }}>Preparation Plan</h3>
+              <Button variant="ghost" size="sm" onClick={() => setIsModalOpen(false)}>✕</Button>
+            </div>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
+              Select a duration for your tailored preparation plan to bridge the identified gaps.
+            </p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              {['Quick', '90-day', '180-day', '365-day'].map(duration => (
+                <Button key={duration} variant="outline" onClick={() => handleCreatePlan(duration)}>
+                  {duration}
+                </Button>
+              ))}
+            </div>
+          </Card>
+        </div>
+      )}
     </div>
   );
 };
@@ -366,4 +409,25 @@ const infoItemStyle: React.CSSProperties = {
   display: 'flex',
   gap: '12px',
   alignItems: 'center',
+};
+
+const modalOverlayStyle: React.CSSProperties = {
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  zIndex: 2000,
+  backdropFilter: 'blur(8px)',
+};
+
+const modalContentStyle: React.CSSProperties = {
+  width: '100%',
+  maxWidth: '450px',
+  padding: '32px',
+  animation: 'scaleIn 0.2s ease-out',
 };
