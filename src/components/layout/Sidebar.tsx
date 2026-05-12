@@ -49,6 +49,8 @@ const navGroups = [
   }
 ];
 
+import logo from '../../assets/images/logo.png';
+
 export const Sidebar: React.FC = () => {
   const navigate = useNavigate();
 
@@ -60,10 +62,7 @@ export const Sidebar: React.FC = () => {
   return (
     <aside style={sidebarStyle}>
       <div style={logoContainerStyle}>
-        <div style={logoIconStyle}>
-          <Sparkles size={20} color="var(--accent-primary)" />
-        </div>
-        <span style={logoTextStyle}>PATHEW</span>
+        <img src={logo} alt="PATHEW Logo" style={{ height: '40px', objectFit: 'contain' }} />
       </div>
 
       <nav style={navStyle}>

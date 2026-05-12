@@ -3,6 +3,7 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Sparkles, Mail, Lock, Globe, ArrowLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
+import logo from '../../assets/images/logo.png';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
@@ -20,8 +21,7 @@ export const LoginPage: React.FC = () => {
       
       <div style={authContentStyle}>
         <div style={logoWrapperStyle}>
-          <Sparkles size={32} color="var(--accent-primary)" />
-          <h1 style={{ fontSize: '1.75rem' }}>PATHEW</h1>
+          <img src={logo} alt="PATHEW Logo" style={{ height: '48px', objectFit: 'contain' }} />
         </div>
 
         <Card style={{ padding: '40px' }}>
@@ -98,8 +98,7 @@ export const SignUpPage: React.FC = () => {
       
       <div style={authContentStyle}>
         <div style={logoWrapperStyle}>
-          <Sparkles size={32} color="var(--accent-primary)" />
-          <h1 style={{ fontSize: '1.75rem' }}>PATHEW</h1>
+          <img src={logo} alt="PATHEW Logo" style={{ height: '48px', objectFit: 'contain' }} />
         </div>
 
         <Card style={{ padding: '40px' }}>

@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Button } from '../../components/ui/Button';
 import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import logo from '../../assets/images/logo.png';
 
 export const LandingPage: React.FC = () => {
   return (
@@ -10,8 +11,7 @@ export const LandingPage: React.FC = () => {
       {/* Navbar */}
       <nav style={navStyle}>
         <div style={logoStyle}>
-          <Sparkles size={24} color="var(--accent-primary)" />
-          <span>PATHEW</span>
+          <img src={logo} alt="PATHEW Logo" style={{ height: '40px', objectFit: 'contain' }} />
         </div>
         <div style={navLinksStyle}>
           <a href="#features">Features</a>
@@ -104,8 +104,7 @@ export const LandingPage: React.FC = () => {
       <footer style={footerStyle}>
         <div style={footerContentStyle}>
           <div style={logoStyle}>
-            <Sparkles size={20} color="var(--accent-primary)" />
-            <span>Assistance</span>
+            <img src={logo} alt="PATHEW Logo" style={{ height: '32px', objectFit: 'contain' }} />
           </div>
           <p style={{ color: 'var(--text-muted)', marginTop: '12px' }}>
             © 2024 PATHEW. All rights reserved.

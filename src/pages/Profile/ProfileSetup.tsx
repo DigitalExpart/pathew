@@ -47,6 +47,8 @@ const steps = [
   { id: 'portfolio', title: 'Portfolio', icon: FileUp },
 ];
 
+import logo from '../../assets/images/logo.png';
+
 export const ProfileSetup: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const navigate = useNavigate();
@@ -69,8 +71,7 @@ export const ProfileSetup: React.FC = () => {
     <div style={containerStyle}>
       <header style={headerStyle}>
         <div style={logoStyle}>
-          <Sparkles size={24} color="var(--accent-primary)" />
-          <span>PATHEW</span>
+          <img src={logo} alt="PATHEW Logo" style={{ height: '32px', objectFit: 'contain' }} />
         </div>
         <div style={stepperStyle}>
           {steps.map((step, idx) => (
