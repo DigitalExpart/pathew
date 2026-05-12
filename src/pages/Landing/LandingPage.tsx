@@ -236,6 +236,20 @@ export const LandingPage: React.FC = () => {
           <StepItem number="02" title="Get Matched" description="Our Assistant engine scans thousands of opportunities to find your perfect fit." />
           <StepItem number="03" title="Apply with Confidence" description="Use smart-generated documents to stand out and land your dream role." />
         </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.6 }}
+          style={{ textAlign: 'center', marginTop: '64px' }}
+        >
+          <Link to="/how-it-works">
+            <Button variant="outline" style={{ gap: '10px', padding: '16px 40px' }}>
+              Learn More <ArrowRight size={18} />
+            </Button>
+          </Link>
+        </motion.div>
       </section>
 
       {/* Comparison Section */}
