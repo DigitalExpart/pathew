@@ -255,30 +255,59 @@ const GoalsStep = () => {
 
 const AchievementStep = () => {
   const { openAIAssistant } = useAI();
-  const [achievements, setAchievements] = useState('');
+  const [achievements, setAchievements] = useState<string[]>(['']);
+
+  const addAchievement = () => setAchievements([...achievements, '']);
+  const removeAchievement = (index: number) => {
+    const newAchievements = [...achievements];
+    newAchievements.splice(index, 1);
+    setAchievements(newAchievements);
+  };
+  const updateAchievement = (index: number, value: string) => {
+    const newAchievements = [...achievements];
+    newAchievements[index] = value;
+    setAchievements(newAchievements);
+  };
 
   return (
     <div style={formGridStyle}>
-      <div style={inputGroupStyle}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-          <label style={labelStyle}>Your Key Achievements</label>
-          <button 
-            style={aiLinkButtonStyle}
-            onClick={() => openAIAssistant('Achievement Assistant', ['Make my achievements more impactful', 'Highlight my leadership skills', 'Polish this list'], (text) => setAchievements(text), { achievements })}
-          >
-            <Sparkles size={14} /> Quantify with AI
-          </button>
+      {achievements.map((ach, index) => (
+        <div key={index} style={{ ...inputGroupStyle, padding: '16px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <label style={labelStyle}>Achievement #{index + 1}</label>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <button 
+                style={aiLinkButtonStyle}
+                onClick={() => openAIAssistant('Achievement Assistant', ['Make this more impactful', 'Quantify this accomplishment'], (text) => updateAchievement(index, text), { achievement: ach })}
+              >
+                <Sparkles size={14} /> AI Polish
+              </button>
+              {achievements.length > 1 && (
+                <button 
+                  style={{ ...aiLinkButtonStyle, color: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.05)' }}
+                  onClick={() => removeAchievement(index)}
+                >
+                  Remove
+                </button>
+              )}
+            </div>
+          </div>
+          <textarea 
+            placeholder="e.g. Awarded 'Employee of the Year' for consistently exceeding sales targets by 25%..." 
+            style={{ ...textareaStyle, minHeight: '80px' }}
+            value={ach}
+            onChange={(e) => updateAchievement(index, e.target.value)}
+          />
         </div>
-        <textarea 
-          placeholder="List your key accomplishments, awards, certifications, or major milestones..." 
-          style={textareaStyle}
-          value={achievements}
-          onChange={(e) => setAchievements(e.target.value)}
-        />
-        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '8px' }}>
-          Tip: Use numbers where possible (e.g., "Increased sales by 20%").
-        </p>
-      </div>
+      ))}
+      
+      <Button 
+        variant="outline" 
+        onClick={addAchievement}
+        style={{ width: '100%', borderStyle: 'dashed', marginTop: '8px' }}
+      >
+        + Add another achievement
+      </Button>
     </div>
   );
 };
