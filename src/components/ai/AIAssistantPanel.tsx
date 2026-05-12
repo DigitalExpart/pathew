@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { X, Send, Sparkles, RefreshCw, Check, Trash2, History, AlertCircle } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { X, Send, Sparkles, RefreshCw, Check, Trash2, History, AlertCircle, Download } from 'lucide-react';
 import { useAI } from '../../context/AIContext';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
@@ -22,6 +22,7 @@ export const AIAssistantPanel: React.FC = () => {
   const [responses, setResponses] = useState<{ type: 'user' | 'ai', text: string, error?: boolean }[]>([]);
   const [history, setHistory] = useState<{ text: string, date: string }[]>([]);
   const [activeTab, setActiveTab] = useState<'chat' | 'history'>('chat');
+  const initialTriggerRef = useRef(false);
 
   useEffect(() => {
     if (isAIPanelOpen && responses.length === 0) {
@@ -29,8 +30,27 @@ export const AIAssistantPanel: React.FC = () => {
         type: 'ai', 
         text: `I'm your Pathew Assistant, ready to help with your ${aiContext}. I have access to your current document context. How can I assist you?` 
       }]);
+
+      // Auto-trigger for preparation plan
+      if (fullContextData?.duration && !initialTriggerRef.current) {
+        initialTriggerRef.current = true;
+        handleSend(`Generate a ${fullContextData.duration} preparation plan`);
+      }
     }
-  }, [isAIPanelOpen, aiContext]);
+
+    if (!isAIPanelOpen) {
+      initialTriggerRef.current = false;
+    }
+  }, [isAIPanelOpen, aiContext, fullContextData]);
+
+  const handleDownload = (text: string) => {
+    const element = document.createElement("a");
+    const file = new Blob([text.replace('[AI GENERATED SUCCESS] \n\n', '')], {type: 'text/plain'});
+    element.href = URL.createObjectURL(file);
+    element.download = "Pathew_Preparation_Plan.txt";
+    document.body.appendChild(element);
+    element.click();
+  };
 
   const handleSend = async (text: string = input) => {
     if (!text.trim() || isGenerating) return;
@@ -121,6 +141,14 @@ export const AIAssistantPanel: React.FC = () => {
                         onClick={() => handleInsert(res.text)}
                       >
                         <Check size={14} /> Insert
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        style={smallBtnStyle}
+                        onClick={() => handleDownload(res.text)}
+                      >
+                        <Download size={14} /> Download
                       </Button>
                       <Button variant="outline" size="sm" style={smallBtnStyle} onClick={() => handleSend(responses[i-1].text)}>
                         <RefreshCw size={14} /> Regenerate
