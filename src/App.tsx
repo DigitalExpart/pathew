@@ -47,6 +47,7 @@ function App() {
           <Route path="/grants" element={<Shell><OpportunityList /></Shell>} />
           <Route path="/jobs" element={<Shell><JobsPage /></Shell>} />
           <Route path="/opportunities/:id" element={<Shell><OpportunityDetail /></Shell>} />
+          <Route path="/career-profile" element={<Shell><ProfileSetup /></Shell>} />
           <Route path="/profile" element={<Shell><ProfilePage /></Shell>} />
           <Route path="/cv-builder" element={<Shell><CVBuilderPage /></Shell>} />
           <Route path="/cover-letter" element={<Shell><CoverLetterPage /></Shell>} />

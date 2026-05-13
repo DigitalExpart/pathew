@@ -44,7 +44,7 @@ const navGroups = [
     title: 'Account',
     items: [
       { icon: Wallet, label: 'Wallet & Credits', path: '/wallet' },
-      { icon: User, label: 'Profile', path: '/profile' },
+      { icon: User, label: 'Profile', path: '/career-profile' },
       { icon: Settings, label: 'Settings', path: '/settings' },
     ]
   }

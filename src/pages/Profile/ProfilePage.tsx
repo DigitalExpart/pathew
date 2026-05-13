@@ -280,7 +280,7 @@ export const ProfilePage: React.FC = () => {
                 variant="ghost" 
                 size="sm" 
                 style={{ marginTop: '16px', padding: 0 }}
-                onClick={() => navigate('/profile-setup')}
+                onClick={() => navigate('/career-profile')}
               >
                 Complete profile setup →
               </Button>
