@@ -309,8 +309,6 @@ const DocGenCard = ({ icon: Icon, title, desc, path }: any) => (
   </Link>
 );
 
-);
-
 const InfoItem = ({ icon: Icon, label, value }: any) => (
   <div style={infoItemStyle}>
     <Icon size={16} color="var(--text-muted)" />
@@ -451,25 +449,6 @@ const matchScoreTitleStyle: React.CSSProperties = {
   letterSpacing: '0.05em',
   color: 'var(--text-muted)',
   marginBottom: '20px',
-};
-
-const breakdownItemStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '12px',
-};
-
-const progressContainerStyle: React.CSSProperties = {
-  flex: 1,
-  height: '6px',
-  backgroundColor: 'var(--bg-primary)',
-  borderRadius: '3px',
-  overflow: 'hidden',
-};
-
-const progressFillStyle: React.CSSProperties = {
-  height: '100%',
-  backgroundColor: 'var(--accent-primary)',
 };
 
 const infoGridStyle: React.CSSProperties = {
