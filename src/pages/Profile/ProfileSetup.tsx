@@ -90,7 +90,7 @@ export const ProfileSetup: React.FC = () => {
     }
   }, [profile]);
 
-  const handleComplete = async () => {
+  const saveProgress = async () => {
     if (!user) return;
     setLoading(true);
     
@@ -111,22 +111,25 @@ export const ProfileSetup: React.FC = () => {
         .eq('id', user.id);
 
       if (error) throw error;
-      
       await refreshProfile();
-      navigate('/dashboard');
     } catch (error) {
       console.error('Error saving profile:', error);
-      alert('Failed to save profile. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleNext = () => {
+  const handleComplete = async () => {
+    await saveProgress();
+    navigate('/dashboard');
+  };
+
+  const handleNext = async () => {
+    await saveProgress();
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      handleComplete();
+      navigate('/dashboard');
     }
   };
 
@@ -251,7 +254,7 @@ export const ProfileSetup: React.FC = () => {
                 <ChevronLeft size={18} /> Back
               </Button>
               <Button onClick={handleNext} disabled={loading} style={{ gap: '8px' }}>
-                {loading ? 'Saving...' : currentStep === steps.length - 1 ? 'Complete Setup' : 'Continue'} 
+                {loading ? 'Saving...' : currentStep === steps.length - 1 ? 'Save and Complete' : 'Save and Continue'} 
                 {!loading && <ChevronRight size={18} />}
               </Button>
             </div>
