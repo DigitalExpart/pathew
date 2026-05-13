@@ -67,7 +67,12 @@ export const SavedOpportunities: React.FC = () => {
             <Bookmark size={48} color="var(--text-muted)" />
             <h2>No saved items yet</h2>
             <p>Explore opportunities and save the ones you're interested in.</p>
-            <Button style={{ marginTop: '16px' }}>Explore Opportunities</Button>
+            <Button 
+              style={{ marginTop: '16px' }}
+              onClick={() => navigate('/opportunities')}
+            >
+              Explore Opportunities
+            </Button>
           </div>
         ) : (
           savedOpps.map(opp => (
