@@ -289,6 +289,8 @@ export const OpportunityDetail: React.FC = () => {
           </Card>
         </div>
       )}
+        </>
+      )}
     </div>
   );
 };
