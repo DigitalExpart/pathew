@@ -13,7 +13,6 @@ import {
   Send
 } from 'lucide-react';
 import { useParams, Link } from 'react-router-dom';
-import { mockOpportunities } from '../../data/mockData';
 import { useAssistant } from '../../context/AssistantContext';
 import { Sparkles } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -310,14 +309,6 @@ const DocGenCard = ({ icon: Icon, title, desc, path }: any) => (
   </Link>
 );
 
-const BreakdownItem = ({ label, value }: { label: string, value: number }) => (
-  <div style={breakdownItemStyle}>
-    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{label}</span>
-    <div style={progressContainerStyle}>
-      <div style={{ ...progressFillStyle, width: `${value}%` }}></div>
-    </div>
-    <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>{value}%</span>
-  </div>
 );
 
 const InfoItem = ({ icon: Icon, label, value }: any) => (
@@ -460,31 +451,6 @@ const matchScoreTitleStyle: React.CSSProperties = {
   letterSpacing: '0.05em',
   color: 'var(--text-muted)',
   marginBottom: '20px',
-};
-
-const matchCircleLargeStyle: React.CSSProperties = {
-  width: '120px',
-  height: '120px',
-  borderRadius: '50%',
-  border: '6px solid var(--accent-primary)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  margin: '0 auto',
-  boxShadow: '0 0 20px var(--accent-glow)',
-};
-
-const matchValueLargeStyle: React.CSSProperties = {
-  fontSize: '2rem',
-  fontWeight: 800,
-  color: 'var(--accent-primary)',
-};
-
-const breakdownGridStyle: React.CSSProperties = {
-  marginTop: '32px',
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '16px',
 };
 
 const breakdownItemStyle: React.CSSProperties = {
