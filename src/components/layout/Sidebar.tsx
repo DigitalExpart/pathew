@@ -9,16 +9,19 @@ import {
   Bookmark, 
   Settings,
   LogOut,
-  Wallet
+  Wallet,
+  Clock
 } from 'lucide-react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import logo from '../../assets/images/logo.png';
 
 const navGroups = [
   {
     title: 'Pathway',
     items: [
       { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
+      { icon: Clock, label: 'Application Tracker', path: '/preparation' },
       { icon: Briefcase, label: 'Opportunities', path: '/opportunities' },
       { icon: Briefcase, label: 'Jobs', path: '/jobs' },
       { icon: Bookmark, label: 'Saved Items', path: '/saved' },
@@ -46,8 +49,6 @@ const navGroups = [
     ]
   }
 ];
-
-import logo from '../../assets/images/logo.png';
 
 export const Sidebar: React.FC = () => {
   const { signOut } = useAuth();

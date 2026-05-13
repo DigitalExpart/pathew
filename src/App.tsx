@@ -9,6 +9,7 @@ import { Dashboard } from './pages/Dashboard/Dashboard';
 import { OpportunityList } from './pages/Opportunities/OpportunityList';
 import { OpportunityDetail } from './pages/Opportunities/OpportunityDetail';
 import { ProfileSetup } from './pages/Profile/ProfileSetup';
+import { ProfilePage } from './pages/Profile/ProfilePage';
 import { CVBuilderPage, CoverLetterPage, ProposalPage } from './pages/Builders/Pages';
 import { WalletPage } from './pages/Credits/WalletPage';
 import { PricingPage } from './pages/Credits/PricingPage';
@@ -16,14 +17,12 @@ import { SavedOpportunities } from './pages/Opportunities/SavedOpportunities';
 import { JobsPage } from './pages/Opportunities/JobsPage';
 import { GrantBuilderPage } from './pages/Builders/GrantBuilderPage';
 import { SettingsPage } from './pages/Settings/SettingsPage';
-import { PrivacyPage } from './pages/Settings/PrivacyPage';
-import { AccountDeletionPage } from './pages/Settings/AccountDeletionPage';
-import { ConsentPage } from './pages/Settings/ConsentPage';
 import { TermsPage as PublicTermsPage } from './pages/Legal/TermsPage';
 import { PrivacyPage as PublicPrivacyPage } from './pages/Legal/PrivacyPage';
 import { ContactPage } from './pages/Support/ContactPage';
 import { HowItWorksPage } from './pages/Support/HowItWorksPage';
 import { NotificationsPage } from './pages/Notifications/NotificationsPage';
+import { PreparationPage } from './pages/Pathway/PreparationPage';
 
 function App() {
   return (
@@ -48,7 +47,7 @@ function App() {
           <Route path="/grants" element={<Shell><OpportunityList /></Shell>} />
           <Route path="/jobs" element={<Shell><JobsPage /></Shell>} />
           <Route path="/opportunities/:id" element={<Shell><OpportunityDetail /></Shell>} />
-          <Route path="/profile" element={<Shell><ProfileSetup /></Shell>} />
+          <Route path="/profile" element={<Shell><ProfilePage /></Shell>} />
           <Route path="/cv-builder" element={<Shell><CVBuilderPage /></Shell>} />
           <Route path="/cover-letter" element={<Shell><CoverLetterPage /></Shell>} />
           <Route path="/proposal" element={<Shell><ProposalPage /></Shell>} />
@@ -59,10 +58,8 @@ function App() {
           <Route path="/saved" element={<Shell><SavedOpportunities /></Shell>} />
           <Route path="/grant-builder" element={<Shell><GrantBuilderPage /></Shell>} />
           <Route path="/settings" element={<Shell><SettingsPage /></Shell>} />
-          <Route path="/privacy" element={<Shell><PrivacyPage /></Shell>} />
-          <Route path="/delete-account" element={<Shell><AccountDeletionPage /></Shell>} />
-          <Route path="/preferences" element={<Shell><ConsentPage /></Shell>} />
           <Route path="/notifications" element={<Shell><NotificationsPage /></Shell>} />
+          <Route path="/preparation" element={<Shell><PreparationPage /></Shell>} />
           
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />

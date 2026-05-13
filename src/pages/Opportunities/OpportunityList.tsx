@@ -119,7 +119,7 @@ export const OpportunityList: React.FC = () => {
             <Card key={opp.id} style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={cardHeaderStyle}>
               <div style={companyShortLogoStyle}>
-                {opp.company.charAt(0)}
+                {opp.company?.charAt(0) || 'O'}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
                 <div style={{ display: 'flex', gap: '8px' }}>

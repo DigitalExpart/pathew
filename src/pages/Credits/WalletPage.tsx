@@ -46,7 +46,9 @@ export const WalletPage: React.FC = () => {
             <div style={iconBoxStyle}>
               <Coins size={24} color="var(--accent-primary)" />
             </div>
-            <span style={planBadgeStyle}>Pro Plan</span>
+            <span style={planBadgeStyle}>
+              {profile?.subscription_plan ? `${profile.subscription_plan} Plan` : 'Free Plan'}
+            </span>
           </div>
           <div style={balanceContentStyle}>
             <p style={balanceLabelStyle}>Available Balance</p>

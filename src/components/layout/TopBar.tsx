@@ -70,11 +70,13 @@ export const TopBar: React.FC = () => {
           <div style={userProfileStyle} onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
             <div style={userInfoStyle}>
               <span style={userNameStyle}>{displayName}</span>
-              <span style={userRoleStyle}>{user ? 'Pro Member' : 'Guest'}</span>
+              <span style={userRoleStyle}>
+                {profile?.subscription_plan ? `${profile.subscription_plan} Member` : (user ? 'Explorer' : 'Guest')}
+              </span>
             </div>
             <div style={avatarWrapperStyle}>
-              {user?.user_metadata?.avatar_url ? (
-                <img src={user.user_metadata.avatar_url} alt={displayName} style={avatarStyle} />
+              {profile?.avatar_url || user?.user_metadata?.avatar_url ? (
+                <img src={profile?.avatar_url || user?.user_metadata?.avatar_url} alt={displayName} style={avatarStyle} />
               ) : (
                 <div style={avatarFallbackStyle}>
                   <UserCircle size={24} color="var(--accent-primary)" />
@@ -96,7 +98,7 @@ export const TopBar: React.FC = () => {
                   <LayoutDashboard size={18} /> Dashboard
                 </Link>
                 <Link to="/profile" style={dropdownItemStyle} onClick={() => setIsDropdownOpen(false)}>
-                  <UserCircle size={18} /> Profile
+                  <UserCircle size={18} /> Edit Profile
                 </Link>
                 <div style={dividerMenuStyle} />
                 <button onClick={handleLogout} style={logoutBtnStyle}>

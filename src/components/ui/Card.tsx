@@ -7,18 +7,21 @@ interface CardProps {
   style?: React.CSSProperties;
   glass?: boolean;
   icon?: React.ElementType;
+  onClick?: () => void;
 }
 
-export const Card: React.FC<CardProps> = ({ children, title, subtitle, style, glass, icon: Icon }) => {
+export const Card: React.FC<CardProps> = ({ children, title, subtitle, style, glass, icon: Icon, onClick }) => {
   return (
     <div 
       className={glass ? 'glass' : ''}
+      onClick={onClick}
       style={{
         backgroundColor: glass ? 'transparent' : 'var(--bg-secondary)',
         borderRadius: 'var(--radius-xl)',
         padding: '24px',
         border: '1px solid var(--border-color)',
         boxShadow: 'var(--shadow-md)',
+        cursor: onClick ? 'pointer' : 'default',
         ...style
       }}
     >

@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Send, Sparkles, RefreshCw, Check, Trash2, History, AlertCircle, Download } from 'lucide-react';
+import { X, Send, Sparkles, RefreshCw, Check, History, AlertCircle, Download } from 'lucide-react';
 import { useAssistant } from '../../context/AssistantContext';
 import { Button } from '../ui/Button';
-import { Card } from '../ui/Card';
-import { AssistantService } from '../../services/aiService';
-import { mockUser } from '../../data/mockData';
+import { useAuth } from '../../context/AuthContext';
+import { supabase } from '../../lib/supabase';
+import { usePathewAssistant } from '../../hooks/usePathewAssistant';
 
 export const AssistantPanel: React.FC = () => {
   const { 
@@ -17,18 +17,20 @@ export const AssistantPanel: React.FC = () => {
     isGenerating,
     setIsGenerating
   } = useAssistant();
+  
+  const { profile: _profile } = useAuth();
+  const { generate, isLoading, error } = usePathewAssistant();
 
   const [input, setInput] = useState('');
-  const [responses, setResponses] = useState<{ type: 'user' | 'Assistant', text: string, error?: boolean }[]>([]);
-  const [history, setHistory] = useState<{ text: string, date: string }[]>([]);
+  const [messages, setMessages] = useState<{ type: 'user' | 'assistant', text: string, data?: any, isError?: boolean }[]>([]);
   const [activeTab, setActiveTab] = useState<'chat' | 'history'>('chat');
   const initialTriggerRef = useRef(false);
 
   useEffect(() => {
-    if (isAssistantPanelOpen && responses.length === 0) {
-      setResponses([{ 
-        type: 'Assistant', 
-        text: `I'm your Pathew Assistant, ready to help with your ${activeContext}. I have access to your current document context. How can I assist you?` 
+    if (isAssistantPanelOpen && messages.length === 0) {
+      setMessages([{ 
+        type: 'assistant', 
+        text: `I'm your Pathew Assistant, ready to help with your ${activeContext}. I have analyzed your profile and the current opportunity. How can I assist you?` 
       }]);
 
       // Auto-trigger for preparation plan
@@ -45,35 +47,40 @@ export const AssistantPanel: React.FC = () => {
 
   const handleDownload = (text: string) => {
     const element = document.createElement("a");
-    const file = new Blob([text.replace('[Assistant GENERATED SUCCESS] \n\n', '')], {type: 'text/plain'});
+    const file = new Blob([text], {type: 'text/plain'});
     element.href = URL.createObjectURL(file);
-    element.download = "Pathew_Preparation_Plan.txt";
+    element.download = "Pathew_Assistant_Content.txt";
     document.body.appendChild(element);
     element.click();
   };
 
   const handleSend = async (text: string = input) => {
-    if (!text.trim() || isGenerating) return;
+    if (!text.trim() || isLoading) return;
     
-    const userMsg = { type: 'user' as const, text };
-    setResponses(prev => [...prev, userMsg]);
+    setMessages(prev => [...prev, { type: 'user', text }]);
     setInput('');
     setIsGenerating(true);
 
-    const result = await AssistantService.generateResponse({
-      type: activeContext,
+    const result = await generate({
       action: text,
-      data: fullContextData,
-      userCredits: mockUser.credits
+      documentType: fullContextData?.type || activeContext,
+      opportunityId: fullContextData?.opportunityId,
+      currentDraft: fullContextData?.content,
+      contextData: fullContextData
     });
 
-    if (result.success) {
-      const AssistantMsg = { type: 'Assistant' as const, text: result.text! };
-      setResponses(prev => [...prev, AssistantMsg]);
-      setHistory(prev => [{ text: result.text!, date: new Date().toLocaleTimeString() }, ...prev]);
+    if (result) {
+      setMessages(prev => [...prev, { 
+        type: 'assistant', 
+        text: result.draft,
+        data: result
+      }]);
     } else {
-      const errorMsg = { type: 'Assistant' as const, text: result.error!, error: true };
-      setResponses(prev => [...prev, errorMsg]);
+      setMessages(prev => [...prev, { 
+        type: 'assistant', 
+        text: error || '[RELOADED] I encountered an error while processing your request. Please try again.',
+        isError: true
+      }]);
     }
     
     setIsGenerating(false);
@@ -82,9 +89,19 @@ export const AssistantPanel: React.FC = () => {
   const handleInsert = (fullText: string) => {
     if (!onInsert) return;
     
-    // Extract the text within quotes for the mock response, or just use the text if no quotes
-    const match = fullText.match(/"([^"]+)"/);
-    const textToInsert = match ? match[1] : (fullText.includes('[Assistant GENERATED SUCCESS]') ? fullText.split('\n\n')[1] : fullText);
+    // For preparation plans, we often want the whole text or everything after the success tag
+    let textToInsert = fullText;
+    
+    if (fullText.includes('[Assistant GENERATED SUCCESS]')) {
+      const parts = fullText.split('\n\n');
+      if (parts.length > 1) {
+        textToInsert = parts.slice(1).join('\n\n');
+      }
+    } else {
+      // Fallback to quote extraction for simple text snippets
+      const match = fullText.match(/"([^"]+)"/);
+      if (match) textToInsert = match[1];
+    }
     
     onInsert(textToInsert);
     setAssistantPanelOpen(false);
@@ -124,15 +141,42 @@ export const AssistantPanel: React.FC = () => {
       <div style={contentStyle}>
         {activeTab === 'chat' ? (
           <div style={messagesStyle}>
-            {responses.map((res, i) => (
+            {messages.map((res, i) => (
               <div key={i} style={res.type === 'user' ? userMsgWrapperStyle : AssistantMsgWrapperStyle}>
                 <div style={{
                   ...(res.type === 'user' ? userMsgStyle : AssistantMsgStyle),
-                  ...(res.error ? errorMsgStyle : {})
+                  ...(res.isError ? errorMsgStyle : {})
                 }}>
-                  {res.error && <AlertCircle size={16} style={{ marginBottom: '8px', display: 'block' }} />}
+                  {res.isError && <AlertCircle size={16} style={{ marginBottom: '8px', display: 'block' }} />}
+                  
                   {res.text}
-                  {res.type === 'Assistant' && i > 0 && !res.error && (
+
+                  {res.data?.matchSummary && (
+                    <div style={matchSummaryStyle}>
+                      {res.data.matchSummary.strongMatches.length > 0 && (
+                        <div style={{ marginBottom: '12px' }}>
+                          <p style={matchTitleStyle}>Strong Matches</p>
+                          <ul style={matchListStyle}>
+                            {res.data.matchSummary.strongMatches.map((m: string, idx: number) => (
+                              <li key={idx}>✓ {m}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {res.data.matchSummary.gaps.length > 0 && (
+                        <div>
+                          <p style={{ ...matchTitleStyle, color: '#f59e0b' }}>Key Gaps</p>
+                          <ul style={matchListStyle}>
+                            {res.data.matchSummary.gaps.map((g: string, idx: number) => (
+                              <li key={idx}>! {g}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {res.type === 'assistant' && i > 0 && !res.isError && (
                     <div style={AssistantActionStyle}>
                       <Button 
                         variant="outline" 
@@ -150,7 +194,7 @@ export const AssistantPanel: React.FC = () => {
                       >
                         <Download size={14} /> Download
                       </Button>
-                      <Button variant="outline" size="sm" style={smallBtnStyle} onClick={() => handleSend(responses[i-1].text)}>
+                      <Button variant="outline" size="sm" style={smallBtnStyle} onClick={() => handleSend(messages[i-1].text)}>
                         <RefreshCw size={14} /> Regenerate
                       </Button>
                     </div>
@@ -158,26 +202,10 @@ export const AssistantPanel: React.FC = () => {
                 </div>
               </div>
             ))}
-            {isGenerating && <ThinkingState />}
+            {isLoading && <ThinkingState />}
           </div>
         ) : (
-          <div style={messagesStyle}>
-            {history.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
-                No generation history yet.
-              </div>
-            ) : (
-              history.map((item, i) => (
-                <div key={i} style={historyItemStyle}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{item.date}</span>
-                    <button style={smallBtnStyle} onClick={() => handleInsert(item.text)}>Insert</button>
-                  </div>
-                  <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{item.text.substring(0, 100)}...</p>
-                </div>
-              ))
-            )}
-          </div>
+          <HistoryTab onInsert={handleInsert} />
         )}
 
         {activeTab === 'chat' && (
@@ -211,6 +239,57 @@ export const AssistantPanel: React.FC = () => {
     </div>
   );
 };
+
+const HistoryTab = ({ onInsert }: { onInsert: (text: string) => void }) => {
+  const { user } = useAuth();
+  const [history, setHistory] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchHistory = async () => {
+      if (!user) return;
+      const { data, error } = await supabase
+        .from('assistant_messages')
+        .select('*, session:assistant_sessions(*)')
+        .eq('user_id', user.id)
+        .eq('role', 'assistant')
+        .order('created_at', { ascending: false })
+        .limit(20);
+      
+      if (!error) setHistory(data || []);
+      setLoading(false);
+    };
+    fetchHistory();
+  }, [user]);
+
+  if (loading) return <div style={{ padding: '20px', textAlign: 'center' }}>Loading history...</div>;
+
+  return (
+    <div style={messagesStyle}>
+      {history.length === 0 ? (
+        <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
+          No generation history yet.
+        </div>
+      ) : (
+        history.map((item, i) => (
+          <div key={i} style={historyItemStyle}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                {new Date(item.created_at).toLocaleDateString()} • {item.session?.task || 'General'}
+              </span>
+              <button style={smallBtnStyle} onClick={() => onInsert(item.content)}>Insert</button>
+            </div>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+              {item.content}
+            </p>
+          </div>
+        ))
+      )}
+    </div>
+  );
+};
+
+// ... existing drawerStyle and other styles
 
 const ThinkingState = () => (
   <div style={AssistantMsgWrapperStyle}>
@@ -439,3 +518,28 @@ const smallBtnStyle: React.CSSProperties = {
   height: 'auto',
   gap: '4px',
 };
+
+const matchSummaryStyle: React.CSSProperties = {
+  marginTop: '16px',
+  padding: '12px',
+  backgroundColor: 'rgba(255,255,255,0.03)',
+  borderRadius: '8px',
+  borderLeft: '3px solid var(--accent-primary)',
+};
+
+const matchTitleStyle: React.CSSProperties = {
+  fontSize: '0.75rem',
+  fontWeight: 700,
+  textTransform: 'uppercase',
+  color: 'var(--accent-primary)',
+  marginBottom: '6px',
+};
+
+const matchListStyle: React.CSSProperties = {
+  listStyle: 'none',
+  padding: 0,
+  margin: 0,
+  fontSize: '0.8125rem',
+  color: 'var(--text-secondary)',
+};
+

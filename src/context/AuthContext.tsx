@@ -17,6 +17,27 @@ interface Profile {
   portfolio_url?: string;
   skills?: string[];
   portfolios?: any[];
+  notification_settings?: {
+    email: boolean;
+    push: boolean;
+    newsletter: boolean;
+  };
+  assistant_settings?: {
+    tone: string;
+    language: string;
+    autoSave: boolean;
+  };
+  marketing_preferences?: {
+    opportunityAlerts: boolean;
+    productUpdates: boolean;
+  };
+  subscription_plan?: string;
+  renewal_date?: string;
+  payment_method?: {
+    brand: string;
+    last4: string;
+    expiry: string;
+  };
 }
 
 interface AuthContextType {

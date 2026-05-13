@@ -1,10 +1,18 @@
-import { promptTemplates } from '../data/promptTemplates';
+
+import Anthropic from '@anthropic-ai/sdk';
+
+const anthropic = new Anthropic({
+  apiKey: import.meta.env.VITE_ANTHROPIC_API_KEY,
+  dangerouslyAllowBrowser: true
+});
 
 export interface AssistantRequestContext {
   type: string;
   action: string;
   data: any;
   userCredits: number;
+  language?: string;
+  tone?: string;
 }
 
 export interface AssistantResponse {
@@ -24,55 +32,54 @@ export const AssistantService = {
       };
     }
 
-    // 2. Simulate Network Latency
-    await new Promise(resolve => setTimeout(resolve, 2000));
-
-    // 3. Simulate Assistant Generation Logic
     try {
-      // In a real app, this would be an API call to OpenAI/Anthropic/Gemini
-      // Here we simulate successful generation using our templates
-      let generatedText = "";
+      const { type, action, data, language = 'English (US)', tone = 'Professional & Academic' } = context;
       
-      const { type, action, data } = context;
-      const title = data?.title || 'the field';
-      
-      if (type === 'Pathew Assistant' && (action.toLowerCase().includes('preparation plan') || data?.duration)) {
-        const duration = data?.duration || '90-day';
-        const weeks = duration === 'Quick' ? 1 : (duration === '90-day' ? 12 : (duration === '180-day' ? 24 : 52));
-        
-        let planRows = "";
-        for (let i = 1; i <= weeks; i++) {
-          let focus = "Foundation & Theory";
-          let desc = `Mastering the basics of ${data?.gaps?.[0] || 'core requirements'}.`;
-          
-          if (i > weeks * 0.75) {
-            focus = "Showcase & Application";
-            desc = `Finalizing portfolio pieces and preparing for ${data?.opportunity || 'the role'}.`;
-          } else if (i > weeks * 0.5) {
-            focus = "Advanced Implementation";
-            desc = `Building complex features and troubleshooting edge cases with ${data?.gaps?.[0] || 'new skills'}.`;
-          } else if (i > weeks * 0.25) {
-            focus = "Hands-on Practice";
-            desc = `Working on real-world scenarios and small projects involving ${data?.gaps?.[0] || 'requirements'}.`;
-          }
-          
-          planRows += `### Week ${i}: ${focus}\n${desc}\n\n`;
-        }
+      // Constructing a detailed system prompt based on preferences
+      const systemPrompt = `You are the PATHEW Career Assistant. Your goal is to help the user with ${type} tasks.
+Selected Tone: ${tone}
+Target Language: ${language}
 
-        generatedText = `[Assistant GENERATED SUCCESS] \n\n# ${duration} FULL ROADMAP: ${data?.opportunity || 'Bridge the Gap'}\n\nTotal Duration: ${weeks} Weeks\n\n${planRows}\n\nThis comprehensive breakdown is tailored to ensure you are fully prepared for ${data?.opportunity || 'this opportunity'}.`;
-      } else {
-        generatedText = `[Assistant GENERATED SUCCESS] \n\nThis is a production-ready simulation of the ${action} task for your ${type}. It has analyzed your provided context and tailored the output to meet the highest professional standards. \n\n"Results-driven professional with specialized expertise in ${title}. Proven track record of delivering innovative solutions and exceeding targets."`;
-      }
+Tone Guidelines:
+- Professional & Academic: formal, structured, and polished.
+- Creative & Narrative: expressive and story-driven.
+- Concise & Impactful: short, direct, and high-signal.
+- Casual & Friendly: conversational, warm, and natural.
+
+Language Guidelines:
+- If English (UK), use UK spelling (e.g., -ise, -our).
+- If English (US), use US spelling (e.g., -ize, -or).
+- If any other language (Spanish, French, etc.), provide the ENTIRE response in that language.
+
+Task-Specific Instructions:
+- For Preparation Roadmaps: Generate a week-by-week plan. Start each week with "### Week X: [Focus Title]" followed by tasks. Use the tag "[Assistant GENERATED SUCCESS]" at the very beginning.
+- For Documents (CV, Cover Letter, Grants): Provide high-quality, professional content ready for insertion. Start with "[Assistant GENERATED SUCCESS]".
+
+The response MUST start with "[Assistant GENERATED SUCCESS]".`;
+
+      const userMessage = `Task: ${action}
+Context Data: ${JSON.stringify(data)}
+Please generate the response now.`;
+
+      const msg = await anthropic.messages.create({
+        model: "claude-3-5-sonnet-20241022",
+        max_tokens: 4096,
+        system: systemPrompt,
+        messages: [{ role: "user", content: userMessage }],
+      });
+
+      const generatedText = msg.content[0].type === 'text' ? msg.content[0].text : "";
 
       return {
         success: true,
         text: generatedText,
         creditsDeducted: 10
       };
-    } catch (err) {
+    } catch (err: any) {
+      console.error('Claude API Error:', err);
       return {
         success: false,
-        error: "An error occurred while communicating with the Assistant service. Please try again."
+        error: `AI Service Error: ${err.message || "Failed to communicate with Claude API."}`
       };
     }
   }

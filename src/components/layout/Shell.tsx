@@ -12,12 +12,15 @@ export const Shell: React.FC<ShellProps> = ({ children }) => {
   return (
     <div style={shellStyle}>
       <Sidebar />
-      <div style={mainContainerStyle}>
-        <TopBar />
-        <main style={contentStyle}>
-          {children}
-        </main>
-      </div>
+      <AssistantProvider>
+        <div style={mainContainerStyle}>
+          <TopBar />
+          <main style={contentStyle}>
+            {children}
+          </main>
+        </div>
+        <AssistantPanel />
+      </AssistantProvider>
     </div>
   );
 };

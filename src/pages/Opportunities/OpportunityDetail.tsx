@@ -1,6 +1,7 @@
 import React from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
+import { Badge } from '../../components/ui/Badge';
 import { 
   ArrowLeft, 
   MapPin, 
@@ -10,9 +11,11 @@ import {
   AlertCircle,
   FileText,
   FileEdit,
-  Send
+  Send,
+  XCircle,
+  Target
 } from 'lucide-react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAssistant } from '../../context/AssistantContext';
 import { Sparkles } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -20,7 +23,8 @@ import { supabase } from '../../lib/supabase';
 
 export const OpportunityDetail: React.FC = () => {
   const { id } = useParams();
-  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { user, profile } = useAuth();
   const { openAssistant } = useAssistant();
   
   const [opp, setOpp] = React.useState<any>(null);
@@ -52,12 +56,18 @@ export const OpportunityDetail: React.FC = () => {
 
   const handleFitAnalysis = () => {
     if (!opp) return;
+    (window as any).currentOpportunityId = opp.id;
     openAssistant('Pathew Assistant', [
       'Explain my compatibility',
       'Generate a readiness plan',
       'Identify my strengths and gaps',
       'Suggest next steps'
-    ]);
+    ], undefined, {
+      opportunityId: opp.id,
+      opportunityDescription: opp.description,
+      title: opp.title,
+      company: opp.company
+    });
   };
 
   const handleSave = async () => {
@@ -113,15 +123,7 @@ export const OpportunityDetail: React.FC = () => {
 
   const handleCreatePlan = (duration: string) => {
     setIsModalOpen(false);
-    openAssistant('Pathew Assistant', [
-      `Generate a ${duration} preparation plan`,
-      `How to gain ${opp.missingRequirements[0]} in ${duration}`,
-      'Suggest resources for this plan'
-    ], undefined, {
-      duration,
-      opportunity: opp.title,
-      gaps: opp.missingRequirements
-    });
+    navigate(`/preparation?type=${duration.toLowerCase()}&oppId=${id}`);
   };
 
   return (
@@ -177,15 +179,69 @@ export const OpportunityDetail: React.FC = () => {
             <h2 style={sectionTitleStyle}>Description</h2>
             <p style={descriptionStyle}>{opp.description}</p>
             
-            <h2 style={{ ...sectionTitleStyle, marginTop: '32px' }}>Key Requirements</h2>
-            <ul style={requirementsListStyle}>
-              {opp.requirements.map((req, i) => (
-                <li key={i} style={requirementItemStyle}>
-                  <CheckCircle2 size={18} color="#22c55e" />
-                  <span>{req}</span>
-                </li>
-              ))}
-            </ul>
+            <h2 style={{ ...sectionTitleStyle, marginTop: '32px' }}>Requirement Comparison</h2>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
+              {(opp.requirements || []).map((req: string, i: number) => {
+                const searchReq = req?.toLowerCase() || '';
+                const hasSkill = profile?.skills?.some(s => s.toLowerCase().includes(searchReq)) || 
+                                 profile?.experience?.some(e => e.description?.toLowerCase().includes(searchReq)) ||
+                                 profile?.story?.toLowerCase().includes(searchReq);
+                return (
+                  <div key={i} style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'space-between', 
+                    padding: '12px 16px', 
+                    backgroundColor: 'var(--bg-secondary)', 
+                    borderRadius: 'var(--radius-md)',
+                    border: `1px solid ${hasSkill ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)'}`
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      {hasSkill ? (
+                        <CheckCircle2 size={18} color="#22c55e" />
+                      ) : (
+                        <XCircle size={18} color="#ef4444" />
+                      )}
+                      <span style={{ 
+                        fontWeight: 500,
+                        color: hasSkill ? 'var(--text-primary)' : 'var(--text-secondary)' 
+                      }}>
+                        {req}
+                      </span>
+                    </div>
+                    {!hasSkill && <Badge variant="outline" style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)', fontSize: '0.7rem' }}>Skill Gap</Badge>}
+                  </div>
+                );
+              })}
+            </div>
+
+            <Card title="Get Preparation Plan" icon={Target} style={{ backgroundColor: 'rgba(245, 158, 11, 0.03)', borderColor: 'var(--accent-glow)', marginTop: '32px' }}>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>
+                Based on the comparison above, our Assistant can generate a roadmap to help you bridge your identified gaps.
+              </p>
+              <div style={{ 
+                display: 'flex', 
+                flexWrap: 'wrap', 
+                gap: '12px' 
+              }}>
+                {['Quick', '90-Day', '180-Day', '365-Day'].map(duration => (
+                  <Button 
+                    key={duration} 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => handleCreatePlan(duration)}
+                    style={{ 
+                      fontSize: '0.75rem', 
+                      fontWeight: 600, 
+                      flex: '1 1 calc(25% - 12px)',
+                      minWidth: '100px'
+                    }}
+                  >
+                    {duration}
+                  </Button>
+                ))}
+              </div>
+            </Card>
           </Card>
 
           <Card title="Prepare Your Application">
@@ -241,28 +297,20 @@ export const OpportunityDetail: React.FC = () => {
             </div>
           </Card>
 
-          {opp.missingRequirements.length > 0 && (
-            <Card style={{ marginTop: '24px', borderColor: 'rgba(239, 68, 68, 0.2)' }}>
+          {opp.missingRequirements?.length > 0 && (
+            <Card style={{ marginTop: '24px', borderColor: 'rgba(239, 68, 68, 0.2)', backgroundColor: 'rgba(239, 68, 68, 0.02)' }}>
               <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '12px' }}>
                 <AlertCircle size={20} color="#ef4444" />
-                <h3 style={{ fontSize: '1rem', color: '#ef4444' }}>Improve Fit</h3>
+                <h3 style={{ fontSize: '1rem', color: '#ef4444', fontWeight: 700 }}>Priority Gaps</h3>
               </div>
               <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '12px' }}>
-                You are missing these key requirements:
+                Our Assistant suggests focusing on these areas first:
               </p>
-              <ul style={{ paddingLeft: '20px', fontSize: '0.875rem' }}>
-                {opp.missingRequirements.map((req, i) => (
-                   <li key={i} style={{ marginBottom: '4px' }}>{req}</li>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                {(opp.missingRequirements || []).map((req: any, i: number) => (
+                   <Badge key={i} variant="outline" style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.2)' }}>{req}</Badge>
                 ))}
-              </ul>
-              <Button 
-                variant="primary" 
-                size="sm" 
-                style={{ marginTop: '20px', width: '100%', gap: '8px' }}
-                onClick={() => setIsModalOpen(true)}
-              >
-                Create a Plan
-              </Button>
+              </div>
             </Card>
           )}
         </div>
@@ -403,18 +451,6 @@ const descriptionStyle: React.CSSProperties = {
   lineHeight: 1.8,
 };
 
-const requirementsListStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '12px',
-};
-
-const requirementItemStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: '12px',
-  alignItems: 'center',
-  color: 'var(--text-secondary)',
-};
 
 const docGenGridStyle: React.CSSProperties = {
   display: 'flex',

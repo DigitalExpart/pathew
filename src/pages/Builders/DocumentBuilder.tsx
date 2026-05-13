@@ -45,7 +45,8 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
     }, {
       title: initialTitle,
       content: content,
-      type: type
+      type: type,
+      opportunityId: (window as any).currentOpportunityId // Temporary bridge if not in props
     });
   };
 

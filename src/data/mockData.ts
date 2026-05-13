@@ -50,7 +50,8 @@ export const mockUser: UserProfile = {
   ],
   skills: ['React', 'TypeScript', 'Node.js', 'Next.js', 'CSS Modules', 'GraphQL'],
   languages: ['English', 'Spanish'],
-  goals: ['To work on mission-driven projects', 'To lead a technical team']
+  goals: ['To work on mission-driven projects', 'To lead a technical team'],
+  credits: 1200
 };
 
 export const mockOpportunities: Opportunity[] = [

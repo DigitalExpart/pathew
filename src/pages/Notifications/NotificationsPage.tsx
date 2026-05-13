@@ -1,18 +1,14 @@
 import React, { useState } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { Badge } from '../../components/ui/Badge';
 import { 
   Bell, 
   Search, 
-  Filter, 
   Trash2, 
   CheckCheck, 
   MessageSquare, 
-  Briefcase, 
   Zap, 
   Star,
-  MoreVertical,
   Clock
 } from 'lucide-react';
 

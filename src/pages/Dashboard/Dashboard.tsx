@@ -11,11 +11,13 @@ import {
   Target,
   Briefcase
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 
 export const Dashboard: React.FC = () => {
   const { user, profile } = useAuth();
+  const navigate = useNavigate();
   const [prepHorizon, setPrepHorizon] = React.useState('90-day');
   const [stats, setStats] = React.useState({
     opps: 0,
@@ -68,7 +70,7 @@ export const Dashboard: React.FC = () => {
     } catch (error) {
       console.error('Error fetching dashboard data:', error);
     } finally {
-      setLoading(false);
+      // Data fetched
     }
   };
   React.useEffect(() => {
@@ -143,7 +145,10 @@ export const Dashboard: React.FC = () => {
                       ...horizonButtonStyle,
                       ...(prepHorizon === horizon ? horizonButtonActiveStyle : {})
                     }}
-                    onClick={() => setPrepHorizon(horizon)}
+                    onClick={() => {
+                      setPrepHorizon(horizon);
+                      navigate(`/preparation?type=${horizon.toLowerCase()}`);
+                    }}
                   >
                     {horizon}
                   </button>

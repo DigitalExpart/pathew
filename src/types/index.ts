@@ -8,6 +8,7 @@ export interface UserProfile {
   skills: string[];
   languages: string[];
   goals: string[];
+  credits: number;
   avatar?: string;
 }
 
