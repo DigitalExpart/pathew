@@ -51,10 +51,10 @@ const steps = [
   { id: 'portfolio', title: 'Portfolio', icon: FileUp },
 ];
 
-import logo from '../../assets/images/logo.png';
+
 
 export const ProfileSetup: React.FC = () => {
-  const { user, refreshProfile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -665,12 +665,7 @@ const PortfolioStep = ({ data, update }: any) => (
   </div>
 );
 
-const GoalOption = ({ label }: { label: string }) => (
-  <div style={goalOptionStyle}>
-    <input type="checkbox" id={label} />
-    <label htmlFor={label}>{label}</label>
-  </div>
-);
+
 
 // Styles
 const containerStyle: React.CSSProperties = {
@@ -688,13 +683,7 @@ const headerStyle: React.CSSProperties = {
   borderBottom: '1px solid var(--border-color)',
 };
 
-const logoStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '12px',
-  fontSize: '1.25rem',
-  fontWeight: 800,
-};
+
 
 const stepperStyle: React.CSSProperties = {
   display: 'flex',
