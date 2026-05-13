@@ -3,15 +3,13 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { 
-  TrendingUp, 
   Users, 
   FileCheck, 
   Clock, 
   ArrowRight,
   Zap,
   Target,
-  Briefcase,
-  GraduationCap
+  Briefcase
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
@@ -27,7 +25,6 @@ export const Dashboard: React.FC = () => {
   });
   const [recentOpps, setRecentOpps] = React.useState<any[]>([]);
   const [recentActivity, setRecentActivity] = React.useState<any[]>([]);
-  const [loading, setLoading] = React.useState(true);
   const [scanning, setScanning] = React.useState(false);
 
   const fetchDashboardData = async () => {

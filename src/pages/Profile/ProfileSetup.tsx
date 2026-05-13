@@ -11,11 +11,8 @@ import {
   ChevronLeft, 
   Award,
   Layers,
-  Building,
-  FileUp,
   Plus,
   Trash2,
-  Upload,
   Check
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -70,6 +67,7 @@ export const ProfileSetup: React.FC = () => {
     achievements: [] as string[],
     projects: [] as any[],
     organisation: '',
+    portfolio_url: '',
     portfolios: [] as any[],
   });
 
