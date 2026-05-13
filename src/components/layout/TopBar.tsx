@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export const TopBar: React.FC = () => {
   const { user, profile, signOut } = useAuth();
+  const { openAssistant } = useAssistant();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
