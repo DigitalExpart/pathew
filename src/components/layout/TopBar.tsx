@@ -58,10 +58,10 @@ export const TopBar: React.FC = () => {
           <Bell size={20} color="var(--text-secondary)" />
         </button>
 
-        <div style={creditBadgeStyle}>
+        <Link to="/wallet" style={{ ...creditBadgeStyle, textDecoration: 'none' }}>
           <Coins size={16} color="var(--accent-primary)" />
           <span style={creditTextStyle}>{profile?.credits?.toLocaleString() || '0'} Credits</span>
-        </div>
+        </Link>
         
         <div style={dividerStyle}></div>
 
