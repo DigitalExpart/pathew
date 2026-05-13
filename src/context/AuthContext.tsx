@@ -7,6 +7,14 @@ interface Profile {
   full_name: string | null;
   avatar_url: string | null;
   credits: number;
+  story?: string;
+  education?: any[];
+  experience?: any[];
+  goals?: string[];
+  achievements?: string[];
+  projects?: any[];
+  organisation?: string;
+  portfolio_url?: string;
 }
 
 interface AuthContextType {

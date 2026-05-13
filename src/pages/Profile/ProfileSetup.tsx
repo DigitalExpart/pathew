@@ -75,6 +75,21 @@ export const ProfileSetup: React.FC = () => {
     setProfileData(prev => ({ ...prev, [field]: value }));
   };
 
+  React.useEffect(() => {
+    if (profile) {
+      setProfileData({
+        story: profile.story || '',
+        education: profile.education || [],
+        experience: profile.experience || [],
+        goals: profile.goals || [],
+        achievements: profile.achievements || [],
+        projects: profile.projects || [],
+        organisation: profile.organisation || '',
+        portfolio_url: profile.portfolio_url || '',
+      });
+    }
+  }, [profile]);
+
   const handleComplete = async () => {
     if (!user) return;
     setLoading(true);
@@ -112,6 +127,12 @@ export const ProfileSetup: React.FC = () => {
       setCurrentStep(currentStep + 1);
     } else {
       handleComplete();
+    }
+  };
+
+  const handleBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(currentStep - 1);
     }
   };
 
