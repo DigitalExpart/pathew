@@ -13,14 +13,86 @@ import {
   Briefcase,
   GraduationCap
 } from 'lucide-react';
-import { mockOpportunities, mockUser, mockPrepPlan } from '../../data/mockData';
 import { useAuth } from '../../context/AuthContext';
+import { supabase } from '../../lib/supabase';
 
 export const Dashboard: React.FC = () => {
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const [prepHorizon, setPrepHorizon] = React.useState('90-day');
+  const [stats, setStats] = React.useState({
+    opps: 0,
+    jobs: 0,
+    docs: 0,
+    reviews: 0
+  });
+  const [recentOpps, setRecentOpps] = React.useState<any[]>([]);
+  const [recentActivity, setRecentActivity] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const fetchDashboardData = async () => {
+      if (!user) return;
+      
+      try {
+        // Fetch Counts
+        const [oppsCount, jobsCount, docsCount] = await Promise.all([
+          supabase.from('opportunities').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
+          supabase.from('jobs').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
+          supabase.from('documents').select('*', { count: 'exact', head: true }).eq('user_id', user.id)
+        ]);
+
+        setStats({
+          opps: oppsCount.count || 0,
+          jobs: jobsCount.count || 0,
+          docs: docsCount.count || 0,
+          reviews: 0 // Logic for reviews if needed
+        });
+
+        // Fetch Recent Opportunities
+        const { data: opps } = await supabase
+          .from('opportunities')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(3);
+        
+        setRecentOpps(opps || []);
+
+        // Fetch Recent Activity
+        const { data: activity } = await supabase
+          .from('activities')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false })
+          .limit(5);
+        
+        setRecentActivity(activity || []);
+
+      } catch (error) {
+        console.error('Error fetching dashboard data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboardData();
+  }, [user]);
 
   const firstName = profile?.full_name?.split(' ')[0] || 'User';
+
+  // Calculate Readiness Score (Simple logic based on profile completeness)
+  const calculateReadiness = () => {
+    if (!profile) return 0;
+    let score = 0;
+    if (profile.story) score += 20;
+    if (profile.education?.length) score += 20;
+    if (profile.experience?.length) score += 20;
+    if (profile.goals?.length) score += 20;
+    if (profile.projects?.length) score += 20;
+    return score;
+  };
+
+  const readinessScore = calculateReadiness();
 
   return (
     <div style={containerStyle}>
@@ -37,10 +109,10 @@ export const Dashboard: React.FC = () => {
 
       {/* Stats Grid */}
       <div style={statsGridStyle}>
-        <StatCard icon={Users} label="Opportunities" value="128" trend="+12" />
-        <StatCard icon={Briefcase} label="Jobs" value="84" trend="+8" />
-        <StatCard icon={FileCheck} label="Docs Generated" value="14" trend="+2" />
-        <StatCard icon={Clock} label="Pending Reviews" value="3" />
+        <StatCard icon={Users} label="Opportunities" value={stats.opps.toString()} trend="+0" />
+        <StatCard icon={Briefcase} label="Jobs" value={stats.jobs.toString()} trend="+0" />
+        <StatCard icon={FileCheck} label="Docs Generated" value={stats.docs.toString()} trend="+0" />
+        <StatCard icon={Clock} label="Pending Reviews" value={stats.reviews.toString()} />
       </div>
 
       <div style={mainGridStyle}>
@@ -71,35 +143,48 @@ export const Dashboard: React.FC = () => {
               <Card style={{ flex: 1, backgroundColor: 'var(--bg-tertiary)' }}>
                 <p style={statLabelStyle}>Readiness Score</p>
                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', marginTop: '8px' }}>
-                  <h3 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--accent-primary)' }}>{mockPrepPlan.readinessScore}%</h3>
+                  <h3 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--accent-primary)' }}>{readinessScore}%</h3>
                   <span style={{ color: 'var(--text-muted)', marginBottom: '6px' }}>/ 100</span>
                 </div>
               </Card>
               <Card style={{ flex: 2 }}>
-                <p style={statLabelStyle}>Strengths</p>
+                <p style={statLabelStyle}>Top Goals</p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
-                  {mockPrepPlan.strengths.map((s, i) => <Badge key={i} variant="primary">{s}</Badge>)}
+                  {profile?.goals?.length ? (
+                    profile.goals.map((g, i) => <Badge key={i} variant="primary">{g}</Badge>)
+                  ) : (
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>No goals set yet.</p>
+                  )}
                 </div>
               </Card>
               <Card style={{ flex: 2 }}>
-                <p style={statLabelStyle}>Key Gaps</p>
+                <p style={statLabelStyle}>Achievements</p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
-                  {mockPrepPlan.gaps.map((g, i) => <Badge key={i} variant="secondary">{g}</Badge>)}
+                  {profile?.achievements?.length ? (
+                    profile.achievements.map((a, i) => <Badge key={i} variant="secondary">{a}</Badge>)
+                  ) : (
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>No achievements listed.</p>
+                  )}
                 </div>
               </Card>
             </div>
 
             <Card title="Next Steps" icon={Target}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {mockPrepPlan.nextSteps.map(step => (
-                  <div key={step.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
+                {profile?.projects?.slice(0, 3).map((proj: any) => (
+                  <div key={proj.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2px solid var(--accent-primary)' }} />
-                      <span style={{ fontWeight: 500 }}>{step.title}</span>
+                      <span style={{ fontWeight: 500 }}>Refine {proj.title}</span>
                     </div>
-                    <Badge variant="outline">{step.timeframe}</Badge>
+                    <Badge variant="outline">Next Up</Badge>
                   </div>
                 ))}
+                {!profile?.projects?.length && (
+                  <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px' }}>
+                    Complete your profile to see your next steps.
+                  </p>
+                )}
               </div>
             </Card>
           </div>
@@ -111,7 +196,7 @@ export const Dashboard: React.FC = () => {
               <Button variant="ghost" size="sm">View all <ArrowRight size={14} /></Button>
             </div>
           <div style={matchesListStyle}>
-            {mockOpportunities.map(opp => (
+            {recentOpps.map(opp => (
               <Card key={opp.id} style={{ marginBottom: '16px' }}>
                 <div style={oppCardContentStyle}>
                   <div style={oppInfoStyle}>
@@ -123,11 +208,19 @@ export const Dashboard: React.FC = () => {
                     </div>
                   </div>
                   <div style={oppMatchStyle}>
-                    <Button variant="secondary" size="sm">Details</Button>
+                    <div style={matchCircleStyle}>
+                      <span style={matchValueStyle}>{opp.match_score}%</span>
+                    </div>
+                    <span style={matchLabelStyle}>Match</span>
                   </div>
                 </div>
               </Card>
             ))}
+            {!recentOpps.length && (
+              <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '40px' }}>
+                No opportunities found yet. Try a Quick Scan!
+              </p>
+            )}
             </div>
           </div>
         </section>
@@ -145,9 +238,18 @@ export const Dashboard: React.FC = () => {
 
           <Card title="Recent Activity">
             <div style={activityListStyle}>
-              <ActivityItem text="CV exported as PDF" time="2h ago" />
-              <ActivityItem text="Applied to InnovateX" time="5h ago" />
-              <ActivityItem text="Profile score updated" time="1d ago" />
+              {recentActivity.map(activity => (
+                <ActivityItem 
+                  key={activity.id} 
+                  text={activity.content} 
+                  time={new Date(activity.created_at).toLocaleDateString()} 
+                />
+              ))}
+              {!recentActivity.length && (
+                <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', textAlign: 'center', padding: '20px' }}>
+                  No recent activity to show.
+                </p>
+              )}
             </div>
           </Card>
         </section>
