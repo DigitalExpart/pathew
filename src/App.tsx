@@ -13,6 +13,7 @@ import { CVBuilderPage, CoverLetterPage, ProposalPage } from './pages/Builders/P
 import { WalletPage } from './pages/Credits/WalletPage';
 import { PricingPage } from './pages/Credits/PricingPage';
 import { SavedOpportunities } from './pages/Opportunities/SavedOpportunities';
+import { JobsPage } from './pages/Opportunities/JobsPage';
 import { GrantBuilderPage } from './pages/Builders/GrantBuilderPage';
 import { SettingsPage } from './pages/Settings/SettingsPage';
 import { PrivacyPage } from './pages/Settings/PrivacyPage';
@@ -44,6 +45,7 @@ function App() {
           <Route path="/opportunities" element={<Shell><OpportunityList /></Shell>} />
           <Route path="/fellowships" element={<Shell><OpportunityList /></Shell>} />
           <Route path="/grants" element={<Shell><OpportunityList /></Shell>} />
+          <Route path="/jobs" element={<Shell><JobsPage /></Shell>} />
           <Route path="/opportunities/:id" element={<Shell><OpportunityDetail /></Shell>} />
           <Route path="/profile" element={<Shell><ProfileSetup /></Shell>} />
           <Route path="/cv-builder" element={<Shell><CVBuilderPage /></Shell>} />

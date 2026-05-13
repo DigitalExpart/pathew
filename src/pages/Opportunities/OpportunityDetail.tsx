@@ -16,20 +16,100 @@ import { useParams, Link } from 'react-router-dom';
 import { mockOpportunities } from '../../data/mockData';
 import { useAssistant } from '../../context/AssistantContext';
 import { Sparkles } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { supabase } from '../../lib/supabase';
 
 export const OpportunityDetail: React.FC = () => {
   const { id } = useParams();
-  const opp = mockOpportunities.find(o => o.id === id) || mockOpportunities[0];
+  const { user } = useAuth();
   const { openAssistant } = useAssistant();
+  
+  const [opp, setOpp] = React.useState<any>(null);
+  const [loading, setLoading] = React.useState(true);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [saving, setSaving] = React.useState(false);
+  const [applying, setApplying] = React.useState(false);
+
+  React.useEffect(() => {
+    const fetchOpp = async () => {
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('opportunities')
+          .select('*')
+          .eq('id', id)
+          .single();
+        
+        if (error) throw error;
+        setOpp(data);
+      } catch (error) {
+        console.error('Error fetching opportunity:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOpp();
+  }, [id]);
 
   const handleFitAnalysis = () => {
+    if (!opp) return;
     openAssistant('Pathew Assistant', [
       'Explain my compatibility',
       'Generate a readiness plan',
       'Identify my strengths and gaps',
       'Suggest next steps'
     ]);
+  };
+
+  const handleSave = async () => {
+    if (!user || !opp) return;
+    setSaving(true);
+    try {
+      const { error } = await supabase
+        .from('opportunities')
+        .update({ status: 'Saved' })
+        .eq('id', opp.id);
+      
+      if (error) throw error;
+      setOpp({ ...opp, status: 'Saved' });
+      
+      await supabase.from('activities').insert({
+        user_id: user.id,
+        content: `Saved opportunity: ${opp.title}`
+      });
+    } catch (error) {
+      console.error('Error saving:', error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleApply = async () => {
+    if (!user || !opp) return;
+    setApplying(true);
+    try {
+      // 1. Record in Jobs table
+      await supabase.from('jobs').insert({
+        user_id: user.id,
+        title: opp.title,
+        company: opp.company,
+        status: 'Applied'
+      });
+
+      // 2. Record Activity
+      await supabase.from('activities').insert({
+        user_id: user.id,
+        content: `Applied for ${opp.title} at ${opp.company}`
+      });
+
+      // 3. Redirect (Mocking external link for now, but recording the action)
+      window.open('https://linkedin.com', '_blank');
+      
+    } catch (error) {
+      console.error('Error applying:', error);
+    } finally {
+      setApplying(false);
+    }
   };
 
   const handleCreatePlan = (duration: string) => {
@@ -51,6 +131,21 @@ export const OpportunityDetail: React.FC = () => {
         <ArrowLeft size={18} /> Back to list
       </Link>
 
+      {loading && (
+        <div style={{ textAlign: 'center', padding: '100px' }}>
+          <p>Loading details...</p>
+        </div>
+      )}
+
+      {!loading && !opp && (
+        <div style={{ textAlign: 'center', padding: '100px' }}>
+          <p>Opportunity not found.</p>
+        </div>
+      )}
+
+      {!loading && opp && (
+        <>
+
       <div style={headerStyle}>
         <div style={headerMainStyle}>
           <div style={companyLogoStyle}>{opp.company.charAt(0)}</div>
@@ -60,9 +155,19 @@ export const OpportunityDetail: React.FC = () => {
           </div>
         </div>
         <div style={headerActionsStyle}>
-          <Button variant="outline">Save</Button>
-          <Button style={{ gap: '8px' }}>
-            Apply on {opp.source} <ExternalLink size={16} />
+          <Button 
+            variant={opp?.status === 'Saved' ? 'secondary' : 'outline'}
+            onClick={handleSave}
+            disabled={saving || opp?.status === 'Saved'}
+          >
+            {saving ? 'Saving...' : opp?.status === 'Saved' ? 'Saved' : 'Save'}
+          </Button>
+          <Button 
+            style={{ gap: '8px' }}
+            onClick={handleApply}
+            disabled={applying}
+          >
+            {applying ? 'Processing...' : `Apply on ${opp?.source || 'Portal'}`} <ExternalLink size={16} />
           </Button>
         </div>
       </div>
