@@ -8,7 +8,7 @@ import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const TopBar: React.FC = () => {
-  const { user, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
@@ -28,7 +28,7 @@ export const TopBar: React.FC = () => {
     navigate('/login');
   };
 
-  const displayName = user?.user_metadata?.full_name || user?.email?.split('@')[0] || mockUser.name;
+  const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || mockUser.name;
 
   return (
     <header style={headerStyle}>
@@ -60,7 +60,7 @@ export const TopBar: React.FC = () => {
 
         <div style={creditBadgeStyle}>
           <Coins size={16} color="var(--accent-primary)" />
-          <span style={creditTextStyle}>1,250 Credits</span>
+          <span style={creditTextStyle}>{profile?.credits?.toLocaleString() || '0'} Credits</span>
         </div>
         
         <div style={dividerStyle}></div>

@@ -14,15 +14,19 @@ import {
   GraduationCap
 } from 'lucide-react';
 import { mockOpportunities, mockUser, mockPrepPlan } from '../../data/mockData';
+import { useAuth } from '../../context/AuthContext';
 
 export const Dashboard: React.FC = () => {
+  const { profile } = useAuth();
   const [prepHorizon, setPrepHorizon] = React.useState('90-day');
+
+  const firstName = profile?.full_name?.split(' ')[0] || 'User';
 
   return (
     <div style={containerStyle}>
       <header style={headerStyle}>
         <div>
-          <h1 style={titleStyle}>Good morning, {mockUser.name.split(' ')[0]}! 👋</h1>
+          <h1 style={titleStyle}>Good morning, {firstName}! 👋</h1>
           <p style={subtitleStyle}>Here is what's happening with your opportunities today.</p>
         </div>
         <Button style={{ gap: '10px' }}>
