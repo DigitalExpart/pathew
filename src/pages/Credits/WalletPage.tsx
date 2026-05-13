@@ -2,9 +2,36 @@ import React from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Coins, ArrowUpRight, ArrowDownRight, Clock } from 'lucide-react';
-import { mockTransactions } from '../../data/mockData';
+import { useAuth } from '../../context/AuthContext';
+import { supabase } from '../../lib/supabase';
 
 export const WalletPage: React.FC = () => {
+  const { user, profile } = useAuth();
+  const [transactions, setTransactions] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const fetchWalletData = async () => {
+      if (!user) return;
+      setLoading(true);
+      try {
+        const { data, error } = await supabase
+          .from('transactions')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+        
+        if (error) throw error;
+        setTransactions(data || []);
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchWalletData();
+  }, [user]);
+
   return (
     <div style={containerStyle}>
       <header style={headerStyle}>
@@ -23,8 +50,8 @@ export const WalletPage: React.FC = () => {
           </div>
           <div style={balanceContentStyle}>
             <p style={balanceLabelStyle}>Available Balance</p>
-            <h2 style={balanceValueStyle}>1,250</h2>
-            <p style={balanceSubtextStyle}>Credits renew on June 1, 2024</p>
+            <h2 style={balanceValueStyle}>{profile?.credits?.toLocaleString() || '0'}</h2>
+            <p style={balanceSubtextStyle}>Credits ready for your next application</p>
           </div>
           <div style={balanceFooterStyle}>
             <Button style={{ flex: 1 }}>Buy Credits</Button>
@@ -35,20 +62,26 @@ export const WalletPage: React.FC = () => {
         {/* Transaction History */}
         <Card title="Recent Transactions" icon={Clock} style={{ flex: 2 }}>
           <div style={txListStyle}>
-            {mockTransactions.map(tx => (
-              <div key={tx.id} style={txItemStyle}>
-                <div style={{ ...txIconStyle, backgroundColor: tx.type === 'credit' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(245, 158, 11, 0.1)' }}>
-                  {tx.type === 'credit' ? <ArrowDownRight size={18} color="#22c55e" /> : <ArrowUpRight size={18} color="var(--accent-primary)" />}
+            {loading ? (
+              <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px' }}>Loading history...</p>
+            ) : transactions.length === 0 ? (
+              <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px' }}>No transactions yet.</p>
+            ) : (
+              transactions.map(tx => (
+                <div key={tx.id} style={txItemStyle}>
+                  <div style={{ ...txIconStyle, backgroundColor: tx.type === 'credit' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(245, 158, 11, 0.1)' }}>
+                    {tx.type === 'credit' ? <ArrowDownRight size={18} color="#22c55e" /> : <ArrowUpRight size={18} color="var(--accent-primary)" />}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <p style={txTitleStyle}>{tx.description}</p>
+                    <p style={txDateStyle}>{new Date(tx.created_at).toLocaleDateString()}</p>
+                  </div>
+                  <div style={{ ...txAmountStyle, color: tx.type === 'credit' ? '#22c55e' : 'var(--text-primary)' }}>
+                    {tx.type === 'credit' ? '+' : ''}{tx.amount}
+                  </div>
                 </div>
-                <div style={{ flex: 1 }}>
-                  <p style={txTitleStyle}>{tx.description}</p>
-                  <p style={txDateStyle}>{tx.date}</p>
-                </div>
-                <div style={{ ...txAmountStyle, color: tx.type === 'credit' ? '#22c55e' : 'var(--text-primary)' }}>
-                  {tx.type === 'credit' ? '+' : ''}{tx.amount}
-                </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </Card>
       </div>
