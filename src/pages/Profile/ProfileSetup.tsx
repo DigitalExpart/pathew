@@ -11,6 +11,8 @@ import {
   ChevronLeft, 
   Award,
   Layers,
+  Building,
+  FileUp,
   Plus,
   Trash2,
   Check
@@ -48,8 +50,6 @@ const steps = [
   { id: 'portfolio', title: 'Portfolio', icon: FileUp },
 ];
 
-
-
 export const ProfileSetup: React.FC = () => {
   const { user, profile, refreshProfile } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
@@ -86,6 +86,7 @@ export const ProfileSetup: React.FC = () => {
         achievements: profile.achievements || [],
         projects: profile.projects || [],
         organisation: profile.organisation || '',
+        portfolio_url: profile.portfolio_url || '',
         portfolios: profile.portfolios || [],
       });
     }
@@ -151,8 +152,6 @@ export const ProfileSetup: React.FC = () => {
     }
   };
 
-
-
   const handleNext = async () => {
     await saveProgress();
     if (currentStep < steps.length - 1) {
@@ -178,21 +177,16 @@ export const ProfileSetup: React.FC = () => {
               const isCurrent = idx === currentStep;
               const isPast = idx < currentStep;
               
-              // Define a window of 5 steps around the current step
-              // We want to show a few before and a few after
               const windowSize = 5;
               const startWindow = Math.max(0, Math.min(currentStep - 1, steps.length - windowSize));
               const endWindow = startWindow + windowSize;
               
               const isInWindow = idx >= startWindow && idx < endWindow;
-
-              // Logic: Always show Step 1. Show the window of 5 steps.
               const shouldRender = isFirst || isInWindow;
               if (!shouldRender) return null;
 
               return (
                 <React.Fragment key={step.id}>
-                  {/* Line before step if it's the first one rendered in this view and it's not the actual first step */}
                   {idx === startWindow && idx > 0 && !isFirst && (
                     <motion.div 
                       initial={{ width: 0, opacity: 0 }}
@@ -239,7 +233,6 @@ export const ProfileSetup: React.FC = () => {
                     </motion.span>
                   </motion.div>
 
-                  {/* Standard Line between consecutive rendered steps */}
                   {idx < steps.length - 1 && ( (idx >= startWindow && idx < endWindow - 1) || (isFirst && startWindow === 1) ) && (
                     <motion.div 
                       initial={{ width: 0, opacity: 0 }}
@@ -330,7 +323,6 @@ const StoryStep = ({ data, update }: any) => {
           <button 
             style={AssistantLinkButtonStyle}
             onClick={() => openAssistant('Skills Assistant', ['Suggest skills based on my bio', 'Group my skills by category', 'Improve this list'], (text) => {
-              // Extract skills from text or append
               update('goals', [...data.goals, text]);
             }, { bio: data.story })}
           >
@@ -787,8 +779,6 @@ const PortfolioStep = ({ data, update, onUpload, uploading }: any) => {
   );
 };
 
-
-
 // Styles
 const containerStyle: React.CSSProperties = {
   backgroundColor: 'var(--bg-primary)',
@@ -798,20 +788,17 @@ const containerStyle: React.CSSProperties = {
 };
 
 const headerStyle: React.CSSProperties = {
-  padding: '24px 40px',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
+  padding: '24px',
+  backgroundColor: 'var(--bg-secondary)',
   borderBottom: '1px solid var(--border-color)',
 };
 
-
-
 const stepperStyle: React.CSSProperties = {
+  maxWidth: '1000px',
+  margin: '0 auto',
   display: 'flex',
   alignItems: 'center',
   gap: '12px',
-  transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
 };
 
 const stepItemStyle: React.CSSProperties = {
@@ -829,6 +816,7 @@ const stepCircleStyle: React.CSSProperties = {
   justifyContent: 'center',
   fontSize: '0.875rem',
   fontWeight: 700,
+  transition: 'all 0.3s ease',
 };
 
 const stepLabelStyle: React.CSSProperties = {
@@ -837,23 +825,20 @@ const stepLabelStyle: React.CSSProperties = {
 };
 
 const stepLineStyle: React.CSSProperties = {
-  width: '32px',
-  height: '1px',
+  flex: 1,
+  height: '2px',
   backgroundColor: 'var(--border-color)',
-  margin: '0 8px',
+  borderRadius: '1px',
 };
 
 const mainStyle: React.CSSProperties = {
   flex: 1,
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  padding: '80px 20px',
+  padding: '48px 24px',
 };
 
 const contentWrapperStyle: React.CSSProperties = {
-  width: '100%',
   maxWidth: '800px',
+  margin: '0 auto',
 };
 
 const formGridStyle: React.CSSProperties = {
@@ -875,99 +860,91 @@ const labelStyle: React.CSSProperties = {
 };
 
 const inputStyle: React.CSSProperties = {
-  backgroundColor: 'var(--bg-primary)',
+  width: '100%',
+  padding: '12px 16px',
+  backgroundColor: 'var(--bg-secondary)',
   border: '1px solid var(--border-color)',
   borderRadius: 'var(--radius-md)',
-  padding: '12px 16px',
   color: 'var(--text-primary)',
+  fontSize: '1rem',
   outline: 'none',
-  fontSize: '0.875rem',
+  transition: 'border-color 0.2s',
 };
 
 const textareaStyle: React.CSSProperties = {
-  ...inputStyle,
+  width: '100%',
+  padding: '12px 16px',
+  backgroundColor: 'var(--bg-secondary)',
+  border: '1px solid var(--border-color)',
+  borderRadius: 'var(--radius-md)',
+  color: 'var(--text-primary)',
+  fontSize: '1rem',
+  outline: 'none',
   minHeight: '120px',
   resize: 'vertical',
-  fontFamily: 'inherit',
-};
-
-const actionsStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  marginTop: '40px',
-  paddingTop: '24px',
-  borderTop: '1px solid var(--border-color)',
+  transition: 'border-color 0.2s',
 };
 
 const goalsGridStyle: React.CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
+  gridTemplateColumns: 'repeat(2, 1fr)',
   gap: '12px',
 };
 
 const goalOptionStyle: React.CSSProperties = {
+  padding: '16px',
+  backgroundColor: 'var(--bg-secondary)',
+  border: '1px solid var(--border-color)',
+  borderRadius: 'var(--radius-md)',
   display: 'flex',
   alignItems: 'center',
   gap: '12px',
-  padding: '16px',
-  backgroundColor: 'var(--bg-primary)',
-  borderRadius: 'var(--radius-md)',
-  border: '1px solid var(--border-color)',
   cursor: 'pointer',
+  transition: 'all 0.2s',
 };
 
 const listItemStyle: React.CSSProperties = {
-  padding: '16px',
+  padding: '24px',
   backgroundColor: 'var(--bg-secondary)',
-  borderRadius: 'var(--radius-lg)',
   border: '1px solid var(--border-color)',
+  borderRadius: 'var(--radius-lg)',
 };
 
 const listHeaderStyle: React.CSSProperties = {
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
-  marginBottom: '12px',
 };
 
 const removeBtnStyle: React.CSSProperties = {
-  background: 'none',
-  border: 'none',
-  color: '#ef4444',
-  cursor: 'pointer',
   padding: '4px',
-  borderRadius: '4px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  transition: 'background 0.2s',
+  backgroundColor: 'transparent',
+  border: 'none',
+  color: 'var(--text-muted)',
+  cursor: 'pointer',
+  transition: 'color 0.2s',
 };
 
 const addBtnStyle: React.CSSProperties = {
   width: '100%',
-  borderStyle: 'dashed',
-  marginTop: '8px',
-  gap: '8px',
-};
-
-const uploadContainerStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  padding: '40px',
-  backgroundColor: 'rgba(245, 158, 11, 0.02)',
-  border: '2px dashed var(--border-color)',
-  borderRadius: 'var(--radius-xl)',
-  marginBottom: '24px',
-};
-
-const uploadIconStyle: React.CSSProperties = {
-  width: '64px',
-  height: '64px',
-  backgroundColor: 'rgba(245, 158, 11, 0.1)',
-  borderRadius: '50%',
+  padding: '16px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  marginBottom: '16px',
+  gap: '8px',
+  backgroundColor: 'var(--bg-tertiary)',
+  border: '1px dashed var(--border-color)',
+  borderRadius: 'var(--radius-lg)',
+  color: 'var(--text-secondary)',
+  cursor: 'pointer',
+  transition: 'all 0.2s',
+};
+
+const actionsStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginTop: '40px',
+  paddingTop: '32px',
+  borderTop: '1px solid var(--border-color)',
 };
