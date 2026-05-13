@@ -133,7 +133,7 @@ export const ProfileSetup: React.FC = () => {
       const fileName = `${user.id}/${Math.random()}.${fileExt}`;
       const filePath = `${fileName}`;
 
-      const { error: uploadError, data } = await supabase.storage
+      const { error: uploadError } = await supabase.storage
         .from('portfolio')
         .upload(filePath, file);
 
@@ -153,10 +153,7 @@ export const ProfileSetup: React.FC = () => {
     }
   };
 
-  const handleComplete = async () => {
-    await saveProgress();
-    navigate('/dashboard');
-  };
+
 
   const handleNext = async () => {
     await saveProgress();
