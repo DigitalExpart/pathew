@@ -70,7 +70,7 @@ export const ProfileSetup: React.FC = () => {
     achievements: [] as string[],
     projects: [] as any[],
     organisation: '',
-    portfolio_url: '',
+    portfolios: [] as any[],
   });
 
   const updateData = (field: string, value: any) => {
@@ -88,7 +88,7 @@ export const ProfileSetup: React.FC = () => {
         achievements: profile.achievements || [],
         projects: profile.projects || [],
         organisation: profile.organisation || '',
-        portfolio_url: profile.portfolio_url || '',
+        portfolios: profile.portfolios || [],
       });
     }
   }, [profile]);
@@ -110,6 +110,7 @@ export const ProfileSetup: React.FC = () => {
           organisation: profileData.organisation,
           portfolio_url: profileData.portfolio_url,
           skills: profileData.skills,
+          portfolios: profileData.portfolios,
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -143,11 +144,10 @@ export const ProfileSetup: React.FC = () => {
         .from('portfolio')
         .getPublicUrl(filePath);
 
-      updateData('portfolio_url', publicUrl);
-      alert('Portfolio uploaded successfully!');
+      return publicUrl;
     } catch (error) {
       console.error('Error uploading portfolio:', error);
-      alert('Error uploading portfolio. Make sure the bucket is created.');
+      return null;
     } finally {
       setUploading(false);
     }
@@ -676,48 +676,118 @@ const OrganisationStep = ({ data, update }: any) => {
   );
 };
 
-const PortfolioStep = ({ data, update, onUpload, uploading }: any) => (
-  <div style={formGridStyle}>
-    <div style={uploadContainerStyle}>
-      <div style={uploadIconStyle}>
-        <Upload size={32} color="var(--accent-primary)" />
-      </div>
-      <h3 style={{ fontSize: '1.125rem', marginBottom: '8px' }}>
-        {data.portfolio_url ? 'Portfolio Uploaded ✓' : 'Upload your Portfolio'}
-      </h3>
-      <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '24px', textAlign: 'center' }}>
-        {data.portfolio_url 
-          ? `File: ${data.portfolio_url.split('/').pop()?.substring(0, 30)}...`
-          : 'Support for PDF, DOCX, and high-quality images. Max file size 10MB.'}
-      </p>
-      <input 
-        type="file" 
-        id="portfolio-upload" 
-        style={{ display: 'none' }} 
-        onChange={onUpload}
-        accept=".pdf,.doc,.docx,image/*"
-      />
-      <Button 
-        onClick={() => document.getElementById('portfolio-upload')?.click()}
-        disabled={uploading}
-      >
-        <FileUp size={18} style={{ marginRight: '8px' }} />
-        {uploading ? 'Uploading...' : data.portfolio_url ? 'Change File' : 'Select Files'}
-      </Button>
-    </div>
+const PortfolioStep = ({ data, update, onUpload, uploading }: any) => {
+  const [newProject, setNewProject] = useState({ title: '', description: '', url: '' });
+
+  const handleAddProject = async () => {
+    if (!newProject.url) {
+      alert('Please upload a file first');
+      return;
+    }
+    if (!newProject.title) {
+      alert('Please add a title');
+      return;
+    }
     
-    <div style={inputGroupStyle}>
-      <label style={labelStyle}>Portfolio Link (Optional)</label>
-      <input 
-        type="url" 
-        placeholder="https://yourportfolio.com" 
-        style={inputStyle} 
-        value={data.portfolio_url}
-        onChange={(e) => update('portfolio_url', e.target.value)}
-      />
+    const updatedPortfolios = [...(data.portfolios || []), newProject];
+    update('portfolios', updatedPortfolios);
+    setNewProject({ title: '', description: '', url: '' });
+  };
+
+  const removeProject = (index: number) => {
+    const updated = [...data.portfolios];
+    updated.splice(index, 1);
+    update('portfolios', updated);
+  };
+
+  return (
+    <div style={formGridStyle}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '20px', marginBottom: '32px' }}>
+        {data.portfolios?.map((proj: any, idx: number) => (
+          <Card key={idx} style={{ padding: '16px', position: 'relative', overflow: 'hidden' }}>
+            <button 
+              onClick={() => removeProject(idx)}
+              style={{ position: 'absolute', top: '8px', right: '8px', backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: 'none', borderRadius: '4px', padding: '4px', cursor: 'pointer', zIndex: 10 }}
+            >
+              <Trash2 size={14} />
+            </button>
+            
+            <div style={{ height: '120px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '8px', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+              {proj.url.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                <img src={proj.url} alt={proj.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                <FileUp size={32} color="var(--accent-primary)" />
+              )}
+            </div>
+            <h4 style={{ fontSize: '1rem', marginBottom: '4px', color: 'var(--text-primary)' }}>{proj.title}</h4>
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+              {proj.description}
+            </p>
+          </Card>
+        ))}
+        
+        {/* Add New Card */}
+        <Card style={{ padding: '24px', borderStyle: 'dashed', borderColor: 'var(--accent-primary)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <input 
+              type="text" 
+              placeholder="Project Title" 
+              style={inputStyle} 
+              value={newProject.title}
+              onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
+            />
+            <textarea 
+              placeholder="Brief description..." 
+              style={{ ...textareaStyle, minHeight: '60px', padding: '8px' }} 
+              value={newProject.description}
+              onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
+            />
+          </div>
+
+          <input 
+            type="file" 
+            id="portfolio-add-file" 
+            style={{ display: 'none' }} 
+            onChange={async (e) => {
+              const url = await onUpload(e);
+              if (url) setNewProject({ ...newProject, url });
+            }}
+          />
+          
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={() => document.getElementById('portfolio-add-file')?.click()}
+            disabled={uploading}
+            style={{ width: '100%', borderStyle: 'dashed' }}
+          >
+            {uploading ? 'Uploading...' : newProject.url ? 'File Ready ✓' : 'Upload File'}
+          </Button>
+
+          <Button 
+            size="sm" 
+            onClick={handleAddProject}
+            disabled={!newProject.url || !newProject.title}
+            style={{ width: '100%' }}
+          >
+            Add to Portfolio
+          </Button>
+        </Card>
+      </div>
+
+      <div style={inputGroupStyle}>
+        <label style={labelStyle}>External Portfolio Link (Optional)</label>
+        <input 
+          type="url" 
+          placeholder="https://yourportfolio.com" 
+          style={inputStyle} 
+          value={data.portfolio_url}
+          onChange={(e) => update('portfolio_url', e.target.value)}
+        />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 
 

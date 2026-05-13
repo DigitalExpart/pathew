@@ -16,6 +16,7 @@ interface Profile {
   organisation?: string;
   portfolio_url?: string;
   skills?: string[];
+  portfolios?: any[];
 }
 
 interface AuthContextType {
