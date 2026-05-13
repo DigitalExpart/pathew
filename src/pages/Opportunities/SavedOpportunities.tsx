@@ -3,12 +3,52 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
-import { MapPin, Calendar, ChevronRight, Activity, Bookmark } from 'lucide-react';
-import { mockOpportunities } from '../../data/mockData';
+import { MapPin, Calendar, ChevronRight, Activity, Bookmark, Trash2 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { supabase } from '../../lib/supabase';
 
 export const SavedOpportunities: React.FC = () => {
-  const savedOpps = mockOpportunities.filter(o => o.status === 'Saved');
+  const { user } = useAuth();
+  const [savedOpps, setSavedOpps] = React.useState<any[]>([]);
+  const [loading, setLoading] = React.useState(true);
   const navigate = useNavigate();
+
+  const fetchSavedOpps = async () => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('opportunities')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('status', 'Saved');
+      
+      if (error) throw error;
+      setSavedOpps(data || []);
+    } catch (error) {
+      console.error('Error fetching saved opportunities:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchSavedOpps();
+  }, [user]);
+
+  const handleRemove = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('opportunities')
+        .update({ status: 'Reviewing' })
+        .eq('id', id);
+      
+      if (error) throw error;
+      setSavedOpps(prev => prev.filter(o => o.id !== id));
+    } catch (error) {
+      console.error('Error removing opportunity:', error);
+    }
+  };
 
   return (
     <div style={containerStyle}>
@@ -18,7 +58,11 @@ export const SavedOpportunities: React.FC = () => {
       </header>
 
       <div style={gridStyle}>
-        {savedOpps.length === 0 ? (
+        {loading ? (
+          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>
+            <p>Loading your saved items...</p>
+          </div>
+        ) : savedOpps.length === 0 ? (
           <div style={emptyStateStyle}>
             <Bookmark size={48} color="var(--text-muted)" />
             <h2>No saved items yet</h2>
@@ -30,7 +74,7 @@ export const SavedOpportunities: React.FC = () => {
             <Card key={opp.id} style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={cardHeaderStyle}>
                 <div style={matchBadgeStyle}>
-                  <span style={matchScoreStyle}>{opp.matchScore}%</span>
+                  <span style={matchScoreStyle}>{opp.match_score || 0}%</span>
                   <span style={matchTextStyle}>Match</span>
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>
@@ -56,16 +100,24 @@ export const SavedOpportunities: React.FC = () => {
                   </div>
                 </div>
 
-                <div style={tagsStyle}>
-                  {opp.requirements.slice(0, 3).map((req, i) => (
+                 <div style={tagsStyle}>
+                  {opp.requirements?.slice(0, 3).map((req: string, i: number) => (
                     <span key={i} style={tagStyle}>{req}</span>
                   ))}
-                  {opp.requirements.length > 3 && <span style={tagStyle}>+{opp.requirements.length - 3} more</span>}
+                  {(opp.requirements?.length > 3) && (
+                    <span style={tagStyle}>+{opp.requirements.length - 3} more</span>
+                  )}
                 </div>
               </div>
 
-              <div style={cardFooterStyle}>
-                <Button variant="outline" style={{ flex: 1 }}>Remove</Button>
+               <div style={cardFooterStyle}>
+                <Button 
+                  variant="outline" 
+                  style={{ flex: 1, gap: '4px' }}
+                  onClick={() => handleRemove(opp.id)}
+                >
+                  <Trash2 size={16} /> Remove
+                </Button>
                 <Button 
                   style={{ flex: 1, gap: '4px' }}
                   onClick={() => navigate(`/opportunities/${opp.id}`)}
