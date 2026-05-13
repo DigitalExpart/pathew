@@ -177,7 +177,8 @@ export const OpportunityList: React.FC = () => {
               >
                 Prepare <ChevronRight size={16} />
               </Button>
-            </Card>
+            </div>
+          </Card>
           ))
         )}
       </div>
