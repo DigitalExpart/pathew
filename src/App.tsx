@@ -23,6 +23,7 @@ import { TermsPage as PublicTermsPage } from './pages/Legal/TermsPage';
 import { PrivacyPage as PublicPrivacyPage } from './pages/Legal/PrivacyPage';
 import { ContactPage } from './pages/Support/ContactPage';
 import { HowItWorksPage } from './pages/Support/HowItWorksPage';
+import { NotificationsPage } from './pages/Notifications/NotificationsPage';
 
 function App() {
   return (
@@ -61,6 +62,7 @@ function App() {
           <Route path="/privacy" element={<Shell><PrivacyPage /></Shell>} />
           <Route path="/delete-account" element={<Shell><AccountDeletionPage /></Shell>} />
           <Route path="/preferences" element={<Shell><ConsentPage /></Shell>} />
+          <Route path="/notifications" element={<Shell><NotificationsPage /></Shell>} />
           
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />

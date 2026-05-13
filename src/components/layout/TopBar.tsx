@@ -53,10 +53,10 @@ export const TopBar: React.FC = () => {
         <button style={iconButtonStyle}>
           <HelpCircle size={20} color="var(--text-secondary)" />
         </button>
-        <button style={iconButtonStyle}>
+        <Link to="/notifications" style={iconButtonStyle}>
           <div style={notificationBadgeStyle}></div>
           <Bell size={20} color="var(--text-secondary)" />
-        </button>
+        </Link>
 
         <Link to="/wallet" style={{ ...creditBadgeStyle, textDecoration: 'none' }}>
           <Coins size={16} color="var(--accent-primary)" />
