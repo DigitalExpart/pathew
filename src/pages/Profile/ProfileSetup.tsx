@@ -58,6 +58,7 @@ export const ProfileSetup: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const [uploading, setUploading] = useState(false);
 
   // Centralized State
   const [profileData, setProfileData] = useState({
@@ -119,6 +120,36 @@ export const ProfileSetup: React.FC = () => {
       console.error('Error saving profile:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !user) return;
+
+    setUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/${Math.random()}.${fileExt}`;
+      const filePath = `${fileName}`;
+
+      const { error: uploadError, data } = await supabase.storage
+        .from('portfolio')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('portfolio')
+        .getPublicUrl(filePath);
+
+      updateData('portfolio_url', publicUrl);
+      alert('Portfolio uploaded successfully!');
+    } catch (error) {
+      console.error('Error uploading portfolio:', error);
+      alert('Error uploading portfolio. Make sure the bucket is created.');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -245,7 +276,14 @@ export const ProfileSetup: React.FC = () => {
             {currentStep === 4 && <AchievementStep data={profileData} update={updateData} />}
             {currentStep === 5 && <ProjectsStep data={profileData} update={updateData} />}
             {currentStep === 6 && <OrganisationStep data={profileData} update={updateData} />}
-            {currentStep === 7 && <PortfolioStep data={profileData} update={updateData} />}
+            {currentStep === 7 && (
+              <PortfolioStep 
+                data={profileData} 
+                update={updateData} 
+                onUpload={handleFileUpload}
+                uploading={uploading}
+              />
+            )}
 
             <div style={actionsStyle}>
               <Button 
@@ -641,20 +679,33 @@ const OrganisationStep = ({ data, update }: any) => {
   );
 };
 
-const PortfolioStep = ({ data, update }: any) => (
+const PortfolioStep = ({ data, update, onUpload, uploading }: any) => (
   <div style={formGridStyle}>
     <div style={uploadContainerStyle}>
       <div style={uploadIconStyle}>
         <Upload size={32} color="var(--accent-primary)" />
       </div>
-      <h3 style={{ fontSize: '1.125rem', marginBottom: '8px' }}>Upload your Portfolio</h3>
+      <h3 style={{ fontSize: '1.125rem', marginBottom: '8px' }}>
+        {data.portfolio_url ? 'Portfolio Uploaded ✓' : 'Upload your Portfolio'}
+      </h3>
       <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '24px', textAlign: 'center' }}>
-        Support for PDF, DOCX, and high-quality images. Max file size 10MB.
+        {data.portfolio_url 
+          ? `File: ${data.portfolio_url.split('/').pop()?.substring(0, 30)}...`
+          : 'Support for PDF, DOCX, and high-quality images. Max file size 10MB.'}
       </p>
-      <input type="file" id="portfolio-upload" style={{ display: 'none' }} />
-      <Button onClick={() => document.getElementById('portfolio-upload')?.click()}>
+      <input 
+        type="file" 
+        id="portfolio-upload" 
+        style={{ display: 'none' }} 
+        onChange={onUpload}
+        accept=".pdf,.doc,.docx,image/*"
+      />
+      <Button 
+        onClick={() => document.getElementById('portfolio-upload')?.click()}
+        disabled={uploading}
+      >
         <FileUp size={18} style={{ marginRight: '8px' }} />
-        Select Files
+        {uploading ? 'Uploading...' : data.portfolio_url ? 'Change File' : 'Select Files'}
       </Button>
     </div>
     
