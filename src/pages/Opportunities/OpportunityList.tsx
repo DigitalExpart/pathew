@@ -3,18 +3,80 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
-import { Search, Filter, Calendar, MapPin, ChevronRight, Activity, Wifi } from 'lucide-react';
-import { mockOpportunities } from '../../data/mockData';
+import { Search, Filter, Calendar, MapPin, ChevronRight, Activity, Wifi, Bookmark } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import { supabase } from '../../lib/supabase';
 
 export const OpportunityList: React.FC = () => {
+  const { user } = useAuth();
+  const [opportunities, setOpportunities] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
+  const [savingId, setSavingId] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  const fetchOpportunities = async () => {
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('opportunities')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      setOpportunities(data || []);
+    } catch (error) {
+      console.error('Error fetching opportunities:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  React.useEffect(() => {
+    fetchOpportunities();
+  }, []);
+
+  const handleSave = async (opp: any) => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    
+    setSavingId(opp.id);
+    try {
+      const { error } = await supabase
+        .from('opportunities')
+        .update({ status: 'Saved' })
+        .eq('id', opp.id);
+      
+      if (error) throw error;
+      
+      // Update local state
+      setOpportunities(prev => prev.map(o => o.id === opp.id ? { ...o, status: 'Saved' } : o));
+      
+      // Record activity
+      await supabase.from('activities').insert({
+        user_id: user.id,
+        content: `Saved opportunity: ${opp.title} at ${opp.company}`
+      });
+
+    } catch (error) {
+      console.error('Error saving opportunity:', error);
+    } finally {
+      setSavingId(null);
+    }
+  };
+
+  const filteredOpps = opportunities.filter(opp => 
+    opp.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    opp.company.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div style={containerStyle}>
       <header style={headerStyle}>
         <h1 style={titleStyle}>Explore Opportunities</h1>
-        <p style={subtitleStyle}>Found {mockOpportunities.length} opportunities matching your profile.</p>
+        <p style={subtitleStyle}>Found {filteredOpps.length} opportunities matching your profile.</p>
       </header>
 
       {/* Filters Bar */}
@@ -44,8 +106,17 @@ export const OpportunityList: React.FC = () => {
 
       {/* Opportunity Cards */}
       <div style={gridStyle}>
-        {mockOpportunities.map(opp => (
-          <Card key={opp.id} style={{ display: 'flex', flexDirection: 'column' }}>
+        {loading ? (
+          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>
+            <p>Loading opportunities...</p>
+          </div>
+        ) : filteredOpps.length === 0 ? (
+          <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>
+            <p>No opportunities found. Try a different search term.</p>
+          </div>
+        ) : (
+          filteredOpps.map(opp => (
+            <Card key={opp.id} style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={cardHeaderStyle}>
               <div style={companyShortLogoStyle}>
                 {opp.company.charAt(0)}
@@ -53,8 +124,9 @@ export const OpportunityList: React.FC = () => {
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   {opp.status && (
-                    <Badge variant="outline" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      <Activity size={12} /> {opp.status}
+                    <Badge variant={opp.status === 'Saved' ? 'primary' : 'outline'} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                      {opp.status === 'Saved' ? <Bookmark size={12} fill="currentColor" /> : <Activity size={12} />}
+                      {opp.status}
                     </Badge>
                   )}
                   <Badge variant="primary">{opp.source}</Badge>
@@ -82,16 +154,23 @@ export const OpportunityList: React.FC = () => {
                 </div>
               </div>
 
-              <div style={tagsStyle}>
-                {opp.requirements.slice(0, 3).map((req, i) => (
+               <div style={tagsStyle}>
+                {opp.requirements?.slice(0, 3).map((req: string, i: number) => (
                   <span key={i} style={tagStyle}>{req}</span>
                 ))}
-                {opp.requirements.length > 3 && <span style={tagStyle}>+{opp.requirements.length - 3} more</span>}
+                {opp.requirements?.length > 3 && <span style={tagStyle}>+{opp.requirements.length - 3} more</span>}
               </div>
             </div>
 
-            <div style={cardFooterStyle}>
-              <Button variant="outline" style={{ flex: 1 }}>Save</Button>
+             <div style={cardFooterStyle}>
+              <Button 
+                variant={opp.status === 'Saved' ? 'secondary' : 'outline'} 
+                style={{ flex: 1, gap: '4px' }}
+                onClick={() => handleSave(opp)}
+                disabled={savingId === opp.id || opp.status === 'Saved'}
+              >
+                {savingId === opp.id ? 'Saving...' : opp.status === 'Saved' ? 'Saved' : 'Save'}
+              </Button>
               <Button 
                 style={{ flex: 1, gap: '4px' }}
                 onClick={() => navigate(`/opportunities/${opp.id}`)}
