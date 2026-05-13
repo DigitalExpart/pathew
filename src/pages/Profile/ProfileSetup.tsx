@@ -65,6 +65,7 @@ export const ProfileSetup: React.FC = () => {
     education: [] as any[],
     experience: [] as any[],
     goals: [] as string[],
+    skills: [] as string[],
     achievements: [] as string[],
     projects: [] as any[],
     organisation: '',
@@ -82,6 +83,7 @@ export const ProfileSetup: React.FC = () => {
         education: profile.education || [],
         experience: profile.experience || [],
         goals: profile.goals || [],
+        skills: profile.skills || [],
         achievements: profile.achievements || [],
         projects: profile.projects || [],
         organisation: profile.organisation || '',
@@ -106,6 +108,7 @@ export const ProfileSetup: React.FC = () => {
           projects: profileData.projects,
           organisation: profileData.organisation,
           portfolio_url: profileData.portfolio_url,
+          skills: profileData.skills,
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -305,8 +308,8 @@ const StoryStep = ({ data, update }: any) => {
           type="text" 
           placeholder="React, TypeScript, Project Management..." 
           style={inputStyle} 
-          defaultValue={data.goals.join(', ')}
-          onBlur={(e) => update('goals', e.target.value.split(',').map(s => s.trim()))}
+          value={data.skills.join(', ')}
+          onChange={(e) => update('skills', e.target.value.split(',').map(s => s.trim()))}
         />
       </div>
     </div>
