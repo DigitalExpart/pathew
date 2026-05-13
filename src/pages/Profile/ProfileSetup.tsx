@@ -21,6 +21,8 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAssistant } from '../../context/AssistantContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../../context/AuthContext';
+import { supabase } from '../../lib/supabase';
 
 const AssistantLinkButtonStyle: React.CSSProperties = {
   background: 'none',
@@ -52,20 +54,64 @@ const steps = [
 import logo from '../../assets/images/logo.png';
 
 export const ProfileSetup: React.FC = () => {
+  const { user, refreshProfile } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  // Centralized State
+  const [profileData, setProfileData] = useState({
+    story: '',
+    education: [] as any[],
+    experience: [] as any[],
+    goals: [] as string[],
+    achievements: [] as string[],
+    projects: [] as any[],
+    organisation: '',
+    portfolio_url: '',
+  });
+
+  const updateData = (field: string, value: any) => {
+    setProfileData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handleComplete = async () => {
+    if (!user) return;
+    setLoading(true);
+    
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({
+          story: profileData.story,
+          education: profileData.education,
+          experience: profileData.experience,
+          goals: profileData.goals,
+          achievements: profileData.achievements,
+          projects: profileData.projects,
+          organisation: profileData.organisation,
+          portfolio_url: profileData.portfolio_url,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', user.id);
+
+      if (error) throw error;
+      
+      await refreshProfile();
+      navigate('/dashboard');
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      alert('Failed to save profile. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleNext = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      navigate('/dashboard');
-    }
-  };
-
-  const handleBack = () => {
-    if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
+      handleComplete();
     }
   };
 
@@ -165,26 +211,27 @@ export const ProfileSetup: React.FC = () => {
           </div>
 
           <Card style={{ padding: '32px' }}>
-            {currentStep === 0 && <StoryStep />}
-            {currentStep === 1 && <EducationStep />}
-            {currentStep === 2 && <ExperienceStep />}
-            {currentStep === 3 && <GoalsStep />}
-            {currentStep === 4 && <AchievementStep />}
-            {currentStep === 5 && <ProjectsStep />}
-            {currentStep === 6 && <OrganisationStep />}
-            {currentStep === 7 && <PortfolioStep />}
+            {currentStep === 0 && <StoryStep data={profileData} update={updateData} />}
+            {currentStep === 1 && <EducationStep data={profileData} update={updateData} />}
+            {currentStep === 2 && <ExperienceStep data={profileData} update={updateData} />}
+            {currentStep === 3 && <GoalsStep data={profileData} update={updateData} />}
+            {currentStep === 4 && <AchievementStep data={profileData} update={updateData} />}
+            {currentStep === 5 && <ProjectsStep data={profileData} update={updateData} />}
+            {currentStep === 6 && <OrganisationStep data={profileData} update={updateData} />}
+            {currentStep === 7 && <PortfolioStep data={profileData} update={updateData} />}
 
             <div style={actionsStyle}>
               <Button 
                 variant="outline" 
                 onClick={handleBack}
+                disabled={loading}
                 style={{ visibility: currentStep === 0 ? 'hidden' : 'visible', gap: '8px' }}
               >
                 <ChevronLeft size={18} /> Back
               </Button>
-              <Button onClick={handleNext} style={{ gap: '8px' }}>
-                {currentStep === steps.length - 1 ? 'Complete Setup' : 'Continue'} 
-                <ChevronRight size={18} />
+              <Button onClick={handleNext} disabled={loading} style={{ gap: '8px' }}>
+                {loading ? 'Saving...' : currentStep === steps.length - 1 ? 'Complete Setup' : 'Continue'} 
+                {!loading && <ChevronRight size={18} />}
               </Button>
             </div>
           </Card>
@@ -195,10 +242,8 @@ export const ProfileSetup: React.FC = () => {
 };
 
 // Step Components
-const StoryStep = () => {
+const StoryStep = ({ data, update }: any) => {
   const { openAssistant } = useAssistant();
-  const [bio, setBio] = useState('');
-  const [skills, setSkills] = useState('');
 
   return (
     <div style={formGridStyle}>
@@ -207,7 +252,7 @@ const StoryStep = () => {
           <label style={labelStyle}>Bio / Personal Story</label>
           <button 
             style={AssistantLinkButtonStyle}
-            onClick={() => openAssistant('Personal Story', ['Rewrite this to be more professional', 'Turn my notes into a story', 'Polish this summary'], (text) => setBio(text), { bio })}
+            onClick={() => openAssistant('Personal Story', ['Rewrite this to be more professional', 'Turn my notes into a story', 'Polish this summary'], (text) => update('story', text), { bio: data.story })}
           >
             <Sparkles size={14} /> Polish with Assistant
           </button>
@@ -215,8 +260,8 @@ const StoryStep = () => {
         <textarea 
           placeholder="Share your background, passions, and what drives you professionally..." 
           style={textareaStyle}
-          value={bio}
-          onChange={(e) => setBio(e.target.value)}
+          value={data.story}
+          onChange={(e) => update('story', e.target.value)}
         />
       </div>
       <div style={inputGroupStyle}>
@@ -224,7 +269,10 @@ const StoryStep = () => {
           <label style={labelStyle}>Skills (Comma separated)</label>
           <button 
             style={AssistantLinkButtonStyle}
-            onClick={() => openAssistant('Skills Assistant', ['Suggest skills based on my bio', 'Group my skills by category', 'Improve this list'], (text) => setSkills(text), { bio, skills })}
+            onClick={() => openAssistant('Skills Assistant', ['Suggest skills based on my bio', 'Group my skills by category', 'Improve this list'], (text) => {
+              // Extract skills from text or append
+              update('goals', [...data.goals, text]);
+            }, { bio: data.story })}
           >
             <Sparkles size={14} /> Suggest Skills
           </button>
@@ -233,52 +281,97 @@ const StoryStep = () => {
           type="text" 
           placeholder="React, TypeScript, Project Management..." 
           style={inputStyle} 
-          value={skills}
-          onChange={(e) => setSkills(e.target.value)}
+          defaultValue={data.goals.join(', ')}
+          onBlur={(e) => update('goals', e.target.value.split(',').map(s => s.trim()))}
         />
       </div>
     </div>
   );
 };
 
-const EducationStep = () => (
-  <div style={formGridStyle}>
-    <div style={inputGroupStyle}>
-      <label style={labelStyle}>Institution</label>
-      <input type="text" placeholder="Stanford University" style={inputStyle} />
-    </div>
-    <div style={{ display: 'flex', gap: '16px' }}>
-      <div style={{ ...inputGroupStyle, flex: 1 }}>
-        <label style={labelStyle}>Degree</label>
-        <input type="text" placeholder="Master of Science" style={inputStyle} />
-      </div>
-      <div style={{ ...inputGroupStyle, flex: 1 }}>
-        <label style={labelStyle}>Field of Study</label>
-        <input type="text" placeholder="Computer Science" style={inputStyle} />
-      </div>
-    </div>
-  </div>
-);
+const EducationStep = ({ data, update }: any) => {
+  const edu = data.education[0] || { school: '', degree: '', field: '' };
 
-const ExperienceStep = () => {
+  const handleChange = (field: string, value: string) => {
+    const newEdu = [{ ...edu, [field]: value }];
+    update('education', newEdu);
+  };
+
+  return (
+    <div style={formGridStyle}>
+      <div style={inputGroupStyle}>
+        <label style={labelStyle}>Institution</label>
+        <input 
+          type="text" 
+          placeholder="Stanford University" 
+          style={inputStyle} 
+          value={edu.school}
+          onChange={(e) => handleChange('school', e.target.value)}
+        />
+      </div>
+      <div style={{ display: 'flex', gap: '16px' }}>
+        <div style={{ ...inputGroupStyle, flex: 1 }}>
+          <label style={labelStyle}>Degree</label>
+          <input 
+            type="text" 
+            placeholder="Master of Science" 
+            style={inputStyle} 
+            value={edu.degree}
+            onChange={(e) => handleChange('degree', e.target.value)}
+          />
+        </div>
+        <div style={{ ...inputGroupStyle, flex: 1 }}>
+          <label style={labelStyle}>Field of Study</label>
+          <input 
+            type="text" 
+            placeholder="Computer Science" 
+            style={inputStyle} 
+            value={edu.field}
+            onChange={(e) => handleChange('field', e.target.value)}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ExperienceStep = ({ data, update }: any) => {
   const { openAssistant } = useAssistant();
-  const [desc, setDesc] = useState('');
+  const exp = data.experience[0] || { company: '', title: '', description: '' };
+
+  const handleChange = (field: string, value: string) => {
+    const newExp = [{ ...exp, [field]: value }];
+    update('experience', newExp);
+  };
+
   return (
     <div style={formGridStyle}>
       <div style={inputGroupStyle}>
         <label style={labelStyle}>Most Recent Company</label>
-        <input type="text" placeholder="TechFlow Inc." style={inputStyle} />
+        <input 
+          type="text" 
+          placeholder="TechFlow Inc." 
+          style={inputStyle} 
+          value={exp.company}
+          onChange={(e) => handleChange('company', e.target.value)}
+        />
       </div>
       <div style={inputGroupStyle}>
         <label style={labelStyle}>Job Title</label>
-        <input type="text" placeholder="Senior Frontend Engineer" style={inputStyle} />
+        <input 
+          type="text" 
+          placeholder="Senior Frontend Engineer" 
+          style={inputStyle} 
+          value={exp.title}
+          onChange={(e) => handleChange('title', e.target.value)}
+        />
       </div>
       <div style={inputGroupStyle}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
           <label style={labelStyle}>Description</label>
           <button 
             style={AssistantLinkButtonStyle}
-            onClick={() => openAssistant('Experience Assistant', ['Improve this description', 'Turn into bullet points', 'Make it more achievement-oriented'], (text) => setDesc(text), { description: desc })}
+            onClick={() => openAssistant('Experience Assistant', ['Improve this description', 'Turn into bullet points', 'Make it more achievement-oriented'], (text) => handleChange('description', text), { description: exp.description })}
           >
             <Sparkles size={14} /> Rewrite with Assistant
           </button>
@@ -286,37 +379,56 @@ const ExperienceStep = () => {
         <textarea 
           placeholder="What were your key responsibilities?" 
           style={textareaStyle} 
-          value={desc}
-          onChange={(e) => setDesc(e.target.value)}
+          value={exp.description}
+          onChange={(e) => handleChange('description', e.target.value)}
         />
       </div>
     </div>
   );
 };
 
-const GoalsStep = () => {
+const GoalsStep = ({ data, update }: any) => {
   const [showManual, setShowManual] = useState(false);
-  const [manualGoal, setManualGoal] = useState('');
+  
+  const toggleGoal = (label: string) => {
+    const newGoals = data.goals.includes(label)
+      ? data.goals.filter((g: string) => g !== label)
+      : [...data.goals, label];
+    update('goals', newGoals);
+  };
 
   return (
     <div style={formGridStyle}>
       <div style={inputGroupStyle}>
         <label style={labelStyle}>What are you looking for?</label>
         <div style={goalsGridStyle}>
-          <GoalOption label="Full-time Roles" />
-          <GoalOption label="Contract Work" />
-          <GoalOption label="Freelance Projects" />
-          <GoalOption label="Fellowships" />
-          <GoalOption label="Grants" />
-          <GoalOption label="Leadership Positions" />
-          <div style={{ ...goalOptionStyle, gridColumn: 'span 2' }}>
-             <input 
-              type="checkbox" 
-              id="manual" 
-              checked={showManual} 
-              onChange={(e) => setShowManual(e.target.checked)} 
-            />
-            <label htmlFor="manual" style={{ flex: 1 }}>Others (Add manually)</label>
+          {['Full-time Roles', 'Contract Work', 'Freelance Projects', 'Fellowships', 'Grants', 'Leadership Positions'].map(label => (
+            <div 
+              key={label}
+              style={{ ...goalOptionStyle, borderColor: data.goals.includes(label) ? 'var(--accent-primary)' : 'var(--border-color)' }}
+              onClick={() => toggleGoal(label)}
+            >
+              <div style={{ 
+                width: '18px', 
+                height: '18px', 
+                borderRadius: '4px', 
+                border: '2px solid var(--accent-primary)',
+                backgroundColor: data.goals.includes(label) ? 'var(--accent-primary)' : 'transparent',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}>
+                {data.goals.includes(label) && <Check size={12} color="#000" />}
+              </div>
+              <label style={{ flex: 1, cursor: 'pointer' }}>{label}</label>
+            </div>
+          ))}
+          <div 
+            style={{ ...goalOptionStyle, gridColumn: 'span 2' }}
+            onClick={() => setShowManual(!showManual)}
+          >
+            <div style={{ width: '18px', height: '18px', borderRadius: '4px', border: '2px solid var(--border-color)', backgroundColor: showManual ? 'var(--bg-tertiary)' : 'transparent' }} />
+            <label style={{ flex: 1, cursor: 'pointer' }}>Others (Add manually)</label>
           </div>
         </div>
       </div>
@@ -328,8 +440,7 @@ const GoalsStep = () => {
             type="text" 
             placeholder="e.g. Academic Research, Mentorship..." 
             style={inputStyle}
-            value={manualGoal}
-            onChange={(e) => setManualGoal(e.target.value)}
+            onBlur={(e) => e.target.value && toggleGoal(e.target.value)}
           />
         </div>
       )}
@@ -337,25 +448,25 @@ const GoalsStep = () => {
   );
 };
 
-const AchievementStep = () => {
+const AchievementStep = ({ data, update }: any) => {
   const { openAssistant } = useAssistant();
-  const [achievements, setAchievements] = useState<string[]>(['']);
+  const achievements = data.achievements.length > 0 ? data.achievements : [''];
 
-  const addAchievement = () => setAchievements([...achievements, '']);
+  const addAchievement = () => update('achievements', [...achievements, '']);
   const removeAchievement = (index: number) => {
     const newAchievements = [...achievements];
     newAchievements.splice(index, 1);
-    setAchievements(newAchievements);
+    update('achievements', newAchievements);
   };
   const updateAchievement = (index: number, value: string) => {
     const newAchievements = [...achievements];
     newAchievements[index] = value;
-    setAchievements(newAchievements);
+    update('achievements', newAchievements);
   };
 
   return (
     <div style={formGridStyle}>
-      {achievements.map((ach, index) => (
+      {achievements.map((ach: string, index: number) => (
         <div key={index} style={{ ...inputGroupStyle, padding: '16px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
             <label style={labelStyle}>Achievement #{index + 1}</label>
@@ -396,29 +507,27 @@ const AchievementStep = () => {
   );
 };
 
-const ProjectsStep = () => {
-  const [projects, setProjects] = useState([
+const ProjectsStep = ({ data, update }: any) => {
+  const projects = data.projects.length > 0 ? data.projects : [
     { id: 1, title: '', description: '', isSaved: false },
     { id: 2, title: '', description: '', isSaved: false },
-    { id: 3, title: '', description: '', isSaved: false },
-    { id: 4, title: '', description: '', isSaved: false },
-  ]);
+  ];
 
-  const addProject = () => setProjects([...projects, { id: Date.now(), title: '', description: '', isSaved: false }]);
+  const addProject = () => update('projects', [...projects, { id: Date.now(), title: '', description: '', isSaved: false }]);
   
   const removeProject = (id: number) => {
     if (projects.length > 1) {
-      setProjects(projects.filter(p => p.id !== id));
+      update('projects', projects.filter((p: any) => p.id !== id));
     }
   };
 
   const updateProject = (id: number, field: string, value: any) => {
-    setProjects(projects.map(p => p.id === id ? { ...p, [field]: value } : p));
+    update('projects', projects.map((p: any) => p.id === id ? { ...p, [field]: value } : p));
   };
 
   return (
     <div style={{ ...formGridStyle, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', maxWidth: '1000px', width: '100%' }}>
-      {projects.map((proj, index) => (
+      {projects.map((proj: any, index: number) => (
         <div key={proj.id} style={{ 
           ...listItemStyle, 
           display: 'flex', 
@@ -488,63 +597,24 @@ const ProjectsStep = () => {
   );
 };
 
-const OrganisationStep = () => {
-  const [orgs, setOrgs] = useState<string[]>(['', '', '']); // Default to 3 affiliated orgs
-  const addOrg = () => setOrgs([...orgs, '']);
-  const removeOrg = (index: number) => {
-    const newOrgs = [...orgs];
-    newOrgs.splice(index, 1);
-    setOrgs(newOrgs);
-  };
-  const updateOrg = (index: number, value: string) => {
-    const newOrgs = [...orgs];
-    newOrgs[index] = value;
-    setOrgs(newOrgs);
-  };
-
+const OrganisationStep = ({ data, update }: any) => {
   return (
     <div style={formGridStyle}>
       <div style={inputGroupStyle}>
         <label style={labelStyle}>Primary Organisation</label>
-        <input type="text" placeholder="Current Company or Institution" style={inputStyle} />
-      </div>
-      
-      <div style={inputGroupStyle}>
-        <label style={labelStyle}>Affiliated Organisations</label>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-          {orgs.map((org, index) => (
-            <div key={index} style={{ position: 'relative' }}>
-              <input 
-                type="text" 
-                placeholder={`Affiliation #${index + 1}`} 
-                style={{ ...inputStyle, paddingRight: '40px' }}
-                value={org}
-                onChange={(e) => updateOrg(index, e.target.value)}
-              />
-              {orgs.length > 1 && (
-                <button 
-                  style={{ ...removeBtnStyle, position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', background: 'none' }} 
-                  onClick={() => removeOrg(index)}
-                >
-                  <Trash2 size={14} color="#ef4444" />
-                </button>
-              )}
-            </div>
-          ))}
-          <Button 
-            variant="outline" 
-            onClick={addOrg} 
-            style={{ borderStyle: 'dashed', height: '42px' }}
-          >
-            <Plus size={14} /> Add More
-          </Button>
-        </div>
+        <input 
+          type="text" 
+          placeholder="Current Company or Institution" 
+          style={inputStyle} 
+          value={data.organisation}
+          onChange={(e) => update('organisation', e.target.value)}
+        />
       </div>
     </div>
   );
 };
 
-const PortfolioStep = () => (
+const PortfolioStep = ({ data, update }: any) => (
   <div style={formGridStyle}>
     <div style={uploadContainerStyle}>
       <div style={uploadIconStyle}>
@@ -563,7 +633,13 @@ const PortfolioStep = () => (
     
     <div style={inputGroupStyle}>
       <label style={labelStyle}>Portfolio Link (Optional)</label>
-      <input type="url" placeholder="https://yourportfolio.com" style={inputStyle} />
+      <input 
+        type="url" 
+        placeholder="https://yourportfolio.com" 
+        style={inputStyle} 
+        value={data.portfolio_url}
+        onChange={(e) => update('portfolio_url', e.target.value)}
+      />
     </div>
   </div>
 );
