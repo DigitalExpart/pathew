@@ -28,55 +28,62 @@ export const Dashboard: React.FC = () => {
   const [recentOpps, setRecentOpps] = React.useState<any[]>([]);
   const [recentActivity, setRecentActivity] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [scanning, setScanning] = React.useState(false);
 
-  React.useEffect(() => {
-    const fetchDashboardData = async () => {
-      if (!user) return;
+  const fetchDashboardData = async () => {
+    if (!user) return;
+    
+    try {
+      // Fetch Counts
+      const [oppsCount, jobsCount, docsCount] = await Promise.all([
+        supabase.from('opportunities').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
+        supabase.from('jobs').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
+        supabase.from('documents').select('*', { count: 'exact', head: true }).eq('user_id', user.id)
+      ]);
+
+      setStats({
+        opps: oppsCount.count || 0,
+        jobs: jobsCount.count || 0,
+        docs: docsCount.count || 0,
+        reviews: 0 
+      });
+
+      // Fetch Recent Opportunities
+      const { data: opps } = await supabase
+        .from('opportunities')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(3);
       
-      try {
-        // Fetch Counts
-        const [oppsCount, jobsCount, docsCount] = await Promise.all([
-          supabase.from('opportunities').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
-          supabase.from('jobs').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
-          supabase.from('documents').select('*', { count: 'exact', head: true }).eq('user_id', user.id)
-        ]);
+      setRecentOpps(opps || []);
 
-        setStats({
-          opps: oppsCount.count || 0,
-          jobs: jobsCount.count || 0,
-          docs: docsCount.count || 0,
-          reviews: 0 // Logic for reviews if needed
-        });
+      // Fetch Recent Activity
+      const { data: activity } = await supabase
+        .from('activities')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(5);
+      
+      setRecentActivity(activity || []);
 
-        // Fetch Recent Opportunities
-        const { data: opps } = await supabase
-          .from('opportunities')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
-          .limit(3);
-        
-        setRecentOpps(opps || []);
-
-        // Fetch Recent Activity
-        const { data: activity } = await supabase
-          .from('activities')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false })
-          .limit(5);
-        
-        setRecentActivity(activity || []);
-
-      } catch (error) {
-        console.error('Error fetching dashboard data:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+  React.useEffect(() => {
     fetchDashboardData();
   }, [user]);
+
+  const handleQuickScan = async () => {
+    setScanning(true);
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    await fetchDashboardData();
+    setScanning(false);
+  };
 
   const firstName = profile?.full_name?.split(' ')[0] || 'User';
 
@@ -101,9 +108,17 @@ export const Dashboard: React.FC = () => {
           <h1 style={titleStyle}>Good morning, {firstName}! 👋</h1>
           <p style={subtitleStyle}>Here is what's happening with your opportunities today.</p>
         </div>
-        <Button style={{ gap: '10px' }}>
-          <Zap size={18} fill="currentColor" />
-          Quick Scan
+        <Button 
+          onClick={handleQuickScan} 
+          disabled={scanning}
+          style={{ 
+            gap: '10px', 
+            minWidth: '140px',
+            boxShadow: scanning ? 'none' : '0 4px 15px var(--accent-glow)' 
+          }}
+        >
+          <Zap size={18} fill="currentColor" className={scanning ? 'animate-pulse' : ''} />
+          {scanning ? 'Scanning...' : 'Quick Scan'}
         </Button>
       </header>
 
@@ -299,8 +314,10 @@ const containerStyle: React.CSSProperties = {
 const headerStyle: React.CSSProperties = {
   display: 'flex',
   justifyContent: 'space-between',
-  alignItems: 'flex-end',
+  alignItems: 'center',
   marginBottom: '32px',
+  flexWrap: 'wrap',
+  gap: '20px',
 };
 
 const titleStyle: React.CSSProperties = {
