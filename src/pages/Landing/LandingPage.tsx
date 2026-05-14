@@ -5,6 +5,7 @@ import { Card } from '../../components/ui/Card';
 import { Navbar } from '../../components/layout/Navbar';
 import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap, Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { StripeCheckoutModal } from '../../components/payment/StripeCheckoutModal';
 import logo from '../../assets/images/logo.png';
 
 const features = [
@@ -631,22 +632,16 @@ const StepItem = ({ number, title, description }: { number: string, title: strin
 );
 
 const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedFeatures, badge, badgeColor = 'var(--accent-primary)' }: any) => {
-  const [isConnecting, setIsConnecting] = React.useState(false);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const handleSubscribe = (e: any) => {
     e.preventDefault();
-    setIsConnecting(true);
-    // TODO: Replace with actual Stripe checkout session logic
-    console.log(`Initiating Stripe checkout for ${title} plan`);
-    
-    // Simulate connection delay to show intent
-    setTimeout(() => {
-      setIsConnecting(false);
-    }, 2000);
+    setIsModalOpen(true);
   };
 
   return (
-  <motion.div 
+    <>
+      <motion.div 
     initial={{ opacity: 0, y: 30 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
@@ -703,10 +698,18 @@ const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedF
 
     <div style={{ marginTop: 'auto' }}>
       <Button onClick={handleSubscribe} variant={badge === '★ MOST POPULAR ★' ? 'primary' : 'outline'} style={{ width: '100%' }}>
-        {isConnecting ? 'Connecting to Stripe...' : `Choose ${title}`}
+        Choose {title}
       </Button>
     </div>
   </motion.div>
+
+  <StripeCheckoutModal 
+    isOpen={isModalOpen} 
+    onClose={() => setIsModalOpen(false)} 
+    planTitle={title} 
+    planPrice={price} 
+  />
+  </>
   );
 };
 
