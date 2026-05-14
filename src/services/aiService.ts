@@ -25,10 +25,10 @@ export interface AssistantResponse {
 export const AssistantService = {
   async generateResponse(context: AssistantRequestContext): Promise<AssistantResponse> {
     // 1. Credit Check
-    if (context.userCredits < 10) {
+    if (context.userCredits < 1) {
       return { 
         success: false, 
-        error: "Insufficient credits. You need at least 10 credits to generate Assistant content." 
+        error: "Insufficient credits. Please top up your account to use the Assistant." 
       };
     }
 
@@ -62,7 +62,7 @@ Context Data: ${JSON.stringify(data)}
 Please generate the response now.`;
 
       const msg = await anthropic.messages.create({
-        model: "claude-3-5-sonnet-20241022",
+        model: "claude-3-5-sonnet-20240620", // Use the widely available Sonnet 3.5
         max_tokens: 4096,
         system: systemPrompt,
         messages: [{ role: "user", content: userMessage }],
@@ -73,7 +73,7 @@ Please generate the response now.`;
       return {
         success: true,
         text: generatedText,
-        creditsDeducted: 10
+        creditsDeducted: 1
       };
     } catch (err: any) {
       console.error('Claude API Error:', err);
