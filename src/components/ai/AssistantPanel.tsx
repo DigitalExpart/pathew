@@ -212,7 +212,7 @@ export const AssistantPanel: React.FC = () => {
           <div style={footerStyle}>
             <div style={creditWarningStyle}>
               <Sparkles size={12} color="var(--accent-primary)" />
-              <span>Each generation costs 10 Credits</span>
+              <span>Each generation costs 1 Credit</span>
             </div>
             <div style={chipsContainerStyle}>
               {suggestedPrompts.map((prompt, i) => (

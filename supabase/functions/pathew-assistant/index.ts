@@ -16,10 +16,16 @@ Deno.serve(async (req: Request) => {
       })
     }
 
+    // Use service role for admin operations (credit deduction, history saving)
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_ANON_KEY') ?? '',
       { global: { headers: { Authorization: authHeader } } }
+    )
+
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '',
     )
 
     const { data: { user }, error: authError } = await supabaseClient.auth.getUser()
@@ -35,6 +41,19 @@ Deno.serve(async (req: Request) => {
     const { data: profile } = await supabaseClient
       .from('profiles').select('*').eq('id', user.id).maybeSingle()
 
+    // Credit check
+    const currentCredits = profile?.credits ?? 0
+    if (currentCredits < 1) {
+      return new Response(JSON.stringify({ 
+        error: 'Insufficient credits. Please upgrade your plan.',
+        draft: 'You do not have enough credits to use the Assistant. Please top up your account.',
+        matchSummary: { strongMatches: [], gaps: [], priorityPoints: [] },
+        editingSuggestions: [], wordCountEstimate: 0, confidence: 'low', sessionId: sessionId || 'error'
+      }), {
+        status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
+    }
+
     const userContext = profile
       ? `Name: ${profile.full_name || 'Unknown'}, Plan: ${profile.subscription_plan || 'Free'}`
       : `Email: ${user.email}`
@@ -46,7 +65,6 @@ Deno.serve(async (req: Request) => {
       })
     }
 
-    // Use env var for model, fallback to claude-sonnet-4-5
     const preferredModel = Deno.env.get('CLAUDE_MODEL') || 'claude-sonnet-4-5'
     const sid = sessionId || 'session-' + Date.now()
 
@@ -57,23 +75,14 @@ User context: ${userContext}
 CRITICAL: Your ENTIRE response must be a valid JSON object with this exact structure (no markdown, no code blocks, just raw JSON):
 {"draft": "Your detailed response here", "matchSummary": {"strongMatches": ["point1"], "gaps": ["gap1"], "priorityPoints": ["tip1"]}, "editingSuggestions": ["suggestion1"], "wordCountEstimate": 300, "confidence": "high", "sessionId": "${sid}"}`
 
-    // Models available on this account (from Anthropic dashboard)
     const modelsToTry = [
-      preferredModel,
-      "claude-sonnet-4-5",
-      "claude-sonnet-4-6",
-      "claude-opus-4-5",
-      "claude-opus-4-6",
-      "claude-opus-4-7",
-      "claude-opus-4-1",
+      preferredModel, "claude-sonnet-4-5", "claude-sonnet-4-6",
+      "claude-opus-4-5", "claude-opus-4-6", "claude-opus-4-7", "claude-opus-4-1",
     ]
-
-    // Remove duplicates
     const uniqueModels = [...new Set(modelsToTry)]
 
     for (const model of uniqueModels) {
       console.log(`[TRY] Model: ${model}`)
-
       try {
         const claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
@@ -83,9 +92,7 @@ CRITICAL: Your ENTIRE response must be a valid JSON object with this exact struc
             'anthropic-version': '2023-06-01',
           },
           body: JSON.stringify({
-            model: model,
-            max_tokens: 2048,
-            system: systemPrompt,
+            model, max_tokens: 2048, system: systemPrompt,
             messages: [{ role: "user", content: action || "How can I improve my profile?" }],
           }),
         })
@@ -93,7 +100,9 @@ CRITICAL: Your ENTIRE response must be a valid JSON object with this exact struc
         if (claudeResponse.ok) {
           const result = await claudeResponse.json()
           const content = result.content?.[0]?.text || ''
-          console.log(`[SUCCESS] Model ${model} responded!`)
+          const tokensIn = result.usage?.input_tokens || 0
+          const tokensOut = result.usage?.output_tokens || 0
+          console.log(`[SUCCESS] Model ${model} | Tokens: ${tokensIn}in/${tokensOut}out`)
 
           let parsedResponse
           try {
@@ -110,13 +119,43 @@ CRITICAL: Your ENTIRE response must be a valid JSON object with this exact struc
             }
           }
 
+          // === DEDUCT 1 CREDIT ===
+          const newCredits = Math.max(0, currentCredits - 1)
+          await supabaseAdmin.from('profiles').update({ credits: newCredits }).eq('id', user.id)
+          console.log(`[CREDITS] ${currentCredits} -> ${newCredits} for user ${user.id}`)
+
+          // === SAVE TO HISTORY ===
+          // Save user message
+          await supabaseAdmin.from('assistant_messages').insert({
+            user_id: user.id,
+            role: 'user',
+            content: action,
+            session_id: sid,
+            tokens_in: tokensIn,
+            tokens_out: 0,
+          })
+          // Save assistant response
+          await supabaseAdmin.from('assistant_messages').insert({
+            user_id: user.id,
+            role: 'assistant',
+            content: parsedResponse.draft || content,
+            session_id: sid,
+            tokens_in: 0,
+            tokens_out: tokensOut,
+          })
+          console.log(`[HISTORY] Saved messages for session ${sid}`)
+
+          // Add credits info to response
+          parsedResponse.creditsRemaining = newCredits
+          parsedResponse.creditsDeducted = 1
+
           return new Response(JSON.stringify(parsedResponse), {
             status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
           })
         }
 
         const errBody = await claudeResponse.text()
-        console.log(`[FAIL] ${model}: ${claudeResponse.status} - ${errBody}`)
+        console.log(`[FAIL] ${model}: ${claudeResponse.status}`)
 
       } catch (fetchErr) {
         console.log(`[ERROR] ${model}: ${fetchErr.message}`)
@@ -125,7 +164,7 @@ CRITICAL: Your ENTIRE response must be a valid JSON object with this exact struc
 
     console.error('[FAILED] No models available')
     return new Response(JSON.stringify({
-      draft: "AI service is temporarily unavailable. Please try again shortly.",
+      draft: "AI service is temporarily unavailable. No credits were deducted.",
       matchSummary: { strongMatches: [], gaps: [], priorityPoints: [] },
       editingSuggestions: [], wordCountEstimate: 0, confidence: 'low', sessionId: sid
     }), {
@@ -135,7 +174,7 @@ CRITICAL: Your ENTIRE response must be a valid JSON object with this exact struc
   } catch (error) {
     console.error('[FATAL]', error.message)
     return new Response(JSON.stringify({
-      draft: "Sorry, something went wrong. Please try again.",
+      draft: "Sorry, something went wrong. No credits were deducted.",
       matchSummary: { strongMatches: [], gaps: [], priorityPoints: [] },
       editingSuggestions: [], wordCountEstimate: 0, confidence: 'low', sessionId: 'error'
     }), {
