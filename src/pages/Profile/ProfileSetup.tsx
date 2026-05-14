@@ -43,6 +43,7 @@ const steps = [
   { id: 'story', title: 'Your Story', icon: User },
   { id: 'education', title: 'Education', icon: BookOpen },
   { id: 'experience', title: 'Experience', icon: Briefcase },
+  { id: 'certifications', title: 'Certifications', icon: Award },
   { id: 'goals', title: 'Goals', icon: Target },
   { id: 'achievements', title: 'Achievements', icon: Award },
   { id: 'projects', title: 'Projects', icon: Layers },
@@ -71,6 +72,11 @@ export const ProfileSetup: React.FC = () => {
     organisation: '',
     portfolio_url: '',
     portfolios: [] as any[],
+    languages: [] as string[],
+    marital_status: '',
+    location: '',
+    date_of_birth: '',
+    certifications: [] as any[],
   });
 
   const updateData = (field: string, value: any) => {
@@ -90,6 +96,11 @@ export const ProfileSetup: React.FC = () => {
         organisation: profile.organisation || '',
         portfolio_url: profile.portfolio_url || '',
         portfolios: profile.portfolios || [],
+        languages: profile.languages || [],
+        marital_status: profile.marital_status || '',
+        location: profile.location || '',
+        date_of_birth: profile.date_of_birth || '',
+        certifications: profile.certifications || [],
       });
     }
   }, [profile]);
@@ -112,6 +123,11 @@ export const ProfileSetup: React.FC = () => {
           portfolio_url: profileData.portfolio_url,
           skills: profileData.skills,
           portfolios: profileData.portfolios,
+          languages: profileData.languages,
+          marital_status: profileData.marital_status,
+          location: profileData.location,
+          date_of_birth: profileData.date_of_birth,
+          certifications: profileData.certifications,
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
@@ -279,11 +295,12 @@ export const ProfileSetup: React.FC = () => {
             {currentStep === 0 && <StoryStep data={profileData} update={updateData} />}
             {currentStep === 1 && <EducationStep data={profileData} update={updateData} />}
             {currentStep === 2 && <ExperienceStep data={profileData} update={updateData} />}
-            {currentStep === 3 && <GoalsStep data={profileData} update={updateData} />}
-            {currentStep === 4 && <AchievementStep data={profileData} update={updateData} />}
-            {currentStep === 5 && <ProjectsStep data={profileData} update={updateData} />}
-            {currentStep === 6 && <OrganisationStep data={profileData} update={updateData} />}
-            {currentStep === 7 && (
+            {currentStep === 3 && <CertificationsStep data={profileData} update={updateData} />}
+            {currentStep === 4 && <GoalsStep data={profileData} update={updateData} />}
+            {currentStep === 5 && <AchievementStep data={profileData} update={updateData} />}
+            {currentStep === 6 && <ProjectsStep data={profileData} update={updateData} />}
+            {currentStep === 7 && <OrganisationStep data={profileData} update={updateData} />}
+            {currentStep === 8 && (
               <PortfolioStep 
                 data={profileData} 
                 update={updateData} 
@@ -319,6 +336,7 @@ const StoryStep = ({ data, update }: any) => {
 
   return (
     <div style={formGridStyle}>
+
       <div style={inputGroupStyle}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
           <label style={labelStyle}>Bio / Personal Story</label>
@@ -338,7 +356,7 @@ const StoryStep = ({ data, update }: any) => {
       </div>
       <div style={inputGroupStyle}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-          <label style={labelStyle}>Skills (Comma separated)</label>
+          <label style={labelStyle}>Core Skills (Comma separated)</label>
           <button 
             style={AssistantLinkButtonStyle}
             onClick={() => openAssistant('Skills Assistant', ['Suggest skills based on my bio', 'Group my skills by category', 'Improve this list'], (text) => {
@@ -361,99 +379,292 @@ const StoryStep = ({ data, update }: any) => {
 };
 
 const EducationStep = ({ data, update }: any) => {
-  const edu = data.education[0] || { school: '', degree: '', field: '' };
+  const educations = data.education.length > 0 ? data.education : [{ school: '', degree: '', field: '', year: '' }];
 
-  const handleChange = (field: string, value: string) => {
-    const newEdu = [{ ...edu, [field]: value }];
+  const addEducation = () => update('education', [...educations, { school: '', degree: '', field: '', year: '' }]);
+  
+  const removeEducation = (index: number) => {
+    if (educations.length > 1) {
+      const newEdu = [...educations];
+      newEdu.splice(index, 1);
+      update('education', newEdu);
+    }
+  };
+
+  const handleChange = (index: number, field: string, value: string) => {
+    const newEdu = [...educations];
+    newEdu[index] = { ...newEdu[index], [field]: value };
     update('education', newEdu);
   };
 
   return (
-    <div style={formGridStyle}>
-      <div style={inputGroupStyle}>
-        <label style={labelStyle}>Institution</label>
-        <input 
-          type="text" 
-          placeholder="Stanford University" 
-          style={inputStyle} 
-          value={edu.school}
-          onChange={(e) => handleChange('school', e.target.value)}
-        />
-      </div>
-      <div className="stack-on-mobile" style={{ display: 'flex', gap: '16px' }}>
-        <div style={{ ...inputGroupStyle, flex: 1 }}>
-          <label style={labelStyle}>Degree</label>
-          <input 
-            type="text" 
-            placeholder="Master of Science" 
-            style={inputStyle} 
-            value={edu.degree}
-            onChange={(e) => handleChange('degree', e.target.value)}
-          />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {educations.map((edu: any, index: number) => (
+        <div key={index} style={{ ...inputGroupStyle, padding: '24px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', position: 'relative' }}>
+          {educations.length > 1 && (
+            <button 
+              onClick={() => removeEducation(index)}
+              style={{ position: 'absolute', top: '12px', right: '12px', background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
+            >
+              <Trash2 size={16} />
+            </button>
+          )}
+          
+          <div style={formGridStyle}>
+            <div style={inputGroupStyle}>
+              <label style={labelStyle}>Institution</label>
+              <input 
+                type="text" 
+                placeholder="Stanford University" 
+                style={inputStyle} 
+                value={edu.school}
+                onChange={(e) => handleChange(index, 'school', e.target.value)}
+              />
+            </div>
+            <div className="stack-on-mobile" style={{ display: 'flex', gap: '16px' }}>
+              <div style={{ ...inputGroupStyle, flex: 1 }}>
+                <label style={labelStyle}>Degree</label>
+                <input 
+                  type="text" 
+                  placeholder="Master of Science" 
+                  style={inputStyle} 
+                  value={edu.degree}
+                  onChange={(e) => handleChange(index, 'degree', e.target.value)}
+                />
+              </div>
+              <div style={{ ...inputGroupStyle, flex: 1 }}>
+                <label style={labelStyle}>Field of Study</label>
+                <input 
+                  type="text" 
+                  placeholder="Computer Science" 
+                  style={inputStyle} 
+                  value={edu.field}
+                  onChange={(e) => handleChange(index, 'field', e.target.value)}
+                />
+              </div>
+              <div style={{ ...inputGroupStyle, flex: 1 }}>
+                <label style={labelStyle}>Graduation Year</label>
+                <input 
+                  type="text" 
+                  placeholder="2022" 
+                  style={inputStyle} 
+                  value={edu.year}
+                  onChange={(e) => handleChange(index, 'year', e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
         </div>
-        <div style={{ ...inputGroupStyle, flex: 1 }}>
-          <label style={labelStyle}>Field of Study</label>
-          <input 
-            type="text" 
-            placeholder="Computer Science" 
-            style={inputStyle} 
-            value={edu.field}
-            onChange={(e) => handleChange('field', e.target.value)}
-          />
-        </div>
-      </div>
+      ))}
+      
+      <Button 
+        variant="outline" 
+        onClick={addEducation}
+        style={{ width: '100%', borderStyle: 'dashed' }}
+      >
+        <Plus size={18} style={{ marginRight: '8px' }} /> Add Another Education
+      </Button>
     </div>
   );
 };
 
 const ExperienceStep = ({ data, update }: any) => {
   const { openAssistant } = useAssistant();
-  const exp = data.experience[0] || { company: '', title: '', description: '' };
+  const experiences = data.experience.length > 0 ? data.experience : [{ company: '', title: '', description: '', duration: '' }];
 
-  const handleChange = (field: string, value: string) => {
-    const newExp = [{ ...exp, [field]: value }];
+  const addExperience = () => update('experience', [...experiences, { company: '', title: '', description: '', duration: '' }]);
+  
+  const removeExperience = (index: number) => {
+    if (experiences.length > 1) {
+      const newExp = [...experiences];
+      newExp.splice(index, 1);
+      update('experience', newExp);
+    }
+  };
+
+  const handleChange = (index: number, field: string, value: string) => {
+    const newExp = [...experiences];
+    newExp[index] = { ...newExp[index], [field]: value };
     update('experience', newExp);
   };
 
   return (
-    <div style={formGridStyle}>
-      <div style={inputGroupStyle}>
-        <label style={labelStyle}>Most Recent Company</label>
-        <input 
-          type="text" 
-          placeholder="TechFlow Inc." 
-          style={inputStyle} 
-          value={exp.company}
-          onChange={(e) => handleChange('company', e.target.value)}
-        />
-      </div>
-      <div style={inputGroupStyle}>
-        <label style={labelStyle}>Job Title</label>
-        <input 
-          type="text" 
-          placeholder="Senior Frontend Engineer" 
-          style={inputStyle} 
-          value={exp.title}
-          onChange={(e) => handleChange('title', e.target.value)}
-        />
-      </div>
-      <div style={inputGroupStyle}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
-          <label style={labelStyle}>Description</label>
-          <button 
-            style={AssistantLinkButtonStyle}
-            onClick={() => openAssistant('Experience Assistant', ['Improve this description', 'Turn into bullet points', 'Make it more achievement-oriented'], (text) => handleChange('description', text), { description: exp.description })}
-          >
-            <Sparkles size={14} /> Rewrite with Assistant
-          </button>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {experiences.map((exp: any, index: number) => (
+        <div key={index} style={{ ...inputGroupStyle, padding: '24px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', position: 'relative' }}>
+          {experiences.length > 1 && (
+            <button 
+              onClick={() => removeExperience(index)}
+              style={{ position: 'absolute', top: '12px', right: '12px', background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
+            >
+              <Trash2 size={16} />
+            </button>
+          )}
+
+          <div style={formGridStyle}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div style={inputGroupStyle}>
+                <label style={labelStyle}>Company</label>
+                <input 
+                  type="text" 
+                  placeholder="TechFlow Inc." 
+                  style={inputStyle} 
+                  value={exp.company}
+                  onChange={(e) => handleChange(index, 'company', e.target.value)}
+                />
+              </div>
+              <div style={inputGroupStyle}>
+                <label style={labelStyle}>Job Title</label>
+                <input 
+                  type="text" 
+                  placeholder="Senior Frontend Engineer" 
+                  style={inputStyle} 
+                  value={exp.title}
+                  onChange={(e) => handleChange(index, 'title', e.target.value)}
+                />
+              </div>
+            </div>
+            <div style={inputGroupStyle}>
+              <label style={labelStyle}>Duration</label>
+              <input 
+                type="text" 
+                placeholder="Jan 2020 - Present" 
+                style={inputStyle} 
+                value={exp.duration}
+                onChange={(e) => handleChange(index, 'duration', e.target.value)}
+              />
+            </div>
+            <div style={inputGroupStyle}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
+                <label style={labelStyle}>Description</label>
+                <button 
+                  style={AssistantLinkButtonStyle}
+                  onClick={() => openAssistant('Experience Assistant', ['Improve this description', 'Turn into bullet points', 'Make it more achievement-oriented'], (text) => handleChange(index, 'description', text), { description: exp.description })}
+                >
+                  <Sparkles size={14} /> Rewrite with Assistant
+                </button>
+              </div>
+              <textarea 
+                placeholder="What were your key responsibilities?" 
+                style={textareaStyle} 
+                value={exp.description}
+                onChange={(e) => handleChange(index, 'description', e.target.value)}
+              />
+            </div>
+          </div>
         </div>
-        <textarea 
-          placeholder="What were your key responsibilities?" 
-          style={textareaStyle} 
-          value={exp.description}
-          onChange={(e) => handleChange('description', e.target.value)}
-        />
-      </div>
+      ))}
+
+      <Button 
+        variant="outline" 
+        onClick={addExperience}
+        style={{ width: '100%', borderStyle: 'dashed' }}
+      >
+        <Plus size={18} style={{ marginRight: '8px' }} /> Add Another Experience
+      </Button>
+    </div>
+  );
+};
+
+const CertificationsStep = ({ data, update }: any) => {
+  const certifications = data.certifications.length > 0 ? data.certifications : [{ title: '', organization: '', level: '', tutor: '', year: '' }];
+
+  const addCert = () => update('certifications', [...certifications, { title: '', organization: '', level: '', tutor: '', year: '' }]);
+  
+  const removeCert = (index: number) => {
+    if (certifications.length > 1) {
+      const newCerts = [...certifications];
+      newCerts.splice(index, 1);
+      update('certifications', newCerts);
+    }
+  };
+
+  const handleChange = (index: number, field: string, value: string) => {
+    const newCerts = [...certifications];
+    newCerts[index] = { ...newCerts[index], [field]: value };
+    update('certifications', newCerts);
+  };
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+      {certifications.map((cert: any, index: number) => (
+        <div key={index} style={{ ...inputGroupStyle, padding: '24px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', position: 'relative' }}>
+          {certifications.length > 1 && (
+            <button 
+              onClick={() => removeCert(index)}
+              style={{ position: 'absolute', top: '12px', right: '12px', background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}
+            >
+              <Trash2 size={16} />
+            </button>
+          )}
+          
+          <div style={formGridStyle}>
+            <div style={inputGroupStyle}>
+              <label style={labelStyle}>Certification Title</label>
+              <input 
+                type="text" 
+                placeholder="Google Data Analytics Professional Certificate" 
+                style={inputStyle} 
+                value={cert.title}
+                onChange={(e) => handleChange(index, 'title', e.target.value)}
+              />
+            </div>
+            <div style={inputGroupStyle}>
+              <label style={labelStyle}>Issuing Organization</label>
+              <input 
+                type="text" 
+                placeholder="Udemy, Coursera, Google, etc." 
+                style={inputStyle} 
+                value={cert.organization}
+                onChange={(e) => handleChange(index, 'organization', e.target.value)}
+              />
+            </div>
+            <div className="stack-on-mobile" style={{ display: 'flex', gap: '16px' }}>
+              <div style={{ ...inputGroupStyle, flex: 1 }}>
+                <label style={labelStyle}>Experience Level</label>
+                <select 
+                  style={inputStyle} 
+                  value={cert.level}
+                  onChange={(e) => handleChange(index, 'level', e.target.value)}
+                >
+                  <option value="">Select Level</option>
+                  <option value="Beginner">Beginner</option>
+                  <option value="Intermediate">Intermediate</option>
+                  <option value="Pro">Pro</option>
+                </select>
+              </div>
+              <div style={{ ...inputGroupStyle, flex: 1 }}>
+                <label style={labelStyle}>Tutor/Instructor Name</label>
+                <input 
+                  type="text" 
+                  placeholder="Dr. John Doe" 
+                  style={inputStyle} 
+                  value={cert.tutor}
+                  onChange={(e) => handleChange(index, 'tutor', e.target.value)}
+                />
+              </div>
+              <div style={{ ...inputGroupStyle, flex: 1 }}>
+                <label style={labelStyle}>Year Given</label>
+                <input 
+                  type="text" 
+                  placeholder="2023" 
+                  style={inputStyle} 
+                  value={cert.year}
+                  onChange={(e) => handleChange(index, 'year', e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+      
+      <Button 
+        variant="outline" 
+        onClick={addCert}
+        style={{ width: '100%', borderStyle: 'dashed' }}
+      >
+        <Plus size={18} style={{ marginRight: '8px' }} /> Add Another Certification
+      </Button>
     </div>
   );
 };

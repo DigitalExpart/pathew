@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { useAuth } from '../../context/AuthContext';
-import { User, CheckCircle2, Sparkles, Target, Briefcase, BookOpen, FileEdit, Award } from 'lucide-react';
+import { User, CheckCircle2, Sparkles, Target, Briefcase, BookOpen, FileEdit, Award, Heart, MapPin, Globe } from 'lucide-react';
 import { Badge } from '../../components/ui/Badge';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -108,13 +108,12 @@ export const ProfilePage: React.FC = () => {
                   <Badge variant="outline">Verified Professional</Badge>
                 </div>
               </div>
-            </div>
-
             <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '32px' }}>
               <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '16px' }}>My Story</h3>
               <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
                 {formData.story || 'No bio provided yet. Use the Edit Profile to share your professional journey.'}
               </p>
+            </div>
             </div>
           </Card>
 
@@ -319,4 +318,26 @@ const progressBarFillStyle: React.CSSProperties = {
   height: '100%',
   backgroundColor: 'var(--accent-primary)',
   borderRadius: '4px',
+};
+
+const detailItemStyle: React.CSSProperties = {
+  display: 'flex',
+  gap: '12px',
+  alignItems: 'center',
+  padding: '16px',
+  backgroundColor: 'var(--bg-secondary)',
+  borderRadius: 'var(--radius-md)',
+  border: '1px solid var(--border-color)',
+};
+
+const detailLabelStyle: React.CSSProperties = {
+  fontSize: '0.75rem',
+  color: 'var(--text-muted)',
+  marginBottom: '2px',
+};
+
+const detailValueStyle: React.CSSProperties = {
+  fontSize: '0.875rem',
+  fontWeight: 600,
+  color: 'var(--text-primary)',
 };

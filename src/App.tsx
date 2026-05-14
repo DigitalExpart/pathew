@@ -12,6 +12,7 @@ import { OpportunityList } from './pages/Opportunities/OpportunityList';
 import { OpportunityDetail } from './pages/Opportunities/OpportunityDetail';
 import { ProfileSetup } from './pages/Profile/ProfileSetup';
 import { ProfilePage } from './pages/Profile/ProfilePage';
+import { EditProfile } from './pages/Profile/EditProfile';
 import { CVBuilderPage, CoverLetterPage, ProposalPage } from './pages/Builders/Pages';
 import { WalletPage } from './pages/Credits/WalletPage';
 import { PricingPage } from './pages/Credits/PricingPage';
@@ -63,7 +64,7 @@ function App() {
           <Route path="/jobs" element={<Shell><JobsPage /></Shell>} />
           <Route path="/opportunities/:id" element={<Shell><OpportunityDetail /></Shell>} />
           <Route path="/career-profile" element={<Shell><ProfilePage /></Shell>} />
-          <Route path="/profile" element={<Shell><ProfileSetup /></Shell>} />
+          <Route path="/profile" element={<Shell><EditProfile /></Shell>} />
           <Route path="/cv-builder" element={<Shell><CVBuilderPage /></Shell>} />
           <Route path="/cover-letter" element={<Shell><CoverLetterPage /></Shell>} />
           <Route path="/proposal" element={<Shell><ProposalPage /></Shell>} />
