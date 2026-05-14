@@ -36,7 +36,7 @@ Deno.serve(async (req: Request) => {
     }
 
     const body = await req.json()
-    const { action, sessionId } = body
+    const { action, sessionId, documentType } = body
 
     const { data: profile } = await supabaseClient
       .from('profiles').select('*').eq('id', user.id).maybeSingle()
@@ -131,7 +131,8 @@ CRITICAL: Your ENTIRE response must be a valid JSON object with this exact struc
             const { error: sessionError } = await supabaseAdmin.from('assistant_sessions').insert({
               id: sid,
               user_id: user.id,
-              task: action.length > 50 ? action.substring(0, 50) + '...' : action
+              task: action.length > 50 ? action.substring(0, 50) + '...' : action,
+              page: documentType || 'General'
             })
             if (sessionError) console.error(`[HISTORY ERROR SESSION] ${sessionError.message}`)
           }
