@@ -630,7 +630,14 @@ const StepItem = ({ number, title, description }: { number: string, title: strin
   </motion.div>
 );
 
-const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedFeatures, badge, badgeColor = 'var(--accent-primary)' }: any) => (
+const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedFeatures, badge, badgeColor = 'var(--accent-primary)' }: any) => {
+  const handleSubscribe = () => {
+    // TODO: Replace with actual Stripe checkout session logic
+    console.log(`Initiating Stripe checkout for ${title} plan`);
+    alert(`Connecting to Stripe Payment Gateway for ${title}...`);
+  };
+
+  return (
   <motion.div 
     initial={{ opacity: 0, y: 30 }}
     whileInView={{ opacity: 1, y: 0 }}
@@ -686,11 +693,12 @@ const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedF
       </ul>
     </div>
 
-    <a href="https://stripe.com" target="_blank" rel="noreferrer" style={{ marginTop: 'auto', textDecoration: 'none' }}>
-      <Button variant={badge === '★ MOST POPULAR ★' ? 'primary' : 'outline'} style={{ width: '100%' }}>Choose {title}</Button>
-    </a>
+    <div style={{ marginTop: 'auto' }}>
+      <Button onClick={handleSubscribe} variant={badge === '★ MOST POPULAR ★' ? 'primary' : 'outline'} style={{ width: '100%' }}>Choose {title}</Button>
+    </div>
   </motion.div>
-);
+  );
+};
 
 const SocialIcon = ({ icon: Icon, label }: { icon: any, label: string }) => (
   <motion.a 

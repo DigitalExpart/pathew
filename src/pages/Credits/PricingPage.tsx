@@ -4,7 +4,14 @@ import { Button } from '../../components/ui/Button';
 import { CheckCircle, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedFeatures, badge, badgeColor = 'var(--accent-primary)' }: any) => (
+const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedFeatures, badge, badgeColor = 'var(--accent-primary)' }: any) => {
+  const handleSubscribe = () => {
+    // TODO: Replace with actual Stripe checkout session logic
+    console.log(`Initiating Stripe checkout for ${title} plan`);
+    alert(`Connecting to Stripe Payment Gateway for ${title}...`);
+  };
+
+  return (
   <Card 
     style={{
       ...cardStyle,
@@ -55,11 +62,12 @@ const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedF
       </ul>
     </div>
 
-    <a href="https://stripe.com" target="_blank" rel="noreferrer" style={{ marginTop: 'auto', textDecoration: 'none' }}>
-      <Button variant={badge === '★ MOST POPULAR ★' ? 'primary' : 'outline'} style={{ width: '100%' }}>Choose {title}</Button>
-    </a>
+    <div style={{ marginTop: 'auto' }}>
+      <Button onClick={handleSubscribe} variant={badge === '★ MOST POPULAR ★' ? 'primary' : 'outline'} style={{ width: '100%' }}>Choose {title}</Button>
+    </div>
   </Card>
-);
+  );
+};
 
 export const PricingPage: React.FC = () => {
   return (
