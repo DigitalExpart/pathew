@@ -126,11 +126,24 @@ ${currentDraft || '(No current draft provided)'}
             }
           }
 
-          // === DEDUCT 1 CREDIT ===
-          const newCredits = Math.max(0, currentCredits - 1)
+          let creditCost = 1
+          if (sessionId) {
+            const { count } = await supabaseAdmin
+              .from('assistant_messages')
+              .select('*', { count: 'exact', head: true })
+              .eq('session_id', sid)
+              .eq('role', 'user')
+            
+            if (count && count >= 3) {
+              creditCost = 0.25
+            }
+          }
+
+          // === DEDUCT CREDIT ===
+          const newCredits = Math.max(0, currentCredits - creditCost)
           const { error: creditError } = await supabaseAdmin.from('profiles').update({ credits: newCredits }).eq('id', user.id)
           if (creditError) console.error(`[CREDIT ERROR] ${creditError.message}`)
-          else console.log(`[CREDITS] ${currentCredits} -> ${newCredits} for user ${user.id}`)
+          else console.log(`[CREDITS] ${currentCredits} -> ${newCredits} (Cost: ${creditCost}) for user ${user.id}`)
 
           // === SAVE TO HISTORY ===
           // 1. Create the session first to satisfy the foreign key constraint
