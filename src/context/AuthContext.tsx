@@ -17,6 +17,15 @@ interface Profile {
   portfolio_url?: string;
   skills?: string[];
   portfolios?: any[];
+  location?: string;
+  languages?: string[];
+  marital_status?: string;
+  date_of_birth?: string;
+  gender?: string;
+  country?: string;
+  street_address?: string;
+  postal_code?: string;
+  certifications?: any[];
   notification_settings?: {
     email: boolean;
     push: boolean;

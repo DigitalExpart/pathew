@@ -407,7 +407,6 @@ const formGridStyle: React.CSSProperties = { display: 'grid', gridTemplateColumn
 const inputGroupStyle: React.CSSProperties = { display: 'flex', flexDirection: 'column', gap: '8px' };
 const labelStyle: React.CSSProperties = { fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)' };
 const inputStyle: React.CSSProperties = { padding: '12px 16px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '12px', color: 'var(--text-primary)', outline: 'none' };
-const textareaStyle: React.CSSProperties = { ...inputStyle, minHeight: '150px', resize: 'vertical' };
 const inputWithIconStyle: React.CSSProperties = { ...inputStyle, display: 'flex', alignItems: 'center', gap: '12px' };
 const bareInputStyle: React.CSSProperties = { background: 'none', border: 'none', color: 'inherit', width: '100%', outline: 'none', fontSize: 'inherit' };
 const infoCardStyle: React.CSSProperties = { padding: '24px', backgroundColor: 'rgba(245, 158, 11, 0.05)', borderRadius: '16px', border: '1px solid rgba(245, 158, 11, 0.1)' };
