@@ -250,7 +250,7 @@ const HistoryTab = ({ onInsert }: { onInsert: (text: string) => void }) => {
       if (!user) return;
       const { data, error } = await supabase
         .from('assistant_messages')
-        .select('*, session:assistant_sessions(*)')
+        .select('*')
         .eq('user_id', user.id)
         .eq('role', 'assistant')
         .order('created_at', { ascending: false })
@@ -275,7 +275,7 @@ const HistoryTab = ({ onInsert }: { onInsert: (text: string) => void }) => {
           <div key={i} style={historyItemStyle}>
             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
               <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                {new Date(item.created_at).toLocaleDateString()} • {item.session?.task || 'General'}
+                {new Date(item.created_at).toLocaleDateString()} • {item.session_id || 'General'}
               </span>
               <button style={smallBtnStyle} onClick={() => onInsert(item.content)}>Insert</button>
             </div>
