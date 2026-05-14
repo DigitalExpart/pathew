@@ -43,10 +43,11 @@ Deno.serve(async (req: Request) => {
 
     // Credit check
     const currentCredits = profile?.credits ?? 0
-    if (currentCredits < 1) {
+    const requiredCredits = documentType === 'Roadmap' ? 3 : 1
+    if (currentCredits < requiredCredits) {
       return new Response(JSON.stringify({ 
-        error: 'Insufficient credits. Please upgrade your plan.',
-        draft: 'You do not have enough credits to use the Assistant. Please top up your account.',
+        error: `Insufficient credits. This action requires ${requiredCredits} credits.`,
+        draft: 'You do not have enough credits to perform this action. Please top up your account.',
         matchSummary: { strongMatches: [], gaps: [], priorityPoints: [] },
         editingSuggestions: [], wordCountEstimate: 0, confidence: 'low', sessionId: sessionId || 'error'
       }), {
@@ -73,7 +74,9 @@ Provide high-quality, actionable career advice and document drafts.
 User context: ${userContext}
 
 CRITICAL: Your ENTIRE response must be a valid JSON object with this exact structure (no markdown, no code blocks, just raw JSON):
-{"draft": "Your detailed response here", "matchSummary": {"strongMatches": ["point1"], "gaps": ["gap1"], "priorityPoints": ["tip1"]}, "editingSuggestions": ["suggestion1"], "wordCountEstimate": 300, "confidence": "high", "sessionId": "${sid}"}`
+{"draft": "Your detailed response here", "matchSummary": {"strongMatches": ["point1"], "gaps": ["gap1"], "priorityPoints": ["tip1"]}, "editingSuggestions": ["suggestion1"], "wordCountEstimate": 300, "confidence": "high", "sessionId": "${sid}"}
+
+If the user asks for a Roadmap or Preparation Plan, format the draft with clear "Week X:" headings on new lines.`
 
     const userMessageContent = `
 Task / Action: ${action || "How can I improve my profile?"}
@@ -126,8 +129,8 @@ ${currentDraft || '(No current draft provided)'}
             }
           }
 
-          let creditCost = 1
-          if (sessionId) {
+          let creditCost = requiredCredits
+          if (sessionId && documentType !== 'Roadmap') {
             const { count } = await supabaseAdmin
               .from('assistant_messages')
               .select('*', { count: 'exact', head: true })
