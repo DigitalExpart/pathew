@@ -57,9 +57,8 @@ export const WalletPage: React.FC = () => {
             <p style={balanceSubtextStyle}>Credits ready for your next application</p>
           </div>
           <div style={balanceFooterStyle}>
-            <Button style={{ flex: 1 }}>Buy Credits</Button>
-            <Link to="/pricing" style={{ flex: 1, display: 'flex', textDecoration: 'none' }}>
-              <Button variant="outline" style={{ width: '100%' }}>Upgrade Plan</Button>
+            <Link to="/pricing" style={{ width: '100%', display: 'flex', textDecoration: 'none' }}>
+              <Button variant="primary" style={{ width: '100%' }}>Upgrade Plan</Button>
             </Link>
           </div>
         </Card>
