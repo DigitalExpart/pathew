@@ -16,7 +16,8 @@ export const AdminUsersPage: React.FC = () => {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const { data } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+      const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+      if (error) console.error('Supabase error fetching users:', error);
       setUsers(data || []);
       setFiltered(data || []);
       setLoading(false);

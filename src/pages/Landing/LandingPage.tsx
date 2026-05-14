@@ -30,6 +30,26 @@ export const LandingPage: React.FC = () => {
   }, []);
 
   const isSmallDevice = isMobile || isTablet;
+  const [pricingTiers, setPricingTiers] = React.useState<any[]>([]);
+  const [creditCostSettings, setCreditCostSettings] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    const fetchDynamicSettings = async () => {
+      const { data } = await supabase.from('app_settings').select('*');
+      if (data) {
+        const p = data.find(s => s.id === 'pricing_tiers')?.value || [];
+        const c = data.find(s => s.id === 'credit_costs')?.value || [];
+        setPricingTiers(p);
+        setCreditCostSettings(c);
+      }
+    };
+    fetchDynamicSettings();
+  }, []);
+
+  const getPlanInfo = (name: string, fallback: any) => {
+    const found = pricingTiers.find(p => p.name === name);
+    return found ? { ...fallback, price: found.price, credits: `${found.credits} credits / month` } : fallback;
+  };
 
   return (
     <div style={landingStyle}>
@@ -347,17 +367,19 @@ export const LandingPage: React.FC = () => {
         
         <div className="grid-responsive" style={{ alignItems: 'stretch' }}>
           <PricingCard 
-            title="Starter" 
-            price="£11.99" 
-            credits="25 credits / month"
-            subtitle="Perfect for individuals tackling a single application round."
-            generatesUpTo={[
-              { label: 'Cover Letters', count: '25×' },
-              { label: 'CVs / Resumes', count: '25×' },
-              { label: 'Proposals', count: '25×' },
-              { label: 'Grant Applications', count: '8×' },
-              { label: 'Rewrites', count: '100×' }
-            ]}
+            {...getPlanInfo('Starter', {
+              title: "Starter",
+              price: "£11.99",
+              credits: "25 credits / month",
+              subtitle: "Perfect for individuals tackling a single application round.",
+              generatesUpTo: [
+                { label: 'Cover Letters', count: '25×' },
+                { label: 'CVs / Resumes', count: '25×' },
+                { label: 'Proposals', count: '25×' },
+                { label: 'Grant Applications', count: '8×' },
+                { label: 'Rewrites', count: '100×' }
+              ]
+            })}
             includedFeatures={[
               'View live job & grant opportunities',
               'Percentage readiness score per application',
@@ -365,18 +387,20 @@ export const LandingPage: React.FC = () => {
             ]}
           />
           <PricingCard 
-            title="Growth" 
-            price="£25.00" 
-            credits="60 credits / month"
-            subtitle="For freelancers and active job seekers applying across multiple roles."
-            badge="★ MOST POPULAR ★"
-            generatesUpTo={[
-              { label: 'Cover Letters', count: '60×' },
-              { label: 'CVs / Resumes', count: '60×' },
-              { label: 'Proposals', count: '60×' },
-              { label: 'Grant Applications', count: '20×' },
-              { label: 'Rewrites', count: '240×' }
-            ]}
+            {...getPlanInfo('Growth', {
+              title: "Growth",
+              price: "£25.00",
+              credits: "60 credits / month",
+              subtitle: "For freelancers and active job seekers applying across multiple roles.",
+              badge: "★ MOST POPULAR ★",
+              generatesUpTo: [
+                { label: 'Cover Letters', count: '60×' },
+                { label: 'CVs / Resumes', count: '60×' },
+                { label: 'Proposals', count: '60×' },
+                { label: 'Grant Applications', count: '20×' },
+                { label: 'Rewrites', count: '240×' }
+              ]
+            })}
             includedFeatures={[
               'View live job & grant opportunities',
               'Percentage readiness score per application',
@@ -384,19 +408,21 @@ export const LandingPage: React.FC = () => {
             ]}
           />
           <PricingCard 
-            title="Power User" 
-            price="£48.00" 
-            credits="120 credits / month"
-            subtitle="For agencies, consultants and power users generating at scale."
-            badge="★ BEST VALUE ★"
-            badgeColor="#3b82f6"
-            generatesUpTo={[
-              { label: 'Cover Letters', count: '120×' },
-              { label: 'CVs / Resumes', count: '120×' },
-              { label: 'Proposals', count: '120×' },
-              { label: 'Grant Applications', count: '40×' },
-              { label: 'Rewrites', count: '480×' }
-            ]}
+            {...getPlanInfo('Power User', {
+              title: "Power User",
+              price: "£48.00",
+              credits: "120 credits / month",
+              subtitle: "For agencies, consultants and power users generating at scale.",
+              badge: "★ BEST VALUE ★",
+              badgeColor: "#3b82f6",
+              generatesUpTo: [
+                { label: 'Cover Letters', count: '120×' },
+                { label: 'CVs / Resumes', count: '120×' },
+                { label: 'Proposals', count: '120×' },
+                { label: 'Grant Applications', count: '40×' },
+                { label: 'Rewrites', count: '480×' }
+              ]
+            })}
             includedFeatures={[
               'View live job & grant opportunities',
               'Percentage readiness score per application',
@@ -430,18 +456,18 @@ export const LandingPage: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {[
-                    { service: 'Cover Letter', credits: '1 credit', notes: 'per letter' },
-                    { service: 'CV / Resume', credits: '1 credit', notes: 'per CV' },
-                    { service: 'Proposal', credits: '1 credit', notes: 'per proposal' },
-                    { service: 'Grant Application', credits: '3 credits', notes: 'per grant' },
-                    { service: 'Preparation Plan', credits: '3 credits', notes: 'per plan' },
-                    { service: 'Any Rewrite', credits: '0.25 credits', notes: 'per rewrite (¼ of original after 3 rewrites)' },
-                  ].map((row, idx) => (
+                  {(creditCostSettings.length > 0 ? creditCostSettings : [
+                    { service: 'Cover Letter', credits: 1, notes: 'per letter' },
+                    { service: 'CV / Resume', credits: 1, notes: 'per CV' },
+                    { service: 'Proposal', credits: 1, notes: 'per proposal' },
+                    { service: 'Grant Application', credits: 3, notes: 'per grant' },
+                    { service: 'Preparation Plan', credits: 3, notes: 'per plan' },
+                    { service: 'Any Rewrite', credits: 0.25, notes: 'per rewrite (¼ of original after 3 rewrites)' },
+                  ]).map((row, idx) => (
                     <tr key={idx} style={{ borderBottom: idx !== 5 ? '1px solid var(--border-color)' : 'none' }}>
                       <td style={{ padding: '16px 24px', fontWeight: 500 }}>{row.service}</td>
-                      <td style={{ padding: '16px 24px', color: 'var(--accent-primary)', fontWeight: 600 }}>{row.credits}</td>
-                      <td style={{ padding: '16px 24px', color: 'var(--text-muted)', fontSize: '0.875rem' }}>{row.notes}</td>
+                      <td style={{ padding: '16px 24px', color: 'var(--accent-primary)', fontWeight: 600 }}>{row.credits} {row.credits === 1 ? 'credit' : 'credits'}</td>
+                      <td style={{ padding: '16px 24px', color: 'var(--text-muted)', fontSize: '0.875rem' }}>{row.notes || (row.service === 'Any Rewrite' ? 'per rewrite' : `per ${row.service.toLowerCase()}`)}</td>
                     </tr>
                   ))}
                 </tbody>
