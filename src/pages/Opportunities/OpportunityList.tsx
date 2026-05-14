@@ -15,6 +15,8 @@ export const OpportunityList: React.FC = () => {
   const [savingId, setSavingId] = useState<string | null>(null);
   const navigate = useNavigate();
 
+  const isMobile = window.innerWidth <= 768;
+
   const fetchOpportunities = async () => {
     setLoading(true);
     try {
@@ -73,14 +75,14 @@ export const OpportunityList: React.FC = () => {
   );
 
   return (
-    <div style={containerStyle}>
-      <header style={headerStyle}>
-        <h1 style={titleStyle}>Explore Opportunities</h1>
+    <div style={{ ...containerStyle, padding: isMobile ? '0' : '0' }}>
+      <header style={{ ...headerStyle, textAlign: isMobile ? 'center' : 'left' }}>
+        <h1 style={{ ...titleStyle, fontSize: isMobile ? '1.75rem' : '2.5rem' }}>Explore Opportunities</h1>
         <p style={subtitleStyle}>Found {filteredOpps.length} opportunities matching your profile.</p>
       </header>
 
       {/* Filters Bar */}
-      <div style={filtersBarStyle}>
+      <div className="stack-on-mobile" style={{ ...filtersBarStyle, flexDirection: isMobile ? 'column' : 'row' }}>
         <div style={searchWrapperStyle}>
           <Search size={18} color="var(--text-muted)" />
           <input 
@@ -92,12 +94,12 @@ export const OpportunityList: React.FC = () => {
           />
         </div>
         
-        <div style={filterButtonsStyle}>
-          <Button variant="outline" size="sm" style={{ gap: '8px' }}>
+        <div style={{ ...filterButtonsStyle, width: isMobile ? '100%' : 'auto', justifyContent: isMobile ? 'space-between' : 'flex-start' }}>
+          <Button variant="outline" size="sm" style={{ gap: '8px', flex: isMobile ? 1 : 'none' }}>
             <Filter size={16} /> Filters
           </Button>
-          <div style={dividerStyle}></div>
-          <select style={selectStyle}>
+          {!isMobile && <div style={dividerStyle}></div>}
+          <select style={{ ...selectStyle, flex: isMobile ? 1 : 'none' }}>
             <option>Sort by: Newest</option>
             <option>Sort by: Deadline</option>
           </select>
@@ -105,7 +107,10 @@ export const OpportunityList: React.FC = () => {
       </div>
 
       {/* Opportunity Cards */}
-      <div style={gridStyle}>
+      <div className="grid-responsive" style={{
+        ...gridStyle,
+        gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(350px, 1fr))',
+      }}>
         {loading ? (
           <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>
             <p>Loading opportunities...</p>

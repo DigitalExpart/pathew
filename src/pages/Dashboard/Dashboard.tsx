@@ -18,6 +18,14 @@ import { supabase } from '../../lib/supabase';
 export const Dashboard: React.FC = () => {
   const { user, profile } = useAuth();
   const navigate = useNavigate();
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
+
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const [prepHorizon, setPrepHorizon] = React.useState('90-day');
   const [stats, setStats] = React.useState({
     opps: 0,
@@ -101,10 +109,10 @@ export const Dashboard: React.FC = () => {
   const readinessScore = calculateReadiness();
 
   return (
-    <div style={containerStyle}>
+    <div style={{ ...containerStyle, padding: isMobile ? '20px' : '0' }}>
       <header style={headerStyle}>
         <div>
-          <h1 style={titleStyle}>Good morning, {firstName}! 👋</h1>
+          <h1 style={{ ...titleStyle, fontSize: isMobile ? '1.5rem' : '2rem' }}>Good morning, {firstName}! 👋</h1>
           <p style={subtitleStyle}>Here is what's happening with your opportunities today.</p>
         </div>
         <Button 
@@ -112,6 +120,7 @@ export const Dashboard: React.FC = () => {
           disabled={scanning}
           style={{ 
             gap: '10px', 
+            width: isMobile ? '100%' : 'auto',
             minWidth: '140px',
             boxShadow: scanning ? 'none' : '0 4px 15px var(--accent-glow)' 
           }}
@@ -119,27 +128,25 @@ export const Dashboard: React.FC = () => {
           <Zap size={18} fill="currentColor" className={scanning ? 'animate-pulse' : ''} />
           {scanning ? 'Scanning...' : 'Quick Scan'}
         </Button>
-      </header>
-
-      {/* Stats Grid */}
-      <div style={statsGridStyle}>
+      </header>      {/* Stats Grid */}
+      <div className="grid-responsive" style={{ marginBottom: '32px' }}>
         <StatCard icon={Users} label="Opportunities" value={stats.opps.toString()} trend="+0" />
         <StatCard icon={Briefcase} label="Jobs" value={stats.jobs.toString()} trend="+0" />
         <StatCard icon={FileCheck} label="Docs Generated" value={stats.docs.toString()} trend="+0" />
         <StatCard icon={Clock} label="Pending Reviews" value={stats.reviews.toString()} />
       </div>
 
-      <div style={mainGridStyle}>
+      <div className="flex-responsive" style={{ gap: '32px' }}>
         {/* Main Content Area */}
-        <section style={{ flex: 2, display: 'flex', flexDirection: 'column', gap: '32px' }}>
+        <section style={{ flex: 2, display: 'flex', flexDirection: 'column', gap: '32px', minWidth: 0 }}>
           
           {/* Preparation Plan */}
           <div>
             <div style={sectionHeaderStyle}>
               <h2 style={sectionTitleStyle}>Preparation Plan</h2>
-              <div style={horizonSelectorStyle}>
+              <div className="desktop-only" style={horizonSelectorStyle}>
                 {['Quick', '90-day', '180-day', '365-day'].map(horizon => (
-                  <button 
+                   <button 
                     key={horizon} 
                     style={{
                       ...horizonButtonStyle,
@@ -156,7 +163,7 @@ export const Dashboard: React.FC = () => {
               </div>
             </div>
             
-            <div style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
+            <div className="stack-on-mobile" style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
               <Card style={{ flex: 1, backgroundColor: 'var(--bg-tertiary)' }}>
                 <p style={statLabelStyle}>Readiness Score</p>
                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', marginTop: '8px' }}>
@@ -189,10 +196,10 @@ export const Dashboard: React.FC = () => {
             <Card title="Next Steps" icon={Target}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {profile?.projects?.slice(0, 3).map((proj: any) => (
-                  <div key={proj.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)' }}>
+                  <div key={proj.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', gap: '12px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2px solid var(--accent-primary)' }} />
-                      <span style={{ fontWeight: 500 }}>Refine {proj.title}</span>
+                      <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2px solid var(--accent-primary)', flexShrink: 0 }} />
+                      <span style={{ fontWeight: 500, fontSize: '0.9375rem' }}>Refine {proj.title}</span>
                     </div>
                     <Badge variant="outline">Next Up</Badge>
                   </div>
@@ -215,16 +222,16 @@ export const Dashboard: React.FC = () => {
           <div style={matchesListStyle}>
             {recentOpps.map(opp => (
               <Card key={opp.id} style={{ marginBottom: '16px' }}>
-                <div style={oppCardContentStyle}>
+                <div className="stack-on-mobile" style={oppCardContentStyle}>
                   <div style={oppInfoStyle}>
                     <h3 style={oppTitleStyle}>{opp.title}</h3>
                     <p style={oppCompanyStyle}>{opp.company} • {opp.location}</p>
-                    <div style={{ marginTop: '12px', display: 'flex', gap: '8px' }}>
+                    <div style={{ marginTop: '12px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                       <Badge variant="primary">{opp.type}</Badge>
                       <Badge variant="info">{opp.source}</Badge>
                     </div>
                   </div>
-                  <div style={oppMatchStyle}>
+                  <div className="desktop-only" style={oppMatchStyle}>
                     <div style={matchCircleStyle}>
                       <span style={matchValueStyle}>{opp.match_score}%</span>
                     </div>
@@ -243,7 +250,7 @@ export const Dashboard: React.FC = () => {
         </section>
 
         {/* Sidebar Panel */}
-        <section style={{ flex: 1 }}>
+        <section style={{ flex: 1, minWidth: 0 }}>
           <Card title="Quick Actions" style={{ marginBottom: '24px' }}>
             <div style={actionListStyle}>
               <ActionButton label="Generate New CV" />
@@ -331,12 +338,7 @@ const subtitleStyle: React.CSSProperties = {
   color: 'var(--text-secondary)',
 };
 
-const statsGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-  gap: '24px',
-  marginBottom: '32px',
-};
+
 
 const statIconBoxStyle: React.CSSProperties = {
   width: '40px',
@@ -364,10 +366,7 @@ const trendStyle: React.CSSProperties = {
   fontWeight: 600,
 };
 
-const mainGridStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: '32px',
-};
+
 
 const horizonSelectorStyle: React.CSSProperties = {
   display: 'flex',

@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, LogOut, LayoutDashboard, UserCircle, ChevronDown } from 'lucide-react';
+import { User, LogOut, LayoutDashboard, UserCircle, ChevronDown, Menu, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { Button } from '../ui/Button';
 import logo from '../../assets/images/logo.png';
@@ -14,7 +14,16 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -32,11 +41,13 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
   };
 
   const navLinkStyle = (page: string): React.CSSProperties => ({
-    fontSize: '0.875rem',
-    fontWeight: 500,
+    fontSize: isMobile ? '1.25rem' : '0.875rem',
+    fontWeight: isMobile ? 600 : 500,
     color: activePage === page ? 'var(--accent-primary)' : 'var(--text-secondary)',
     textDecoration: 'none',
     transition: 'color 0.2s ease',
+    padding: isMobile ? '16px 0' : '0',
+    borderBottom: isMobile ? '1px solid var(--border-color)' : 'none',
   });
 
   return (
@@ -44,63 +55,118 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6, type: 'spring' }}
-      style={navStyle}
+      style={{
+        ...navStyle,
+        padding: isMobile ? '16px 20px' : '24px 80px',
+      }}
     >
       <Link to="/" style={logoStyle}>
-        <img src={logo} alt="PATHEW Logo" style={{ height: '40px', objectFit: 'contain' }} />
+        <img src={logo} alt="PATHEW Logo" style={{ height: isMobile ? '32px' : '40px', objectFit: 'contain' }} />
       </Link>
 
-      <div style={navLinksStyle}>
-        <a href="#features" style={navLinkStyle('features')}>Features</a>
-        <Link to="/how-it-works" style={navLinkStyle('how-it-works')}>How it works</Link>
-        <Link to="/pricing" style={navLinkStyle('pricing')}>Pricing</Link>
-        <Link to="/contact" style={navLinkStyle('contact')}>Contact</Link>
-      </div>
+      {/* Desktop Links */}
+      {!isMobile && (
+        <div style={navLinksStyle}>
+          <a href="#features" style={navLinkStyle('features')}>Features</a>
+          <Link to="/how-it-works" style={navLinkStyle('how-it-works')}>How it works</Link>
+          <Link to="/pricing" style={navLinkStyle('pricing')}>Pricing</Link>
+          <Link to="/contact" style={navLinkStyle('contact')}>Contact</Link>
+        </div>
+      )}
 
       <div style={navActionsStyle}>
-        {user ? (
-          <div style={{ position: 'relative' }} ref={dropdownRef}>
-            <motion.div 
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-              style={profileTriggerStyle}
-            >
-              <div style={avatarStyle}>
-                <User size={20} color="var(--accent-primary)" />
-              </div>
-              <ChevronDown size={16} style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
-            </motion.div>
+        {/* Mobile Menu Toggle */}
+        {isMobile && (
+          <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} style={{ color: 'var(--text-primary)' }}>
+            {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        )}
 
-            <AnimatePresence>
-              {isDropdownOpen && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                  style={dropdownStyle}
-                >
-                  <Link to="/dashboard" style={dropdownItemStyle} onClick={() => setIsDropdownOpen(false)}>
-                    <LayoutDashboard size={18} /> Dashboard
-                  </Link>
-                  <Link to="/profile" style={dropdownItemStyle} onClick={() => setIsDropdownOpen(false)}>
-                    <UserCircle size={18} /> Profile
-                  </Link>
-                  <div style={dividerStyle} />
-                  <button onClick={handleLogout} style={{...dropdownItemStyle, color: '#ef4444', border: 'none', background: 'none', width: '100%', cursor: 'pointer'}}>
-                    <LogOut size={18} /> Logout
-                  </button>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        ) : (
-          <>
-            <Link to="/login"><Button variant="ghost">Login</Button></Link>
-            <Link to="/signup"><Button>Get Started</Button></Link>
-          </>
+        {!isMobile && (
+          user ? (
+            <div style={{ position: 'relative' }} ref={dropdownRef}>
+              <motion.div 
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                style={profileTriggerStyle}
+              >
+                <div style={avatarStyle}>
+                  <User size={20} color="var(--accent-primary)" />
+                </div>
+                <ChevronDown size={16} style={{ transform: isDropdownOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+              </motion.div>
+
+              <AnimatePresence>
+                {isDropdownOpen && (
+                  <motion.div 
+                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scale: 1 }}
+                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                    style={dropdownStyle}
+                  >
+                    <Link to="/dashboard" style={dropdownItemStyle} onClick={() => setIsDropdownOpen(false)}>
+                      <LayoutDashboard size={18} /> Dashboard
+                    </Link>
+                    <Link to="/career-profile" style={dropdownItemStyle} onClick={() => setIsDropdownOpen(false)}>
+                      <UserCircle size={18} /> Profile
+                    </Link>
+                    <div style={dividerStyle} />
+                    <button onClick={handleLogout} style={{...dropdownItemStyle, color: '#ef4444', border: 'none', background: 'none', width: '100%', cursor: 'pointer'}}>
+                      <LogOut size={18} /> Logout
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          ) : (
+            <>
+              <Link to="/login"><Button variant="ghost">Login</Button></Link>
+              <Link to="/signup"><Button>Get Started</Button></Link>
+            </>
+          )
         )}
       </div>
+
+      {/* Mobile Menu Overlay */}
+      <AnimatePresence>
+        {isMobile && isMobileMenuOpen && (
+          <motion.div
+            initial={{ x: '100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '100%' }}
+            transition={{ type: 'tween', duration: 0.3 }}
+            style={mobileMenuStyle}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', padding: '40px 20px' }}>
+              <a href="#features" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('features')}>Features</a>
+              <Link to="/how-it-works" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('how-it-works')}>How it works</Link>
+              <Link to="/pricing" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('pricing')}>Pricing</Link>
+              <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('contact')}>Contact</Link>
+              
+              <div style={{ marginTop: '32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                {user ? (
+                  <>
+                    <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button style={{ width: '100%' }}>Dashboard</Button>
+                    </Link>
+                    <button onClick={handleLogout} style={{ color: '#ef4444', fontWeight: 600 }}>Logout</button>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button variant="outline" style={{ width: '100%' }}>Login</Button>
+                    </Link>
+                    <Link to="/signup" onClick={() => setIsMobileMenuOpen(false)}>
+                      <Button style={{ width: '100%' }}>Get Started</Button>
+                    </Link>
+                  </>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
   );
 };
@@ -192,4 +258,15 @@ const dividerStyle: React.CSSProperties = {
   height: '1px',
   backgroundColor: 'var(--border-color)',
   margin: '8px',
+};
+
+const mobileMenuStyle: React.CSSProperties = {
+  position: 'fixed',
+  top: '72px',
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'var(--bg-primary)',
+  zIndex: 999,
+  overflowY: 'auto',
 };

@@ -13,6 +13,8 @@ export const JobsPage: React.FC = () => {
   const [loading, setLoading] = React.useState(true);
   const navigate = useNavigate();
 
+  const isMobile = window.innerWidth <= 768;
+
   const fetchJobs = async () => {
     if (!user) return;
     setLoading(true);
@@ -37,13 +39,16 @@ export const JobsPage: React.FC = () => {
   }, [user]);
 
   return (
-    <div style={containerStyle}>
-      <header style={headerStyle}>
-        <h1 style={titleStyle}>Applied Jobs</h1>
+    <div style={{ ...containerStyle, padding: isMobile ? '0' : '0' }}>
+      <header style={{ ...headerStyle, textAlign: isMobile ? 'center' : 'left' }}>
+        <h1 style={{ ...titleStyle, fontSize: isMobile ? '1.75rem' : '2.5rem' }}>Applied Jobs</h1>
         <p style={subtitleStyle}>You have applied for {jobs.length} roles.</p>
       </header>
 
-      <div style={gridStyle}>
+      <div className="grid-responsive" style={{
+        ...gridStyle,
+        gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(350px, 1fr))',
+      }}>
         {loading ? (
           <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>
             <p>Loading your applications...</p>

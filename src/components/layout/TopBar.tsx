@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Search, Bell, HelpCircle, ChevronDown, Coins, Sparkles, UserCircle, LogOut, LayoutDashboard } from 'lucide-react';
+import { Search, Bell, HelpCircle, ChevronDown, Coins, Sparkles, UserCircle, LogOut, LayoutDashboard, Menu } from 'lucide-react';
 import { mockUser } from '../../data/mockData';
 import { useAssistant } from '../../context/AssistantContext';
 
@@ -7,14 +7,29 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export const TopBar: React.FC = () => {
+interface TopBarProps {
+  onMenuClick?: () => void;
+}
+
+export const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
   const { user, profile, signOut } = useAuth();
   const { openAssistant } = useAssistant();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
+  const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+
+  React.useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isMobile = windowWidth <= 1024;
+  const isSmallMobile = windowWidth <= 768;
+
+  React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
@@ -31,49 +46,81 @@ export const TopBar: React.FC = () => {
 
   const displayName = profile?.full_name || user?.user_metadata?.full_name || user?.email?.split('@')[0] || mockUser.name;
 
+  const headerResponsiveStyle: React.CSSProperties = {
+    ...headerStyle,
+    padding: isSmallMobile ? '0 16px' : '0 32px',
+    marginLeft: isMobile ? '0' : '260px',
+  };
+
   return (
-    <header style={headerStyle}>
-      <div style={searchContainerStyle}>
-        <Search size={18} color="var(--text-muted)" />
-        <input 
-          type="text" 
-          placeholder="Search opportunities, documents..." 
-          style={searchInputStyle}
-        />
+    <header style={headerResponsiveStyle}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        {isMobile && (
+          <button onClick={onMenuClick} style={iconButtonStyle}>
+            <Menu size={24} color="var(--text-primary)" />
+          </button>
+        )}
+        {!isSmallMobile && (
+          <div style={searchContainerStyle}>
+            <Search size={18} color="var(--text-muted)" />
+            <input 
+              type="text" 
+              placeholder="Search..." 
+              style={searchInputStyle}
+            />
+          </div>
+        )}
       </div>
 
       <div style={actionsStyle}>
-        <button 
-          style={AssistantButtonStyle}
-          onClick={() => openAssistant('Pathew Assistant', ['How can I improve my profile?', 'What opportunities are trending?', 'Help me write a document'])}
-        >
-          <Sparkles size={16} />
-          <span>Pathew Assistant</span>
-        </button>
+        {!isSmallMobile && (
+          <button 
+            style={AssistantButtonStyle}
+            onClick={() => openAssistant('Pathew Assistant', ['How can I improve my profile?', 'What opportunities are trending?', 'Help me write a document'])}
+          >
+            <Sparkles size={16} />
+            <span>Assistant</span>
+          </button>
+        )}
 
-        <button style={iconButtonStyle}>
-          <HelpCircle size={20} color="var(--text-secondary)" />
-        </button>
-        <Link to="/notifications" style={iconButtonStyle}>
-          <div style={notificationBadgeStyle}></div>
-          <Bell size={20} color="var(--text-secondary)" />
-        </Link>
+        {isSmallMobile && (
+          <button 
+            style={{ ...iconButtonStyle, color: 'var(--accent-primary)' }}
+            onClick={() => openAssistant('Pathew Assistant', ['How can I improve my profile?', 'What opportunities are trending?', 'Help me write a document'])}
+          >
+            <Sparkles size={20} />
+          </button>
+        )}
+
+        {!isSmallMobile && (
+          <>
+            <button style={iconButtonStyle}>
+              <HelpCircle size={20} color="var(--text-secondary)" />
+            </button>
+            <Link to="/notifications" style={iconButtonStyle}>
+              <div style={notificationBadgeStyle}></div>
+              <Bell size={20} color="var(--text-secondary)" />
+            </Link>
+          </>
+        )}
 
         <Link to="/wallet" style={{ ...creditBadgeStyle, textDecoration: 'none' }}>
           <Coins size={16} color="var(--accent-primary)" />
-          <span style={creditTextStyle}>{profile?.credits?.toLocaleString() || '0'} Credits</span>
+          <span style={creditTextStyle}>{profile?.credits?.toLocaleString() || '0'}</span>
         </Link>
         
         <div style={dividerStyle}></div>
 
         <div style={{ position: 'relative' }} ref={dropdownRef}>
           <div style={userProfileStyle} onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-            <div style={userInfoStyle}>
-              <span style={userNameStyle}>{displayName}</span>
-              <span style={userRoleStyle}>
-                {profile?.subscription_plan ? `${profile.subscription_plan} Member` : (user ? 'Explorer' : 'Guest')}
-              </span>
-            </div>
+            {!isSmallMobile && (
+              <div style={userInfoStyle}>
+                <span style={userNameStyle}>{displayName}</span>
+                <span style={userRoleStyle}>
+                  {profile?.subscription_plan ? `${profile.subscription_plan} Member` : (user ? 'Explorer' : 'Guest')}
+                </span>
+              </div>
+            )}
             <div style={avatarWrapperStyle}>
               {profile?.avatar_url || user?.user_metadata?.avatar_url ? (
                 <img src={profile?.avatar_url || user?.user_metadata?.avatar_url} alt={displayName} style={avatarStyle} />
@@ -120,11 +167,12 @@ const headerStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  padding: '0 32px',
+  padding: window.innerWidth <= 768 ? '0 16px' : '0 32px',
   position: 'sticky',
   top: 0,
   zIndex: 90,
-  marginLeft: '260px',
+  marginLeft: window.innerWidth <= 1024 ? '0' : '260px',
+  transition: 'margin-left 0.3s ease',
 };
 
 const searchContainerStyle: React.CSSProperties = {

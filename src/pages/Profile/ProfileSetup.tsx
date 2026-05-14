@@ -57,6 +57,8 @@ export const ProfileSetup: React.FC = () => {
   const navigate = useNavigate();
   const [uploading, setUploading] = useState(false);
 
+  const isMobile = window.innerWidth <= 768;
+
   // Centralized State
   const [profileData, setProfileData] = useState({
     story: '',
@@ -169,16 +171,22 @@ export const ProfileSetup: React.FC = () => {
 
   return (
     <div style={containerStyle}>
-      <header style={headerStyle}>
-        <div style={stepperStyle}>
+      <header style={{
+        ...headerStyle,
+        padding: isMobile ? '16px' : '24px',
+      }}>
+        <div style={{
+          ...stepperStyle,
+          justifyContent: isMobile ? 'center' : 'flex-start',
+        }}>
           <AnimatePresence mode="popLayout">
             {steps.map((step, idx) => {
               const isFirst = idx === 0;
               const isCurrent = idx === currentStep;
               const isPast = idx < currentStep;
               
-              const windowSize = 5;
-              const startWindow = Math.max(0, Math.min(currentStep - 1, steps.length - windowSize));
+              const windowSize = isMobile ? 3 : 5;
+              const startWindow = Math.max(0, Math.min(currentStep - (isMobile ? 1 : 1), steps.length - windowSize));
               const endWindow = startWindow + windowSize;
               
               const isInWindow = idx >= startWindow && idx < endWindow;
@@ -190,7 +198,7 @@ export const ProfileSetup: React.FC = () => {
                   {idx === startWindow && idx > 0 && !isFirst && (
                     <motion.div 
                       initial={{ width: 0, opacity: 0 }}
-                      animate={{ width: 40, opacity: 0.3 }}
+                      animate={{ width: isMobile ? 20 : 40, opacity: 0.3 }}
                       style={{ ...stepLineStyle, borderStyle: 'dashed', backgroundColor: 'transparent', borderBottom: '1px dashed var(--border-color)' }}
                     />
                   )}
@@ -212,6 +220,9 @@ export const ProfileSetup: React.FC = () => {
                   >
                     <div style={{
                       ...stepCircleStyle,
+                      width: isMobile ? '28px' : '32px',
+                      height: isMobile ? '28px' : '32px',
+                      fontSize: isMobile ? '0.75rem' : '0.875rem',
                       backgroundColor: idx <= currentStep ? 'var(--accent-primary)' : 'var(--bg-tertiary)',
                       color: idx <= currentStep ? '#000' : 'var(--text-muted)',
                       boxShadow: isCurrent ? '0 0 20px var(--accent-glow)' : 'none',
@@ -219,24 +230,26 @@ export const ProfileSetup: React.FC = () => {
                       {isPast ? '✓' : idx + 1}
                     </div>
                     
-                    <motion.span
-                      initial={{ opacity: 0, width: 0 }}
-                      animate={{ opacity: 1, width: 'auto' }}
-                      style={{
-                        ...stepLabelStyle,
-                        color: idx <= currentStep ? 'var(--text-primary)' : 'var(--text-muted)',
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
-                      }}
-                    >
-                      {step.title}
-                    </motion.span>
+                    {!isMobile && (
+                      <motion.span
+                        initial={{ opacity: 0, width: 0 }}
+                        animate={{ opacity: 1, width: 'auto' }}
+                        style={{
+                          ...stepLabelStyle,
+                          color: idx <= currentStep ? 'var(--text-primary)' : 'var(--text-muted)',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                        }}
+                      >
+                        {step.title}
+                      </motion.span>
+                    )}
                   </motion.div>
 
                   {idx < steps.length - 1 && ( (idx >= startWindow && idx < endWindow - 1) || (isFirst && startWindow === 1) ) && (
                     <motion.div 
                       initial={{ width: 0, opacity: 0 }}
-                      animate={{ width: 32, opacity: idx < currentStep ? 0.6 : 0.2 }}
+                      animate={{ width: isMobile ? 16 : 32, opacity: idx < currentStep ? 0.6 : 0.2 }}
                       style={stepLineStyle}
                     />
                   )}
@@ -247,16 +260,22 @@ export const ProfileSetup: React.FC = () => {
         </div>
       </header>
 
-      <main style={mainStyle}>
-        <div style={contentWrapperStyle}>
-          <div style={{ marginBottom: '32px' }}>
-            <h1 style={{ fontSize: '2rem', marginBottom: '8px' }}>{steps[currentStep].title}</h1>
-            <p style={{ color: 'var(--text-secondary)' }}>
+      <main style={{
+        ...mainStyle,
+        padding: isMobile ? '24px 16px' : '40px 24px',
+      }}>
+        <div style={{
+          ...contentWrapperStyle,
+          maxWidth: '800px',
+        }}>
+          <div style={{ marginBottom: '32px', textAlign: isMobile ? 'center' : 'left' }}>
+            <h1 style={{ fontSize: isMobile ? '1.5rem' : '2rem', marginBottom: '8px' }}>{steps[currentStep].title}</h1>
+            <p style={{ color: 'var(--text-secondary)', fontSize: isMobile ? '0.875rem' : '1rem' }}>
               Tell us more about yourself to help our Assistant find the best matches.
             </p>
           </div>
 
-          <Card style={{ padding: '32px' }}>
+          <Card style={{ padding: isMobile ? '20px' : '32px' }}>
             {currentStep === 0 && <StoryStep data={profileData} update={updateData} />}
             {currentStep === 1 && <EducationStep data={profileData} update={updateData} />}
             {currentStep === 2 && <ExperienceStep data={profileData} update={updateData} />}
@@ -361,7 +380,7 @@ const EducationStep = ({ data, update }: any) => {
           onChange={(e) => handleChange('school', e.target.value)}
         />
       </div>
-      <div style={{ display: 'flex', gap: '16px' }}>
+      <div className="stack-on-mobile" style={{ display: 'flex', gap: '16px' }}>
         <div style={{ ...inputGroupStyle, flex: 1 }}>
           <label style={labelStyle}>Degree</label>
           <input 
@@ -419,7 +438,7 @@ const ExperienceStep = ({ data, update }: any) => {
         />
       </div>
       <div style={inputGroupStyle}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
           <label style={labelStyle}>Description</label>
           <button 
             style={AssistantLinkButtonStyle}
@@ -441,6 +460,7 @@ const ExperienceStep = ({ data, update }: any) => {
 
 const GoalsStep = ({ data, update }: any) => {
   const [showManual, setShowManual] = useState(false);
+  const isMobile = window.innerWidth <= 768;
   
   const toggleGoal = (label: string) => {
     const newGoals = data.goals.includes(label)
@@ -453,7 +473,10 @@ const GoalsStep = ({ data, update }: any) => {
     <div style={formGridStyle}>
       <div style={inputGroupStyle}>
         <label style={labelStyle}>What are you looking for?</label>
-        <div style={goalsGridStyle}>
+        <div style={{
+          ...goalsGridStyle,
+          gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
+        }}>
           {['Full-time Roles', 'Contract Work', 'Freelance Projects', 'Fellowships', 'Grants', 'Leadership Positions'].map(label => (
             <div 
               key={label}
@@ -476,7 +499,7 @@ const GoalsStep = ({ data, update }: any) => {
             </div>
           ))}
           <div 
-            style={{ ...goalOptionStyle, gridColumn: 'span 2' }}
+            style={{ ...goalOptionStyle, gridColumn: isMobile ? 'auto' : 'span 2' }}
             onClick={() => setShowManual(!showManual)}
           >
             <div style={{ width: '18px', height: '18px', borderRadius: '4px', border: '2px solid var(--border-color)', backgroundColor: showManual ? 'var(--bg-tertiary)' : 'transparent' }} />
@@ -520,14 +543,14 @@ const AchievementStep = ({ data, update }: any) => {
     <div style={formGridStyle}>
       {achievements.map((ach: string, index: number) => (
         <div key={index} style={{ ...inputGroupStyle, padding: '16px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
             <label style={labelStyle}>Achievement #{index + 1}</label>
-            <div style={{ display: 'flex', gap: '8px' }}>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               <button 
                 style={AssistantLinkButtonStyle}
                 onClick={() => openAssistant('Achievement Assistant', ['Make this more impactful', 'Quantify this accomplishment'], (text) => updateAchievement(index, text), { achievement: ach })}
               >
-                <Sparkles size={14} /> Assistant Polish
+                <Sparkles size={14} /> Polish
               </button>
               {achievements.length > 1 && (
                 <button 
@@ -540,7 +563,7 @@ const AchievementStep = ({ data, update }: any) => {
             </div>
           </div>
           <textarea 
-            placeholder="e.g. Awarded 'Employee of the Year' for consistently exceeding sales targets by 25%..." 
+            placeholder="e.g. Awarded 'Employee of the Year'..." 
             style={{ ...textareaStyle, minHeight: '80px' }}
             value={ach}
             onChange={(e) => updateAchievement(index, e.target.value)}
@@ -577,8 +600,10 @@ const ProjectsStep = ({ data, update }: any) => {
     update('projects', projects.map((p: any) => p.id === id ? { ...p, [field]: value } : p));
   };
 
+  const isMobile = window.innerWidth <= 768;
+
   return (
-    <div style={{ ...formGridStyle, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', maxWidth: '1000px', width: '100%' }}>
+    <div className="grid-responsive" style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', width: '100%' }}>
       {projects.map((proj: any, index: number) => (
         <div key={proj.id} style={{ 
           ...listItemStyle, 
@@ -589,7 +614,7 @@ const ProjectsStep = ({ data, update }: any) => {
           boxShadow: proj.isSaved ? '0 0 10px rgba(245, 158, 11, 0.1)' : 'none',
           transition: 'all 0.3s ease'
         }}>
-          <div style={{ ...listHeaderStyle, marginBottom: '12px' }}>
+          <div style={{ ...listHeaderStyle, marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <label style={{ ...labelStyle, color: proj.isSaved ? 'var(--accent-primary)' : 'var(--text-secondary)' }}>
                 Project #{index + 1}
@@ -626,7 +651,7 @@ const ProjectsStep = ({ data, update }: any) => {
               onChange={(e) => updateProject(proj.id, 'title', e.target.value)}
             />
             <textarea 
-              placeholder="Brief description of the project and your role..." 
+              placeholder="Brief description..." 
               style={{ ...textareaStyle, flex: 1, minHeight: '100px' }}
               value={proj.description}
               onChange={(e) => updateProject(proj.id, 'description', e.target.value)}
@@ -638,7 +663,7 @@ const ProjectsStep = ({ data, update }: any) => {
       <Button 
         variant="outline" 
         onClick={addProject} 
-        style={{ ...addBtnStyle, height: '100%', minHeight: '180px', borderStyle: 'dashed', gridColumn: 'span 1' }}
+        style={{ ...addBtnStyle, height: '100%', minHeight: isMobile ? '120px' : '180px', borderStyle: 'dashed' }}
       >
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
           <Plus size={24} />
@@ -668,6 +693,7 @@ const OrganisationStep = ({ data, update }: any) => {
 
 const PortfolioStep = ({ data, update, onUpload, uploading }: any) => {
   const [newProject, setNewProject] = useState({ title: '', description: '', url: '' });
+  const isMobile = window.innerWidth <= 768;
 
   const handleAddProject = async () => {
     if (!newProject.url) {
@@ -692,7 +718,12 @@ const PortfolioStep = ({ data, update, onUpload, uploading }: any) => {
 
   return (
     <div style={formGridStyle}>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '20px', marginBottom: '32px' }}>
+      <div style={{ 
+        display: 'grid', 
+        gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(240px, 1fr))', 
+        gap: '20px', 
+        marginBottom: '32px' 
+      }}>
         {data.portfolios?.map((proj: any, idx: number) => (
           <Card key={idx} style={{ padding: '16px', position: 'relative', overflow: 'hidden' }}>
             <button 
@@ -702,7 +733,7 @@ const PortfolioStep = ({ data, update, onUpload, uploading }: any) => {
               <Trash2 size={14} />
             </button>
             
-            <div style={{ height: '120px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '8px', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+            <div style={{ height: isMobile ? '160px' : '120px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '8px', marginBottom: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
               {proj.url.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
                 <img src={proj.url} alt={proj.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
               ) : (

@@ -15,12 +15,32 @@ const features = [
 ];
 
 export const LandingPage: React.FC = () => {
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
+  const [isTablet, setIsTablet] = React.useState(window.innerWidth <= 1024 && window.innerWidth > 768);
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+      setIsTablet(window.innerWidth <= 1024 && window.innerWidth > 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isSmallDevice = isMobile || isTablet;
+
   return (
     <div style={landingStyle}>
       <Navbar />
 
       {/* Hero Section */}
-      <header style={heroSectionStyle}>
+      <header style={{
+        ...heroSectionStyle,
+        padding: isMobile ? '100px 20px 40px' : isTablet ? '120px 40px 60px' : '160px 80px 100px',
+        flexDirection: isSmallDevice ? 'column' : 'row',
+        textAlign: isSmallDevice ? 'center' : 'left',
+        gap: isSmallDevice ? '40px' : '80px',
+      }}>
         <div style={heroBackgroundGlow}></div>
         <motion.div 
           initial={{ opacity: 0, x: -50 }}
@@ -28,47 +48,70 @@ export const LandingPage: React.FC = () => {
           transition={{ duration: 0.8, ease: "easeOut" }}
           style={heroContentStyle}
         >
-          <Badge text="Powered by Pathew Assistant" />
-          <h1 style={heroTitleStyle}>
+          <div style={{ display: 'flex', justifyContent: isSmallDevice ? 'center' : 'flex-start' }}>
+            <Badge text="Powered by Pathew Assistant" />
+          </div>
+          <h1 style={{
+            ...heroTitleStyle,
+            fontSize: isMobile ? '2.25rem' : '5rem',
+            lineHeight: isMobile ? 1.3 : 1.2,
+          }}>
             Apply for Your Next <span style={{ color: 'var(--accent-primary)' }}>Opportunity</span> with Precision.
           </h1>
-          <p style={heroSubtitleStyle}>
+          <p style={{
+            ...heroSubtitleStyle,
+            margin: isSmallDevice ? '0 auto 48px' : '0 0 48px 0',
+          }}>
             The ultimate platform for professionals to find, match, and apply for high-impact opportunities worldwide. 
             Stop searching, start matching with Pathew Assistant.
           </p>
-          <div style={heroActionsStyle}>
+          <div style={{
+            ...heroActionsStyle,
+            justifyContent: isSmallDevice ? 'center' : 'flex-start',
+            flexDirection: isMobile ? 'column' : 'row',
+          }}>
             <Link to="/signup">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                <Button size="lg" style={{ gap: '12px', padding: '16px 32px' }}>
+                <Button size="lg" style={{ gap: '12px', padding: '16px 32px', width: '100%' }}>
                   Create Your Profile <ArrowRight size={20} />
                 </Button>
               </motion.div>
             </Link>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button size="lg" variant="outline" style={{ padding: '16px 32px' }}>Watch Demo</Button>
+              <Button size="lg" variant="outline" style={{ padding: '16px 32px', width: '100%' }}>Watch Demo</Button>
             </motion.div>
           </div>
 
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1 }}
-            style={trustBarHeroStyle}
-          >
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Trusted by professionals at</span>
-            <div style={heroLogosStyle}>
-              <span style={heroLogoPlaceholderStyle}>UNDP</span>
-              <span style={heroLogoPlaceholderStyle}>WHO</span>
-              <span style={heroLogoPlaceholderStyle}>UNESCO</span>
-              <span style={heroLogoPlaceholderStyle}>WORLD BANK</span>
-            </div>
-          </motion.div>
+          {!isMobile && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 1 }}
+              style={trustBarHeroStyle}
+            >
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Trusted by professionals at</span>
+              <div style={{
+                ...heroLogosStyle,
+                justifyContent: 'flex-start',
+                flexWrap: 'wrap',
+              }}>
+                <span style={heroLogoPlaceholderStyle}>UNDP</span>
+                <span style={heroLogoPlaceholderStyle}>WHO</span>
+                <span style={heroLogoPlaceholderStyle}>UNESCO</span>
+                <span style={heroLogoPlaceholderStyle}>WORLD BANK</span>
+              </div>
+            </motion.div>
+          )}
           
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.8 }}
-            style={statsRowStyle}
+            style={{
+              ...statsRowStyle,
+              justifyContent: isMobile ? 'center' : 'flex-start',
+              gap: isMobile ? '24px' : '48px',
+            }}
           >
             <StatItem count="50k+" label="Opportunities" />
             <StatItem count="98%" label="Match Accuracy" />
@@ -80,7 +123,10 @@ export const LandingPage: React.FC = () => {
           initial={{ opacity: 0, scale: 0.9, x: 50 }}
           animate={{ opacity: 1, scale: 1, x: 0 }}
           transition={{ duration: 1, delay: 0.2, type: 'spring' }}
-          style={heroImageContainerStyle}
+          style={{
+            ...heroImageContainerStyle,
+            display: isMobile ? 'none' : 'block',
+          }}
         >
           <div style={heroImagePlaceholderStyle}>
             <img 
@@ -109,18 +155,27 @@ export const LandingPage: React.FC = () => {
       </header>
 
       {/* Problem/Solution Narrative */}
-      <section style={problemSectionStyle}>
-        <div style={problemContentStyle}>
+      <section className="section-padding" style={problemSectionStyle}>
+        <div style={{
+          ...problemContentStyle,
+          flexDirection: isSmallDevice ? 'column' : 'row',
+          gap: isSmallDevice ? '40px' : '80px',
+        }}>
           <motion.div 
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             style={{ flex: 1 }}
           >
-            <h2 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '24px', lineHeight: 1.2 }}>
+            <h2 style={{ 
+              fontSize: isMobile ? '2rem' : '3rem', 
+              fontWeight: 800, 
+              marginBottom: '24px', 
+              lineHeight: 1.2 
+            }}>
               Stop Applying into <span style={{ color: 'var(--accent-primary)' }}>the Dark</span>.
             </h2>
-            <p style={{ fontSize: '1.25rem', color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: 1.6 }}>
+            <p style={{ fontSize: '1.125rem', color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: 1.6 }}>
               You've spent weeks on proposals. You've sent countless emails. You've waited for months only to get a generic rejection with no feedback. 
               The problem isn't your vision—it's the language of funders you haven't mastered.
             </p>
@@ -134,9 +189,12 @@ export const LandingPage: React.FC = () => {
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            style={problemImageStyle}
+            style={{
+              ...problemImageStyle,
+              marginTop: isMobile ? '32px' : '0',
+            }}
           >
-            <Card style={{ padding: '40px', border: '1px solid rgba(239, 68, 68, 0.2)', backgroundColor: 'rgba(239, 68, 68, 0.02)' }}>
+            <Card className="card-padding" style={{ border: '1px solid rgba(239, 68, 68, 0.2)', backgroundColor: 'rgba(239, 68, 68, 0.02)' }}>
               <h4 style={{ color: '#ef4444', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Shield size={18} /> The Old Way
               </h4>
@@ -152,7 +210,7 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* Features Section */}
-      <section id="features" style={featuresSectionStyle}>
+      <section id="features" className="section-padding" style={featuresSectionStyle}>
         <motion.div 
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -160,23 +218,13 @@ export const LandingPage: React.FC = () => {
           transition={{ duration: 0.6 }}
           style={sectionHeaderStyle}
         >
-          <h2 style={sectionTitleStyle}>Why Professionals Choose PATHEW</h2>
+          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '2.5rem' }}>Why Professionals Choose PATHEW</h2>
           <p style={sectionSubtitleStyle}>Powerful tools designed to accelerate your career growth.</p>
         </motion.div>
         
-        <div style={carouselContainerStyle}>
-          <motion.div 
-            animate={{ 
-              x: [0, -1200], // Adjust based on total width
-            }}
-            transition={{
-              duration: 20,
-              repeat: Infinity,
-              ease: "linear"
-            }}
-            style={carouselTrackStyle}
-          >
-            {[...features, ...features].map((f, i) => (
+        {isMobile ? (
+          <div className="grid-responsive">
+            {features.map((f, i) => (
               <FeatureCard 
                 key={`${f.title}-${i}`}
                 icon={f.icon} 
@@ -184,39 +232,50 @@ export const LandingPage: React.FC = () => {
                 description={f.description} 
               />
             ))}
-          </motion.div>
-        </div>
+          </div>
+        ) : (
+          <div style={carouselContainerStyle}>
+            <motion.div 
+              animate={{ 
+                x: isMobile ? [0, -1000] : [0, -1200],
+              }}
+              transition={{
+                duration: 20,
+                repeat: Infinity,
+                ease: "linear"
+              }}
+              style={carouselTrackStyle}
+            >
+              {[...features, ...features].map((f, i) => (
+                <FeatureCard 
+                  key={`${f.title}-${i}`}
+                  icon={f.icon} 
+                  title={f.title} 
+                  description={f.description} 
+                />
+              ))}
+            </motion.div>
+          </div>
+        )}
       </section>
 
       {/* How It Works */}
-      <section id="how-it-works" style={howItWorksSectionStyle}>
+      <section id="how-it-works" className="section-padding" style={howItWorksSectionStyle}>
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true }}
           style={sectionHeaderStyle}
         >
-          <h2 style={sectionTitleStyle}>How it Works</h2>
+          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>How it Works</h2>
           <p style={sectionSubtitleStyle}>Your journey to a better career in three simple steps.</p>
         </motion.div>
         
-        <motion.div 
-          initial="hidden"
-          whileInView="show"
-          viewport={{ once: true }}
-          variants={{
-            hidden: { opacity: 0 },
-            show: {
-              opacity: 1,
-              transition: { staggerChildren: 0.2 }
-            }
-          }}
-          style={stepsContainerStyle}
-        >
+        <div className="grid-responsive">
           <StepItem number="01" title="Complete Your Profile" description="Share your story, achievements, and goals through our intuitive onboarding wizard." />
           <StepItem number="02" title="Get Matched" description="Our Assistant engine scans thousands of opportunities to find your perfect fit." />
           <StepItem number="03" title="Apply with Confidence" description="Use smart-generated documents to stand out and land your dream role." />
-        </motion.div>
+        </div>
 
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
@@ -225,7 +284,7 @@ export const LandingPage: React.FC = () => {
           transition={{ delay: 0.6 }}
           style={{ textAlign: 'center', marginTop: '64px' }}
         >
-          <Link to="/how-it-works">
+          <Link to="/signup">
             <Button variant="outline" style={{ gap: '10px', padding: '16px 40px' }}>
               Learn More <ArrowRight size={18} />
             </Button>
@@ -234,18 +293,22 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* Comparison Section */}
-      <section style={comparisonSectionStyle}>
+      <section className="section-padding" style={comparisonSectionStyle}>
         <motion.div 
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           style={sectionHeaderStyle}
         >
-          <h2 style={sectionTitleStyle}>ChatGPT learned from the internet. <br/> <span style={{ color: 'var(--accent-primary)' }}>PATHEW learned from winners.</span></h2>
+          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '1.75rem' : '3.5rem' }}>ChatGPT learned from the internet. <br/> <span style={{ color: 'var(--accent-primary)' }}>PATHEW learned from winners.</span></h2>
           <p style={sectionSubtitleStyle}>Unlike generic AI, our system is trained on over $50M in successful global opportunity applications.</p>
         </motion.div>
 
-        <div style={comparisonGridStyle}>
+        <div className="comparison-grid" style={{ 
+          maxWidth: '1200px', 
+          margin: '0 auto',
+          gridTemplateColumns: isSmallDevice ? '1fr' : '1fr 1fr' 
+        }}>
           <ComparisonColumn 
             title="Generic AI" 
             items={[
@@ -269,18 +332,18 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" style={pricingSectionStyle}>
+      <section id="pricing" className="section-padding" style={pricingSectionStyle}>
         <motion.div 
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           style={sectionHeaderStyle}
         >
-          <h2 style={sectionTitleStyle}>Simple, Transparent Pricing</h2>
+          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>Simple, Transparent Pricing</h2>
           <p style={sectionSubtitleStyle}>Choose the plan that fits your professional needs.</p>
         </motion.div>
         
-        <div style={pricingGridStyle}>
+        <div className="grid-responsive">
           <PricingCard 
             title="Free" 
             price="$0" 
@@ -301,15 +364,15 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* Social Proof Section */}
-      <section style={socialProofSectionStyle}>
+      <section className="section-padding" style={socialProofSectionStyle}>
         <motion.div 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           style={sectionHeaderStyle}
         >
-          <h2 style={sectionTitleStyle}>Built for Visionaries Like You</h2>
+          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>Built for Visionaries Like You</h2>
         </motion.div>
-        <div style={testimonialsGridStyle}>
+        <div className="grid-responsive">
           <TestimonialCard 
             quote="PATHEW helped our NGO secure a $150k grant from the World Bank in just 3 weeks. The match score was spot on." 
             author="Dr. Sarah Chen" 
@@ -329,14 +392,14 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* FAQ Section */}
-      <section id="faq" style={faqSectionStyle}>
+      <section id="faq" className="section-padding" style={faqSectionStyle}>
         <motion.div 
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           style={sectionHeaderStyle}
         >
-          <h2 style={sectionTitleStyle}>Frequently Asked Questions</h2>
+          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>Frequently Asked Questions</h2>
           <p style={sectionSubtitleStyle}>Everything you need to know about Pathew Assistant.</p>
         </motion.div>
         
@@ -353,59 +416,57 @@ export const LandingPage: React.FC = () => {
             question="Can I use the platform for free?" 
             answer="Absolutely! Our Free plan allows you to explore matches and make up to 3 applications per month." 
           />
-          <FAQItem 
-            question="How does the smart document generation work?" 
-            answer="Based on the specific requirements of an opportunity, our engine tailors your CV and cover letter to highlight your most relevant skills." 
-          />
-          <FAQItem 
-            question="Can I export my generated documents?" 
-            answer="Yes, all generated CVs, cover letters, and proposals can be exported as professional PDF or Word documents with one click." 
-          />
-          <FAQItem 
-            question="What types of opportunities are available?" 
-            answer="We aggregate fellowships, grants, scholarships, and professional roles from premium global sources across all sectors." 
-          />
-          <FAQItem 
-            question="How often are new opportunities added?" 
-            answer="Our discovery engine updates the database every 6 hours to ensure you never miss a deadline for a high-impact role." 
-          />
-          <FAQItem 
-            question="Can I manage multiple applications at once?" 
-            answer="Yes, the dashboard provides a centralized tracker to manage the status of all your active, saved, and submitted applications." 
-          />
-          <FAQItem 
-            question="Do you offer team or enterprise plans?" 
-            answer="We do! Our Enterprise plan includes team collaboration tools, custom branding for documents, and dedicated account management." 
-          />
-          <FAQItem 
-            question="How do I cancel my subscription?" 
-            answer="You can manage or cancel your subscription at any time directly from the Settings page. There are no long-term contracts." 
-          />
         </div>
       </section>
 
       {/* Footer */}
-      <footer style={footerStyle}>
-        <div style={footerMainStyle}>
-          <div style={footerBrandColStyle}>
-            <Link to="/" style={logoStyle}>
+      <footer className="section-padding" style={{
+        ...footerStyle,
+        paddingTop: isMobile ? '60px' : '100px',
+        paddingBottom: '40px',
+      }}>
+        <div className="flex-responsive" style={{ 
+          ...footerMainStyle, 
+          gap: isSmallDevice ? '40px' : '80px',
+          textAlign: isSmallDevice ? 'center' : 'left'
+        }}>
+          <div style={{ 
+            ...footerBrandColStyle, 
+            flex: isSmallDevice ? '1' : '1.5', 
+            textAlign: isSmallDevice ? 'center' : 'left' 
+          }}>
+            <Link to="/" style={{ ...logoStyle, justifyContent: isSmallDevice ? 'center' : 'flex-start' }}>
               <img src={logo} alt="PATHEW Logo" style={{ height: '32px', objectFit: 'contain' }} />
             </Link>
-            <p style={{ color: 'var(--text-secondary)', marginTop: '20px', lineHeight: 1.6 }}>
+            <p style={{ 
+              color: 'var(--text-secondary)', 
+              marginTop: '20px', 
+              lineHeight: 1.6, 
+              maxWidth: isSmallDevice ? '100%' : '300px',
+              margin: isSmallDevice ? '20px auto 0' : '20px 0 0'
+            }}>
               The premium platform for global opportunity matching. Empowering professionals with Pathew Assistant.
             </p>
           </div>
           
-          <div style={footerLinksGridStyle}>
+          <div className="grid-responsive" style={{ flex: 3, gap: '40px' }}>
             <FooterCol title="Product" links={['Features', 'How it works', 'Pricing', 'API']} />
             <FooterCol title="Company" links={['About', 'Careers', 'Blog', 'Contact']} />
             <FooterCol title="Legal" links={['Privacy', 'Terms', 'Security', 'Cookies']} />
           </div>
         </div>
         
-        <div style={footerBottomStyle}>
+        <div style={{
+          ...footerBottomStyle,
+          flexDirection: isSmallDevice ? 'column' : 'row',
+          gap: '24px',
+          textAlign: 'center',
+          marginTop: '64px',
+          paddingTop: '32px',
+          borderTop: '1px solid var(--border-color)',
+        }}>
           <p>© 2024 PATHEW. All rights reserved.</p>
-          <div style={socialLinksStyle}>
+          <div style={{ ...socialLinksStyle, justifyContent: 'center' }}>
             <SocialIcon icon={FacebookIcon} label="Facebook" />
             <SocialIcon icon={InstagramIcon} label="Instagram" />
             <SocialIcon icon={TikTokIcon} label="TikTok" />
@@ -436,7 +497,8 @@ const FeatureCard = ({ icon: Icon, title, description }: any) => (
       show: { opacity: 1, y: 0 }
     }}
     whileHover={{ y: -10, borderColor: 'var(--accent-primary)', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}
-    style={{...featureCardStyle, flexShrink: 0, width: '350px'}}
+    className="card-padding"
+    style={{...featureCardStyle, flexShrink: 0, width: '100%', minWidth: '280px'}}
   >
     <div style={featureIconWrapperStyle}>
       <Icon size={24} color="var(--accent-primary)" />
@@ -466,6 +528,7 @@ const StepItem = ({ number, title, description }: { number: string, title: strin
       show: { opacity: 1, scale: 1 }
     }}
     whileHover={{ scale: 1.02 }}
+    className="card-padding"
     style={stepItemCardStyle}
   >
     <div style={stepNumberStyle}>{number}</div>
@@ -480,6 +543,7 @@ const PricingCard = ({ title, price, features, isPopular }: any) => (
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
     whileHover={{ y: -15 }}
+    className="card-padding"
     style={{
       ...pricingCardStyle,
       borderColor: isPopular ? 'var(--accent-primary)' : 'var(--border-color)',
@@ -619,6 +683,7 @@ const ComparisonColumn = ({ title, items, highlight }: any) => (
         : '0 20px 40px rgba(0, 0, 0, 0.4)'
     }}
     transition={{ type: 'spring', stiffness: 300 }}
+    className="card-padding"
     style={{
       ...comparisonColStyle,
       position: 'relative',
@@ -688,6 +753,7 @@ const ComparisonColumn = ({ title, items, highlight }: any) => (
 const TestimonialCard = ({ quote, author, role }: any) => (
   <motion.div 
     whileHover={{ scale: 1.02 }}
+    className="card-padding"
     style={testimonialCardStyle}
   >
     <div style={{ color: 'var(--accent-primary)', fontSize: '3rem', lineHeight: 1, marginBottom: '20px' }}>"</div>
@@ -754,7 +820,7 @@ const heroContentStyle: React.CSSProperties = {
 
 const heroTitleStyle: React.CSSProperties = {
   fontSize: '5rem',
-  lineHeight: 1.05,
+  lineHeight: 1.2,
   marginBottom: '32px',
   fontWeight: 800,
   letterSpacing: '-0.04em',
@@ -847,25 +913,16 @@ const badgeDotStyle: React.CSSProperties = {
 };
 
 const featuresSectionStyle: React.CSSProperties = {
-  padding: '140px 80px',
   backgroundColor: 'var(--bg-secondary)',
 };
 
 const howItWorksSectionStyle: React.CSSProperties = {
-  padding: '140px 80px',
   backgroundColor: 'var(--bg-primary)',
 };
 
-const stepsContainerStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(3, 1fr)',
-  gap: '40px',
-  maxWidth: '1200px',
-  margin: '0 auto',
-};
+
 
 const stepItemCardStyle: React.CSSProperties = {
-  padding: '48px',
   backgroundColor: 'var(--bg-secondary)',
   borderRadius: '32px',
   border: '1px solid var(--border-color)',
@@ -882,21 +939,12 @@ const stepNumberStyle: React.CSSProperties = {
 };
 
 const pricingSectionStyle: React.CSSProperties = {
-  padding: '140px 80px',
   backgroundColor: 'var(--bg-secondary)',
 };
 
-const pricingGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(3, 1fr)',
-  gap: '32px',
-  maxWidth: '1200px',
-  margin: '0 auto',
-  alignItems: 'center',
-};
+
 
 const pricingCardStyle: React.CSSProperties = {
-  padding: '48px',
   backgroundColor: 'var(--bg-primary)',
   borderRadius: '32px',
   border: '2px solid var(--border-color)',
@@ -920,7 +968,6 @@ const popularBadgeStyle: React.CSSProperties = {
 };
 
 const footerStyle: React.CSSProperties = {
-  padding: '100px 80px 40px',
   backgroundColor: 'var(--bg-primary)',
   borderTop: '1px solid var(--border-color)',
 };
@@ -939,12 +986,7 @@ const footerBrandColStyle: React.CSSProperties = {
   maxWidth: '400px',
 };
 
-const footerLinksGridStyle: React.CSSProperties = {
-  flex: 2,
-  display: 'grid',
-  gridTemplateColumns: 'repeat(3, 1fr)',
-  gap: '40px',
-};
+
 
 const footerColStyle: React.CSSProperties = {
   display: 'flex',
@@ -1002,7 +1044,6 @@ const carouselTrackStyle: React.CSSProperties = {
 
 
 const featureCardStyle: React.CSSProperties = {
-  padding: '48px',
   backgroundColor: 'var(--bg-primary)',
   borderRadius: '32px',
   border: '1px solid var(--border-color)',
@@ -1023,7 +1064,6 @@ const featureIconWrapperStyle: React.CSSProperties = {
 };
 
 const faqSectionStyle: React.CSSProperties = {
-  padding: '140px 80px',
   backgroundColor: 'var(--bg-primary)',
 };
 
@@ -1082,7 +1122,6 @@ const heroLogoPlaceholderStyle: React.CSSProperties = {
 };
 
 const problemSectionStyle: React.CSSProperties = {
-  padding: '100px 80px',
   backgroundColor: 'var(--bg-primary)',
 };
 
@@ -1105,40 +1144,24 @@ const problemImageStyle: React.CSSProperties = {
 };
 
 const comparisonSectionStyle: React.CSSProperties = {
-  padding: '140px 80px',
   backgroundColor: 'var(--bg-secondary)',
 };
 
-const comparisonGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
-  gap: '32px',
-  maxWidth: '1000px',
-  margin: '0 auto',
-};
+
 
 const comparisonColStyle: React.CSSProperties = {
-  padding: '48px',
   borderRadius: '32px',
   border: '2px solid var(--border-color)',
   transition: 'all 0.3s ease',
 };
 
 const socialProofSectionStyle: React.CSSProperties = {
-  padding: '140px 80px',
   backgroundColor: 'var(--bg-primary)',
 };
 
-const testimonialsGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(3, 1fr)',
-  gap: '32px',
-  maxWidth: '1200px',
-  margin: '0 auto',
-};
+
 
 const testimonialCardStyle: React.CSSProperties = {
-  padding: '48px',
   backgroundColor: 'var(--bg-secondary)',
   borderRadius: '32px',
   border: '1px solid var(--border-color)',

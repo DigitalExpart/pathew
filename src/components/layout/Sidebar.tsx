@@ -10,7 +10,8 @@ import {
   Settings,
   LogOut,
   Wallet,
-  Clock
+  Clock,
+  X
 } from 'lucide-react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -50,7 +51,12 @@ const navGroups = [
   }
 ];
 
-export const Sidebar: React.FC = () => {
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const { signOut } = useAuth();
   const navigate = useNavigate();
 
@@ -59,11 +65,24 @@ export const Sidebar: React.FC = () => {
     navigate('/login');
   };
 
+  const isMobile = window.innerWidth <= 1024;
+
   return (
-    <aside style={sidebarStyle}>
-      <Link to="/" style={logoContainerStyle}>
-        <img src={logo} alt="PATHEW Logo" style={{ height: '40px', objectFit: 'contain' }} />
-      </Link>
+    <aside style={{
+      ...sidebarStyle,
+      transform: isMobile ? (isOpen ? 'translateX(0)' : 'translateX(-100%)') : 'none',
+      visibility: isMobile && !isOpen ? 'hidden' : 'visible',
+    }}>
+      <div style={logoContainerStyle}>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center' }} onClick={onClose}>
+          <img src={logo} alt="PATHEW Logo" style={{ height: '40px', objectFit: 'contain' }} />
+        </Link>
+        {isMobile && (
+          <button onClick={onClose} style={closeButtonStyle}>
+            <X size={20} />
+          </button>
+        )}
+      </div>
 
       <nav style={navStyle}>
         {navGroups.map((group, idx) => (
@@ -73,6 +92,7 @@ export const Sidebar: React.FC = () => {
               <NavLink 
                 key={item.path} 
                 to={item.path}
+                onClick={onClose}
                 style={({ isActive }) => ({
                   ...navItemStyle,
                   backgroundColor: isActive ? 'var(--bg-tertiary)' : 'transparent',
@@ -108,6 +128,13 @@ const sidebarStyle: React.CSSProperties = {
   left: 0,
   top: 0,
   zIndex: 100,
+  transition: 'transform 0.3s ease, visibility 0.3s',
+};
+
+const closeButtonStyle: React.CSSProperties = {
+  marginLeft: 'auto',
+  color: 'var(--text-secondary)',
+  padding: '8px',
 };
 
 const logoContainerStyle: React.CSSProperties = {
