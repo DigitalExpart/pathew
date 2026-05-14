@@ -4,6 +4,7 @@ import { Button } from '../../components/ui/Button';
 import { Coins, ArrowUpRight, ArrowDownRight, Clock } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { Link } from 'react-router-dom';
 
 export const WalletPage: React.FC = () => {
   const { user, profile } = useAuth();
@@ -57,7 +58,9 @@ export const WalletPage: React.FC = () => {
           </div>
           <div style={balanceFooterStyle}>
             <Button style={{ flex: 1 }}>Buy Credits</Button>
-            <Button variant="outline" style={{ flex: 1 }}>Upgrade Plan</Button>
+            <Link to="/pricing" style={{ flex: 1, display: 'flex', textDecoration: 'none' }}>
+              <Button variant="outline" style={{ width: '100%' }}>Upgrade Plan</Button>
+            </Link>
           </div>
         </Card>
 
