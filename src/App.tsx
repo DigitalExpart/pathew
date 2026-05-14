@@ -54,7 +54,7 @@ function App() {
           <Route path="/privacy-policy" element={<PublicPrivacyPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/how-it-works" element={<HowItWorksPage />} />
-          <Route path="/profile-setup" element={<ProfileSetup />} />
+          <Route path="/profile-setup" element={<Shell><ProfileSetup /></Shell>} />
           
           {/* Protected Routes (Authenticated) */}
           <Route path="/dashboard" element={<Shell><Dashboard /></Shell>} />

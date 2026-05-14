@@ -1023,15 +1023,14 @@ const PortfolioStep = ({ data, update, onUpload, uploading }: any) => {
 
 // Styles
 const containerStyle: React.CSSProperties = {
-  backgroundColor: 'var(--bg-primary)',
-  minHeight: '100vh',
   display: 'flex',
   flexDirection: 'column',
+  width: '100%',
 };
 
 const headerStyle: React.CSSProperties = {
-  padding: '24px',
-  backgroundColor: 'var(--bg-secondary)',
+  padding: '16px 0',
+  marginBottom: '24px',
   borderBottom: '1px solid var(--border-color)',
 };
 
@@ -1075,7 +1074,7 @@ const stepLineStyle: React.CSSProperties = {
 
 const mainStyle: React.CSSProperties = {
   flex: 1,
-  padding: '48px 24px',
+  padding: '0',
 };
 
 const contentWrapperStyle: React.CSSProperties = {
