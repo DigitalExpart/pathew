@@ -1422,14 +1422,7 @@ const socialProofSectionStyle: React.CSSProperties = {
 
 
 
-const testimonialCardStyle: React.CSSProperties = {
-  backgroundColor: 'var(--bg-secondary)',
-  borderRadius: '32px',
-  border: '1px solid var(--border-color)',
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'space-between',
-};
+
 
 const comparisonBadgeStyle: React.CSSProperties = {
   position: 'absolute',
