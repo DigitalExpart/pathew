@@ -121,12 +121,13 @@ CRITICAL: Your ENTIRE response must be a valid JSON object with this exact struc
 
           // === DEDUCT 1 CREDIT ===
           const newCredits = Math.max(0, currentCredits - 1)
-          await supabaseAdmin.from('profiles').update({ credits: newCredits }).eq('id', user.id)
-          console.log(`[CREDITS] ${currentCredits} -> ${newCredits} for user ${user.id}`)
+          const { error: creditError } = await supabaseAdmin.from('profiles').update({ credits: newCredits }).eq('id', user.id)
+          if (creditError) console.error(`[CREDIT ERROR] ${creditError.message}`)
+          else console.log(`[CREDITS] ${currentCredits} -> ${newCredits} for user ${user.id}`)
 
           // === SAVE TO HISTORY ===
           // Save user message
-          await supabaseAdmin.from('assistant_messages').insert({
+          const { error: userMsgError } = await supabaseAdmin.from('assistant_messages').insert({
             user_id: user.id,
             role: 'user',
             content: action,
@@ -134,8 +135,10 @@ CRITICAL: Your ENTIRE response must be a valid JSON object with this exact struc
             tokens_in: tokensIn,
             tokens_out: 0,
           })
+          if (userMsgError) console.error(`[HISTORY ERROR USER] ${userMsgError.message}`)
+
           // Save assistant response
-          await supabaseAdmin.from('assistant_messages').insert({
+          const { error: asstMsgError } = await supabaseAdmin.from('assistant_messages').insert({
             user_id: user.id,
             role: 'assistant',
             content: parsedResponse.draft || content,
@@ -143,7 +146,8 @@ CRITICAL: Your ENTIRE response must be a valid JSON object with this exact struc
             tokens_in: 0,
             tokens_out: tokensOut,
           })
-          console.log(`[HISTORY] Saved messages for session ${sid}`)
+          if (asstMsgError) console.error(`[HISTORY ERROR ASST] ${asstMsgError.message}`)
+          else console.log(`[HISTORY] Saved messages for session ${sid}`)
 
           // Add credits info to response
           parsedResponse.creditsRemaining = newCredits
