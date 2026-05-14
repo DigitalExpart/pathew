@@ -36,7 +36,7 @@ Deno.serve(async (req: Request) => {
     }
 
     const body = await req.json()
-    const { action, sessionId, documentType } = body
+    const { action, sessionId, documentType, currentDraft } = body
 
     const { data: profile } = await supabaseClient
       .from('profiles').select('*').eq('id', user.id).maybeSingle()
@@ -75,6 +75,13 @@ User context: ${userContext}
 CRITICAL: Your ENTIRE response must be a valid JSON object with this exact structure (no markdown, no code blocks, just raw JSON):
 {"draft": "Your detailed response here", "matchSummary": {"strongMatches": ["point1"], "gaps": ["gap1"], "priorityPoints": ["tip1"]}, "editingSuggestions": ["suggestion1"], "wordCountEstimate": 300, "confidence": "high", "sessionId": "${sid}"}`
 
+    const userMessageContent = `
+Task / Action: ${action || "How can I improve my profile?"}
+Document Type: ${documentType || 'General'}
+Current Draft Content to Review/Rewrite:
+${currentDraft || '(No current draft provided)'}
+`
+
     const modelsToTry = [
       preferredModel, "claude-sonnet-4-5", "claude-sonnet-4-6",
       "claude-opus-4-5", "claude-opus-4-6", "claude-opus-4-7", "claude-opus-4-1",
@@ -93,7 +100,7 @@ CRITICAL: Your ENTIRE response must be a valid JSON object with this exact struc
           },
           body: JSON.stringify({
             model, max_tokens: 2048, system: systemPrompt,
-            messages: [{ role: "user", content: action || "How can I improve my profile?" }],
+            messages: [{ role: "user", content: userMessageContent.trim() }],
           }),
         })
 
