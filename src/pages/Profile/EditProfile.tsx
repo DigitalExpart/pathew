@@ -8,25 +8,19 @@ import {
   User,
   MapPin, 
   Heart, 
-  Globe, 
-  Calendar, 
   Save, 
   ArrowLeft,
-  Briefcase,
-  BookOpen,
   Plus,
   Trash2,
-  Sparkles,
   X,
   Search as SearchIcon,
   Award
 } from 'lucide-react';
-import { useAssistant } from '../../context/AssistantContext';
+
 
 export const EditProfile: React.FC = () => {
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
-  const { openAssistant } = useAssistant();
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
