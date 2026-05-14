@@ -3,7 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Navbar } from '../../components/layout/Navbar';
-import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap, Plus } from 'lucide-react';
+import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap, Plus, Star } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
 import { Link } from 'react-router-dom';
 import { StripeCheckoutModal } from '../../components/payment/StripeCheckoutModal';
 import logo from '../../assets/images/logo.png';
@@ -457,32 +458,21 @@ export const LandingPage: React.FC = () => {
         </motion.div>
       </section>
 
-      {/* Social Proof Section */}
-      <section className="section-padding" style={socialProofSectionStyle}>
+      {/* Social Proof Section (Trustpilot Reviews) */}
+      <section className="section-padding" style={{...socialProofSectionStyle, overflow: 'hidden'}}>
         <motion.div 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           style={sectionHeaderStyle}
         >
-          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>Built for Visionaries Like You</h2>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+             <Star size={24} fill="#00b67a" color="#00b67a" />
+             <span style={{ fontWeight: 800, fontSize: '1.25rem', color: '#00b67a' }}>Trustpilot</span>
+          </div>
+          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>See why thousands of professionals trust us</h2>
         </motion.div>
-        <div className="grid-responsive">
-          <TestimonialCard 
-            quote="PATHEW helped our NGO secure a $150k grant from the World Bank in just 3 weeks. The match score was spot on." 
-            author="Dr. Sarah Chen" 
-            role="Director, GreenGrowth Foundation" 
-          />
-          <TestimonialCard 
-            quote="I used to spend months on fellowships. With Pathew, I found and landed the Vital Voices fellowship mid-way through my setup." 
-            author="Amina Bello" 
-            role="Social Entrepreneur" 
-          />
-          <TestimonialCard 
-            quote="The document generation is magic. It doesn't just write; it understands the soul of our mission." 
-            author="James Wilson" 
-            role="Founder, TechAfrica" 
-          />
-        </div>
+        
+        <ReviewsCarousel isMobile={isMobile} />
       </section>
 
       {/* FAQ Section */}
@@ -566,6 +556,20 @@ export const LandingPage: React.FC = () => {
             <SocialIcon icon={TikTokIcon} label="TikTok" />
           </div>
         </div>
+        
+        {/* Decorative Footer Glow */}
+        <div style={{
+          position: 'absolute',
+          bottom: '-100px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: '800px',
+          height: '200px',
+          background: 'radial-gradient(circle, rgba(245, 158, 11, 0.05) 0%, transparent 70%)',
+          filter: 'blur(50px)',
+          pointerEvents: 'none',
+          zIndex: 0,
+        }}></div>
       </footer>
     </div>
   );
@@ -592,7 +596,7 @@ const FeatureCard = ({ icon: Icon, title, description }: any) => (
     }}
     whileHover={{ y: -10, borderColor: 'var(--accent-primary)', boxShadow: '0 20px 40px rgba(0,0,0,0.3)' }}
     className="card-padding"
-    style={{...featureCardStyle, flexShrink: 0, width: '100%', minWidth: '280px'}}
+    style={{...featureCardStyle, flexShrink: 0}}
   >
     <div style={featureIconWrapperStyle}>
       <Icon size={24} color="var(--accent-primary)" />
@@ -600,6 +604,93 @@ const FeatureCard = ({ icon: Icon, title, description }: any) => (
     <h3 style={{ marginBottom: '12px', fontSize: '1.25rem', fontWeight: 700 }}>{title}</h3>
     <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6 }}>{description}</p>
   </motion.div>
+);
+
+const ReviewsCarousel = ({ isMobile }: { isMobile: boolean }) => {
+  const [reviews, setReviews] = React.useState<any[]>([]);
+
+  React.useEffect(() => {
+    const fetchReviews = async () => {
+      const { data } = await supabase.from('reviews').select('*').order('review_date', { ascending: false });
+      if (data && data.length > 0) {
+        setReviews(data);
+      } else {
+        // Fallback mock data if table is empty
+        setReviews([
+          { user_name: "Akarshak Tanwar", location_code: "CA", rating: 5, content: "Applied to 150+ jobs in a week, and secured 2 confirmed interviews with responsive team support.", review_date: "2025-09-06" },
+          { user_name: "Olufisayo Abiodun", location_code: "US", rating: 5, content: "Incredible tool! I got an interview invite just a day after I signed up on Pathew!", review_date: "2025-10-17" },
+          { user_name: "Julian Carlin", location_code: "CR", rating: 5, content: "It worked; within 48 hours it applied to 100 jobs for me without requiring any of my time or effort.", review_date: "2025-09-19" },
+          { user_name: "John D Patton", location_code: "US", rating: 5, content: "Effortless AI-Powered Applications! The platform's intuitive interface saves countless hours.", review_date: "2025-06-10" },
+          { user_name: "Shaimaa Faik", location_code: "GB", rating: 5, content: "Its like hiring someone to help you with searching and applying, it amplifies your percentage.", review_date: "2025-10-30" },
+          { user_name: "Ahmed Fouad", location_code: "EG", rating: 5, content: "Very easy to use, many features for every single detail you would need in your hiring journey.", review_date: "2025-10-22" },
+        ]);
+      }
+    };
+    fetchReviews();
+  }, []);
+
+  const row1 = [...reviews, ...reviews];
+  const row2 = [...reviews.slice().reverse(), ...reviews.slice().reverse()];
+
+  return (
+    <div style={{ position: 'relative', width: '100%', overflow: 'hidden', padding: '24px 0', display: 'flex', flexDirection: 'column', gap: '32px' }}>
+      {/* Row 1: Scrolling Left */}
+      <div style={{ position: 'relative', width: '100%', overflow: 'hidden' }}>
+        <motion.div 
+          animate={{ x: [0, -2000] }}
+          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+          style={{ display: 'flex', gap: '24px', width: 'max-content' }}
+        >
+          {row1.map((r, i) => <ReviewCard key={`r1-${i}`} review={r} />)}
+        </motion.div>
+      </div>
+
+      {/* Row 2: Scrolling Right */}
+      <div style={{ position: 'relative', width: '100%', overflow: 'hidden' }}>
+        <motion.div 
+          animate={{ x: [-2000, 0] }}
+          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+          style={{ display: 'flex', gap: '24px', width: 'max-content' }}
+        >
+          {row2.map((r, i) => <ReviewCard key={`r2-${i}`} review={r} />)}
+        </motion.div>
+      </div>
+    </div>
+  );
+};
+
+const ReviewCard = ({ review }: { review: any }) => (
+  <Card style={{ width: '360px', minHeight: '220px', padding: '32px', display: 'flex', flexDirection: 'column', gap: '20px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', boxShadow: '0 10px 30px -10px rgba(0,0,0,0.5)' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      {review.user_avatar ? (
+        <img src={review.user_avatar} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} alt="" />
+      ) : (
+        <div style={{ width: '40px', height: '40px', borderRadius: '50%', backgroundColor: 'var(--accent-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 800, color: '#000' }}>
+          {review.user_name[0]}
+        </div>
+      )}
+      <div>
+        <div style={{ fontWeight: 700, fontSize: '0.9375rem' }}>{review.user_name}</div>
+        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{review.location_code}</div>
+      </div>
+    </div>
+    
+    <div style={{ display: 'flex', gap: '2px' }}>
+      {[...Array(5)].map((_, i) => (
+        <div key={i} style={{ width: '16px', height: '16px', backgroundColor: i < review.rating ? '#00b67a' : '#475569', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <Star size={10} fill="#fff" color="#fff" />
+        </div>
+      ))}
+    </div>
+
+    <p style={{ fontSize: '0.9375rem', lineHeight: 1.5, color: 'var(--text-primary)', flex: 1 }}>
+      "{review.content}"
+    </p>
+
+    <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', fontWeight: 500 }}>
+      {new Date(review.review_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+    </div>
+  </Card>
 );
 
 const StatItem = ({ count, label }: { count: string, label: string }) => (
@@ -1115,8 +1206,10 @@ const popularBadgeStyle: React.CSSProperties = {
 };
 
 const footerStyle: React.CSSProperties = {
-  backgroundColor: 'var(--bg-primary)',
-  borderTop: '1px solid var(--border-color)',
+  backgroundColor: '#020617',
+  borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+  position: 'relative',
+  overflow: 'hidden',
 };
 
 const footerMainStyle: React.CSSProperties = {
@@ -1126,6 +1219,8 @@ const footerMainStyle: React.CSSProperties = {
   marginBottom: '80px',
   maxWidth: '1400px',
   margin: '0 auto 80px',
+  position: 'relative',
+  zIndex: 1,
 };
 
 const footerBrandColStyle: React.CSSProperties = {
@@ -1145,11 +1240,13 @@ const footerBottomStyle: React.CSSProperties = {
   justifyContent: 'space-between',
   alignItems: 'center',
   paddingTop: '40px',
-  borderTop: '1px solid var(--border-color)',
+  borderTop: '1px solid rgba(255, 255, 255, 0.05)',
   color: 'var(--text-muted)',
   fontSize: '0.875rem',
   maxWidth: '1400px',
   margin: '0 auto',
+  position: 'relative',
+  zIndex: 1,
 };
 
 const socialLinksStyle: React.CSSProperties = {
@@ -1159,7 +1256,7 @@ const socialLinksStyle: React.CSSProperties = {
 
 const sectionHeaderStyle: React.CSSProperties = {
   textAlign: 'center',
-  marginBottom: '80px',
+  marginBottom: '48px',
 };
 
 const sectionTitleStyle: React.CSSProperties = {
@@ -1191,11 +1288,15 @@ const carouselTrackStyle: React.CSSProperties = {
 
 
 const featureCardStyle: React.CSSProperties = {
-  backgroundColor: 'var(--bg-primary)',
+  backgroundColor: 'var(--bg-secondary)',
   borderRadius: '32px',
   border: '1px solid var(--border-color)',
   transition: 'all 0.3s ease',
   cursor: 'default',
+  width: '380px',
+  minHeight: '320px',
+  display: 'flex',
+  flexDirection: 'column',
 };
 
 const featureIconWrapperStyle: React.CSSProperties = {

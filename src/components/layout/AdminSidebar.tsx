@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { useAdmin } from '../../context/AdminContext';
-import { LayoutDashboard, Users, CreditCard, ArrowLeftRight, FileText, Bot, Settings, LogOut, ArrowLeft, Megaphone } from 'lucide-react';
+import { LayoutDashboard, Users, CreditCard, ArrowLeftRight, FileText, Bot, Settings, LogOut, ArrowLeft, Megaphone, Star } from 'lucide-react';
 import logo from '../../assets/images/logo.png';
 
 const navItems = [
@@ -11,6 +11,7 @@ const navItems = [
   { icon: ArrowLeftRight, label: 'Transactions', path: '/admin/transactions' },
   { icon: Megaphone, label: 'Opportunities', path: '/admin/opportunities' },
   { icon: FileText, label: 'Documents', path: '/admin/documents' },
+  { icon: Star, label: 'Reviews', path: '/admin/reviews' },
   { icon: Bot, label: 'AI Usage', path: '/admin/ai-usage' },
   { icon: Settings, label: 'Settings', path: '/admin/settings' },
 ];
