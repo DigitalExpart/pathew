@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Search, Bell, HelpCircle, ChevronDown, Coins, Sparkles, UserCircle, LogOut, LayoutDashboard, Menu } from 'lucide-react';
 import { mockUser } from '../../data/mockData';
 import { useAssistant } from '../../context/AssistantContext';

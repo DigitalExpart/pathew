@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { useAuth } from '../../context/AuthContext';
-import { supabase } from '../../lib/supabase';
 import { User, CheckCircle2, Sparkles, Target, Briefcase, BookOpen, FileEdit, Award } from 'lucide-react';
 import { Badge } from '../../components/ui/Badge';
 import { motion } from 'framer-motion';
@@ -149,8 +148,8 @@ export const ProfilePage: React.FC = () => {
           <Card title="Work Experience" icon={Briefcase}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {profile?.experience?.length ? (
-                profile.experience.map((exp: any, i: number) => (
-                  <div key={i} style={{ display: 'flex', gap: '20px', paddingBottom: i !== profile.experience.length - 1 ? '24px' : 0, borderBottom: i !== profile.experience.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
+                profile.experience.map((exp: any, i: number, arr: any[]) => (
+                  <div key={i} style={{ display: 'flex', gap: '20px', paddingBottom: i !== arr.length - 1 ? '24px' : 0, borderBottom: i !== arr.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
                     <div style={{ width: '40px', height: '40px', backgroundColor: 'var(--bg-primary)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <Briefcase size={20} color="var(--accent-primary)" />
                     </div>
