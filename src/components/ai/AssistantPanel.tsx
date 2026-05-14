@@ -216,7 +216,7 @@ export const AssistantPanel: React.FC = () => {
             </div>
             <div style={chipsContainerStyle}>
               {suggestedPrompts.map((prompt, i) => (
-                <button key={i} onClick={() => handleSend(prompt)} style={chipStyle}>
+                <button key={i} onClick={() => setInput(prompt)} style={chipStyle}>
                   {prompt}
                 </button>
               ))}
