@@ -75,7 +75,8 @@ const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedF
     isOpen={isModalOpen} 
     onClose={() => setIsModalOpen(false)} 
     planTitle={title} 
-    planPrice={price} 
+    planPrice={price}
+    planCredits={credits}
   />
   </>
   );
