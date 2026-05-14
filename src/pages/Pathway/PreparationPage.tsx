@@ -215,81 +215,11 @@ export const PreparationPage: React.FC = () => {
   };
 
   const generateNewPlan = async () => {
-    if (!user || !profile) return;
-    setLoading(true);
-    
-    try {
-      const response = await PathewAssistantService.generateResponse({
-        action: `Generate a ${planType} preparation plan`,
-        documentType: 'Roadmap',
-        opportunityId: oppId === 'general' ? undefined : (oppId || undefined),
-        contextData: {
-          duration: planType,
-          opportunity: opportunity?.title || 'Career Growth'
-        }
-      });
-
-      if (response && response.draft) {
-        const weeks = parsePlanToJSON(response.draft);
-        const now = new Date().toISOString();
-        const planPayload = {
-          weeks,
-          startDate: now,
-          completedWeeks: [],
-          opportunity_id: oppId === 'general' ? null : (oppId || null),
-          planType
-        };
-
-        const { data: existingDocs } = await supabase
-          .from('documents')
-          .select('id, content')
-          .eq('user_id', user.id)
-          .eq('type', 'Roadmap');
-
-        const existingDoc = existingDocs?.find(doc => {
-          try {
-            const content = JSON.parse(doc.content);
-            const targetId = oppId === 'general' ? null : (oppId || null);
-            return content.opportunity_id === targetId;
-          } catch (e) {
-            return false;
-          }
-        });
-
-        const docPayload = {
-          user_id: user.id,
-          type: 'Roadmap',
-          title: `Roadmap: ${planType}${opportunity ? ` for ${opportunity.title}` : ''}`,
-          content: JSON.stringify(planPayload)
-        };
-
-        let error;
-        if (existingDoc) {
-          const { error: updateError } = await supabase
-            .from('documents')
-            .update(docPayload)
-            .eq('id', existingDoc.id);
-          error = updateError;
-        } else {
-          const { error: insertError } = await supabase
-            .from('documents')
-            .insert(docPayload);
-          error = insertError;
-        }
-
-        if (error) throw error;
-        setPlan(planPayload);
-        setCompletedWeeks([]);
-        
-        // Refresh profile if credits were deducted (handled in edge function usually, but we check local state)
-        await refreshProfile();
-      }
-    } catch (error: any) {
-      console.error('Error generating plan:', error);
-      alert(`Generation/Storage error: ${error.message || 'Unknown error'}`);
-    } finally {
-      setLoading(false);
-    }
+    openAssistant('Pathew Assistant', [
+      `Regenerate my ${planType} plan`,
+      `Adjust my ${planType} plan to be more aggressive`,
+      'How does this work?'
+    ], (text) => handleInsertPlan(text), { duration: planType, opportunity: opportunity?.title });
   };
 
   const parsePlanToJSON = (text: string) => {
