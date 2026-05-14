@@ -51,6 +51,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
   });
 
   return (
+    <>
     <motion.nav 
       initial={{ y: -100 }}
       animate={{ y: 0 }}
@@ -128,6 +129,8 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
         )}
       </div>
 
+    </motion.nav>
+
       {/* Mobile Menu Overlay */}
       <AnimatePresence>
         {isMobile && isMobileMenuOpen && (
@@ -150,7 +153,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
                     <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
                       <Button style={{ width: '100%' }}>Dashboard</Button>
                     </Link>
-                    <button onClick={handleLogout} style={{ color: '#ef4444', fontWeight: 600 }}>Logout</button>
+                    <button onClick={handleLogout} style={{ color: '#ef4444', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}>Logout</button>
                   </>
                 ) : (
                   <>
@@ -167,7 +170,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
           </motion.div>
         )}
       </AnimatePresence>
-    </motion.nav>
+    </>
   );
 };
 
