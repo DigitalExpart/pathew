@@ -3,12 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
-import { Briefcase, Calendar, Clock } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
+import { Briefcase, MapPin, ExternalLink } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 export const JobsPage: React.FC = () => {
-  const { user } = useAuth();
   const [jobs, setJobs] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const navigate = useNavigate();
@@ -16,14 +14,15 @@ export const JobsPage: React.FC = () => {
   const isMobile = window.innerWidth <= 768;
 
   const fetchJobs = async () => {
-    if (!user) return;
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('jobs')
+        .from('opportunities')
         .select('*')
-        .eq('user_id', user.id)
-        .order('applied_at', { ascending: false });
+        .eq('status', 'published')
+        .eq('type', 'job')
+        .order('featured', { ascending: false })
+        .order('created_at', { ascending: false });
       
       if (error) throw error;
       setJobs(data || []);
@@ -36,13 +35,13 @@ export const JobsPage: React.FC = () => {
 
   React.useEffect(() => {
     fetchJobs();
-  }, [user]);
+  }, []);
 
   return (
     <div style={{ ...containerStyle, padding: isMobile ? '0' : '0' }}>
       <header style={{ ...headerStyle, textAlign: isMobile ? 'center' : 'left' }}>
-        <h1 style={{ ...titleStyle, fontSize: isMobile ? '1.75rem' : '2.5rem' }}>Applied Jobs</h1>
-        <p style={subtitleStyle}>You have applied for {jobs.length} roles.</p>
+        <h1 style={{ ...titleStyle, fontSize: isMobile ? '1.75rem' : '2.5rem' }}>Explore Jobs</h1>
+        <p style={subtitleStyle}>Found {jobs.length} roles matching your profile.</p>
       </header>
 
       <div className="grid-responsive" style={{
@@ -67,30 +66,47 @@ export const JobsPage: React.FC = () => {
             <Card key={job.id} style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={cardHeaderStyle}>
                 <div style={companyLogoStyle}>
-                  {job.company?.charAt(0)}
+                  {(job.organization_name || 'J').charAt(0)}
                 </div>
-                <Badge variant="primary" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <Clock size={12} /> {job.status}
-                </Badge>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  {job.featured && (
+                    <Badge variant="primary" style={{ backgroundColor: 'rgba(245,158,11,0.1)', color: '#f59e0b', borderColor: 'rgba(245,158,11,0.2)' }}>
+                      Featured
+                    </Badge>
+                  )}
+                  <Badge variant="outline">{job.work_mode || 'Remote'}</Badge>
+                </div>
               </div>
 
               <div style={{ flex: 1, marginTop: '20px' }}>
                 <h3 style={jobTitleStyle}>{job.title}</h3>
-                <p style={companyNameStyle}>{job.company}</p>
+                <p style={companyNameStyle}>{job.organization_name}</p>
                 
                 <div style={metaItemStyle}>
-                  <Calendar size={14} color="var(--text-muted)" />
-                  <span>Applied on {new Date(job.applied_at).toLocaleDateString()}</span>
+                  <MapPin size={14} color="var(--text-muted)" />
+                  <span>{job.location}</span>
                 </div>
+                {job.salary && (
+                  <div style={{ ...metaItemStyle, marginTop: '8px' }}>
+                    <Briefcase size={14} color="var(--text-muted)" />
+                    <span>{job.salary}</span>
+                  </div>
+                )}
               </div>
 
               <div style={cardFooterStyle}>
-                <Button variant="outline" style={{ flex: 1 }}>View Details</Button>
+                <Button 
+                  variant="outline" 
+                  style={{ flex: 1 }}
+                  onClick={() => window.open(job.apply_link, '_blank')}
+                >
+                  Apply <ExternalLink size={14} style={{ marginLeft: '4px' }} />
+                </Button>
                 <Button 
                   style={{ flex: 1, gap: '4px' }}
-                  onClick={() => navigate('/cv-builder')}
+                  onClick={() => navigate(`/opportunities/${job.id}`)}
                 >
-                  Manage Docs
+                  Prepare
                 </Button>
               </div>
             </Card>

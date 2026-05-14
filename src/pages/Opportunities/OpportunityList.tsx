@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
-import { Search, Filter, Calendar, MapPin, ChevronRight, Activity, Wifi, Bookmark } from 'lucide-react';
+import { Search, Filter, Calendar, MapPin, ChevronRight, Star } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 
@@ -23,6 +23,9 @@ export const OpportunityList: React.FC = () => {
       const { data, error } = await supabase
         .from('opportunities')
         .select('*')
+        .eq('status', 'published')
+        .neq('type', 'job')
+        .order('featured', { ascending: false })
         .order('created_at', { ascending: false });
       
       if (error) throw error;
@@ -124,29 +127,23 @@ export const OpportunityList: React.FC = () => {
             <Card key={opp.id} style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={cardHeaderStyle}>
               <div style={companyShortLogoStyle}>
-                {opp.company?.charAt(0) || 'O'}
+                {(opp.organization_name || opp.funder_name || 'O').charAt(0)}
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  {opp.status && (
-                    <Badge variant={opp.status === 'Saved' ? 'primary' : 'outline'} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                      {opp.status === 'Saved' ? <Bookmark size={12} fill="currentColor" /> : <Activity size={12} />}
-                      {opp.status}
+                  {opp.featured && (
+                    <Badge variant="primary" style={{ backgroundColor: 'rgba(245,158,11,0.1)', color: '#f59e0b', borderColor: 'rgba(245,158,11,0.2)' }}>
+                      <Star size={12} fill="currentColor" /> Featured
                     </Badge>
                   )}
-                  <Badge variant="primary">{opp.source}</Badge>
+                  <Badge variant="outline" style={{ textTransform: 'capitalize' }}>{opp.type}</Badge>
                 </div>
-                {opp.rssStatus && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '0.75rem', color: opp.rssStatus === 'Live' ? '#22c55e' : (opp.rssStatus === 'Error' ? '#ef4444' : '#f59e0b') }}>
-                    <Wifi size={12} /> {opp.rssStatus}
-                  </div>
-                )}
               </div>
             </div>
 
             <div style={{ flex: 1, marginTop: '20px' }}>
               <h3 style={oppTitleStyle}>{opp.title}</h3>
-              <p style={companyStyle}>{opp.company}</p>
+              <p style={companyStyle}>{opp.organization_name || opp.funder_name || 'Various Sources'}</p>
               
               <div style={metaGridStyle}>
                 <div style={metaItemStyle}>

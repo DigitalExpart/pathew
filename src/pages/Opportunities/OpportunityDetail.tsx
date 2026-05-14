@@ -13,7 +13,10 @@ import {
   FileEdit,
   Send,
   XCircle,
-  Target
+  Target,
+  Globe,
+  Gift,
+  Briefcase
 } from 'lucide-react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAssistant } from '../../context/AssistantContext';
@@ -94,25 +97,22 @@ export const OpportunityDetail: React.FC = () => {
   };
 
   const handleApply = async () => {
-    if (!user || !opp) return;
+    if (!opp) return;
     setApplying(true);
     try {
-      // 1. Record in Jobs table
-      await supabase.from('jobs').insert({
-        user_id: user.id,
-        title: opp.title,
-        company: opp.company,
-        status: 'Applied'
-      });
+      // 1. Increment click count
+      await supabase.rpc('increment_click_count', { row_id: opp.id });
 
-      // 2. Record Activity
-      await supabase.from('activities').insert({
-        user_id: user.id,
-        content: `Applied for ${opp.title} at ${opp.company}`
-      });
+      // 2. Record Activity if logged in
+      if (user) {
+        await supabase.from('activities').insert({
+          user_id: user.id,
+          content: `Viewed application for ${opp.title} at ${opp.organization_name || opp.funder_name}`
+        });
+      }
 
-      // 3. Redirect (Mocking external link for now, but recording the action)
-      window.open('https://linkedin.com', '_blank');
+      // 3. Open external link
+      window.open(opp.apply_link, '_blank');
       
     } catch (error) {
       console.error('Error applying:', error);
@@ -128,8 +128,8 @@ export const OpportunityDetail: React.FC = () => {
 
   return (
     <div style={containerStyle}>
-      <Link to="/opportunities" style={backLinkStyle}>
-        <ArrowLeft size={18} /> Back to list
+      <Link to={opp?.type === 'job' ? "/jobs" : "/opportunities"} style={backLinkStyle}>
+        <ArrowLeft size={18} /> Back to {opp?.type === 'job' ? 'Jobs' : 'Opportunities'}
       </Link>
 
       {loading && (
@@ -149,26 +149,26 @@ export const OpportunityDetail: React.FC = () => {
 
       <div style={headerStyle}>
         <div style={headerMainStyle}>
-          <div style={companyLogoStyle}>{opp.company.charAt(0)}</div>
+          <div style={companyLogoStyle}>{(opp.organization_name || opp.funder_name || 'O').charAt(0)}</div>
           <div>
             <h1 style={titleStyle}>{opp.title}</h1>
-            <p style={companyNameStyle}>{opp.company}</p>
+            <p style={companyNameStyle}>{opp.organization_name || opp.funder_name || 'Various Sources'}</p>
           </div>
         </div>
         <div style={headerActionsStyle}>
           <Button 
-            variant={opp?.status === 'Saved' ? 'secondary' : 'outline'}
+            variant="outline"
             onClick={handleSave}
-            disabled={saving || opp?.status === 'Saved'}
+            disabled={saving}
           >
-            {saving ? 'Saving...' : opp?.status === 'Saved' ? 'Saved' : 'Save'}
+            {saving ? 'Saving...' : 'Save'}
           </Button>
           <Button 
             style={{ gap: '8px' }}
             onClick={handleApply}
             disabled={applying}
           >
-            {applying ? 'Processing...' : `Apply on ${opp?.source || 'Portal'}`} <ExternalLink size={16} />
+            {applying ? 'Processing...' : `Apply on ${opp?.source_name || 'Original Site'}`} <ExternalLink size={16} />
           </Button>
         </div>
       </div>
@@ -291,9 +291,12 @@ export const OpportunityDetail: React.FC = () => {
 
           <Card title="At a Glance">
             <div style={infoGridStyle}>
-              <InfoItem icon={MapPin} label="Location" value={opp.location} />
-              <InfoItem icon={Calendar} label="Deadline" value={opp.deadline} />
-              <InfoItem icon={ArrowLeft} label="Type" value={opp.type} />
+              <InfoItem icon={MapPin} label="Location" value={opp.location || 'Remote / Various'} />
+              <InfoItem icon={Calendar} label="Deadline" value={opp.deadline || 'No deadline'} />
+              <InfoItem icon={Globe} label="Type" value={opp.type} />
+              {opp.salary && <InfoItem icon={Briefcase} label="Salary" value={opp.salary} />}
+              {opp.amount && <InfoItem icon={Gift} label="Funding" value={opp.amount} />}
+              {opp.work_mode && <InfoItem icon={Target} label="Mode" value={opp.work_mode} />}
             </div>
           </Card>
 

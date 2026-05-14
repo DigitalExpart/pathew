@@ -35,6 +35,8 @@ import { AdminTransactionsPage } from './pages/Admin/AdminTransactionsPage';
 import { AdminDocumentsPage } from './pages/Admin/AdminDocumentsPage';
 import { AdminAIUsagePage } from './pages/Admin/AdminAIUsagePage';
 import { AdminSettingsPage } from './pages/Admin/AdminSettingsPage';
+import { AdminOpportunitiesPage } from './pages/Admin/AdminOpportunitiesPage';
+import { AdminOpportunityForm } from './pages/Admin/AdminOpportunityForm';
 
 function App() {
   return (
@@ -81,6 +83,9 @@ function App() {
           <Route path="/admin/users" element={<RequireAdmin><AdminShell><AdminUsersPage /></AdminShell></RequireAdmin>} />
           <Route path="/admin/subscriptions" element={<RequireAdmin><AdminShell><AdminSubscriptionsPage /></AdminShell></RequireAdmin>} />
           <Route path="/admin/transactions" element={<RequireAdmin><AdminShell><AdminTransactionsPage /></AdminShell></RequireAdmin>} />
+          <Route path="/admin/opportunities" element={<RequireAdmin><AdminShell><AdminOpportunitiesPage /></AdminShell></RequireAdmin>} />
+          <Route path="/admin/opportunities/new" element={<RequireAdmin><AdminShell><AdminOpportunityForm /></AdminShell></RequireAdmin>} />
+          <Route path="/admin/opportunities/:id/edit" element={<RequireAdmin><AdminShell><AdminOpportunityForm /></AdminShell></RequireAdmin>} />
           <Route path="/admin/documents" element={<RequireAdmin><AdminShell><AdminDocumentsPage /></AdminShell></RequireAdmin>} />
           <Route path="/admin/ai-usage" element={<RequireAdmin><AdminShell><AdminAIUsagePage /></AdminShell></RequireAdmin>} />
           <Route path="/admin/settings" element={<RequireAdmin><AdminShell><AdminSettingsPage /></AdminShell></RequireAdmin>} />

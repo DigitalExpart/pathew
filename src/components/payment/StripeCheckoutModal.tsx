@@ -10,7 +10,7 @@ const STRIPE_PUBLISHABLE_KEY = 'pk_test_placeholder';
 const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
 
 // TODO: Replace with your actual backend API endpoint
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'https://ialvtdpugkvnkznzbyde.supabase.co/functions/v1';
 
 /* ── Checkout Form (uses PaymentElement) ───────────────────── */
 const CheckoutForm = ({ planTitle, planPrice, planCredits, onSuccess, onCancel }: any) => {
