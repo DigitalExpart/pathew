@@ -332,35 +332,128 @@ export const LandingPage: React.FC = () => {
       </section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="section-padding" style={pricingSectionStyle}>
+      <section id="pricing" className="section-padding" style={{...pricingSectionStyle, backgroundColor: 'var(--bg-secondary)'}}>
         <motion.div 
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           style={sectionHeaderStyle}
         >
-          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>Simple, Transparent Pricing</h2>
-          <p style={sectionSubtitleStyle}>Choose the plan that fits your professional needs.</p>
+          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>Pricing Plans</h2>
+          <p style={sectionSubtitleStyle}>Simple, credit-based pricing. Pay for what you create.</p>
         </motion.div>
         
-        <div className="grid-responsive">
+        <div className="grid-responsive" style={{ alignItems: 'stretch' }}>
           <PricingCard 
-            title="Free" 
-            price="$0" 
-            features={['Basic matching', '3 applications/mo', 'Email support']} 
+            title="Starter" 
+            price="£11.99" 
+            credits="25 credits / month"
+            subtitle="Perfect for individuals tackling a single application round."
+            generatesUpTo={[
+              { label: 'Cover Letters', count: '25×' },
+              { label: 'CVs / Resumes', count: '25×' },
+              { label: 'Proposals', count: '25×' },
+              { label: 'Grant Applications', count: '8×' },
+              { label: 'Rewrites', count: '100×' }
+            ]}
+            includedFeatures={[
+              'View live job & grant opportunities',
+              'Percentage readiness score per application',
+              'AI-generated preparation plan – credit applies'
+            ]}
           />
           <PricingCard 
-            title="Professional" 
-            price="$19" 
-            isPopular 
-            features={['Unlimited matching', 'Unlimited applications', 'Assistant Polish', 'Priority support']} 
+            title="Growth" 
+            price="£25.00" 
+            credits="60 credits / month"
+            subtitle="For freelancers and active job seekers applying across multiple roles."
+            badge="★ MOST POPULAR ★"
+            generatesUpTo={[
+              { label: 'Cover Letters', count: '60×' },
+              { label: 'CVs / Resumes', count: '60×' },
+              { label: 'Proposals', count: '60×' },
+              { label: 'Grant Applications', count: '20×' },
+              { label: 'Rewrites', count: '240×' }
+            ]}
+            includedFeatures={[
+              'View live job & grant opportunities',
+              'Percentage readiness score per application',
+              'AI-generated preparation plan – credit applies'
+            ]}
           />
           <PricingCard 
-            title="Enterprise" 
-            price="Custom" 
-            features={['Team management', 'API access', 'Custom branding', 'Dedicated manager']} 
+            title="Power User" 
+            price="£48.00" 
+            credits="120 credits / month"
+            subtitle="For agencies, consultants and power users generating at scale."
+            badge="★ BEST VALUE ★"
+            badgeColor="#3b82f6"
+            generatesUpTo={[
+              { label: 'Cover Letters', count: '120×' },
+              { label: 'CVs / Resumes', count: '120×' },
+              { label: 'Proposals', count: '120×' },
+              { label: 'Grant Applications', count: '40×' },
+              { label: 'Rewrites', count: '480×' }
+            ]}
+            includedFeatures={[
+              'View live job & grant opportunities',
+              'Percentage readiness score per application',
+              'AI-generated preparation plan – credit applies'
+            ]}
           />
         </div>
+
+        {/* Credit Cost Table */}
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          style={{ maxWidth: '800px', margin: '80px auto 0' }}
+        >
+          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+            <h3 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '16px' }}>Credit Cost Per Service</h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '1.125rem' }}>
+              Mix and match any service — credits work across your entire account.
+            </p>
+          </div>
+
+          <Card style={{ padding: 0, overflow: 'hidden', border: '1px solid var(--border-color)' }}>
+            <div style={{ overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+                <thead>
+                  <tr style={{ backgroundColor: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)' }}>
+                    <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>Service</th>
+                    <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>Credits</th>
+                    <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>Notes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {[
+                    { service: 'Cover Letter', credits: '1 credit', notes: 'per letter' },
+                    { service: 'CV / Resume', credits: '1 credit', notes: 'per CV' },
+                    { service: 'Proposal', credits: '1 credit', notes: 'per proposal' },
+                    { service: 'Grant Application', credits: '3 credits', notes: 'per grant' },
+                    { service: 'Preparation Plan', credits: '3 credits', notes: 'per plan' },
+                    { service: 'Any Rewrite', credits: '0.25 credits', notes: 'per rewrite (¼ of original after 3 rewrites)' },
+                  ].map((row, idx) => (
+                    <tr key={idx} style={{ borderBottom: idx !== 5 ? '1px solid var(--border-color)' : 'none' }}>
+                      <td style={{ padding: '16px 24px', fontWeight: 500 }}>{row.service}</td>
+                      <td style={{ padding: '16px 24px', color: 'var(--accent-primary)', fontWeight: 600 }}>{row.credits}</td>
+                      <td style={{ padding: '16px 24px', color: 'var(--text-muted)', fontSize: '0.875rem' }}>{row.notes}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </Card>
+          
+          <div style={{ textAlign: 'center', marginTop: '32px' }}>
+            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', backgroundColor: 'rgba(245, 158, 11, 0.1)', padding: '12px 24px', borderRadius: 'var(--radius-full)', color: 'var(--accent-primary)', fontWeight: 600 }}>
+              <Zap size={18} />
+              Need more? Users can top up their credits at any time.
+            </div>
+          </div>
+        </motion.div>
       </section>
 
       {/* Social Proof Section */}
@@ -537,33 +630,65 @@ const StepItem = ({ number, title, description }: { number: string, title: strin
   </motion.div>
 );
 
-const PricingCard = ({ title, price, features, isPopular }: any) => (
+const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedFeatures, badge, badgeColor = 'var(--accent-primary)' }: any) => (
   <motion.div 
     initial={{ opacity: 0, y: 30 }}
     whileInView={{ opacity: 1, y: 0 }}
     viewport={{ once: true }}
-    whileHover={{ y: -15 }}
+    whileHover={{ y: -10 }}
     className="card-padding"
     style={{
       ...pricingCardStyle,
-      borderColor: isPopular ? 'var(--accent-primary)' : 'var(--border-color)',
-      boxShadow: isPopular ? '0 30px 60px -15px rgba(245, 158, 11, 0.2)' : 'none',
-      zIndex: isPopular ? 1 : 0
+      borderColor: badge ? badgeColor : 'var(--border-color)',
+      boxShadow: badge ? `0 30px 60px -15px ${badgeColor}33` : 'none',
+      zIndex: badge ? 1 : 0,
+      display: 'flex',
+      flexDirection: 'column'
     }}
   >
-    {isPopular && <div style={popularBadgeStyle}>Most Popular</div>}
-    <h3 style={{ fontSize: '1.25rem', marginBottom: '8px' }}>{title}</h3>
-    <div style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '24px' }}>
-      {price}<span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--text-muted)' }}>{price !== 'Custom' ? '/mo' : ''}</span>
+    {badge && <div style={{...popularBadgeStyle, backgroundColor: badgeColor, color: '#000'}}>{badge}</div>}
+    <h3 style={{ fontSize: '1.5rem', marginBottom: '8px', fontWeight: 700 }}>{title}</h3>
+    <div style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '8px' }}>
+      {price}<span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--text-muted)' }}>/mo</span>
     </div>
-    <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 32px 0', flex: 1 }}>
-      {features.map((f: string) => (
-        <li key={f} style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px', color: 'var(--text-secondary)' }}>
-          <CheckCircle size={16} color="var(--accent-primary)" /> {f}
-        </li>
-      ))}
-    </ul>
-    <Button variant={isPopular ? 'primary' : 'outline'} style={{ width: '100%' }}>Get Started</Button>
+    <div style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--accent-primary)', marginBottom: '8px' }}>
+      {credits}
+    </div>
+    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '24px', lineHeight: 1.5, minHeight: '42px' }}>
+      {subtitle}
+    </p>
+
+    <div style={{ marginBottom: '24px' }}>
+      <div style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: '12px' }}>
+        GENERATES UP TO
+      </div>
+      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+        {generatesUpTo.map((g: any) => (
+          <li key={g.label} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.9375rem', color: 'var(--text-primary)' }}>
+            <span>{g.label}</span>
+            <span style={{ fontWeight: 600 }}>{g.count}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div style={{ flex: 1, marginBottom: '32px' }}>
+      <div style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: '12px', textTransform: 'uppercase' }}>
+        INCLUDED IN EVERY PLAN
+      </div>
+      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+        {includedFeatures.map((f: string) => (
+          <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '12px', color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.4 }}>
+            <CheckCircle size={16} color="var(--accent-primary)" style={{ flexShrink: 0, marginTop: '2px' }} /> 
+            <span>{f}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <a href="https://stripe.com" target="_blank" rel="noreferrer" style={{ marginTop: 'auto', textDecoration: 'none' }}>
+      <Button variant={badge === '★ MOST POPULAR ★' ? 'primary' : 'outline'} style={{ width: '100%' }}>Choose {title}</Button>
+    </a>
   </motion.div>
 );
 
