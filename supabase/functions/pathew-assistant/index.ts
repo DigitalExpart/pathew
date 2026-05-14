@@ -66,7 +66,7 @@ Deno.serve(async (req: Request) => {
     }
 
     const preferredModel = Deno.env.get('CLAUDE_MODEL') || 'claude-sonnet-4-5'
-    const sid = sessionId || 'session-' + Date.now()
+    const sid = sessionId || crypto.randomUUID()
 
     const systemPrompt = `You are a premium career coach for the PATHEW platform.
 Provide high-quality, actionable career advice and document drafts.
