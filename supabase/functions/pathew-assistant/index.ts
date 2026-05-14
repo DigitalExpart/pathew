@@ -131,7 +131,7 @@ CRITICAL: Your ENTIRE response must be a valid JSON object with this exact struc
             user_id: user.id,
             role: 'user',
             content: action,
-            session_id: sid,
+            session_id: null,
             tokens_in: tokensIn,
             tokens_out: 0,
           })
@@ -142,7 +142,7 @@ CRITICAL: Your ENTIRE response must be a valid JSON object with this exact struc
             user_id: user.id,
             role: 'assistant',
             content: parsedResponse.draft || content,
-            session_id: sid,
+            session_id: null,
             tokens_in: 0,
             tokens_out: tokensOut,
           })
