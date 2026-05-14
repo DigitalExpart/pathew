@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { Search, ChevronDown, Edit3, Trash2, Plus, Star } from 'lucide-react';
+import { Search, ChevronDown, Edit3, Trash2, Plus, Star, Upload, Camera, Loader2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 export const AdminReviewsPage: React.FC = () => {
@@ -18,6 +18,8 @@ export const AdminReviewsPage: React.FC = () => {
     content: '',
     review_date: new Date().toISOString().split('T')[0]
   });
+
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     fetchReviews();
@@ -84,6 +86,35 @@ export const AdminReviewsPage: React.FC = () => {
       review_date: review.review_date
     });
     setIsModalOpen(true);
+  };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    try {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      setUploading(true);
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('reviews')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage
+        .from('reviews')
+        .getPublicUrl(filePath);
+
+      setFormData({ ...formData, user_avatar: data.publicUrl });
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('Error uploading image!');
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -182,8 +213,29 @@ export const AdminReviewsPage: React.FC = () => {
               </div>
 
               <div style={inputGroupStyle}>
-                <label style={labelStyle}>Avatar URL (Optional)</label>
-                <input style={inputStyle} value={formData.user_avatar} onChange={e => setFormData({...formData, user_avatar: e.target.value})} placeholder="https://..." />
+                <label style={labelStyle}>User Avatar</label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <div style={{ position: 'relative', width: '64px', height: '64px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.05)', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', border: '1px solid rgba(255,255,255,0.1)' }}>
+                    {formData.user_avatar ? (
+                      <img src={formData.user_avatar} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="Avatar" />
+                    ) : (
+                      <Camera size={24} color="#64748b" />
+                    )}
+                    {uploading && (
+                      <div style={{ position: 'absolute', inset: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <Loader2 className="animate-spin" size={20} color="#f59e0b" />
+                      </div>
+                    )}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <label style={{ ...actionBtnStyle, display: 'inline-flex', cursor: 'pointer', padding: '8px 16px', backgroundColor: 'rgba(245,158,11,0.1)', color: '#f59e0b', borderColor: 'rgba(245,158,11,0.2)' }}>
+                      <Upload size={14} style={{ marginRight: '8px' }} />
+                      {uploading ? 'Uploading...' : 'Upload Image'}
+                      <input type="file" accept="image/*" onChange={handleImageUpload} style={{ display: 'none' }} disabled={uploading} />
+                    </label>
+                    <p style={{ fontSize: '0.65rem', color: '#64748b', marginTop: '8px' }}>PNG, JPG or WebP (Max 2MB)</p>
+                  </div>
+                </div>
               </div>
 
               <div style={inputGroupStyle}>

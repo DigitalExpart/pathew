@@ -637,8 +637,8 @@ const ReviewsCarousel = ({ isMobile }: { isMobile: boolean }) => {
       {/* Row 1: Scrolling Left */}
       <div style={{ position: 'relative', width: '100%', overflow: 'hidden' }}>
         <motion.div 
-          animate={{ x: [0, -2000] }}
-          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+          animate={{ x: [0, -3000] }}
+          transition={{ duration: 100, repeat: Infinity, ease: "linear" }}
           style={{ display: 'flex', gap: '24px', width: 'max-content' }}
         >
           {row1.map((r, i) => <ReviewCard key={`r1-${i}`} review={r} />)}
@@ -648,8 +648,8 @@ const ReviewsCarousel = ({ isMobile }: { isMobile: boolean }) => {
       {/* Row 2: Scrolling Right */}
       <div style={{ position: 'relative', width: '100%', overflow: 'hidden' }}>
         <motion.div 
-          animate={{ x: [-2000, 0] }}
-          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+          animate={{ x: [-3000, 0] }}
+          transition={{ duration: 100, repeat: Infinity, ease: "linear" }}
           style={{ display: 'flex', gap: '24px', width: 'max-content' }}
         >
           {row2.map((r, i) => <ReviewCard key={`r2-${i}`} review={r} />)}
@@ -660,7 +660,7 @@ const ReviewsCarousel = ({ isMobile }: { isMobile: boolean }) => {
 };
 
 const ReviewCard = ({ review }: { review: any }) => (
-  <Card style={{ width: '360px', minHeight: '220px', padding: '32px', display: 'flex', flexDirection: 'column', gap: '20px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', boxShadow: '0 10px 30px -10px rgba(0,0,0,0.5)' }}>
+  <Card style={{ width: '360px', minHeight: '280px', padding: '32px', display: 'flex', flexDirection: 'column', gap: '20px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', boxShadow: '0 10px 30px -10px rgba(0,0,0,0.5)' }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
       {review.user_avatar ? (
         <img src={review.user_avatar} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} alt="" />
