@@ -498,7 +498,7 @@ export const LandingPage: React.FC = () => {
           <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>See why thousands of professionals trust us</h2>
         </motion.div>
         
-        <ReviewsCarousel isMobile={isMobile} />
+        <ReviewsCarousel />
       </section>
 
       {/* FAQ Section */}
@@ -632,7 +632,7 @@ const FeatureCard = ({ icon: Icon, title, description }: any) => (
   </motion.div>
 );
 
-const ReviewsCarousel = ({ isMobile }: { isMobile: boolean }) => {
+const ReviewsCarousel = () => {
   const [reviews, setReviews] = React.useState<any[]>([]);
 
   React.useEffect(() => {
@@ -1014,20 +1014,7 @@ const ComparisonColumn = ({ title, items, highlight }: any) => (
   </motion.div>
 );
 
-const TestimonialCard = ({ quote, author, role }: any) => (
-  <motion.div 
-    whileHover={{ scale: 1.02 }}
-    className="card-padding"
-    style={testimonialCardStyle}
-  >
-    <div style={{ color: 'var(--accent-primary)', fontSize: '3rem', lineHeight: 1, marginBottom: '20px' }}>"</div>
-    <p style={{ fontSize: '1.125rem', lineHeight: 1.7, marginBottom: '32px', color: 'var(--text-primary)', fontStyle: 'italic' }}>{quote}</p>
-    <div>
-      <div style={{ fontWeight: 700, fontSize: '1rem' }}>{author}</div>
-      <div style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{role}</div>
-    </div>
-  </motion.div>
-);
+
 
 const BenefitItem = ({ text }: { text: string }) => (
   <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>

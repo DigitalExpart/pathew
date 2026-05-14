@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { Search, ChevronDown, Edit3, Trash2, Plus, Star, Upload, Camera, Loader2 } from 'lucide-react';
+import { Edit3, Trash2, Plus, Star, Upload, Camera, Loader2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 export const AdminReviewsPage: React.FC = () => {

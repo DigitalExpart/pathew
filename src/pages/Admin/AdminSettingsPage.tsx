@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '../../components/ui/Card';
-import { Button } from '../../components/ui/Button';
+
 import { Shield, Globe, Code, CreditCard, Edit3, Save, Loader2, X } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
