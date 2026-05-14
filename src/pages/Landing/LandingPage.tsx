@@ -631,10 +631,18 @@ const StepItem = ({ number, title, description }: { number: string, title: strin
 );
 
 const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedFeatures, badge, badgeColor = 'var(--accent-primary)' }: any) => {
-  const handleSubscribe = () => {
+  const [isConnecting, setIsConnecting] = React.useState(false);
+
+  const handleSubscribe = (e: any) => {
+    e.preventDefault();
+    setIsConnecting(true);
     // TODO: Replace with actual Stripe checkout session logic
     console.log(`Initiating Stripe checkout for ${title} plan`);
-    alert(`Connecting to Stripe Payment Gateway for ${title}...`);
+    
+    // Simulate connection delay to show intent
+    setTimeout(() => {
+      setIsConnecting(false);
+    }, 2000);
   };
 
   return (
@@ -694,7 +702,9 @@ const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedF
     </div>
 
     <div style={{ marginTop: 'auto' }}>
-      <Button onClick={handleSubscribe} variant={badge === '★ MOST POPULAR ★' ? 'primary' : 'outline'} style={{ width: '100%' }}>Choose {title}</Button>
+      <Button onClick={handleSubscribe} variant={badge === '★ MOST POPULAR ★' ? 'primary' : 'outline'} style={{ width: '100%' }}>
+        {isConnecting ? 'Connecting to Stripe...' : `Choose ${title}`}
+      </Button>
     </div>
   </motion.div>
   );
