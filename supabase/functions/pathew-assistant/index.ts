@@ -126,23 +126,33 @@ CRITICAL: Your ENTIRE response must be a valid JSON object with this exact struc
           else console.log(`[CREDITS] ${currentCredits} -> ${newCredits} for user ${user.id}`)
 
           // === SAVE TO HISTORY ===
-          // Save user message
+          // 1. Create the session first to satisfy the foreign key constraint
+          if (!sessionId) {
+            const { error: sessionError } = await supabaseAdmin.from('assistant_sessions').insert({
+              id: sid,
+              user_id: user.id,
+              task: action.length > 50 ? action.substring(0, 50) + '...' : action
+            })
+            if (sessionError) console.error(`[HISTORY ERROR SESSION] ${sessionError.message}`)
+          }
+
+          // 2. Save user message
           const { error: userMsgError } = await supabaseAdmin.from('assistant_messages').insert({
             user_id: user.id,
             role: 'user',
             content: action,
-            session_id: null,
+            session_id: sid,
             tokens_in: tokensIn,
             tokens_out: 0,
           })
           if (userMsgError) console.error(`[HISTORY ERROR USER] ${userMsgError.message}`)
 
-          // Save assistant response
+          // 3. Save assistant response
           const { error: asstMsgError } = await supabaseAdmin.from('assistant_messages').insert({
             user_id: user.id,
             role: 'assistant',
             content: parsedResponse.draft || content,
-            session_id: null,
+            session_id: sid,
             tokens_in: 0,
             tokens_out: tokensOut,
           })
