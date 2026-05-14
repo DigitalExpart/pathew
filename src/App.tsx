@@ -1,7 +1,9 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Shell } from './components/layout/Shell';
+import { AdminShell } from './components/layout/AdminShell';
 import { AssistantProvider } from './context/AssistantContext';
 import { AuthProvider } from './context/AuthContext';
+import { AdminProvider, RequireAdmin } from './context/AdminContext';
 import { AssistantPanel } from './components/ai/AssistantPanel';
 import { LandingPage } from './pages/Landing/LandingPage';
 import { LoginPage, SignUpPage } from './pages/Auth/AuthPages';
@@ -24,9 +26,20 @@ import { HowItWorksPage } from './pages/Support/HowItWorksPage';
 import { NotificationsPage } from './pages/Notifications/NotificationsPage';
 import { PreparationPage } from './pages/Pathway/PreparationPage';
 
+// Admin Pages
+import { AdminLogin } from './pages/Admin/AdminLogin';
+import { AdminDashboard } from './pages/Admin/AdminDashboard';
+import { AdminUsersPage } from './pages/Admin/AdminUsersPage';
+import { AdminSubscriptionsPage } from './pages/Admin/AdminSubscriptionsPage';
+import { AdminTransactionsPage } from './pages/Admin/AdminTransactionsPage';
+import { AdminDocumentsPage } from './pages/Admin/AdminDocumentsPage';
+import { AdminAIUsagePage } from './pages/Admin/AdminAIUsagePage';
+import { AdminSettingsPage } from './pages/Admin/AdminSettingsPage';
+
 function App() {
   return (
     <AuthProvider>
+      <AdminProvider>
       <AssistantProvider>
       <Router>
         <Routes>
@@ -61,6 +74,16 @@ function App() {
           <Route path="/settings" element={<Shell><SettingsPage /></Shell>} />
           <Route path="/notifications" element={<Shell><NotificationsPage /></Shell>} />
           <Route path="/preparation" element={<Shell><PreparationPage /></Shell>} />
+
+          {/* Admin Routes */}
+          <Route path="/admin" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<RequireAdmin><AdminShell><AdminDashboard /></AdminShell></RequireAdmin>} />
+          <Route path="/admin/users" element={<RequireAdmin><AdminShell><AdminUsersPage /></AdminShell></RequireAdmin>} />
+          <Route path="/admin/subscriptions" element={<RequireAdmin><AdminShell><AdminSubscriptionsPage /></AdminShell></RequireAdmin>} />
+          <Route path="/admin/transactions" element={<RequireAdmin><AdminShell><AdminTransactionsPage /></AdminShell></RequireAdmin>} />
+          <Route path="/admin/documents" element={<RequireAdmin><AdminShell><AdminDocumentsPage /></AdminShell></RequireAdmin>} />
+          <Route path="/admin/ai-usage" element={<RequireAdmin><AdminShell><AdminAIUsagePage /></AdminShell></RequireAdmin>} />
+          <Route path="/admin/settings" element={<RequireAdmin><AdminShell><AdminSettingsPage /></AdminShell></RequireAdmin>} />
           
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
@@ -68,6 +91,7 @@ function App() {
           <AssistantPanel />
       </Router>
       </AssistantProvider>
+      </AdminProvider>
     </AuthProvider>
   );
 }
