@@ -206,13 +206,23 @@ export const PreparationPage: React.FC = () => {
           openAssistant('Pathew Assistant', [
             `Generate a ${planType} plan`,
             'How does this work?'
-          ], (text) => handleInsertPlan(text), { duration: planType, opportunity: opportunity?.title });
+          ], (text) => handleInsertPlan(text), { 
+            type: 'Roadmap', 
+            duration: planType, 
+            opportunity: opportunity?.title,
+            requestId: Date.now() 
+          });
         }
       } else {
         openAssistant('Pathew Assistant', [
           `Generate a ${planType} plan`,
           'How does this work?'
-        ], (text) => handleInsertPlan(text), { duration: planType, opportunity: opportunity?.title });
+        ], (text) => handleInsertPlan(text), { 
+          type: 'Roadmap', 
+          duration: planType, 
+          opportunity: opportunity?.title,
+          requestId: Date.now()
+        });
       }
     } catch (error) {
       console.error('Error fetching plan:', error);
@@ -226,7 +236,12 @@ export const PreparationPage: React.FC = () => {
       `Regenerate my ${planType} plan`,
       `Adjust my ${planType} plan to be more aggressive`,
       'How does this work?'
-    ], (text) => handleInsertPlan(text), { duration: planType, opportunity: opportunity?.title });
+    ], (text) => handleInsertPlan(text), { 
+      type: 'Roadmap', 
+      duration: planType, 
+      opportunity: opportunity?.title,
+      requestId: Date.now()
+    });
   };
 
   const parsePlanToJSON = (text: string) => {

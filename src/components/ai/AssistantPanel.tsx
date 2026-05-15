@@ -24,26 +24,26 @@ export const AssistantPanel: React.FC = () => {
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<{ type: 'user' | 'assistant', text: string, data?: any, isError?: boolean }[]>([]);
   const [activeTab, setActiveTab] = useState<'chat' | 'history'>('chat');
+  const lastRequestIdRef = useRef<number | null>(null);
   const initialTriggerRef = useRef(false);
 
   useEffect(() => {
-    if (isAssistantPanelOpen && messages.length === 0) {
-      setMessages([{ 
-        type: 'assistant', 
-        text: `I'm your Pathew Assistant, ready to help with your ${activeContext}. I have analyzed your profile and the current opportunity. How can I assist you?` 
-      }]);
+    if (isAssistantPanelOpen) {
+      if (messages.length === 0) {
+        setMessages([{ 
+          type: 'assistant', 
+          text: `I'm your Pathew Assistant, ready to help with your ${activeContext}. I have analyzed your profile and the current opportunity. How can I assist you?` 
+        }]);
+      }
 
-      // Auto-trigger for preparation plan
-      if (fullContextData?.duration && !initialTriggerRef.current) {
-        initialTriggerRef.current = true;
+      // Auto-trigger for preparation plan or any requestId change
+      const currentRequestId = fullContextData?.requestId;
+      if (fullContextData?.duration && currentRequestId && currentRequestId !== lastRequestIdRef.current) {
+        lastRequestIdRef.current = currentRequestId;
         handleSend(`Generate a ${fullContextData.duration} preparation plan`);
       }
     }
-
-    if (!isAssistantPanelOpen) {
-      initialTriggerRef.current = false;
-    }
-  }, [isAssistantPanelOpen, activeContext, fullContextData]);
+  }, [isAssistantPanelOpen, activeContext, fullContextData, messages.length]);
 
   const handleDownload = (text: string) => {
     const element = document.createElement("a");
@@ -97,10 +97,6 @@ export const AssistantPanel: React.FC = () => {
       if (parts.length > 1) {
         textToInsert = parts.slice(1).join('\n\n');
       }
-    } else {
-      // Fallback to quote extraction for simple text snippets
-      const match = fullText.match(/"([^"]+)"/);
-      if (match) textToInsert = match[1];
     }
     
     onInsert(textToInsert);
