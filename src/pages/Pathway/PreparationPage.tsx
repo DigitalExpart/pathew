@@ -201,6 +201,14 @@ export const PreparationPage: React.FC = () => {
         const parsedPlan = JSON.parse(matchingDoc.content);
         setPlan(parsedPlan);
         setCompletedWeeks(parsedPlan.completedWeeks || []);
+        
+        // If the plan is empty/broken (from previous bug), automatically open assistant
+        if (!parsedPlan.weeks || parsedPlan.weeks.length === 0) {
+          openAssistant('Pathew Assistant', [
+            `Generate a ${planType} plan`,
+            'How does this work?'
+          ], (text) => handleInsertPlan(text), { duration: planType, opportunity: opportunity?.title });
+        }
       } else {
         openAssistant('Pathew Assistant', [
           `Generate a ${planType} plan`,
@@ -294,7 +302,7 @@ export const PreparationPage: React.FC = () => {
     }
   };
 
-  const progress = plan?.weeks ? Math.round((completedWeeks.length / plan.weeks.length) * 100) : 0;
+  const progress = plan?.weeks && plan.weeks.length > 0 ? Math.round((completedWeeks.length / plan.weeks.length) * 100) : 0;
 
   if (!viewingSpecific) {
     const activeProjects = allOpportunities.filter(opp => 
