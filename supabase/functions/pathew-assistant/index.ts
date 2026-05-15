@@ -116,8 +116,15 @@ ${currentDraft || '(No current draft provided)'}
 
           let parsedResponse
           try {
-            const cleanJson = content.replace(/```json\n?|```\n?/g, '').trim()
-            parsedResponse = JSON.parse(cleanJson)
+            // Find the first { and last } to extract the JSON object
+            const firstBrace = content.indexOf('{')
+            const lastBrace = content.lastIndexOf('}')
+            if (firstBrace !== -1 && lastBrace !== -1) {
+              const jsonStr = content.substring(firstBrace, lastBrace + 1)
+              parsedResponse = JSON.parse(jsonStr)
+            } else {
+              throw new Error('No JSON object found')
+            }
           } catch {
             parsedResponse = {
               draft: content,

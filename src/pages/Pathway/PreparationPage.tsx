@@ -107,7 +107,8 @@ export const PreparationPage: React.FC = () => {
     const weeks = parsePlanToJSON(cleanText);
     
     if (weeks.length === 0) {
-      console.warn('No weeks found in assistant text');
+      console.warn('No weeks found in assistant text:', cleanText);
+      alert('The AI response did not contain a valid weekly roadmap format (e.g. Week 1: ...). Please ask the assistant to format it as a weekly plan.');
       setLoading(false);
       return;
     }
