@@ -23,12 +23,11 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { useAssistant } from '../../context/AssistantContext';
 import { supabase } from '../../lib/supabase';
-import { PathewAssistantService } from '../../services/pathewAssistant';
 
 export const PreparationPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { user, profile, refreshProfile } = useAuth();
+  const { user } = useAuth();
   const { openAssistant } = useAssistant();
   
   const planType = searchParams.get('type') || '90-day';
