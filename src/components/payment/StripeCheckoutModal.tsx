@@ -4,13 +4,12 @@ import { X, Lock, CheckCircle2, Shield, Zap } from 'lucide-react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { Button } from '../ui/Button';
+import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../context/AuthContext';
 
-// TODO: Replace with your actual Stripe publishable key
-const STRIPE_PUBLISHABLE_KEY = 'pk_test_placeholder';
+// Stripe publishable key from environment variables
+const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '';
 const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
-
-// TODO: Replace with your actual backend API endpoint
-const API_BASE_URL = 'https://ialvtdpugkvnkznzbyde.supabase.co/functions/v1';
 
 /* ── Checkout Form (uses PaymentElement) ───────────────────── */
 const CheckoutForm = ({ planTitle, planPrice, planCredits, onSuccess, onCancel }: any) => {
@@ -146,21 +145,32 @@ export const StripeCheckoutModal = ({ isOpen, onClose, planTitle, planPrice, pla
     setSuccess(false);
     setClientSecret(null);
 
-    // TODO: Replace with your actual backend API call
-    fetch(`${API_BASE_URL}/create-payment-intent`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ plan: planTitle, price: planPrice }),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setClientSecret(data.clientSecret);
+    // Ensure user is logged in
+    const checkUser = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        setFetchError('You must be logged in to make a purchase.');
         setLoading(false);
+        return;
+      }
+
+      // Fetch payment intent from Supabase Edge Function
+      supabase.functions.invoke('create-payment-intent', {
+        body: { plan: planTitle, price: planPrice }
       })
-      .catch(() => {
-        setFetchError('Unable to connect to payment service. Please try again.');
-        setLoading(false);
-      });
+        .then(({ data, error }) => {
+          if (error) throw error;
+          setClientSecret(data.clientSecret);
+          setLoading(false);
+        })
+        .catch((err) => {
+          console.error('Payment intent error:', err);
+          setFetchError('Unable to connect to payment service. Please try again.');
+          setLoading(false);
+        });
+    };
+
+    checkUser();
   }, [isOpen, planTitle, planPrice]);
 
   const handleClose = () => {
