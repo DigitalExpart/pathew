@@ -246,35 +246,62 @@ export const PreparationPage: React.FC = () => {
   };
 
   const parsePlanToJSON = (text: string) => {
-    const lines = text.split('\n');
+    // First, try to see if we can split the text into chunks by "Week X"
+    const weekRegex = /Week\s*(\d+)/gi;
     const weeks: any[] = [];
-    let currentWeek: any = null;
-
-    lines.forEach(line => {
-      const trimmedLine = line.trim();
-      if (!trimmedLine) return;
-
-      if (/Week\s*\d+/i.test(trimmedLine)) {
-        const weekMatch = trimmedLine.match(/Week\s*(\d+)/i);
-        if (weekMatch) {
-          if (currentWeek && currentWeek.tasks.length > 0) weeks.push(currentWeek);
-          
-          const titleParts = trimmedLine.split(/[:#-]/);
-          currentWeek = {
-            number: parseInt(weekMatch[1]),
-            title: titleParts[titleParts.length - 1]?.trim() || 'Focus Area',
-            tasks: []
-          };
-        }
-      } else if (currentWeek) {
-        const taskText = trimmedLine.replace(/^[*+-]\s*/, '').replace(/^\d+\.\s*/, '').trim();
-        if (taskText && !taskText.startsWith('#') && !taskText.startsWith('[')) {
-          currentWeek.tasks.push(taskText);
-        }
-      }
-    });
     
-    if (currentWeek && currentWeek.tasks.length > 0) weeks.push(currentWeek);
+    // Split text by "Week X" occurrences
+    const parts = text.split(/Week\s*\d+[:\s-]*/i);
+    const matches = text.match(weekRegex);
+    
+    if (!matches || parts.length <= 1) {
+      console.warn('Regex split failed to find weeks');
+      return [];
+    }
+
+    // The first part is usually the intro/header, skip it
+    for (let i = 0; i < matches.length; i++) {
+      const weekMatch = matches[i].match(/Week\s*(\d+)/i);
+      if (!weekMatch) continue;
+      
+      const weekNum = parseInt(weekMatch[1]);
+      const content = parts[i + 1] || '';
+      
+      // Split content into lines or by bullet points
+      const subParts = content.split(/\n|(?=\s*[\-*•])|(?=\s*\d+\.\s+)/);
+      
+      let title = 'Focus Area';
+      const tasks: string[] = [];
+      
+      subParts.forEach((part, idx) => {
+        const trimmed = part.trim().replace(/^[:\-*•\d.\s]+/, '').trim();
+        if (!trimmed || trimmed.length < 3) return;
+        
+        if (idx === 0 && !part.startsWith('-') && !part.startsWith('*') && !part.includes('•')) {
+          title = trimmed.split('\n')[0].substring(0, 50);
+        } else {
+          // If it's a long string with internal bullets like "Task 1 - Task 2", split it
+          if (trimmed.includes(' - ')) {
+            const multiTasks = trimmed.split(' - ');
+            multiTasks.forEach(t => {
+              const cleaned = t.trim();
+              if (cleaned.length > 3) tasks.push(cleaned);
+            });
+          } else {
+            tasks.push(trimmed);
+          }
+        }
+      });
+
+      if (tasks.length > 0) {
+        weeks.push({
+          number: weekNum,
+          title: title,
+          tasks: tasks.slice(0, 10) // Limit to 10 tasks per week
+        });
+      }
+    }
+    
     return weeks.sort((a, b) => a.number - b.number);
   };
 
