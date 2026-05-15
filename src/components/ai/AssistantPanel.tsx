@@ -25,7 +25,6 @@ export const AssistantPanel: React.FC = () => {
   const [messages, setMessages] = useState<{ type: 'user' | 'assistant', text: string, data?: any, isError?: boolean }[]>([]);
   const [activeTab, setActiveTab] = useState<'chat' | 'history'>('chat');
   const lastRequestIdRef = useRef<number | null>(null);
-  const initialTriggerRef = useRef(false);
 
   useEffect(() => {
     if (isAssistantPanelOpen) {
