@@ -14,9 +14,11 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { useTranslation } from 'react-i18next';
 
 export const Dashboard: React.FC = () => {
   const { user, profile } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
 
@@ -113,7 +115,7 @@ export const Dashboard: React.FC = () => {
       <header style={headerStyle}>
         <div>
           <h1 style={{ ...titleStyle, fontSize: isMobile ? '1.5rem' : '2rem' }}>Good morning, {firstName}! 👋</h1>
-          <p style={subtitleStyle}>Here is what's happening with your opportunities today.</p>
+          <p style={subtitleStyle}>{t('dashboard.subtitle')}</p>
         </div>
         <Button 
           onClick={handleQuickScan} 
@@ -130,8 +132,8 @@ export const Dashboard: React.FC = () => {
         </Button>
       </header>      {/* Stats Grid */}
       <div className="grid-responsive" style={{ marginBottom: '32px' }}>
-        <StatCard icon={Users} label="Opportunities" value={stats.opps.toString()} trend="+0" />
-        <StatCard icon={Briefcase} label="Jobs" value={stats.jobs.toString()} trend="+0" />
+        <StatCard icon={Users} label={t('nav.opportunities')} value={stats.opps.toString()} trend="+0" />
+        <StatCard icon={Briefcase} label={t('nav.jobs')} value={stats.jobs.toString()} trend="+0" />
         <StatCard icon={FileCheck} label="Docs Generated" value={stats.docs.toString()} trend="+0" />
         <StatCard icon={Clock} label="Pending Reviews" value={stats.reviews.toString()} />
       </div>
@@ -216,8 +218,8 @@ export const Dashboard: React.FC = () => {
           {/* Recent Matches */}
           <div>
             <div style={sectionHeaderStyle}>
-              <h2 style={sectionTitleStyle}>Recent Opportunities</h2>
-              <Button variant="ghost" size="sm">View all <ArrowRight size={14} /></Button>
+              <h2 style={sectionTitleStyle}>{t('dashboard.exploreOpportunities')}</h2>
+              <Button variant="ghost" size="sm" onClick={() => navigate('/opportunities')}>{t('dashboard.viewAll')} <ArrowRight size={14} /></Button>
             </div>
           <div style={matchesListStyle}>
             {recentOpps.map(opp => (
@@ -251,16 +253,16 @@ export const Dashboard: React.FC = () => {
 
         {/* Sidebar Panel */}
         <section style={{ flex: 1, minWidth: 0 }}>
-          <Card title="Quick Actions" style={{ marginBottom: '24px' }}>
+          <Card title={t('dashboard.quickActions')} style={{ marginBottom: '24px' }}>
             <div style={actionListStyle}>
-              <ActionButton label="Generate New CV" />
-              <ActionButton label="Write Cover Letter" />
-              <ActionButton label="Create Proposal" />
-              <ActionButton label="Update Profile" variant="secondary" />
+              <ActionButton label={t('dashboard.buildCV')} />
+              <ActionButton label={t('nav.coverLetter')} />
+              <ActionButton label={t('nav.grantBuilder')} />
+              <ActionButton label={t('nav.editProfile')} variant="secondary" />
             </div>
           </Card>
 
-          <Card title="Recent Activity">
+          <Card title={t('dashboard.recentActivity')}>
             <div style={activityListStyle}>
               {recentActivity.map(activity => (
                 <ActivityItem 

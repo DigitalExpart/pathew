@@ -2,6 +2,14 @@ import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { PathewAssistantService } from '../services/pathewAssistant';
 import type { AssistantRequestPayload, AssistantResponseData } from '../services/pathewAssistant';
+import i18n from '../i18n/index';
+
+const LANGUAGE_MAP: Record<string, string> = {
+  en: 'English',
+  fr: 'French',
+  de: 'German',
+  es: 'Spanish',
+};
 
 export const usePathewAssistant = () => {
   const { profile } = useAuth();
@@ -20,11 +28,15 @@ export const usePathewAssistant = () => {
     setError(null);
 
     try {
+      // Map the current UI language to a full language name for the AI
+      const currentLangCode = i18n.language?.split('-')[0] || 'en';
+      const aiLanguage = LANGUAGE_MAP[currentLangCode] || 'English';
+
       const fullPayload: AssistantRequestPayload = {
         ...payload,
         sessionId,
         tone: profile.assistant_settings?.tone || 'Professional & Academic',
-        language: profile.assistant_settings?.language || 'English (UK)'
+        language: aiLanguage, // Use current UI language for AI responses
       };
 
       const data = await PathewAssistantService.generateResponse(fullPayload);
@@ -40,7 +52,6 @@ export const usePathewAssistant = () => {
       setError(err.message || 'An unexpected error occurred');
       return null;
     } finally {
-      setIsLoading(true); // Keep loading true for a moment for UI transitions if needed, or just false
       setIsLoading(false);
     }
   };

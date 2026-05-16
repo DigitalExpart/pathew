@@ -6,9 +6,11 @@ import { Badge } from '../../components/ui/Badge';
 import { Search, Filter, Calendar, MapPin, ChevronRight, Star } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { useTranslation } from 'react-i18next';
 
 export const OpportunityList: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [opportunities, setOpportunities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -113,8 +115,8 @@ export const OpportunityList: React.FC = () => {
   return (
     <div style={{ ...containerStyle, padding: isMobile ? '0' : '0' }}>
       <header style={{ ...headerStyle, textAlign: isMobile ? 'center' : 'left' }}>
-        <h1 style={{ ...titleStyle, fontSize: isMobile ? '1.75rem' : '2.5rem' }}>Explore Opportunities</h1>
-        <p style={subtitleStyle}>Found {filteredOpps.length} opportunities matching your profile.</p>
+        <h1 style={{ ...titleStyle, fontSize: isMobile ? '1.75rem' : '2.5rem' }}>{t('opportunities.title')}</h1>
+        <p style={subtitleStyle}>{t('opportunities.subtitle', { count: filteredOpps.length })}</p>
       </header>
 
       {/* Filters Bar */}
@@ -123,7 +125,7 @@ export const OpportunityList: React.FC = () => {
           <Search size={18} color="var(--text-muted)" />
           <input 
             type="text" 
-            placeholder="Search by role, company, or keywords..." 
+            placeholder={t('opportunities.search')}
             style={searchInputStyle}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -132,7 +134,7 @@ export const OpportunityList: React.FC = () => {
         
         <div style={{ ...filterButtonsStyle, width: isMobile ? '100%' : 'auto', justifyContent: isMobile ? 'space-between' : 'flex-start' }}>
           <Button variant="outline" size="sm" style={{ gap: '8px', flex: isMobile ? 1 : 'none' }}>
-            <Filter size={16} /> Filters
+            <Filter size={16} /> {t('opportunities.filters')}
           </Button>
           {!isMobile && <div style={dividerStyle}></div>}
           <select style={{ ...selectStyle, flex: isMobile ? 1 : 'none' }}>
@@ -149,11 +151,11 @@ export const OpportunityList: React.FC = () => {
       }}>
         {loading ? (
           <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>
-            <p>Loading opportunities...</p>
+            <p>{t('opportunities.loading')}</p>
           </div>
         ) : filteredOpps.length === 0 ? (
           <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>
-            <p>No opportunities found. Try a different search term.</p>
+            <p>{t('opportunities.noResults')}</p>
           </div>
         ) : (
           filteredOpps.map(opp => (
@@ -204,13 +206,13 @@ export const OpportunityList: React.FC = () => {
                 onClick={() => handleSave(opp)}
                 disabled={savingId === opp.id || opp.status === 'Saved'}
               >
-                {savingId === opp.id ? 'Saving...' : opp.status === 'Saved' ? 'Saved' : 'Save'}
+                {savingId === opp.id ? t('opportunities.saving') : opp.status === 'Saved' ? t('opportunities.saved') : t('opportunities.save')}
               </Button>
               <Button 
                 style={{ flex: 1, gap: '4px' }}
                 onClick={() => navigate(`/opportunities/${opp.id}`)}
               >
-                Prepare <ChevronRight size={16} />
+                {t('opportunities.prepare')} <ChevronRight size={16} />
               </Button>
             </div>
           </Card>

@@ -1,9 +1,10 @@
 import React from 'react';
-import { Search, Bell, HelpCircle, ChevronDown, Coins, Sparkles, UserCircle, LogOut, LayoutDashboard, Menu, Sun, Moon } from 'lucide-react';
+import { Search, Bell, HelpCircle, ChevronDown, Coins, Sparkles, UserCircle, LogOut, LayoutDashboard, Menu, Sun, Moon, Globe } from 'lucide-react';
 import { mockUser } from '../../data/mockData';
 import { useAssistant } from '../../context/AssistantContext';
 import { useTheme } from '../../context/ThemeContext';
-
+import { useTranslation } from 'react-i18next';
+import { SUPPORTED_LANGUAGES } from '../../i18n/index';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -16,9 +17,12 @@ export const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
   const { user, profile, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { openAssistant } = useAssistant();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
+  const [isLangOpen, setIsLangOpen] = React.useState(false);
   const dropdownRef = React.useRef<HTMLDivElement>(null);
+  const langRef = React.useRef<HTMLDivElement>(null);
 
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
 
@@ -35,6 +39,9 @@ export const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
+      }
+      if (langRef.current && !langRef.current.contains(event.target as Node)) {
+        setIsLangOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -113,6 +120,51 @@ export const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
         
         <div style={dividerStyle}></div>
 
+        {/* Language Switcher */}
+        <div style={{ position: 'relative' }} ref={langRef}>
+          <button
+            style={{ ...iconButtonStyle, display: 'flex', alignItems: 'center', gap: '4px', background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-secondary)' }}
+            onClick={() => { setIsLangOpen(!isLangOpen); setIsDropdownOpen(false); }}
+            title={t('common.language')}
+          >
+            <Globe size={18} />
+            {!isSmallMobile && (
+              <span style={{ fontSize: '0.75rem', fontWeight: 600 }}>
+                {SUPPORTED_LANGUAGES.find(l => l.code === i18n.language?.split('-')[0])?.flag || '🌐'}
+              </span>
+            )}
+          </button>
+          <AnimatePresence>
+            {isLangOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 10, scale: 0.95 }}
+                style={{ ...dropdownStyle, minWidth: '160px' }}
+              >
+                <div style={{ padding: '8px 16px 6px', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--text-muted)', fontWeight: 700 }}>
+                  {t('common.language')}
+                </div>
+                {SUPPORTED_LANGUAGES.map(lang => (
+                  <button
+                    key={lang.code}
+                    onClick={() => { i18n.changeLanguage(lang.code); setIsLangOpen(false); }}
+                    style={{
+                      ...dropdownItemStyle,
+                      backgroundColor: i18n.language?.split('-')[0] === lang.code ? 'rgba(245,158,11,0.08)' : 'transparent',
+                      color: i18n.language?.split('-')[0] === lang.code ? 'var(--accent-primary)' : 'var(--text-primary)',
+                      fontWeight: i18n.language?.split('-')[0] === lang.code ? 700 : 400,
+                    }}
+                  >
+                    <span style={{ fontSize: '1rem' }}>{lang.flag}</span>
+                    {lang.label}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
         <div style={{ position: 'relative' }} ref={dropdownRef}>
           <div style={userProfileStyle} onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
             {!isSmallMobile && (
@@ -144,18 +196,18 @@ export const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
                 style={dropdownStyle}
               >
                 <Link to="/dashboard" style={dropdownItemStyle} onClick={() => setIsDropdownOpen(false)}>
-                  <LayoutDashboard size={18} /> Dashboard
+                  <LayoutDashboard size={18} /> {t('nav.dashboard')}
                 </Link>
                 <Link to="/profile" style={dropdownItemStyle} onClick={() => setIsDropdownOpen(false)}>
-                  <UserCircle size={18} /> Edit Profile
+                  <UserCircle size={18} /> {t('nav.editProfile')}
                 </Link>
                 <button onClick={toggleTheme} style={dropdownItemStyle}>
                   {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-                  {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+                  {theme === 'light' ? t('nav.darkMode') : t('nav.lightMode')}
                 </button>
                 <div style={dividerMenuStyle} />
                 <button onClick={handleLogout} style={logoutBtnStyle}>
-                  <LogOut size={18} /> Logout
+                  <LogOut size={18} /> {t('nav.logout')}
                 </button>
               </motion.div>
             )}

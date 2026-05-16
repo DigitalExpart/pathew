@@ -15,41 +15,10 @@ import {
 } from 'lucide-react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import logo from '../../assets/images/logo.png';
 
-const navGroups = [
-  {
-    title: 'Pathway',
-    items: [
-      { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-      { icon: Clock, label: 'Application Tracker', path: '/preparation' },
-      { icon: Briefcase, label: 'Opportunities', path: '/opportunities' },
-      { icon: Briefcase, label: 'Jobs', path: '/jobs' },
-      { icon: Bookmark, label: 'Saved Items', path: '/saved' },
-    ]
-  },
-  {
-    title: 'CV Builder',
-    items: [
-      { icon: FileText, label: 'CV Builder', path: '/cv-builder' },
-      { icon: FileEdit, label: 'Cover Letter', path: '/cover-letter' },
-    ]
-  },
-  {
-    title: 'Grant Builder',
-    items: [
-      { icon: Send, label: 'Grant Builder', path: '/grant-builder' },
-    ]
-  },
-  {
-    title: 'Account',
-    items: [
-      { icon: Wallet, label: 'Wallet & Credits', path: '/wallet' },
-      { icon: User, label: 'Profile', path: '/career-profile' },
-      { icon: Settings, label: 'Settings', path: '/settings' },
-    ]
-  }
-];
+
 
 interface SidebarProps {
   isOpen?: boolean;
@@ -58,7 +27,42 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const { signOut } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
+
+  const navGroups = [
+    {
+      title: 'PATHWAY',
+      items: [
+        { icon: LayoutDashboard, label: t('nav.dashboard'), path: '/dashboard' },
+        { icon: Clock, label: t('nav.applicationTracker'), path: '/preparation' },
+        { icon: Briefcase, label: t('nav.opportunities'), path: '/opportunities' },
+        { icon: Briefcase, label: t('nav.jobs'), path: '/jobs' },
+        { icon: Bookmark, label: t('nav.savedItems'), path: '/saved' },
+      ]
+    },
+    {
+      title: 'CV BUILDER',
+      items: [
+        { icon: FileText, label: t('nav.cvBuilder'), path: '/cv-builder' },
+        { icon: FileEdit, label: t('nav.coverLetter'), path: '/cover-letter' },
+      ]
+    },
+    {
+      title: 'GRANT BUILDER',
+      items: [
+        { icon: Send, label: t('nav.grantBuilder'), path: '/grant-builder' },
+      ]
+    },
+    {
+      title: 'ACCOUNT',
+      items: [
+        { icon: Wallet, label: t('nav.wallet'), path: '/wallet' },
+        { icon: User, label: 'Profile', path: '/career-profile' },
+        { icon: Settings, label: 'Settings', path: '/settings' },
+      ]
+    }
+  ];
 
   const handleLogout = async () => {
     await signOut();
@@ -110,7 +114,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       <div style={footerStyle}>
         <button style={logoutButtonStyle} onClick={handleLogout}>
           <LogOut size={20} />
-          <span>Logout</span>
+          <span>{t('nav.logout')}</span>
         </button>
       </div>
     </aside>
