@@ -90,7 +90,8 @@ export const PreparationPage: React.FC = () => {
       
       if (roadmapOppIds.length > 0) {
         // Construct the OR filter for owned OR referenced opportunities
-        const idList = roadmapOppIds.map(id => `"${id}"`).join(',');
+        // Remove quotes around UUIDs as PostgREST handles them as raw strings in .in.()
+        const idList = roadmapOppIds.join(',');
         query = query.or(`user_id.eq.${user.id},id.in.(${idList})`);
       } else {
         query = query.eq('user_id', user.id);
@@ -477,7 +478,7 @@ export const PreparationPage: React.FC = () => {
             </h1>
             <p style={subtitleStyle}>
               {opportunity 
-                ? `Specifically tailored for ${opportunity.company}. Track your progress weekly.` 
+                ? `Specifically tailored for ${opportunity.organization_name || opportunity.funder_name || opportunity.company || 'this opportunity'}. Track your progress weekly.` 
                 : 'Track your weekly progress and stay on target for your career goals.'}
             </p>
           </div>
