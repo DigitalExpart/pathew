@@ -16,7 +16,9 @@
     "features": "Fonctionnalités",
     "howItWorks": "Comment ça marche",
     "pricing": "Tarifs",
-    "contact": "Contact"
+    "contact": "Contact",
+    "profile": "Profil",
+    "settings": "Paramètres"
   },
   "landing": {
     "badge": "Propulsé par l'Assistant Pathew",
@@ -329,7 +331,10 @@
     "noBio": "Aucune biographie fournie. Utilisez Modifier le profil pour partager votre parcours.",
     "freePlan": "Forfait gratuit",
     "verifiedProfessional": "Professionnel vérifié",
-    "planLabel": "Plan"
+    "planLabel": "Plan",
+    "member": "Membre",
+    "explorer": "Explorateur",
+    "guest": "Invité"
   },
   "preparation": {
     "title": "Projets de préparation",
@@ -868,5 +873,17 @@
     "externalPortfolio": "Lien portfolio externe (facultatif)",
     "errorFile": "Veuillez d'abord télécharger un fichier",
     "errorTitle": "Veuillez ajouter un titre"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "subtitle": "Restez informé de vos matchs et de votre activité.",
+    "tabs": {
+      "all": "Toutes les notifications",
+      "unread": "Non lues"
+    },
+    "markAllRead": "Tout marquer comme lu",
+    "filter": "Filtrer les notifications...",
+    "noNotifications": "Aucune notification trouvée",
+    "noNotificationsDesc": "Nous vous informerons quand quelque chose d'important se produira."
   }
 }

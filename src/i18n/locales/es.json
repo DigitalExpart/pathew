@@ -16,7 +16,9 @@
     "features": "Funciones",
     "howItWorks": "Cómo funciona",
     "pricing": "Precios",
-    "contact": "Contacto"
+    "contact": "Contacto",
+    "profile": "Perfil",
+    "settings": "Configuraciones"
   },
   "landing": {
     "badge": "Desarrollado por el Asistente Pathew",
@@ -329,7 +331,10 @@
     "noBio": "Sin biografía proporcionada. Usa Editar perfil para compartir tu trayectoria.",
     "freePlan": "Plan gratuito",
     "verifiedProfessional": "Profesional verificado",
-    "planLabel": "Plan"
+    "planLabel": "Plan",
+    "member": "Miembro",
+    "explorer": "Explorador",
+    "guest": "Invitado"
   },
   "preparation": {
     "title": "Proyectos de preparación",
@@ -868,5 +873,17 @@
     "externalPortfolio": "Enlace de portafolio externo (opcional)",
     "errorFile": "Por favor, sube un archivo primero",
     "errorTitle": "Por favor, añade un título"
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "subtitle": "Mantente al día con tus coincidencias y actividad.",
+    "tabs": {
+      "all": "Todas las notificaciones",
+      "unread": "No leídas"
+    },
+    "markAllRead": "Marcar todo como leído",
+    "filter": "Filtrar notificaciones...",
+    "noNotifications": "No se encontraron notificaciones",
+    "noNotificationsDesc": "Te avisaremos cuando ocurra algo importante."
   }
 }

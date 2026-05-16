@@ -58,8 +58,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       title: 'ACCOUNT',
       items: [
         { icon: Wallet, label: t('nav.wallet'), path: '/wallet' },
-        { icon: User, label: 'Profile', path: '/career-profile' },
-        { icon: Settings, label: 'Settings', path: '/settings' },
+        { icon: User, label: t('nav.profile'), path: '/career-profile' },
+        { icon: Settings, label: t('nav.settings'), path: '/settings' },
       ]
     }
   ];

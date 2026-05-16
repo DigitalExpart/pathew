@@ -16,7 +16,9 @@
     "features": "Functies",
     "howItWorks": "Hoe het werkt",
     "pricing": "Prijzen",
-    "contact": "Contact"
+    "contact": "Contact",
+    "profile": "Profiel",
+    "settings": "Instellingen"
   },
   "landing": {
     "badge": "Aangedreven door Pathew Assistant",
@@ -329,7 +331,10 @@
     "noBio": "Nog geen biografie verstrekt. Gebruik Profiel bewerken om je traject te delen.",
     "freePlan": "Gratis plan",
     "verifiedProfessional": "Geverifieerde professional",
-    "planLabel": "Plan"
+    "planLabel": "Plan",
+    "member": "Lid",
+    "explorer": "Verkenner",
+    "guest": "Gast"
   },
   "preparation": {
     "title": "Voorbereidingsprojecten",
@@ -869,5 +874,17 @@
     "externalPortfolio": "Externe portfolio-link (optioneel)",
     "errorFile": "Upload eerst een bestand",
     "errorTitle": "Voeg een titel toe"
+  },
+  "notifications": {
+    "title": "Meldingen",
+    "subtitle": "Blijf op de hoogte van je matches en activiteit.",
+    "tabs": {
+      "all": "Alle meldingen",
+      "unread": "Ongelezen"
+    },
+    "markAllRead": "Alles als gelezen markeren",
+    "filter": "Meldingen filteren...",
+    "noNotifications": "Geen meldingen gevonden",
+    "noNotificationsDesc": "We laten het je weten als er iets belangrijks gebeurt."
   }
 }

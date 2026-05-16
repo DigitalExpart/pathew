@@ -16,7 +16,9 @@
     "features": "Funktionen",
     "howItWorks": "Wie es funktioniert",
     "pricing": "Preise",
-    "contact": "Kontakt"
+    "contact": "Kontakt",
+    "profile": "Profil",
+    "settings": "Einstellungen"
   },
   "landing": {
     "badge": "Unterstützt von Pathew Assistant",
@@ -329,7 +331,10 @@
     "noBio": "Noch keine Biografie. Nutzen Sie Profil bearbeiten, um Ihren Werdegang zu teilen.",
     "freePlan": "Kostenloser Plan",
     "verifiedProfessional": "Verifizierter Profi",
-    "planLabel": "Plan"
+    "planLabel": "Plan",
+    "member": "Mitglied",
+    "explorer": "Entdecker",
+    "guest": "Gast"
   },
   "preparation": {
     "title": "Vorbereitungsprojekte",
@@ -868,5 +873,17 @@
     "externalPortfolio": "Externer Portfolio-Link (optional)",
     "errorFile": "Bitte laden Sie zuerst eine Datei hoch",
     "errorTitle": "Bitte fügen Sie einen Titel hinzu"
+  },
+  "notifications": {
+    "title": "Benachrichtigungen",
+    "subtitle": "Bleiben Sie über Ihre Treffer und Aktivitäten auf dem Laufenden.",
+    "tabs": {
+      "all": "Alle Benachrichtigungen",
+      "unread": "Ungelesen"
+    },
+    "markAllRead": "Alle als gelesen markieren",
+    "filter": "Benachrichtigungen filtern...",
+    "noNotifications": "Keine Benachrichtigungen gefunden",
+    "noNotificationsDesc": "Wir benachrichtigen Sie, wenn etwas Wichtiges passiert."
   }
 }

@@ -74,7 +74,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
             <Search size={18} color="var(--text-muted)" />
             <input 
               type="text" 
-              placeholder="Search..." 
+              placeholder={t('common.search')} 
               style={searchInputStyle}
             />
           </div>
@@ -88,7 +88,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
             onClick={() => openAssistant('Pathew Assistant', ['How can I improve my profile?', 'What opportunities are trending?', 'Help me write a document'])}
           >
             <Sparkles size={16} />
-            <span>Assistant</span>
+            <span>{t('assistant.title')}</span>
           </button>
         )}
 
@@ -171,7 +171,9 @@ export const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
               <div style={userInfoStyle}>
                 <span style={userNameStyle}>{displayName}</span>
                 <span style={userRoleStyle}>
-                  {profile?.subscription_plan ? `${profile.subscription_plan} Member` : (user ? 'Explorer' : 'Guest')}
+                  {profile?.subscription_plan 
+                    ? `${profile.subscription_plan} ${t('profile.member')}` 
+                    : (user ? t('profile.explorer') : t('profile.guest'))}
                 </span>
               </div>
             )}

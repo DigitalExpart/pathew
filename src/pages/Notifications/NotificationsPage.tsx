@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { 
@@ -65,6 +66,7 @@ const mockNotifications: Notification[] = [
 ];
 
 export const NotificationsPage: React.FC = () => {
+  const { t } = useTranslation();
   const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
 
@@ -93,12 +95,12 @@ export const NotificationsPage: React.FC = () => {
     <div style={containerStyle}>
       <header style={headerStyle}>
         <div>
-          <h1 style={{ fontSize: '2rem', marginBottom: '8px' }}>Notifications</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>Stay updated with your matches and activity.</p>
+          <h1 style={{ fontSize: '2rem', marginBottom: '8px' }}>{t('notifications.title')}</h1>
+          <p style={{ color: 'var(--text-secondary)' }}>{t('notifications.subtitle')}</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
           <Button variant="outline" size="sm" onClick={markAllAsRead}>
-            <CheckCheck size={16} style={{ marginRight: '8px' }} /> Mark all as read
+            <CheckCheck size={16} style={{ marginRight: '8px' }} /> {t('notifications.markAllRead')}
           </Button>
         </div>
       </header>
@@ -110,21 +112,21 @@ export const NotificationsPage: React.FC = () => {
               style={{ ...filterButtonStyle, borderBottomColor: filter === 'all' ? 'var(--accent-primary)' : 'transparent', color: filter === 'all' ? 'var(--text-primary)' : 'var(--text-muted)' }}
               onClick={() => setFilter('all')}
             >
-              All Notifications
+              {t('notifications.tabs.all')}
             </button>
             <button 
               style={{ ...filterButtonStyle, borderBottomColor: filter === 'unread' ? 'var(--accent-primary)' : 'transparent', color: filter === 'unread' ? 'var(--text-primary)' : 'var(--text-muted)' }}
               onClick={() => setFilter('unread')}
             >
-              Unread
+              {t('notifications.tabs.unread')}
               {notifications.filter(n => !n.isRead).length > 0 && (
                 <span style={countBadgeStyle}>{notifications.filter(n => !n.isRead).length}</span>
               )}
             </button>
           </div>
           <div style={searchContainerStyle}>
-            <Search size={16} color="var(--text-muted)" />
-            <input type="text" placeholder="Filter notifications..." style={searchInputStyle} />
+            <Search size={18} color="var(--text-muted)" />
+            <input type="text" placeholder={t('notifications.filter')} style={searchInputStyle} />
           </div>
         </div>
 
@@ -153,8 +155,8 @@ export const NotificationsPage: React.FC = () => {
           ) : (
             <div style={emptyStateStyle}>
               <Bell size={48} color="var(--bg-tertiary)" style={{ marginBottom: '16px' }} />
-              <h3>No notifications found</h3>
-              <p style={{ color: 'var(--text-muted)' }}>We'll notify you when something important happens.</p>
+              <h3>{t('notifications.noNotifications')}</h3>
+              <p style={{ color: 'var(--text-muted)' }}>{t('notifications.noNotificationsDesc')}</p>
             </div>
           )}
         </div>

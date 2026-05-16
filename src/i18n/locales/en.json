@@ -16,7 +16,9 @@
     "features": "Features",
     "howItWorks": "How it works",
     "pricing": "Pricing",
-    "contact": "Contact"
+    "contact": "Contact",
+    "profile": "Profile",
+    "settings": "Settings"
   },
   "landing": {
     "badge": "Powered by Pathew Assistant",
@@ -334,7 +336,10 @@
     "noBio": "No bio provided yet. Use the Edit Profile to share your professional journey.",
     "freePlan": "Free Plan",
     "verifiedProfessional": "Verified Professional",
-    "planLabel": "Plan"
+    "planLabel": "Plan",
+    "member": "Member",
+    "explorer": "Explorer",
+    "guest": "Guest"
   },
   "preparation": {
     "title": "Preparation Projects",
@@ -873,5 +878,17 @@
     "externalPortfolio": "External Portfolio Link (Optional)",
     "errorFile": "Please upload a file first",
     "errorTitle": "Please add a title"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "subtitle": "Stay updated with your matches and activity.",
+    "tabs": {
+      "all": "All Notifications",
+      "unread": "Unread"
+    },
+    "markAllRead": "Mark all as read",
+    "filter": "Filter notifications...",
+    "noNotifications": "No notifications found",
+    "noNotificationsDesc": "We'll notify you when something important happens."
   }
 }
