@@ -176,8 +176,8 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
             </div>
           ) : (
             <>
-              <Link to="/login"><Button variant="ghost">Login</Button></Link>
-              <Link to="/signup"><Button>Get Started</Button></Link>
+              <Link to="/login"><Button variant="ghost">{t('auth.login')}</Button></Link>
+              <Link to="/signup"><Button>{t('landing.getStarted')}</Button></Link>
             </>
           )
         )}
@@ -217,17 +217,17 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
                 {user ? (
                   <>
                     <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>
-                      <Button style={{ width: '100%' }}>Dashboard</Button>
+                      <Button style={{ width: '100%' }}>{t('nav.dashboard')}</Button>
                     </Link>
-                    <button onClick={handleLogout} style={{ color: '#ef4444', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer' }}>Logout</button>
+                    <button onClick={handleLogout} style={{ color: '#ef4444', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', marginTop: '16px' }}>{t('nav.logout')}</button>
                   </>
                 ) : (
                   <>
                     <Link to="/login" onClick={() => setIsMobileMenuOpen(false)}>
-                      <Button variant="outline" style={{ width: '100%' }}>Login</Button>
+                      <Button variant="outline" style={{ width: '100%' }}>{t('auth.login')}</Button>
                     </Link>
                     <Link to="/signup" onClick={() => setIsMobileMenuOpen(false)}>
-                      <Button style={{ width: '100%' }}>Get Started</Button>
+                      <Button style={{ width: '100%', marginTop: '12px' }}>{t('landing.getStarted')}</Button>
                     </Link>
                   </>
                 )}
