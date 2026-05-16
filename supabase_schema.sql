@@ -72,11 +72,23 @@ CREATE TABLE IF NOT EXISTS assistant_drafts (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- 4. Notifications
+CREATE TABLE IF NOT EXISTS notifications (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  type TEXT CHECK (type IN ('opportunity', 'system', 'message', 'achievement')) NOT NULL,
+  is_read BOOLEAN DEFAULT false,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
 -- Enable RLS
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE assistant_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE assistant_messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE assistant_drafts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
 
 -- Policies for profiles
 DROP POLICY IF EXISTS "Users can manage their own profile" ON profiles;
@@ -106,6 +118,14 @@ CREATE POLICY "Users can manage their own assistant messages"
 DROP POLICY IF EXISTS "Users can manage their own assistant drafts" ON assistant_drafts;
 CREATE POLICY "Users can manage their own assistant drafts"
   ON assistant_drafts FOR ALL
+  TO authenticated
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+-- Policies for notifications
+DROP POLICY IF EXISTS "Users can manage their own notifications" ON notifications;
+CREATE POLICY "Users can manage their own notifications"
+  ON notifications FOR ALL
   TO authenticated
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);

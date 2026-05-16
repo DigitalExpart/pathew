@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
@@ -12,75 +12,99 @@ import {
   Star,
   Clock
 } from 'lucide-react';
+import { supabase } from '../../lib/supabase';
+import { useAuth } from '../../context/AuthContext';
 
 interface Notification {
   id: string;
   title: string;
   description: string;
-  time: string;
+  created_at: string;
   type: 'opportunity' | 'system' | 'message' | 'achievement';
-  isRead: boolean;
+  is_read: boolean;
 }
-
-const mockNotifications: Notification[] = [
-  {
-    id: '1',
-    title: 'New Opportunity Match',
-    description: 'We found a 95% match for a Senior Frontend Developer role at TechFlow Inc.',
-    time: '2 hours ago',
-    type: 'opportunity',
-    isRead: false
-  },
-  {
-    id: '2',
-    title: 'Profile Boosted',
-    description: 'Your recent profile updates have increased your visibility by 40%.',
-    time: '5 hours ago',
-    type: 'achievement',
-    isRead: false
-  },
-  {
-    id: '3',
-    title: 'Credits Added',
-    description: 'Your purchase of 500 credits was successful. Your balance is now 1,500.',
-    time: 'Yesterday',
-    type: 'system',
-    isRead: true
-  },
-  {
-    id: '4',
-    title: 'Message from Assistant',
-    description: 'I have finished analyzing your CV. Click here to see the suggested improvements.',
-    time: 'Yesterday',
-    type: 'message',
-    isRead: true
-  },
-  {
-    id: '5',
-    title: 'Grant Opportunity',
-    description: 'A new Innovation Grant in your field is now accepting applications.',
-    time: '2 days ago',
-    type: 'opportunity',
-    isRead: true
-  }
-];
 
 export const NotificationsPage: React.FC = () => {
   const { t } = useTranslation();
-  const [notifications, setNotifications] = useState<Notification[]>(mockNotifications);
+  const { user } = useAuth();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const markAllAsRead = () => {
-    setNotifications(notifications.map(n => ({ ...n, isRead: true })));
+  const fetchNotifications = async () => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('notifications')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setNotifications(data || []);
+    } catch (err) {
+      console.error('Error fetching notifications:', err);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const deleteNotification = (id: string) => {
-    setNotifications(notifications.filter(n => n.id !== id));
+  useEffect(() => {
+    fetchNotifications();
+  }, [user]);
+
+  const markAllAsRead = async () => {
+    if (!user) return;
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .update({ is_read: true })
+        .eq('user_id', user.id)
+        .eq('is_read', false);
+
+      if (error) throw error;
+      setNotifications(notifications.map(n => ({ ...n, is_read: true })));
+    } catch (err) {
+      console.error('Error marking all as read:', err);
+    }
   };
 
-  const filteredNotifications = filter === 'unread' 
-    ? notifications.filter(n => !n.isRead) 
-    : notifications;
+  const deleteNotification = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      setNotifications(notifications.filter(n => n.id !== id));
+    } catch (err) {
+      console.error('Error deleting notification:', err);
+    }
+  };
+
+  const markAsRead = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('notifications')
+        .update({ is_read: true })
+        .eq('id', id);
+
+      if (error) throw error;
+      setNotifications(notifications.map(n => n.id === id ? { ...n, is_read: true } : n));
+    } catch (err) {
+      console.error('Error marking notification as read:', err);
+    }
+  };
+
+  const filteredNotifications = notifications
+    .filter(n => filter === 'unread' ? !n.is_read : true)
+    .filter(n => 
+      n.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
+      n.description.toLowerCase().includes(searchQuery.toLowerCase())
+    );
 
   const getTypeIcon = (type: Notification['type']) => {
     switch (type) {
@@ -91,6 +115,19 @@ export const NotificationsPage: React.FC = () => {
     }
   };
 
+  const formatRelativeTime = (dateStr: string) => {
+    const date = new Date(dateStr);
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+    if (diffInSeconds < 60) return 'Just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+    
+    return date.toLocaleDateString();
+  };
+
   return (
     <div style={containerStyle}>
       <header style={headerStyle}>
@@ -99,7 +136,7 @@ export const NotificationsPage: React.FC = () => {
           <p style={{ color: 'var(--text-secondary)' }}>{t('notifications.subtitle')}</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
-          <Button variant="outline" size="sm" onClick={markAllAsRead}>
+          <Button variant="outline" size="sm" onClick={markAllAsRead} disabled={notifications.every(n => n.is_read)}>
             <CheckCheck size={16} style={{ marginRight: '8px' }} /> {t('notifications.markAllRead')}
           </Button>
         </div>
@@ -119,34 +156,55 @@ export const NotificationsPage: React.FC = () => {
               onClick={() => setFilter('unread')}
             >
               {t('notifications.tabs.unread')}
-              {notifications.filter(n => !n.isRead).length > 0 && (
-                <span style={countBadgeStyle}>{notifications.filter(n => !n.isRead).length}</span>
+              {notifications.filter(n => !n.is_read).length > 0 && (
+                <span style={countBadgeStyle}>{notifications.filter(n => !n.is_read).length}</span>
               )}
             </button>
           </div>
           <div style={searchContainerStyle}>
             <Search size={18} color="var(--text-muted)" />
-            <input type="text" placeholder={t('notifications.filter')} style={searchInputStyle} />
+            <input 
+              type="text" 
+              placeholder={t('notifications.filter')} 
+              style={searchInputStyle} 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
           </div>
         </div>
 
         <div style={listStyle}>
-          {filteredNotifications.length > 0 ? (
+          {loading ? (
+            <div style={emptyStateStyle}>
+              <div className="loading-spinner" style={{ marginBottom: '16px' }} />
+              <p>{t('common.loading')}</p>
+            </div>
+          ) : filteredNotifications.length > 0 ? (
             filteredNotifications.map((noti) => (
-              <div key={noti.id} style={{ ...notificationItemStyle, backgroundColor: noti.isRead ? 'transparent' : 'rgba(245, 158, 11, 0.03)' }}>
+              <div 
+                key={noti.id} 
+                style={{ ...notificationItemStyle, backgroundColor: noti.is_read ? 'transparent' : 'rgba(245, 158, 11, 0.03)' }}
+                onClick={() => !noti.is_read && markAsRead(noti.id)}
+              >
                 <div style={iconBoxStyle}>
                   {getTypeIcon(noti.type)}
                 </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <h3 style={{ fontSize: '1rem', fontWeight: noti.isRead ? 500 : 700 }}>{noti.title}</h3>
-                    <span style={timeStyle}><Clock size={12} /> {noti.time}</span>
+                    <h3 style={{ fontSize: '1rem', fontWeight: noti.is_read ? 500 : 700 }}>{noti.title}</h3>
+                    <span style={timeStyle}><Clock size={12} /> {formatRelativeTime(noti.created_at)}</span>
                   </div>
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.5' }}>{noti.description}</p>
                 </div>
                 <div style={actionsContainerStyle}>
-                  {!noti.isRead && <div style={unreadDotStyle} />}
-                  <button style={moreButtonStyle} onClick={() => deleteNotification(noti.id)}>
+                  {!noti.is_read && <div style={unreadDotStyle} />}
+                  <button 
+                    style={moreButtonStyle} 
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteNotification(noti.id);
+                    }}
+                  >
                     <Trash2 size={16} color="var(--text-muted)" />
                   </button>
                 </div>
