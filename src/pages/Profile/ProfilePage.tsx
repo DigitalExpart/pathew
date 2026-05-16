@@ -16,6 +16,7 @@ export const ProfilePage: React.FC = () => {
     story: '',
     avatar_url: ''
   });
+  const [isStoryExpanded, setIsStoryExpanded] = useState(false);
 
   const isMobile = window.innerWidth <= 768;
 
@@ -90,30 +91,63 @@ export const ProfilePage: React.FC = () => {
         >
           {/* Basic Info & Story */}
           <Card>
-            <div className="stack-on-mobile" style={{ ...avatarSectionStyle, flexDirection: isMobile ? 'column' : 'row', textAlign: isMobile ? 'center' : 'left', marginBottom: '32px' }}>
-              <div style={avatarWrapperStyle}>
-                {formData.avatar_url ? (
-                  <img src={formData.avatar_url} alt="Profile" style={avatarImgStyle} />
-                ) : (
-                  <div style={avatarPlaceholderStyle}>
-                    <User size={40} color="var(--accent-primary)" />
+            <div style={{ padding: '32px' }}>
+              <div style={{ ...avatarSectionStyle, flexDirection: 'column', alignItems: 'center', textAlign: 'center', marginBottom: '32px' }}>
+                <div style={avatarWrapperStyle}>
+                  {formData.avatar_url ? (
+                    <img src={formData.avatar_url} alt="Profile" style={avatarImgStyle} />
+                  ) : (
+                    <div style={avatarPlaceholderStyle}>
+                      <User size={40} color="var(--accent-primary)" />
+                    </div>
+                  )}
+                </div>
+                <div style={{ marginTop: '16px' }}>
+                  <h2 style={{ fontSize: '1.75rem', fontWeight: 700 }}>{formData.full_name || 'Anonymous User'}</h2>
+                  <p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>{formData.email}</p>
+                  <div style={{ marginTop: '16px', display: 'flex', gap: '8px', justifyContent: 'center' }}>
+                    <Badge variant="primary">{profile?.subscription_plan || 'Free'} Plan</Badge>
+                    <Badge variant="outline">Verified Professional</Badge>
                   </div>
-                )}
-              </div>
-              <div style={{ textAlign: isMobile ? 'center' : 'left' }}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: 700 }}>{formData.full_name || 'Anonymous User'}</h2>
-                <p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>{formData.email}</p>
-                <div style={{ marginTop: '12px', display: 'flex', gap: '8px', justifyContent: isMobile ? 'center' : 'flex-start' }}>
-                  <Badge variant="primary">{profile?.subscription_plan || 'Free'} Plan</Badge>
-                  <Badge variant="outline">Verified Professional</Badge>
                 </div>
               </div>
-            <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '32px' }}>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '16px' }}>My Story</h3>
-              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.7, whiteSpace: 'pre-wrap' }}>
-                {formData.story || 'No bio provided yet. Use the Edit Profile to share your professional journey.'}
-              </p>
-            </div>
+
+              <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '32px' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '16px', color: 'var(--text-primary)' }}>My Story</h3>
+                <div style={{ position: 'relative' }}>
+                  <p style={{ 
+                    color: 'var(--text-secondary)', 
+                    lineHeight: 1.8, 
+                    whiteSpace: 'pre-wrap',
+                    fontSize: '1rem',
+                    display: '-webkit-box',
+                    WebkitLineClamp: isStoryExpanded ? 'unset' : 5,
+                    WebkitBoxOrient: 'vertical',
+                    overflow: 'hidden',
+                    transition: 'all 0.3s ease'
+                  }}>
+                    {formData.story || 'No bio provided yet. Use the Edit Profile to share your professional journey.'}
+                  </p>
+                  
+                  {formData.story && formData.story.length > 250 && (
+                    <button 
+                      onClick={() => setIsStoryExpanded(!isStoryExpanded)}
+                      style={{ 
+                        marginTop: '12px', 
+                        color: 'var(--accent-primary)', 
+                        fontWeight: 600, 
+                        fontSize: '0.875rem',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '4px',
+                        cursor: 'pointer'
+                      }}
+                    >
+                      {isStoryExpanded ? 'Show Less' : 'Read Full Story'}
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
           </Card>
 
