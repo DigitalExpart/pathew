@@ -13,6 +13,7 @@ import { Card } from '../../components/ui/Card';
 import { Navbar } from '../../components/layout/Navbar';
 import logo from '../../assets/images/logo.png';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 // Team Images (Using absolute paths to generated artifacts)
 const team1 = 'file:///C:/Users/Shilley%20Pc/.gemini/antigravity/brain/0068f4c0-8b20-4cdc-bf1e-10e3acf79c97/founder_headshot_1778620506067.png';
@@ -20,6 +21,8 @@ const team2 = 'file:///C:/Users/Shilley%20Pc/.gemini/antigravity/brain/0068f4c0-
 const team3 = 'file:///C:/Users/Shilley%20Pc/.gemini/antigravity/brain/0068f4c0-8b20-4cdc-bf1e-10e3acf79c97/growth_manager_headshot_1778620524895.png';
 
 export const HowItWorksPage: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <div style={pageStyle}>
       <Navbar activePage="how-it-works" />
@@ -31,10 +34,10 @@ export const HowItWorksPage: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           style={heroContentStyle}
         >
-          <div style={badgeStyle}>The Roadmap to Success</div>
-          <h1 style={titleStyle}>How <span style={{ color: 'var(--accent-primary)' }}>PATHEW</span> Works</h1>
+          <div style={badgeStyle}>{t('howItWorks.hero.badge')}</div>
+          <h1 style={titleStyle}>{t('howItWorks.hero.title1')}<span style={{ color: 'var(--accent-primary)' }}>{t('howItWorks.hero.title2')}</span>{t('howItWorks.hero.title3')}</h1>
           <p style={subtitleStyle}>
-            Discover how our advanced Assistant technology bridges the gap between your talent and global opportunities.
+            {t('howItWorks.hero.subtitle')}
           </p>
         </motion.div>
 
@@ -46,28 +49,28 @@ export const HowItWorksPage: React.FC = () => {
       <section style={sectionStyle}>
         <div style={containerStyle}>
           <div style={sectionHeaderStyle}>
-            <h2 style={sectionTitleStyle}>A 3-Step Journey</h2>
-            <p style={{ color: 'var(--text-muted)', maxWidth: '600px', margin: '0 auto' }}>We've simplified the complex world of international applications into three powerful stages.</p>
+            <h2 style={sectionTitleStyle}>{t('howItWorks.process.title')}</h2>
+            <p style={{ color: 'var(--text-muted)', maxWidth: '600px', margin: '0 auto' }}>{t('howItWorks.process.subtitle')}</p>
           </div>
 
           <div style={processGridStyle}>
             <ProcessCard 
               number="01" 
               icon={Search} 
-              title="Global Discovery" 
-              desc="Our engine scans thousands of curated sources to find opportunities specifically matched to your unique profile."
+              title={t('howItWorks.process.step1.title')} 
+              desc={t('howItWorks.process.step1.desc')}
             />
             <ProcessCard 
               number="02" 
               icon={Zap} 
-              title="Assistant Analysis" 
-              desc="The PATHEW Assistant evaluates your gaps, suggests improvements, and generates tailored application documents."
+              title={t('howItWorks.process.step2.title')} 
+              desc={t('howItWorks.process.step2.desc')}
             />
             <ProcessCard 
               number="03" 
               icon={Award} 
-              title="Direct Application" 
-              desc="Apply with confidence using optimized materials that stand out to selection committees and employers."
+              title={t('howItWorks.process.step3.title')} 
+              desc={t('howItWorks.process.step3.desc')}
             />
           </div>
         </div>
@@ -82,22 +85,22 @@ export const HowItWorksPage: React.FC = () => {
               whileInView={{ opacity: 1, x: 0 }}
               style={storyContentStyle}
             >
-              <div style={badgeStyle}>Our Story</div>
-              <h2 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '24px' }}>Born from <span style={{ color: 'var(--accent-primary)' }}>Frustration</span>, Built for <span style={{ color: 'var(--accent-primary)' }}>Future</span>.</h2>
+              <div style={badgeStyle}>{t('howItWorks.story.badge')}</div>
+              <h2 style={{ fontSize: '3rem', fontWeight: 800, marginBottom: '24px' }}>{t('howItWorks.story.title1')}<span style={{ color: 'var(--accent-primary)' }}>{t('howItWorks.story.title2')}</span>{t('howItWorks.story.title3')}<span style={{ color: 'var(--accent-primary)' }}>{t('howItWorks.story.title4')}</span></h2>
               <p style={storyTextStyle}>
-                PATHEW started as a small internal tool used by international researchers to find funding. We quickly realized that the biggest barrier to global success wasn't talent—it was access to information and the ability to package that talent effectively.
+                {t('howItWorks.story.p1')}
               </p>
               <p style={storyTextStyle}>
-                Today, we empower thousands of professionals across 120+ countries to navigate the complex landscape of fellowships, grants, and high-impact roles with ease and precision.
+                {t('howItWorks.story.p2')}
               </p>
               <div style={{ display: 'flex', gap: '32px', marginTop: '40px' }}>
                 <div>
                   <div style={statValueStyle}>50k+</div>
-                  <div style={statLabelStyle}>Lives Impacted</div>
+                  <div style={statLabelStyle}>{t('howItWorks.story.stat1')}</div>
                 </div>
                 <div>
                   <div style={statValueStyle}>120+</div>
-                  <div style={statLabelStyle}>Countries</div>
+                  <div style={statLabelStyle}>{t('howItWorks.story.stat2')}</div>
                 </div>
               </div>
             </motion.div>
@@ -113,28 +116,28 @@ export const HowItWorksPage: React.FC = () => {
       <section style={sectionStyle}>
         <div style={containerStyle}>
           <div style={sectionHeaderStyle}>
-            <h2 style={sectionTitleStyle}>The 3-Man Core</h2>
-            <p style={{ color: 'var(--text-muted)' }}>Meet the visionaries behind the PATHEW Assistant engine.</p>
+            <h2 style={sectionTitleStyle}>{t('howItWorks.team.title')}</h2>
+            <p style={{ color: 'var(--text-muted)' }}>{t('howItWorks.team.subtitle')}</p>
           </div>
 
           <div style={teamGridStyle}>
             <TeamMember 
               image={team1} 
               name="Julieth Agbo" 
-              role="Founder" 
-              desc="The visionary behind PATHEW, dedicated to breaking down geographical barriers for talent worldwide."
+              role={t('howItWorks.team.role1')} 
+              desc={t('howItWorks.team.desc1')}
             />
             <TeamMember 
               image={team2} 
               name="Sarah Jenkins" 
-              role="Head of Product" 
-              desc="Product strategist focused on building intuitive AI tools that empower professional growth."
+              role={t('howItWorks.team.role2')} 
+              desc={t('howItWorks.team.desc2')}
             />
             <TeamMember 
               image={team3} 
               name="Marcus Chen" 
-              role="Growth Manager" 
-              desc="Strategic lead for global expansion, ensuring the PATHEW Assistant reaches every corner of the globe."
+              role={t('howItWorks.team.role3')} 
+              desc={t('howItWorks.team.desc3')}
             />
           </div>
         </div>
@@ -143,11 +146,11 @@ export const HowItWorksPage: React.FC = () => {
       {/* Footer CTA */}
       <section style={ctaSectionStyle}>
         <Card style={ctaCardStyle}>
-          <h2 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '24px' }}>Ready to bridge the gap?</h2>
-          <p style={{ fontSize: '1.125rem', marginBottom: '40px', opacity: 0.9 }}>Join thousands of professionals already using PATHEW to accelerate their careers.</p>
+          <h2 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '24px' }}>{t('howItWorks.cta.title')}</h2>
+          <p style={{ fontSize: '1.125rem', marginBottom: '40px', opacity: 0.9 }}>{t('howItWorks.cta.subtitle')}</p>
           <div style={{ display: 'flex', gap: '16px', justifyContent: 'center' }}>
-            <Link to="/signup"><Button size="lg">Get Started Now</Button></Link>
-            <Link to="/contact"><Button size="lg" variant="outline">Talk to us</Button></Link>
+            <Link to="/signup"><Button size="lg">{t('howItWorks.cta.startBtn')}</Button></Link>
+            <Link to="/contact"><Button size="lg" variant="outline">{t('howItWorks.cta.talkBtn')}</Button></Link>
           </div>
         </Card>
       </section>

@@ -364,5 +364,146 @@
     "addQuestion": "+ Frage hinzufügen",
     "wordLimit": "Wortlimit:",
     "assistant": "Assistent"
+  },
+  "contact": {
+    "title1": "Nehmen Sie ",
+    "title2": "Kontakt auf",
+    "subtitle": "Haben Sie Fragen? Unser Team hilft Ihnen gerne weiter.",
+    "form": {
+      "nameLabel": "Vollständiger Name",
+      "namePlaceholder": "Max Mustermann",
+      "emailLabel": "E-Mail Adresse",
+      "emailPlaceholder": "max@example.com",
+      "subjectLabel": "Betreff",
+      "subjects": {
+        "general": "Allgemeine Anfrage",
+        "tech": "Technischer Support",
+        "billing": "Abrechnung",
+        "partner": "Partnerschaft"
+      },
+      "messageLabel": "Nachricht",
+      "messagePlaceholder": "Wie können wir Ihnen helfen?",
+      "sendBtn": "Nachricht senden",
+      "sendingBtn": "Wird gesendet...",
+      "successTitle": "Nachricht gesendet!",
+      "successDesc": "Danke. Ein PATHEW-Experte meldet sich innerhalb von 24 Stunden.",
+      "sendAnother": "Weitere Nachricht senden"
+    },
+    "info": {
+      "emailTitle": "E-Mail uns",
+      "emailSub": "Antwort in 24h",
+      "callTitle": "Rufen Sie an",
+      "callSub": "Mo-Fr, 9-18 Uhr",
+      "visitTitle": "Besuchen Sie uns",
+      "visitSub": "San Francisco, CA 94105",
+      "followTitle": "Folgen Sie uns"
+    }
+  },
+  "howItWorks": {
+    "hero": {
+      "badge": "Der Weg zum Erfolg",
+      "title1": "Wie ",
+      "title2": "PATHEW",
+      "title3": " funktioniert",
+      "subtitle": "Entdecken Sie, wie unser Assistent die Lücke zwischen Ihrem Talent und globalen Chancen schließt."
+    },
+    "process": {
+      "title": "Ein 3-Stufen-Prozess",
+      "subtitle": "Wir haben die komplexe Welt internationaler Bewerbungen vereinfacht.",
+      "step1": {
+        "title": "Globale Entdeckung",
+        "desc": "Unsere Engine durchsucht tausende Quellen nach passenden Chancen."
+      },
+      "step2": {
+        "title": "Assistenten-Analyse",
+        "desc": "Der Assistent bewertet Lücken und generiert Dokumente."
+      },
+      "step3": {
+        "title": "Direkte Bewerbung",
+        "desc": "Bewerben Sie sich selbstbewusst mit optimierten Materialien."
+      }
+    },
+    "story": {
+      "badge": "Unsere Geschichte",
+      "title1": "Aus ",
+      "title2": "Frustration",
+      "title3": " geboren, für die ",
+      "title4": "Zukunft gebaut.",
+      "p1": "PATHEW begann als kleines internes Tool. Die größte Hürde war nicht das Talent, sondern der Zugang zu Informationen.",
+      "p2": "Heute helfen wir tausenden Profis in über 120 Ländern.",
+      "stat1": "Beeinflusste Leben",
+      "stat2": "Länder"
+    },
+    "team": {
+      "title": "Das Kernteam",
+      "subtitle": "Lernen Sie die Visionäre kennen.",
+      "role1": "Gründerin",
+      "desc1": "Gewidmet dem Abbau geografischer Barrieren.",
+      "role2": "Produktleitung",
+      "desc2": "Fokussiert auf intuitive KI-Tools.",
+      "role3": "Wachstumsmanager",
+      "desc3": "Strategischer Lead für globale Expansion."
+    },
+    "cta": {
+      "title": "Bereit für den nächsten Schritt?",
+      "subtitle": "Schließen Sie sich tausenden erfolgreichen Profis an.",
+      "startBtn": "Jetzt starten",
+      "talkBtn": "Sprechen Sie mit uns"
+    }
+  },
+  "legal": {
+    "backToSignup": "Zurück zur Registrierung",
+    "privacy": {
+      "title": "Datenschutzrichtlinie",
+      "subtitle": "Version 1.0.0 • Letzte Aktualisierung: 12. Mai 2024",
+      "sections": [
+        {
+          "title": "1. Gesammelte Informationen",
+          "p": "Wir erfassen Name und E-Mail bei der Kontoerstellung."
+        },
+        {
+          "title": "2. Datenverwendung",
+          "p": "Ihre Daten werden für das Matching verwendet."
+        },
+        {
+          "title": "3. Datenschutz",
+          "p": "Wir implementieren branchenübliche Sicherheitsmaßnahmen."
+        },
+        {
+          "title": "4. Ihre Rechte",
+          "p": "Sie haben das Recht auf Zugriff, Korrektur oder Löschung."
+        },
+        {
+          "title": "5. Cookies",
+          "p": "Wir verwenden essenzielle Cookies für die Sitzungsverwaltung."
+        }
+      ]
+    },
+    "terms": {
+      "title": "Allgemeine Geschäftsbedingungen",
+      "subtitle": "Letzte Aktualisierung: 12. Mai 2024",
+      "sections": [
+        {
+          "title": "1. Annahme der Bedingungen",
+          "p": "Durch die Nutzung von PATHEW stimmen Sie diesen Bedingungen zu."
+        },
+        {
+          "title": "2. Kontoregistrierung",
+          "p": "Für bestimmte Funktionen ist ein Konto erforderlich."
+        },
+        {
+          "title": "3. Nutzung der Dienste",
+          "p": "Unsere Dienste dienen dem beruflichen Matching."
+        },
+        {
+          "title": "4. Daten & Datenschutz",
+          "p": "Die Nutzung unterliegt auch unserer Datenschutzrichtlinie."
+        },
+        {
+          "title": "5. Beendigung",
+          "p": "Wir behalten uns das Recht vor, Ihr Konto zu sperren."
+        }
+      ]
+    }
   }
 }

@@ -7,8 +7,10 @@ import { Navbar } from '../../components/layout/Navbar';
 import logo from '../../assets/images/logo.png';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { useTranslation } from 'react-i18next';
 
 export const ContactPage: React.FC = () => {
+  const { t } = useTranslation();
   const [formState, setFormState] = useState({
     name: '',
     email: '',
@@ -56,9 +58,9 @@ export const ContactPage: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             style={headerStyle}
           >
-            <h1 style={titleStyle}>Get in <span style={{ color: 'var(--accent-primary)' }}>Touch</span></h1>
+            <h1 style={titleStyle}>{t('contact.title1')}<span style={{ color: 'var(--accent-primary)' }}>{t('contact.title2')}</span></h1>
             <p style={subtitleStyle}>
-              Have questions about PATHEW Assistant? Our team is here to help you accelerate your global career.
+              {t('contact.subtitle')}
             </p>
           </motion.div>
 
@@ -73,53 +75,53 @@ export const ContactPage: React.FC = () => {
                 {!isSubmitted ? (
                   <form onSubmit={handleSubmit} style={formContainerStyle}>
                     <div style={inputGroupStyle}>
-                      <label style={labelStyle}>Full Name</label>
+                      <label style={labelStyle}>{t('contact.form.nameLabel')}</label>
                       <input 
                         type="text" 
                         required 
-                        placeholder="John Doe" 
+                        placeholder={t('contact.form.namePlaceholder')} 
                         style={inputStyle}
                         value={formState.name}
                         onChange={(e) => setFormState({...formState, name: e.target.value})}
                       />
                     </div>
                     <div style={inputGroupStyle}>
-                      <label style={labelStyle}>Email Address</label>
+                      <label style={labelStyle}>{t('contact.form.emailLabel')}</label>
                       <input 
                         type="email" 
                         required 
-                        placeholder="john@example.com" 
+                        placeholder={t('contact.form.emailPlaceholder')} 
                         style={inputStyle}
                         value={formState.email}
                         onChange={(e) => setFormState({...formState, email: e.target.value})}
                       />
                     </div>
                     <div style={inputGroupStyle}>
-                      <label style={labelStyle}>Subject</label>
+                      <label style={labelStyle}>{t('contact.form.subjectLabel')}</label>
                       <select 
                         style={inputStyle}
                         value={formState.subject}
                         onChange={(e) => setFormState({...formState, subject: e.target.value})}
                       >
-                        <option>General Inquiry</option>
-                        <option>Technical Support</option>
-                        <option>Billing Question</option>
-                        <option>Partnership</option>
+                        <option value="General Inquiry">{t('contact.form.subjects.general')}</option>
+                        <option value="Technical Support">{t('contact.form.subjects.tech')}</option>
+                        <option value="Billing Question">{t('contact.form.subjects.billing')}</option>
+                        <option value="Partnership">{t('contact.form.subjects.partner')}</option>
                       </select>
                     </div>
                     <div style={inputGroupStyle}>
-                      <label style={labelStyle}>Message</label>
+                      <label style={labelStyle}>{t('contact.form.messageLabel')}</label>
                       <textarea 
                         required 
                         rows={5} 
-                        placeholder="How can we help you?" 
+                        placeholder={t('contact.form.messagePlaceholder')} 
                         style={{...inputStyle, resize: 'none'}}
                         value={formState.message}
                         onChange={(e) => setFormState({...formState, message: e.target.value})}
                       />
                     </div>
                     <Button type="submit" disabled={isSubmitting} style={{ width: '100%', gap: '10px' }}>
-                      <Send size={18} /> {isSubmitting ? 'Sending...' : 'Send Message'}
+                      <Send size={18} /> {isSubmitting ? t('contact.form.sendingBtn') : t('contact.form.sendBtn')}
                     </Button>
                   </form>
                 ) : (
@@ -127,11 +129,11 @@ export const ContactPage: React.FC = () => {
                     <div style={successIconStyle}>
                       <MessageSquare size={32} color="var(--accent-primary)" />
                     </div>
-                    <h2 style={{ fontSize: '1.5rem', marginBottom: '16px' }}>Message Sent!</h2>
+                    <h2 style={{ fontSize: '1.5rem', marginBottom: '16px' }}>{t('contact.form.successTitle')}</h2>
                     <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
-                      Thank you for reaching out. A PATHEW expert will get back to you within 24 hours.
+                      {t('contact.form.successDesc')}
                     </p>
-                    <Button variant="outline" onClick={() => setIsSubmitted(false)}>Send Another Message</Button>
+                    <Button variant="outline" onClick={() => setIsSubmitted(false)}>{t('contact.form.sendAnother')}</Button>
                   </div>
                 )}
               </Card>
@@ -146,25 +148,25 @@ export const ContactPage: React.FC = () => {
             >
               <ContactInfoItem 
                 icon={Mail} 
-                title="Email Us" 
+                title={t('contact.info.emailTitle')} 
                 detail="support@pathew.com" 
-                sub="Expect a response in 24h"
+                sub={t('contact.info.emailSub')}
               />
               <ContactInfoItem 
                 icon={Phone} 
-                title="Call Us" 
+                title={t('contact.info.callTitle')} 
                 detail="+1 (555) 123-4567" 
-                sub="Mon-Fri, 9am - 6pm EST"
+                sub={t('contact.info.callSub')}
               />
               <ContactInfoItem 
                 icon={MapPin} 
-                title="Visit Us" 
+                title={t('contact.info.visitTitle')} 
                 detail="123 Innovation Way" 
-                sub="San Francisco, CA 94105"
+                sub={t('contact.info.visitSub')}
               />
               
               <div style={socialSectionStyle}>
-                <h4 style={{ marginBottom: '16px', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)' }}>Follow Our Journey</h4>
+                <h4 style={{ marginBottom: '16px', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)' }}>{t('contact.info.followTitle')}</h4>
                 <div style={{ display: 'flex', gap: '16px' }}>
                   <SocialLink icon={Globe} />
                   <SocialLink icon={MessageSquare} />

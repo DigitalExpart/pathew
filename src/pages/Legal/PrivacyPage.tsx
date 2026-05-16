@@ -2,13 +2,15 @@ import React from 'react';
 import { Card } from '../../components/ui/Card';
 import { ArrowLeft, Lock } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export const PrivacyPage: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <div style={pageWrapperStyle}>
       <div style={containerStyle}>
         <Link to="/signup" style={backLinkStyle}>
-          <ArrowLeft size={20} /> Back to Sign Up
+          <ArrowLeft size={20} /> {t('legal.backToSignup')}
         </Link>
 
         <Card style={{ padding: '64px', marginTop: '40px' }}>
@@ -16,48 +18,43 @@ export const PrivacyPage: React.FC = () => {
             <div style={iconBoxStyle}>
               <Lock size={32} color="var(--accent-primary)" />
             </div>
-            <h1 style={titleStyle}>Privacy Policy</h1>
-            <p style={subtitleStyle}>Version 1.0.0 • Last updated: May 12, 2024</p>
+            <h1 style={titleStyle}>{t('legal.privacy.title')}</h1>
+            <p style={subtitleStyle}>{t('legal.privacy.subtitle')}</p>
           </div>
 
           <div style={contentStyle}>
             <section style={sectionStyle}>
-              <h2 style={sectionTitleStyle}>1. Information We Collect</h2>
+              <h2 style={sectionTitleStyle}>{t('legal.privacy.sections.0.title')}</h2>
               <p style={paragraphStyle}>
-                We collect your name and email address when you create an account. For your profile, 
-                we may collect professional history, skills, and goals to provide better matching services.
+                {t('legal.privacy.sections.0.p')}
               </p>
             </section>
 
             <section style={sectionStyle}>
-              <h2 style={sectionTitleStyle}>2. How We Use Data</h2>
+              <h2 style={sectionTitleStyle}>{t('legal.privacy.sections.1.title')}</h2>
               <p style={paragraphStyle}>
-                Your data is used to calculate match scores with global opportunities and to communicate 
-                relevant updates. We do not sell your personal information to third parties.
+                {t('legal.privacy.sections.1.p')}
               </p>
             </section>
 
             <section style={sectionStyle}>
-              <h2 style={sectionTitleStyle}>3. Data Protection</h2>
+              <h2 style={sectionTitleStyle}>{t('legal.privacy.sections.2.title')}</h2>
               <p style={paragraphStyle}>
-                We implement industry-standard security measures, including data encryption and secure 
-                server protocols, to protect your personal information from unauthorized access.
+                {t('legal.privacy.sections.2.p')}
               </p>
             </section>
 
             <section style={sectionStyle}>
-              <h2 style={sectionTitleStyle}>4. Your Rights</h2>
+              <h2 style={sectionTitleStyle}>{t('legal.privacy.sections.3.title')}</h2>
               <p style={paragraphStyle}>
-                You have the right to access, correct, or delete your personal data at any time. 
-                You can manage these settings directly through your profile dashboard.
+                {t('legal.privacy.sections.3.p')}
               </p>
             </section>
 
             <section style={sectionStyle}>
-              <h2 style={sectionTitleStyle}>5. Cookies</h2>
+              <h2 style={sectionTitleStyle}>{t('legal.privacy.sections.4.title')}</h2>
               <p style={paragraphStyle}>
-                We use essential cookies to maintain your login session and improve platform performance. 
-                Non-essential cookies are only used with your explicit consent.
+                {t('legal.privacy.sections.4.p')}
               </p>
             </section>
           </div>

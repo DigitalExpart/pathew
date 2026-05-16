@@ -2,13 +2,15 @@ import React from 'react';
 import { Card } from '../../components/ui/Card';
 import { ArrowLeft, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export const TermsPage: React.FC = () => {
+  const { t } = useTranslation();
   return (
     <div style={pageWrapperStyle}>
       <div style={containerStyle}>
         <Link to="/signup" style={backLinkStyle}>
-          <ArrowLeft size={20} /> Back to Sign Up
+          <ArrowLeft size={20} /> {t('legal.backToSignup')}
         </Link>
 
         <Card style={{ padding: '64px', marginTop: '40px' }}>
@@ -16,48 +18,43 @@ export const TermsPage: React.FC = () => {
             <div style={iconBoxStyle}>
               <Shield size={32} color="var(--accent-primary)" />
             </div>
-            <h1 style={titleStyle}>Terms & Conditions</h1>
-            <p style={subtitleStyle}>Last updated: May 12, 2024</p>
+            <h1 style={titleStyle}>{t('legal.terms.title')}</h1>
+            <p style={subtitleStyle}>{t('legal.terms.subtitle')}</p>
           </div>
 
           <div style={contentStyle}>
             <section style={sectionStyle}>
-              <h2 style={sectionTitleStyle}>1. Acceptance of Terms</h2>
+              <h2 style={sectionTitleStyle}>{t('legal.terms.sections.0.title')}</h2>
               <p style={paragraphStyle}>
-                By accessing and using PATHEW Assistant, you agree to be bound by these Terms and Conditions. 
-                If you do not agree with any part of these terms, you must not use our services.
+                {t('legal.terms.sections.0.p')}
               </p>
             </section>
 
             <section style={sectionStyle}>
-              <h2 style={sectionTitleStyle}>2. Account Registration</h2>
+              <h2 style={sectionTitleStyle}>{t('legal.terms.sections.1.title')}</h2>
               <p style={paragraphStyle}>
-                To access certain features, you must create an account. You are responsible for maintaining 
-                the confidentiality of your account credentials and for all activities that occur under your account.
+                {t('legal.terms.sections.1.p')}
               </p>
             </section>
 
             <section style={sectionStyle}>
-              <h2 style={sectionTitleStyle}>3. Use of Services</h2>
+              <h2 style={sectionTitleStyle}>{t('legal.terms.sections.2.title')}</h2>
               <p style={paragraphStyle}>
-                Our services are intended for professional opportunity matching. You agree not to use the 
-                platform for any unlawful purposes or in any way that could damage or disable our infrastructure.
+                {t('legal.terms.sections.2.p')}
               </p>
             </section>
 
             <section style={sectionStyle}>
-              <h2 style={sectionTitleStyle}>4. Data & Privacy</h2>
+              <h2 style={sectionTitleStyle}>{t('legal.terms.sections.3.title')}</h2>
               <p style={paragraphStyle}>
-                Your use of PATHEW is also governed by our Privacy Policy. Please review it to understand 
-                how we collect and process your information.
+                {t('legal.terms.sections.3.p')}
               </p>
             </section>
 
             <section style={sectionStyle}>
-              <h2 style={sectionTitleStyle}>5. Termination</h2>
+              <h2 style={sectionTitleStyle}>{t('legal.terms.sections.4.title')}</h2>
               <p style={paragraphStyle}>
-                We reserve the right to suspend or terminate your account at our discretion if we believe 
-                you have violated these terms.
+                {t('legal.terms.sections.4.p')}
               </p>
             </section>
           </div>

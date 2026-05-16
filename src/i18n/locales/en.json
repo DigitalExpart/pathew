@@ -364,5 +364,146 @@
     "addQuestion": "+ Add Question",
     "wordLimit": "Word limit:",
     "assistant": "Assistant"
+  },
+  "contact": {
+    "title1": "Get in ",
+    "title2": "Touch",
+    "subtitle": "Have questions about PATHEW Assistant? Our team is here to help you accelerate your global career.",
+    "form": {
+      "nameLabel": "Full Name",
+      "namePlaceholder": "John Doe",
+      "emailLabel": "Email Address",
+      "emailPlaceholder": "john@example.com",
+      "subjectLabel": "Subject",
+      "subjects": {
+        "general": "General Inquiry",
+        "tech": "Technical Support",
+        "billing": "Billing Question",
+        "partner": "Partnership"
+      },
+      "messageLabel": "Message",
+      "messagePlaceholder": "How can we help you?",
+      "sendBtn": "Send Message",
+      "sendingBtn": "Sending...",
+      "successTitle": "Message Sent!",
+      "successDesc": "Thank you for reaching out. A PATHEW expert will get back to you within 24 hours.",
+      "sendAnother": "Send Another Message"
+    },
+    "info": {
+      "emailTitle": "Email Us",
+      "emailSub": "Expect a response in 24h",
+      "callTitle": "Call Us",
+      "callSub": "Mon-Fri, 9am - 6pm EST",
+      "visitTitle": "Visit Us",
+      "visitSub": "San Francisco, CA 94105",
+      "followTitle": "Follow Our Journey"
+    }
+  },
+  "howItWorks": {
+    "hero": {
+      "badge": "The Roadmap to Success",
+      "title1": "How ",
+      "title2": "PATHEW",
+      "title3": " Works",
+      "subtitle": "Discover how our advanced Assistant technology bridges the gap between your talent and global opportunities."
+    },
+    "process": {
+      "title": "A 3-Step Journey",
+      "subtitle": "We've simplified the complex world of international applications into three powerful stages.",
+      "step1": {
+        "title": "Global Discovery",
+        "desc": "Our engine scans thousands of curated sources to find opportunities specifically matched to your unique profile."
+      },
+      "step2": {
+        "title": "Assistant Analysis",
+        "desc": "The PATHEW Assistant evaluates your gaps, suggests improvements, and generates tailored application documents."
+      },
+      "step3": {
+        "title": "Direct Application",
+        "desc": "Apply with confidence using optimized materials that stand out to selection committees and employers."
+      }
+    },
+    "story": {
+      "badge": "Our Story",
+      "title1": "Born from ",
+      "title2": "Frustration",
+      "title3": ", Built for ",
+      "title4": "Future.",
+      "p1": "PATHEW started as a small internal tool used by international researchers to find funding. We quickly realized that the biggest barrier to global success wasn't talent—it was access to information and the ability to package that talent effectively.",
+      "p2": "Today, we empower thousands of professionals across 120+ countries to navigate the complex landscape of fellowships, grants, and high-impact roles with ease and precision.",
+      "stat1": "Lives Impacted",
+      "stat2": "Countries"
+    },
+    "team": {
+      "title": "The 3-Man Core",
+      "subtitle": "Meet the visionaries behind the PATHEW Assistant engine.",
+      "role1": "Founder",
+      "desc1": "The visionary behind PATHEW, dedicated to breaking down geographical barriers for talent worldwide.",
+      "role2": "Head of Product",
+      "desc2": "Product strategist focused on building intuitive AI tools that empower professional growth.",
+      "role3": "Growth Manager",
+      "desc3": "Strategic lead for global expansion, ensuring the PATHEW Assistant reaches every corner of the globe."
+    },
+    "cta": {
+      "title": "Ready to bridge the gap?",
+      "subtitle": "Join thousands of professionals already using PATHEW to accelerate their careers.",
+      "startBtn": "Get Started Now",
+      "talkBtn": "Talk to us"
+    }
+  },
+  "legal": {
+    "backToSignup": "Back to Sign Up",
+    "privacy": {
+      "title": "Privacy Policy",
+      "subtitle": "Version 1.0.0 • Last updated: May 12, 2024",
+      "sections": [
+        {
+          "title": "1. Information We Collect",
+          "p": "We collect your name and email address when you create an account. For your profile, we may collect professional history, skills, and goals to provide better matching services."
+        },
+        {
+          "title": "2. How We Use Data",
+          "p": "Your data is used to calculate match scores with global opportunities and to communicate relevant updates. We do not sell your personal information to third parties."
+        },
+        {
+          "title": "3. Data Protection",
+          "p": "We implement industry-standard security measures, including data encryption and secure server protocols, to protect your personal information from unauthorized access."
+        },
+        {
+          "title": "4. Your Rights",
+          "p": "You have the right to access, correct, or delete your personal data at any time. You can manage these settings directly through your profile dashboard."
+        },
+        {
+          "title": "5. Cookies",
+          "p": "We use essential cookies to maintain your login session and improve platform performance. Non-essential cookies are only used with your explicit consent."
+        }
+      ]
+    },
+    "terms": {
+      "title": "Terms & Conditions",
+      "subtitle": "Last updated: May 12, 2024",
+      "sections": [
+        {
+          "title": "1. Acceptance of Terms",
+          "p": "By accessing and using PATHEW Assistant, you agree to be bound by these Terms and Conditions. If you do not agree with any part of these terms, you must not use our services."
+        },
+        {
+          "title": "2. Account Registration",
+          "p": "To access certain features, you must create an account. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account."
+        },
+        {
+          "title": "3. Use of Services",
+          "p": "Our services are intended for professional opportunity matching. You agree not to use the platform for any unlawful purposes or in any way that could damage or disable our infrastructure."
+        },
+        {
+          "title": "4. Data & Privacy",
+          "p": "Your use of PATHEW is also governed by our Privacy Policy. Please review it to understand how we collect and process your information."
+        },
+        {
+          "title": "5. Termination",
+          "p": "We reserve the right to suspend or terminate your account at our discretion if we believe you have violated these terms."
+        }
+      ]
+    }
   }
 }

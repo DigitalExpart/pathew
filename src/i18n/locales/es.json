@@ -364,5 +364,146 @@
     "addQuestion": "+ Añadir Pregunta",
     "wordLimit": "Límite de palabras:",
     "assistant": "Asistente"
+  },
+  "contact": {
+    "title1": "Ponte en ",
+    "title2": "Contacto",
+    "subtitle": "¿Tienes preguntas? Nuestro equipo está aquí para ayudarte.",
+    "form": {
+      "nameLabel": "Nombre completo",
+      "namePlaceholder": "Juan Pérez",
+      "emailLabel": "Correo electrónico",
+      "emailPlaceholder": "juan@example.com",
+      "subjectLabel": "Asunto",
+      "subjects": {
+        "general": "Consulta General",
+        "tech": "Soporte Técnico",
+        "billing": "Facturación",
+        "partner": "Asociación"
+      },
+      "messageLabel": "Mensaje",
+      "messagePlaceholder": "¿Cómo podemos ayudarte?",
+      "sendBtn": "Enviar Mensaje",
+      "sendingBtn": "Enviando...",
+      "successTitle": "¡Mensaje Enviado!",
+      "successDesc": "Gracias. Un experto de PATHEW te responderá en 24 horas.",
+      "sendAnother": "Enviar otro mensaje"
+    },
+    "info": {
+      "emailTitle": "Escríbenos",
+      "emailSub": "Respuesta en 24h",
+      "callTitle": "Llámanos",
+      "callSub": "Lun-Vie, 9am-6pm",
+      "visitTitle": "Visítanos",
+      "visitSub": "San Francisco, CA 94105",
+      "followTitle": "Síguenos"
+    }
+  },
+  "howItWorks": {
+    "hero": {
+      "badge": "El Mapa hacia el Éxito",
+      "title1": "Cómo funciona ",
+      "title2": "PATHEW",
+      "title3": "",
+      "subtitle": "Descubre cómo nuestra tecnología de Asistente cierra la brecha entre tu talento y las oportunidades globales."
+    },
+    "process": {
+      "title": "Un Viaje de 3 Pasos",
+      "subtitle": "Hemos simplificado el complejo mundo de las solicitudes internacionales.",
+      "step1": {
+        "title": "Descubrimiento Global",
+        "desc": "Nuestro motor escanea miles de fuentes para encontrar oportunidades."
+      },
+      "step2": {
+        "title": "Análisis del Asistente",
+        "desc": "El Asistente evalúa tus debilidades y genera documentos personalizados."
+      },
+      "step3": {
+        "title": "Solicitud Directa",
+        "desc": "Solicita con confianza usando materiales optimizados."
+      }
+    },
+    "story": {
+      "badge": "Nuestra Historia",
+      "title1": "Nacido de la ",
+      "title2": "Frustración",
+      "title3": ", Construido para el ",
+      "title4": "Futuro.",
+      "p1": "PATHEW comenzó como una pequeña herramienta interna. La mayor barrera no era el talento, sino el acceso a la información.",
+      "p2": "Hoy, empoderamos a miles de profesionales en más de 120 países.",
+      "stat1": "Vidas Impactadas",
+      "stat2": "Países"
+    },
+    "team": {
+      "title": "El Núcleo",
+      "subtitle": "Conoce a los visionarios detrás del motor PATHEW.",
+      "role1": "Fundadora",
+      "desc1": "Dedicada a romper barreras geográficas.",
+      "role2": "Jefa de Producto",
+      "desc2": "Estratega enfocada en herramientas de IA intuitivas.",
+      "role3": "Gerente de Crecimiento",
+      "desc3": "Líder estratégico para la expansión global."
+    },
+    "cta": {
+      "title": "¿Listo para dar el salto?",
+      "subtitle": "Únete a miles de profesionales que ya usan PATHEW.",
+      "startBtn": "Empezar Ahora",
+      "talkBtn": "Contáctanos"
+    }
+  },
+  "legal": {
+    "backToSignup": "Volver a Registrarse",
+    "privacy": {
+      "title": "Política de Privacidad",
+      "subtitle": "Versión 1.0.0 • Última actualización: 12 de mayo de 2024",
+      "sections": [
+        {
+          "title": "1. Información que recopilamos",
+          "p": "Recopilamos su nombre y correo al crear una cuenta."
+        },
+        {
+          "title": "2. Uso de datos",
+          "p": "Sus datos se usan para calcular las coincidencias de oportunidades."
+        },
+        {
+          "title": "3. Protección de datos",
+          "p": "Implementamos medidas de seguridad estándar de la industria."
+        },
+        {
+          "title": "4. Sus derechos",
+          "p": "Tiene derecho a acceder, corregir o eliminar sus datos."
+        },
+        {
+          "title": "5. Cookies",
+          "p": "Usamos cookies esenciales para mantener su sesión."
+        }
+      ]
+    },
+    "terms": {
+      "title": "Términos y Condiciones",
+      "subtitle": "Última actualización: 12 de mayo de 2024",
+      "sections": [
+        {
+          "title": "1. Aceptación de los términos",
+          "p": "Al usar PATHEW, usted acepta estos términos."
+        },
+        {
+          "title": "2. Registro de cuenta",
+          "p": "Debe crear una cuenta para acceder a ciertas funciones."
+        },
+        {
+          "title": "3. Uso de los servicios",
+          "p": "Nuestros servicios están destinados a la búsqueda de oportunidades profesionales."
+        },
+        {
+          "title": "4. Datos y privacidad",
+          "p": "Su uso también se rige por nuestra Política de Privacidad."
+        },
+        {
+          "title": "5. Terminación",
+          "p": "Nos reservamos el derecho de suspender o cancelar su cuenta."
+        }
+      ]
+    }
   }
 }

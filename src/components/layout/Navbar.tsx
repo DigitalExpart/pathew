@@ -5,6 +5,7 @@ import { User, LogOut, LayoutDashboard, UserCircle, ChevronDown, Menu, X, Sun, M
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { Button } from '../ui/Button';
+import { useTranslation } from 'react-i18next';
 import logo from '../../assets/images/logo.png';
 
 interface NavbarProps {
@@ -15,9 +16,19 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
   const { user, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const langDropdownRef = useRef<HTMLDivElement>(null);
+
+  const languages = [
+    { code: 'en', label: 'English' },
+    { code: 'fr', label: 'Français' },
+    { code: 'de', label: 'Deutsch' },
+    { code: 'es', label: 'Español' },
+  ];
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
 
@@ -31,6 +42,9 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsDropdownOpen(false);
+      }
+      if (langDropdownRef.current && !langDropdownRef.current.contains(event.target as Node)) {
+        setIsLangDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -70,14 +84,47 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
       {/* Desktop Links */}
       {!isMobile && (
         <div style={navLinksStyle}>
-          <a href="#features" style={navLinkStyle('features')}>Features</a>
-          <Link to="/how-it-works" style={navLinkStyle('how-it-works')}>How it works</Link>
-          <Link to="/pricing" style={navLinkStyle('pricing')}>Pricing</Link>
-          <Link to="/contact" style={navLinkStyle('contact')}>Contact</Link>
+          <a href="#features" style={navLinkStyle('features')}>{t('nav.features', 'Features')}</a>
+          <Link to="/how-it-works" style={navLinkStyle('how-it-works')}>{t('nav.howItWorks', 'How it works')}</Link>
+          <Link to="/pricing" style={navLinkStyle('pricing')}>{t('nav.pricing', 'Pricing')}</Link>
+          <Link to="/contact" style={navLinkStyle('contact')}>{t('nav.contact', 'Contact')}</Link>
         </div>
       )}
 
       <div style={navActionsStyle}>
+        {/* Language Switcher */}
+        {!isMobile && (
+          <div style={{ position: 'relative' }} ref={langDropdownRef}>
+            <button 
+              onClick={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+              style={{ ...navLinkStyle(''), padding: '6px 12px', borderRadius: '20px', border: '1px solid var(--border-color)', background: 'var(--bg-secondary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.875rem' }}
+            >
+              <Globe size={16} color="var(--text-secondary)" />
+              {i18n.language.toUpperCase()}
+            </button>
+            <AnimatePresence>
+              {isLangDropdownOpen && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  style={{ position: 'absolute', top: 'calc(100% + 8px)', right: 0, background: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '12px', overflow: 'hidden', zIndex: 100, minWidth: '120px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.2)' }}
+                >
+                  {languages.map(lang => (
+                    <button
+                      key={lang.code}
+                      onClick={() => { i18n.changeLanguage(lang.code); setIsLangDropdownOpen(false); }}
+                      style={{ width: '100%', padding: '10px 16px', background: i18n.language === lang.code ? 'var(--bg-tertiary)' : 'none', border: 'none', color: 'var(--text-primary)', cursor: 'pointer', textAlign: 'left', fontSize: '0.875rem', fontWeight: i18n.language === lang.code ? 600 : 400 }}
+                    >
+                      {lang.label}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
+
         {/* Mobile Menu Toggle */}
         {isMobile && (
           <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} style={{ color: 'var(--text-primary)' }}>
@@ -148,11 +195,23 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
             style={mobileMenuStyle}
           >
             <div style={{ display: 'flex', flexDirection: 'column', padding: '40px 20px' }}>
-              <a href="#features" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('features')}>Features</a>
-              <Link to="/how-it-works" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('how-it-works')}>How it works</Link>
-              <Link to="/pricing" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('pricing')}>Pricing</Link>
-              <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('contact')}>Contact</Link>
+              <a href="#features" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('features')}>{t('nav.features', 'Features')}</a>
+              <Link to="/how-it-works" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('how-it-works')}>{t('nav.howItWorks', 'How it works')}</Link>
+              <Link to="/pricing" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('pricing')}>{t('nav.pricing', 'Pricing')}</Link>
+              <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('contact')}>{t('nav.contact', 'Contact')}</Link>
               
+              <div style={{ marginTop: '24px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                {languages.map(lang => (
+                  <button
+                    key={lang.code}
+                    onClick={() => { i18n.changeLanguage(lang.code); }}
+                    style={{ padding: '8px 16px', borderRadius: '20px', border: '1px solid var(--border-color)', background: i18n.language === lang.code ? 'var(--accent-primary)' : 'var(--bg-secondary)', color: i18n.language === lang.code ? '#000' : 'var(--text-primary)', fontWeight: 600, cursor: 'pointer' }}
+                  >
+                    {lang.label}
+                  </button>
+                ))}
+              </div>
+
               <div style={{ marginTop: '32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {user ? (
                   <>
