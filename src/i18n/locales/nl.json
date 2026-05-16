@@ -388,7 +388,12 @@
     "keyGaps": "Belangrijke hiaten",
     "attachedReference": "[Bijgevoegde referentie: {{name}}]",
     "referenceUploadedNotify": "Ik heb een referentiebestand geüpload met de naam \"{{name}}\". Gebruik dit als context voor ons gesprek.",
-    "uploadMedia": "Media uploaden"
+    "uploadMedia": "Media uploaden",
+    "defaultPrompts": [
+      "Hoe kan ik mijn profiel verbeteren?",
+      "Welke kansen zijn trending?",
+      "Help me bij het schrijven van een document"
+    ]
   },
   "common": {
     "loading": "Laden...",

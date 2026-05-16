@@ -388,7 +388,12 @@
     "keyGaps": "Wichtige Lücken",
     "attachedReference": "[Angehängte Referenz: {{name}}]",
     "referenceUploadedNotify": "Ich habe eine Referenzdatei namens \"{{name}}\" hochgeladen. Bitte verwenden Sie diese als Kontext für unser Gespräch.",
-    "uploadMedia": "Medien hochladen"
+    "uploadMedia": "Medien hochladen",
+    "defaultPrompts": [
+      "Wie kann ich mein Profil verbessern?",
+      "Welche Möglichkeiten liegen im Trend?",
+      "Helfen Sie mir, ein Dokument zu schreiben"
+    ]
   },
   "common": {
     "loading": "Laden...",

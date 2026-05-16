@@ -85,7 +85,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
         {!isSmallMobile && (
           <button 
             style={AssistantButtonStyle}
-            onClick={() => openAssistant('Pathew Assistant', ['How can I improve my profile?', 'What opportunities are trending?', 'Help me write a document'])}
+            onClick={() => openAssistant(t('assistant.title'), t('assistant.defaultPrompts', { returnObjects: true }) as string[])}
           >
             <Sparkles size={16} />
             <span>{t('assistant.title')}</span>
@@ -95,7 +95,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
         {isSmallMobile && (
           <button 
             style={{ ...iconButtonStyle, color: 'var(--accent-primary)' }}
-            onClick={() => openAssistant('Pathew Assistant', ['How can I improve my profile?', 'What opportunities are trending?', 'Help me write a document'])}
+            onClick={() => openAssistant(t('assistant.title'), t('assistant.defaultPrompts', { returnObjects: true }) as string[])}
           >
             <Sparkles size={20} />
           </button>

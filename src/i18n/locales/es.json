@@ -388,7 +388,12 @@
     "keyGaps": "Brechas clave",
     "attachedReference": "[Referencia adjunta: {{name}}]",
     "referenceUploadedNotify": "He subido un archivo de referencia llamado \"{{name}}\". Por favor, úsalo como contexto para nuestra conversación.",
-    "uploadMedia": "Subir medios"
+    "uploadMedia": "Subir medios",
+    "defaultPrompts": [
+      "¿Cómo puedo mejorar mi perfil?",
+      "¿Qué oportunidades son tendencia?",
+      "Ayúdame a escribir un documento"
+    ]
   },
   "common": {
     "loading": "Cargando...",

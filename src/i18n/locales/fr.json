@@ -388,7 +388,12 @@
     "keyGaps": "Lacunes clés",
     "attachedReference": "[Référence jointe : {{name}}]",
     "referenceUploadedNotify": "J'ai téléchargé un fichier de référence nommé \"{{name}}\". Veuillez l'utiliser comme contexte pour notre conversation.",
-    "uploadMedia": "Télécharger un média"
+    "uploadMedia": "Télécharger un média",
+    "defaultPrompts": [
+      "Comment puis-je améliorer mon profil ?",
+      "Quelles opportunités sont à la mode ?",
+      "Aidez-moi à rédiger un document"
+    ]
   },
   "common": {
     "loading": "Chargement...",

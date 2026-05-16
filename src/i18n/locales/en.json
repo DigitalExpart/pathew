@@ -393,7 +393,12 @@
     "keyGaps": "Key Gaps",
     "attachedReference": "[Attached Reference: {{name}}]",
     "referenceUploadedNotify": "I've uploaded a reference file named \"{{name}}\". Please use it as context for our conversation.",
-    "uploadMedia": "Upload Media"
+    "uploadMedia": "Upload Media",
+    "defaultPrompts": [
+      "How can I improve my profile?",
+      "What opportunities are trending?",
+      "Help me write a document"
+    ]
   },
   "common": {
     "loading": "Loading...",
