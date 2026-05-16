@@ -28,6 +28,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
     { code: 'fr', label: 'Français' },
     { code: 'de', label: 'Deutsch' },
     { code: 'es', label: 'Español' },
+    { code: 'nl', label: 'Nederlands' },
   ];
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 1024);
@@ -156,18 +157,18 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
                     style={dropdownStyle}
                   >
                     <Link to="/dashboard" style={dropdownItemStyle} onClick={() => setIsDropdownOpen(false)}>
-                      <LayoutDashboard size={18} /> Dashboard
+                      <LayoutDashboard size={18} /> {t('nav.dashboard')}
                     </Link>
                     <Link to="/career-profile" style={dropdownItemStyle} onClick={() => setIsDropdownOpen(false)}>
-                      <UserCircle size={18} /> Profile
+                      <UserCircle size={18} /> {t('profile.title')}
                     </Link>
                     <button onClick={toggleTheme} style={dropdownItemStyle}>
                       {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-                      {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+                      {theme === 'light' ? t('nav.darkMode') : t('nav.lightMode')}
                     </button>
                     <div style={dividerStyle} />
                     <button onClick={handleLogout} style={{...dropdownItemStyle, color: '#ef4444', border: 'none', background: 'none', width: '100%', cursor: 'pointer'}}>
-                      <LogOut size={18} /> Logout
+                      <LogOut size={18} /> {t('nav.logout')}
                     </button>
                   </motion.div>
                 )}

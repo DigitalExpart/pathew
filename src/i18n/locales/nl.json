@@ -1,0 +1,638 @@
+{
+  "nav": {
+    "dashboard": "Dashboard",
+    "applicationTracker": "Sollicitatiebeheer",
+    "opportunities": "Mogelijkheden",
+    "jobs": "Banen",
+    "savedItems": "Opgeslagen items",
+    "cvBuilder": "CV-bouwer",
+    "coverLetter": "Sollicitatiebrief",
+    "grantBuilder": "Subsidiebouwer",
+    "wallet": "Portemonnee & Credits",
+    "logout": "Uitloggen",
+    "editProfile": "Profiel bewerken",
+    "darkMode": "Donkere modus",
+    "lightMode": "Lichte modus",
+    "features": "Functies",
+    "howItWorks": "Hoe het werkt",
+    "pricing": "Prijzen",
+    "contact": "Contact"
+  },
+  "landing": {
+    "badge": "Aangedreven door Pathew Assistant",
+    "heroTitle": "Solliciteer voor je volgende ",
+    "heroTitleHighlight": "Kans",
+    "heroSubtitle": "Het ultieme platform voor professionals om wereldwijd impactvolle kansen te vinden, te matchen en te solliciteren. Stop met zoeken, start met matchen met Pathew Assistant.",
+    "getStarted": "Gratis aan de slag",
+    "watchDemo": "Bekijk demo",
+    "features": "Functies",
+    "featuresTitle": "Waarom professionals voor PATHEW kiezen",
+    "pricing": "Prijzen",
+    "pricingTitle": "Prijsplannen",
+    "pricingSubtitle": "Eenvoudige prijzen op basis van credits. Betaal voor wat je creëert.",
+    "faq": "Veelgestelde vragen",
+    "faqTitle": "Veelgestelde Vragen",
+    "howItWorks": "Hoe het werkt",
+    "howItWorksTitle": "Hoe het werkt",
+    "reviews": "Wat onze gebruikers zeggen",
+    "footer": {
+      "tagline": "Het premium platform voor wereldwijde kansen-matching. Professionals empoweren met Pathew Assistant.",
+      "product": "Product",
+      "company": "Bedrijf",
+      "legal": "Juridisch",
+      "rights": "Alle rechten voorbehouden."
+    },
+    "stats": {
+      "users": "Actieve gebruikers",
+      "placements": "Succesvolle plaatsingen",
+      "rating": "Gebruikerswaardering"
+    },
+    "heroTitleEnd": " met Precisie.",
+    "problem": {
+      "title1": "Stop met solliciteren in het ",
+      "title2": "Duister",
+      "subtitle": "Je hebt weken besteed aan voorstellen. Je hebt talloze e-mails gestuurd. Je hebt maanden gewacht om vervolgens een generieke afwijzing te krijgen zonder feedback. Het probleem is niet je visie - het is de taal van financiers die je nog niet beheerst.",
+      "b1": "Verspil geen tijd meer aan ongeschikte kansen.",
+      "b2": "Beheers de specifieke taal van wereldwijde financiers.",
+      "b3": "Solliciteer 10x sneller met succesvolle patronen getraind door de Assistant."
+    },
+    "featuresSubtitle": "Krachtige tools ontworpen om je carrière groei te versnellen.",
+    "featuresList": [
+      {
+        "title": "Wereldwijde Ontdekking",
+        "desc": "Geaggregeerde kansen uit duizenden premium bronnen."
+      },
+      {
+        "title": "Match Score",
+        "desc": "Weet precies hoe goed je past voordat je solliciteert."
+      },
+      {
+        "title": "Slimme Documenten",
+        "desc": "Automatisch gegenereerde CV's en brieven op maat."
+      },
+      {
+        "title": "Privacy Eerst",
+        "desc": "Je gegevens zijn versleuteld en worden alleen op jouw verzoek gedeeld."
+      }
+    ],
+    "howItWorksSubtitle": "Je weg naar een betere carrière in drie eenvoudige stappen.",
+    "steps": [
+      {
+        "title": "Vul je profiel in",
+        "desc": "Deel je verhaal en doelen via onze intuïtieve assistent."
+      },
+      {
+        "title": "Vind matches",
+        "desc": "Onze Assistant-engine scant duizenden kansen voor jou."
+      },
+      {
+        "title": "Solliciteer met vertrouwen",
+        "desc": "Gebruik intelligent gegenereerde documenten om op te vallen."
+      }
+    ],
+    "learnMore": "Lees meer",
+    "compare": {
+      "title1": "ChatGPT leerde van het internet.",
+      "title2": "PATHEW leerde van winnaars.",
+      "subtitle": "In tegenstelling tot generieke tools is ons systeem getraind op meer dan $50 miljoen aan succesvolle aanvragen.",
+      "generic": "Generieke Tools",
+      "g1": "Opgeblähte, generieke ontwerpen",
+      "g2": "Geen context over historie",
+      "g3": "Hallucineert impactgegevens",
+      "g4": "Standaard internetkennis",
+      "pathew": "PATHEW Assistant",
+      "p1": "Präzises Match-Scoring",
+      "p2": "Erfolgspatroon-Training",
+      "p3": "Verifieerbaar narratief",
+      "p4": "Gebouwd voor wereldwijde standaarden",
+      "recommended": "AANBEVOLEN"
+    },
+    "creditTitle": "Creditkosten per Service",
+    "creditSubtitle": "Combineer elke service — credits werken op je gehele account.",
+    "trustpilot": "Zie waarom duizenden professionals ons vertrouwen",
+    "faqList": [
+      {
+        "question": "Hoe matcht Pathew Assistant mij met kansen?",
+        "answer": "Onze geavanceerde Assistant-engine analyseert je profiel aan de hand van duizenden datapunten in vacaturebeschrijvingen om een precisie match-score te geven."
+      },
+      {
+        "question": "Zijn mijn persoonlijke gegevens veilig?",
+        "answer": "Ja, we gebruiken industriestandaard versleuteling. Je volledige profiel wordt alleen gedeeld met recruiters als je er expliciet voor kiest om te solliciteren."
+      },
+      {
+        "question": "Kan ik het platform gratis gebruiken?",
+        "answer": "Absoluut! Ons gratis plan stelt je in staat om matches te verkennen en tot 3 sollicitaties per maand te doen."
+      }
+    ],
+    "trustedBy": "Vertrouwd door professionals bij",
+    "generatesUpTo": "GENEREERT TOT",
+    "includedInEveryPlan": "INBEGREPEN IN ELK PLAN",
+    "pricingChoose": "Kiezen",
+    "footerCols": {
+      "product": "Product",
+      "company": "Bedrijf",
+      "legal": "Juridisch",
+      "productLinks": [
+        "Functies",
+        "Hoe het werkt",
+        "Prijzen",
+        "API"
+      ],
+      "companyLinks": [
+        "Over ons",
+        "Carrières",
+        "Blog",
+        "Contact"
+      ],
+      "legalLinks": [
+        "Privacy",
+        "Voorwaarden",
+        "Beveiliging",
+        "Cookies"
+      ]
+    }
+  },
+  "auth": {
+    "login": "Inloggen",
+    "register": "Registreren",
+    "email": "E-mailadres",
+    "password": "Wachtwoord",
+    "fullName": "Volledige naam",
+    "forgotPassword": "Wachtwoord vergeten?",
+    "noAccount": "Nog geen account?",
+    "haveAccount": "Heb je al een account?",
+    "signUpFree": "Gratis aanmelden",
+    "orContinueWith": "of ga verder met",
+    "continueWithGoogle": "Ga verder met Google",
+    "welcomeBack": "Welkom terug",
+    "createAccount": "Maak je account aan",
+    "loginSubtitle": "Log in om toegang te krijgen tot je carrière-dashboard",
+    "registerSubtitle": "Sluit je aan bij duizenden professionals die hun carrière versnellen"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Dit is wat er gebeurt in je carrière-traject.",
+    "profileStrength": "Profielsterkte",
+    "recentActivity": "Recente activiteit",
+    "savedOpportunities": "Opgeslagen kansen",
+    "upcomingDeadlines": "Aankomende deadlines",
+    "quickActions": "Snelkoppelingen",
+    "exploreOpportunities": "Ontdek kansen",
+    "buildCV": "Maak CV",
+    "aiAssistant": "Pathew Assistant",
+    "credits": "Credits",
+    "viewAll": "Bekijk alles",
+    "noActivity": "Nog geen recente activiteit.",
+    "noDeadlines": "Geen aankomende deadlines."
+  },
+  "opportunities": {
+    "title": "Ontdek kansen",
+    "subtitle": "{{count}} kansen die passen bij je profiel.",
+    "search": "Zoek op functie, bedrijf of trefwoorden...",
+    "filters": "Filters",
+    "sortNewest": "Sorteer op: Nieuwste",
+    "sortDeadline": "Sorteer op: Deadline",
+    "save": "Opslaan",
+    "saved": "Opgeslagen",
+    "prepare": "Voorbereiden",
+    "saving": "Opslaan...",
+    "noResults": "Geen kansen gevonden. Probeer een andere zoekterm.",
+    "loading": "Kansen laden...",
+    "location": "Locatie",
+    "deadline": "Deadline",
+    "type": "Type",
+    "remote": "Remote"
+  },
+  "jobs": {
+    "title": "Vacatures",
+    "subtitle": "Gecureerde vacatures die passen bij je profiel.",
+    "applyNow": "Nu solliciteren",
+    "viewDetails": "Bekijk details",
+    "noJobs": "Geen vacatures gevonden die voldoen aan je criteria."
+  },
+  "savedItems": {
+    "title": "Opgeslagen items",
+    "subtitle": "Je hebt {{count}} opgeslagen kansen om te bekijken.",
+    "remove": "Verwijderen",
+    "empty": "Nog geen opgeslagen items",
+    "emptySubtitle": "Ontdek kansen en sla degene op waarin je geïnteresseerd bent.",
+    "explore": "Ontdek kansen",
+    "match": "Match"
+  },
+  "profile": {
+    "title": "Beroepsprofiel",
+    "subtitle": "Je uitgebreide carrièreoverzicht en doelen.",
+    "myStory": "Mijn verhaal",
+    "readMore": "Lees volledig verhaal",
+    "showLess": "Minder weergeven",
+    "careerGoals": "Carrièredoelen",
+    "coreSkills": "Kerncompetenties",
+    "workExperience": "Werkervaring",
+    "education": "Opleiding",
+    "achievements": "Prestaties",
+    "profileStatus": "Profielstatus",
+    "profileComplete": "Je profiel is voor {{percent}}% voltooid.",
+    "editProfile": "Profiel bewerken",
+    "noGoals": "Nog geen doelen gesteld.",
+    "noSkills": "Nog geen vaardigheden vermeld.",
+    "noExperience": "Nog geen ervaring toegevoegd.",
+    "noEducation": "Nog geen opleiding toegevoegd.",
+    "noAchievements": "Geen prestaties vermeld.",
+    "noBio": "Nog geen biografie verstrekt. Gebruik Profiel bewerken om je traject te delen.",
+    "freePlan": "Gratis plan",
+    "verifiedProfessional": "Geverifieerde professional"
+  },
+  "preparation": {
+    "title": "Voorbereidingsprojecten",
+    "subtitle": "Actieve voorbereidings-roadmaps voor je kansen.",
+    "noRoadmaps": "Geen actieve roadmaps",
+    "noRoadmapsSubtitle": "Genereer een voorbereidingsplan vanaf een detailpagina.",
+    "browseOpportunities": "Blader door kansen",
+    "weeklyRoadmap": "Wekelijkse roadmap",
+    "regeneratePlan": "Plan opnieuw genereren",
+    "generateRoadmap": "Roadmap genereren",
+    "planCalendar": "Plankalender",
+    "preparationStats": "Voorbereidingsstatistieken",
+    "currentStreak": "Huidige reeks",
+    "weeks": "Weken",
+    "backToProjects": "Terug naar projecten",
+    "completed": "Voltooid",
+    "pending": "In afwachting",
+    "complete": "Compleet",
+    "week": "Week"
+  },
+  "assistant": {
+    "title": "PATHEW Assistant",
+    "tabAssistant": "Assistent",
+    "tabHistory": "Geschiedenis",
+    "placeholder": "Vraag alles...",
+    "insert": "Invoegen",
+    "download": "Downloaden",
+    "regenerate": "Opnieuw genereren",
+    "thinking": "PATHEW werkt...",
+    "noHistory": "Nog geen geschiedenis.",
+    "savedResponses": "{{count}} opgeslagen antwoord",
+    "savedResponsesPlural": "{{count}} opgeslagen antwoorden",
+    "clearAll": "Alles wissen",
+    "copy": "Kopiëren naar klembord",
+    "deleteResponse": "Dit antwoord verwijderen",
+    "clearConfirm": "Weet je zeker dat je de volledige chatgeschiedenis wilt wissen? Dit kan niet ongedaan worden gemaakt.",
+    "creditCost": "1 Credit (verlaagd naar 0,25 na 3 herschrijvingen)",
+    "strongMatches": "Sterke matches",
+    "keyGaps": "Belangrijke hiaten"
+  },
+  "common": {
+    "loading": "Laden...",
+    "save": "Opslaan",
+    "cancel": "Annuleren",
+    "delete": "Verwijderen",
+    "edit": "Bewerken",
+    "close": "Sluiten",
+    "back": "Terug",
+    "next": "Volgende",
+    "submit": "Verzenden",
+    "confirm": "Bevestigen",
+    "yes": "Ja",
+    "no": "Nee",
+    "error": "Fout",
+    "success": "Succes",
+    "notFound": "Niet gevonden",
+    "anonymous": "Anonieme gebruiker",
+    "search": "Zoeken...",
+    "language": "Taal",
+    "english": "English",
+    "french": "Français",
+    "german": "Deutsch",
+    "spanish": "Español",
+    "dutch": "Nederlands",
+    "credit": "credit",
+    "credits": "credits"
+  },
+  "wallet": {
+    "title": "Portemonnee & Credits",
+    "subtitle": "Beheer je credits en bekijk transactiegeschiedenis.",
+    "availableBalance": "Beschikbaar saldo",
+    "creditsReady": "Credits klaar voor je volgende sollicitatie",
+    "upgradePlan": "Plan upgraden",
+    "recentTransactions": "Recente transacties",
+    "noTransactions": "Nog geen transacties."
+  },
+  "builders": {
+    "editingMode": "Bewerkingsmodus",
+    "livePreview": "Live voorbeeld",
+    "cv": {
+      "title": "CV op maat",
+      "desc": "Optimaliseer je ervaring voor deze rol."
+    },
+    "coverLetter": {
+      "title": "Sollicitatiebrief",
+      "desc": "Schrijf een overtuigend verhaal."
+    },
+    "proposal": {
+      "title": "Voorstel",
+      "desc": "Structureer je pitch perfect."
+    }
+  },
+  "settings": {
+    "title": "Instellingen",
+    "subtitle": "Beheer je PATHEW-account en voorkeuren.",
+    "tabs": {
+      "notifications": "Meldingen",
+      "security": "Beveiliging",
+      "billing": "Facturering",
+      "privacy": "Privacy & Gegevens",
+      "preferences": "Voorkeuren",
+      "account": "Account verwijderen"
+    },
+    "notifications": {
+      "title": "Meldingsvoorkeuren",
+      "email": "E-mailmeldingen",
+      "emailDesc": "Ontvang updates over nieuwe matches.",
+      "push": "Pushmeldingen",
+      "pushDesc": "Ontvang direct waarschuwingen.",
+      "newsletter": "Nieuwsbrief",
+      "newsletterDesc": "Blijf op de hoogte."
+    },
+    "security": {
+      "title": "Beveiliging & Privacy",
+      "currentPassword": "Huidig wachtwoord",
+      "newPassword": "Nieuw wachtwoord",
+      "confirmPassword": "Bevestig wachtwoord",
+      "updateSecurity": "Update beveiliging",
+      "twoFactor": "Twee-factor-authenticatie",
+      "twoFactorDesc": "Beveilig je account met een extra laag.",
+      "enable": "Inschakelen"
+    },
+    "assistant": {
+      "tone": "Standaard toon",
+      "language": "Voorkeurstaal",
+      "autoSave": "Automatisch opslaan",
+      "autoSaveDesc": "Gegenereerde inhoud automatisch opslaan."
+    },
+    "billing": {
+      "title": "Facturering & Abonnement",
+      "currentPlan": "Huidig plan",
+      "nextRenewal": "Volgende verlenging:",
+      "changePlan": "Plan wijzigen",
+      "paymentMethod": "Betaalmethode",
+      "noPaymentMethod": "Geen betaalmethode",
+      "addPaymentMethod": "Betaalmethode toevoegen",
+      "billingHistory": "Facturatiegeschiedenis",
+      "date": "Datum",
+      "invoice": "Factuur",
+      "amount": "Bedrag",
+      "status": "Status",
+      "action": "Actie",
+      "download": "Downloaden",
+      "noHistory": "Geen facturatiegeschiedenis gevonden"
+    },
+    "privacy": {
+      "title": "Privacy & Gegevens",
+      "dataExport": "Gegevensexport",
+      "dataExportDesc": "Download een kopie van je gegevens.",
+      "exportZip": "Exporteer gegevens (ZIP)",
+      "tracking": "Tracking & Analyse",
+      "trackingDesc": "Anonieme gebruiksgegevens verzamelen.",
+      "analytics": "Analyse-tracking",
+      "analyticsDesc": "Anonieme gebruiksstatistieken delen."
+    },
+    "preferences": {
+      "title": "Toestemming & Voorkeuren",
+      "desc": "Beheer hoe we met je communiceren.",
+      "opportunityAlerts": "Wekelijkse kansmeldingen",
+      "opportunityAlertsDesc": "Gepersonaliseerde matches ontvangen.",
+      "productUpdates": "Productupdates",
+      "productUpdatesDesc": "Blijf op de hoogte van nieuwe functies.",
+      "refreshState": "Status vernieuwen"
+    },
+    "account": {
+      "title": "Account verwijderen",
+      "warning": "Waarschuwing: Deze actie is permanent.",
+      "warningDesc": "Al je gegevens worden definitief verwijderd.",
+      "contactSupport": "Neem contact op met support.",
+      "requestDeletion": "Verzoek accountverwijdering",
+      "areYouSure": "Weet je het absoluut zeker? Dit kan niet ongedaan worden gemaakt.",
+      "confirmDeletion": "Bevestig permanente verwijdering",
+      "cancel": "Annuleren"
+    }
+  },
+  "pricing": {
+    "title": "Prijsplannen",
+    "subtitle": "Eenvoudige prijzen op basis van credits. Betaal voor wat je creëert.",
+    "month": "/maand",
+    "generatesUpTo": "GENEREERT TOT",
+    "included": "INBEGREPEN IN ELK PLAN",
+    "choose": "Kiezen",
+    "creditCost": "Creditkosten per Service",
+    "creditCostSubtitle": "Combineer elke service — credits werken op je gehele account.",
+    "service": "Service",
+    "credits": "Credits",
+    "notes": "Notities",
+    "needMore": "Meer nodig? Waardeer je credits op elk moment op.",
+    "plans": {
+      "starter": {
+        "title": "Starter",
+        "credits": "25 credits / maand",
+        "subtitle": "Perfect voor individuen bij een enkele sollicitatieronde."
+      },
+      "growth": {
+        "title": "Groei",
+        "credits": "60 credits / maand",
+        "subtitle": "Voor freelancers en actieve werkzoekenden.",
+        "badge": "★ MEEST POPULAIR ★"
+      },
+      "power": {
+        "title": "Power-gebruiker",
+        "credits": "120 credits / maand",
+        "subtitle": "Voor bureaus, consultants en grootgebruikers.",
+        "badge": "★ BESTE WAARDE ★"
+      }
+    },
+    "services": {
+      "coverLetter": "Sollicitatiebrief",
+      "cv": "CV",
+      "proposal": "Voorstel",
+      "grant": "Subsidieaanvraag",
+      "prep": "Voorbereidingsplan",
+      "rewrite": "Elke herschrijving"
+    },
+    "features": [
+      "Bekijk live vacatures & subsidiekansen",
+      "Percentage gereedheidsscore per sollicitatie",
+      "Vierbereidingsplan gegenereerd door Assistant – credit van toepassing"
+    ],
+    "labels": {
+      "coverLetters": "Sollicitatiebrieven",
+      "cvs": "CV's / Resumes",
+      "proposals": "Voorstellen",
+      "grants": "Subsidieaanvragen",
+      "rewrites": "Herschrijvingen"
+    },
+    "perLetter": "per brief",
+    "perCV": "per CV",
+    "perProposal": "per voorstel",
+    "perGrant": "per subsidie",
+    "perPlan": "per plan",
+    "perRewrite": "per herschrijving (¼ van origineel na 3 herschrijvingen)",
+    "headers": {
+      "service": "Service",
+      "credits": "Credits",
+      "notes": "Notities"
+    }
+  },
+  "grantBuilder": {
+    "title": "Subsidiebouwer",
+    "subtitle": "Maak meerpaginige voorstellen en gerichte CV's.",
+    "editMode": "Bewerkingsmodus",
+    "preview": "Voorbeeld",
+    "saveDraft": "Concept opslaan",
+    "docSetup": "Documentinstelling",
+    "docType": "Documenttype",
+    "targetPageCount": "Doelaantal pagina's",
+    "customQuestions": "Aangepaste vragen",
+    "addQuestion": "+ Vraag toevoegen",
+    "wordLimit": "Woordlimiet:",
+    "assistant": "Assistent"
+  },
+  "contact": {
+    "title1": "Neem ",
+    "title2": "Contact op",
+    "subtitle": "Vragen over PATHEW Assistant? Ons team is er om te helpen.",
+    "form": {
+      "nameLabel": "Volledige naam",
+      "namePlaceholder": "Jan Janssen",
+      "emailLabel": "E-mailadres",
+      "emailPlaceholder": "jan@example.com",
+      "subjectLabel": "Onderwerp",
+      "subjects": {
+        "general": "Algemene vraag",
+        "tech": "Technische ondersteuning",
+        "billing": "Facturering",
+        "partner": "Partnerschap"
+      },
+      "messageLabel": "Bericht",
+      "messagePlaceholder": "Hoe kunnen we je helpen?",
+      "sendBtn": "Verstuur bericht",
+      "sendingBtn": "Versturen...",
+      "successTitle": "Bericht verzonden!",
+      "successDesc": "Bedankt. Een PATHEW-expert reageert binnen 24 uur.",
+      "sendAnother": "Nog een bericht sturen"
+    },
+    "info": {
+      "emailTitle": "E-mail ons",
+      "emailSub": "Reactie binnen 24u",
+      "callTitle": "Bel ons",
+      "callSub": "Ma-Vr, 9u-18u",
+      "visitTitle": "Bezoek ons",
+      "visitSub": "San Francisco, CA 94105",
+      "followTitle": "Volg ons"
+    }
+  },
+  "howItWorks": {
+    "hero": {
+      "badge": "De Roadmap naar Succes",
+      "title1": "Hoe ",
+      "title2": "PATHEW",
+      "title3": " werkt",
+      "subtitle": "Ontdek hoe onze Assistant de kloof overbrugt tussen jouw talent en wereldwijde kansen."
+    },
+    "process": {
+      "title": "Een 3-Stappen Proces",
+      "subtitle": "We hebben de complexe wereld van internationale sollicitaties vereenvoudigd.",
+      "step1": {
+        "title": "Wereldwijde Ontdekking",
+        "desc": "Onze engine scant duizenden bronnen voor passende kansen."
+      },
+      "step2": {
+        "title": "Assistant Analyse",
+        "desc": "De Assistant evalueert hiaten en genereert documenten."
+      },
+      "step3": {
+        "title": "Direct Solliciteren",
+        "desc": "Solliciteer met vertrouwen met geoptimaliseerde materialen."
+      }
+    },
+    "story": {
+      "badge": "Ons Verhaal",
+      "title1": "Geboren uit ",
+      "title2": "Frustratie",
+      "title3": ", Gebouwd voor de ",
+      "title4": "Toekomst.",
+      "p1": "PATHEW begon als een kleine interne tool. De grootste hindernis was niet talent, maar toegang tot informatie.",
+      "p2": "Vandaag helpen we duizenden professionals in meer dan 120 landen.",
+      "stat1": "Levens Beïnvloed",
+      "stat2": "Landen"
+    },
+    "team": {
+      "title": "Het Kernteam",
+      "subtitle": "Maak kennis met de visionairs.",
+      "role1": "Oprichter",
+      "desc1": "Toegewijd aan het afbreken van geografische barrières.",
+      "role2": "Product Lead",
+      "desc2": "Productstrateeg gericht op het bouwen van intuïtieve Assistant-tools die professionele groei stimuleren.",
+      "role3": "Growth Manager",
+      "desc3": "Strategische lead voor wereldwijde expansie."
+    },
+    "cta": {
+      "title": "Klaar voor de volgende stap?",
+      "subtitle": "Sluit je aan bij duizenden succesvolle professionals.",
+      "startBtn": "Nu Starten",
+      "talkBtn": "Praat met ons"
+    }
+  },
+  "legal": {
+    "backToSignup": "Terug naar aanmelden",
+    "privacy": {
+      "title": "Privacybeleid",
+      "subtitle": "Versie 1.0.0 • Laatst bijgewerkt: 12 mei 2024",
+      "sections": [
+        {
+          "title": "1. Verzamelde Informatie",
+          "p": "We verzamelen naam en e-mail bij het aanmaken van een account."
+        },
+        {
+          "title": "2. Gegevensgebruik",
+          "p": "Je gegevens worden gebruikt voor matching."
+        },
+        {
+          "title": "3. Gegevensbeveiliging",
+          "p": "We implementeren industriestandaard beveiligingsmaatregelen."
+        },
+        {
+          "title": "4. Je Rechten",
+          "p": "Je hebt recht op inzage, correctie of verwijdering."
+        },
+        {
+          "title": "5. Cookies",
+          "p": "We gebruiken essentiële cookies voor sessiebeheer."
+        }
+      ]
+    },
+    "terms": {
+      "title": "Algemene Voorwaarden",
+      "subtitle": "Laatst bijgewerkt: 12 mei 2024",
+      "sections": [
+        {
+          "title": "1. Acceptatie van Voorwaarden",
+          "p": "Door PATHEW te gebruiken, stem je in met deze voorwaarden."
+        },
+        {
+          "title": "2. Accountregistratie",
+          "p": "Voor bepaalde functies is een account vereist."
+        },
+        {
+          "title": "3. Gebruik van Diensten",
+          "p": "Onze diensten zijn bedoeld voor professionele matching."
+        },
+        {
+          "title": "4. Gegevens & Privacy",
+          "p": "Gebruik valt ook onder ons Privacybeleid."
+        },
+        {
+          "title": "5. Beëindiging",
+          "p": "We behouden ons het recht voor om je account op te schorten."
+        }
+      ]
+    }
+  }
+}
