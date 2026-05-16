@@ -72,7 +72,7 @@ export const PreparationPage: React.FC = () => {
 
       const parsedRoadmaps = (docs || []).map(doc => {
         try {
-          return { dbId: doc.id, ...JSON.parse(doc.content) };
+          return { dbId: doc.id, title: doc.title, ...JSON.parse(doc.content) };
         } catch (e) {
           return null;
         }
@@ -83,22 +83,33 @@ export const PreparationPage: React.FC = () => {
       // 2. Extract unique opportunity IDs from roadmaps
       const roadmapOppIds = parsedRoadmaps
         .map(r => r.opportunity_id)
-        .filter(id => id !== null && id !== 'general');
+        .filter((id): id is string => id !== null && id !== undefined && id !== 'general');
 
-      // 3. Fetch opportunities that are either owned by the user OR referenced in roadmaps
-      let query = supabase.from('opportunities').select('*');
-      
+      // 3. Fetch opportunities using two separate reliable queries, then merge
+      const { data: userOpps } = await supabase
+        .from('opportunities')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      let roadmapOpps: any[] = [];
       if (roadmapOppIds.length > 0) {
-        // Construct the OR filter for owned OR referenced opportunities
-        // Remove quotes around UUIDs as PostgREST handles them as raw strings in .in.()
-        const idList = roadmapOppIds.join(',');
-        query = query.or(`user_id.eq.${user.id},id.in.(${idList})`);
-      } else {
-        query = query.eq('user_id', user.id);
+        const { data } = await supabase
+          .from('opportunities')
+          .select('*')
+          .in('id', roadmapOppIds);
+        roadmapOpps = data || [];
       }
 
-      const { data: opps } = await query.order('created_at', { ascending: false });
-      setAllOpportunities(opps || []);
+      // Merge and deduplicate by id
+      const allOpps = [...(userOpps || [])];
+      for (const opp of roadmapOpps) {
+        if (!allOpps.find(o => o.id === opp.id)) {
+          allOpps.push(opp);
+        }
+      }
+      
+      setAllOpportunities(allOpps);
       
     } catch (error) {
       console.error('Error fetching project selection:', error);
@@ -372,6 +383,13 @@ export const PreparationPage: React.FC = () => {
       allRoadmaps.some(r => r.opportunity_id === opp.id)
     );
     const generalRoadmap = allRoadmaps.find(r => r.opportunity_id === null);
+    
+    // Catch roadmaps whose opportunity couldn't be fetched (RLS, deleted, etc.)
+    const orphanedRoadmaps = allRoadmaps.filter(r => 
+      r.opportunity_id !== null && 
+      r.opportunity_id !== undefined &&
+      !allOpportunities.some(opp => opp.id === r.opportunity_id)
+    );
 
     return (
       <div style={containerStyle}>
@@ -397,7 +415,7 @@ export const PreparationPage: React.FC = () => {
                   </div>
                   <div style={{ flex: 1 }}>
                     <h3 style={projectTitleStyle}>{opp.title}</h3>
-                    <p style={projectCompanyStyle}>{opp.company}</p>
+                    <p style={projectCompanyStyle}>{opp.organization_name || opp.funder_name || opp.company || ''}</p>
                     <div style={projectMetaStyle}>
                       <Badge variant="success">{roadmapProgress}% Complete</Badge>
                       <span style={weekCountStyle}>{roadmap?.weeks?.length} Weeks</span>
@@ -407,6 +425,47 @@ export const PreparationPage: React.FC = () => {
                     <ChevronRight size={20} color="var(--text-muted)" />
                     <button 
                       onClick={(e) => handleDeletePlan(e, roadmap!.dbId)}
+                      style={deleteButtonStyle}
+                      title="Delete Roadmap"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  </div>
+                </div>
+                <div style={miniProgressBarStyle}>
+                  <div style={{ ...miniProgressBarFillStyle, width: `${roadmapProgress}%` }} />
+                </div>
+              </Card>
+            );
+          })}
+
+          {/* Show roadmaps whose opportunity couldn't be fetched */}
+          {orphanedRoadmaps.map(roadmap => {
+            const roadmapProgress = Math.round(((roadmap.completedWeeks?.length || 0) / (roadmap.weeks?.length || 1)) * 100);
+            const displayTitle = roadmap.title?.replace('Roadmap: ', '').replace(/^\d+-day\s*/i, '').trim() || 'Preparation Plan';
+            
+            return (
+              <Card 
+                key={roadmap.dbId} 
+                onClick={() => navigate(`/preparation?oppId=${roadmap.opportunity_id}&type=${roadmap.planType || '90-day'}`)}
+                style={projectCardStyle}
+              >
+                <div style={projectCardContentStyle}>
+                  <div style={projectIconWrapperStyle}>
+                    <Briefcase size={24} color="var(--accent-primary)" />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <h3 style={projectTitleStyle}>{displayTitle}</h3>
+                    <p style={projectCompanyStyle}>{roadmap.planType?.toUpperCase() || '90-Day'} Roadmap</p>
+                    <div style={projectMetaStyle}>
+                      <Badge variant="success">{roadmapProgress}% Complete</Badge>
+                      <span style={weekCountStyle}>{roadmap.weeks?.length} Weeks</span>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
+                    <ChevronRight size={20} color="var(--text-muted)" />
+                    <button 
+                      onClick={(e) => handleDeletePlan(e, roadmap.dbId)}
                       style={deleteButtonStyle}
                       title="Delete Roadmap"
                     >
@@ -453,7 +512,7 @@ export const PreparationPage: React.FC = () => {
           )}
         </div>
 
-        {!loading && activeProjects.length === 0 && !generalRoadmap && (
+        {!loading && activeProjects.length === 0 && orphanedRoadmaps.length === 0 && !generalRoadmap && (
           <div style={{ textAlign: 'center', padding: '60px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-xl)' }}>
             <Zap size={48} color="var(--text-muted)" style={{ marginBottom: '16px' }} />
             <h3>No active roadmaps</h3>
