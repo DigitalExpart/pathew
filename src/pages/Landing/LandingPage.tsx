@@ -686,7 +686,7 @@ const ReviewsCarousel = () => {
 };
 
 const ReviewCard = ({ review }: { review: any }) => (
-  <Card style={{ width: '360px', minHeight: '280px', padding: '32px', display: 'flex', flexDirection: 'column', gap: '20px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', boxShadow: '0 10px 30px -10px rgba(0,0,0,0.5)' }}>
+  <Card style={{ width: '360px', minHeight: '280px', padding: '32px', display: 'flex', flexDirection: 'column', gap: '20px', border: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', boxShadow: 'var(--shadow-lg)' }}>
     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
       {review.user_avatar ? (
         <img src={review.user_avatar} style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }} alt="" />
@@ -954,8 +954,8 @@ const ComparisonColumn = ({ title, items, highlight }: any) => (
       overflow: 'hidden',
       borderColor: highlight ? 'var(--accent-primary)' : 'rgba(255, 255, 255, 0.1)',
       background: highlight 
-        ? 'linear-gradient(145deg, rgba(245, 158, 11, 0.05) 0%, rgba(15, 23, 42, 0.9) 100%)' 
-        : 'linear-gradient(145deg, rgba(255, 255, 255, 0.02) 0%, rgba(15, 23, 42, 0.9) 100%)',
+        ? 'linear-gradient(145deg, rgba(245, 158, 11, 0.05) 0%, var(--bg-secondary) 100%)' 
+        : 'linear-gradient(145deg, rgba(255, 255, 255, 0.02) 0%, var(--bg-secondary) 100%)',
       backdropFilter: 'blur(10px)',
     }}
   >
@@ -1123,21 +1123,21 @@ const heroImagePlaceholderStyle: React.CSSProperties = {
 const heroImageOverlayStyle: React.CSSProperties = {
   position: 'absolute',
   inset: 0,
-  background: 'linear-gradient(to top, rgba(15, 23, 42, 0.8), transparent)',
+  background: 'linear-gradient(to top, var(--bg-primary), transparent)',
 };
 
 const floatingCardStyle: React.CSSProperties = {
   position: 'absolute',
   top: '60px',
   left: '-30px',
-  backgroundColor: 'var(--bg-tertiary)',
+  backgroundColor: 'var(--bg-secondary)',
   padding: '24px',
   borderRadius: '20px',
   border: '1px solid rgba(245, 158, 11, 0.3)',
   display: 'flex',
   alignItems: 'center',
   gap: '16px',
-  boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)',
+  boxShadow: 'var(--shadow-lg)',
   backdropFilter: 'blur(10px)',
 };
 
@@ -1219,8 +1219,8 @@ const popularBadgeStyle: React.CSSProperties = {
 };
 
 const footerStyle: React.CSSProperties = {
-  backgroundColor: '#020617',
-  borderTop: '1px solid rgba(255, 255, 255, 0.05)',
+  backgroundColor: 'var(--bg-secondary)',
+  borderTop: '1px solid var(--border-color)',
   position: 'relative',
   overflow: 'hidden',
 };
@@ -1453,12 +1453,12 @@ const checkCircleBoxStyle: React.CSSProperties = {
 const xCircleBoxStyle: React.CSSProperties = {
   width: '32px',
   height: '32px',
-  backgroundColor: 'rgba(255, 255, 255, 0.05)',
+  backgroundColor: 'var(--bg-tertiary)',
   borderRadius: '10px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  color: 'rgba(255, 255, 255, 0.3)',
+  color: 'var(--text-muted)',
 };
 
 const columnGlowStyle: React.CSSProperties = {

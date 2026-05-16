@@ -5,6 +5,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { Button } from '../ui/Button';
 import { supabase } from '../../lib/supabase';
+import { useTheme } from '../../context/ThemeContext';
 
 // Stripe publishable key from environment variables
 const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '';
@@ -180,26 +181,41 @@ export const StripeCheckoutModal = ({ isOpen, onClose, planTitle, planPrice, pla
 
   if (!isOpen) return null;
 
+  const { theme: appTheme } = useTheme();
+
   const stripeAppearance = {
-    theme: 'night' as const,
+    theme: (appTheme === 'dark' ? 'night' : 'stripe') as 'night' | 'stripe',
     variables: {
       colorPrimary: '#f59e0b',
-      colorBackground: '#111827',
-      colorText: '#ffffff',
+      colorBackground: appTheme === 'dark' ? '#111827' : '#ffffff',
+      colorText: appTheme === 'dark' ? '#ffffff' : '#0f172a',
       colorDanger: '#f87171',
       fontFamily: '"Inter", -apple-system, sans-serif',
       borderRadius: '12px',
       spacingUnit: '4px',
     },
     rules: {
-      '.Input': { border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.03)', padding: '14px 16px' },
+      '.Input': { 
+        border: `1px solid ${appTheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`, 
+        backgroundColor: appTheme === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(0,0,0,0.02)', 
+        padding: '14px 16px' 
+      },
       '.Input:focus': { borderColor: '#f59e0b', boxShadow: '0 0 0 2px rgba(245,158,11,0.2)' },
-      '.Label': { color: '#e5e7eb', fontWeight: '600', fontSize: '13px', marginBottom: '8px' },
-      '.Tab': { border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(255,255,255,0.03)', color: '#ffffff' },
-      '.Tab--selected': { borderColor: '#f59e0b', backgroundColor: 'rgba(245,158,11,0.1)', color: '#ffffff', borderSize: '2px' },
+      '.Label': { color: appTheme === 'dark' ? '#e5e7eb' : '#475569', fontWeight: '600', fontSize: '13px', marginBottom: '8px' },
+      '.Tab': { 
+        border: `1px solid ${appTheme === 'dark' ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)'}`, 
+        backgroundColor: appTheme === 'dark' ? 'rgba(255,255,255,0.03)' : 'rgba(255,255,255,1)', 
+        color: appTheme === 'dark' ? '#ffffff' : '#0f172a' 
+      },
+      '.Tab--selected': { 
+        borderColor: '#f59e0b', 
+        backgroundColor: appTheme === 'dark' ? 'rgba(245,158,11,0.1)' : 'rgba(245,158,11,0.05)', 
+        color: appTheme === 'dark' ? '#ffffff' : '#f59e0b', 
+        borderSize: '2px' 
+      },
       '.Tab:hover': { borderColor: 'rgba(245,158,11,0.5)' },
-      '.TabLabel': { color: '#ffffff' },
-      '.TabIcon': { color: '#ffffff' },
+      '.TabLabel': { color: appTheme === 'dark' ? '#ffffff' : 'inherit' },
+      '.TabIcon': { color: appTheme === 'dark' ? '#ffffff' : 'inherit' },
     },
   };
 

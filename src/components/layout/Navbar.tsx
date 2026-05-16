@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, LogOut, LayoutDashboard, UserCircle, ChevronDown, Menu, X } from 'lucide-react';
+import { User, LogOut, LayoutDashboard, UserCircle, ChevronDown, Menu, X, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useTheme } from '../../context/ThemeContext';
 import { Button } from '../ui/Button';
 import logo from '../../assets/images/logo.png';
 
@@ -12,6 +13,7 @@ interface NavbarProps {
 
 export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
   const { user, signOut } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -112,6 +114,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
                     <Link to="/career-profile" style={dropdownItemStyle} onClick={() => setIsDropdownOpen(false)}>
                       <UserCircle size={18} /> Profile
                     </Link>
+                    <button onClick={toggleTheme} style={dropdownItemStyle}>
+                      {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+                      {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+                    </button>
                     <div style={dividerStyle} />
                     <button onClick={handleLogout} style={{...dropdownItemStyle, color: '#ef4444', border: 'none', background: 'none', width: '100%', cursor: 'pointer'}}>
                       <LogOut size={18} /> Logout
@@ -184,7 +190,8 @@ const navStyle: React.CSSProperties = {
   top: 0,
   left: 0,
   right: 0,
-  backgroundColor: 'rgba(15, 23, 42, 0.8)',
+  backgroundColor: 'var(--bg-primary)',
+  opacity: 0.98,
   backdropFilter: 'blur(20px)',
   zIndex: 1000,
   borderBottom: '1px solid var(--border-color)',
