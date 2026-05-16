@@ -112,7 +112,7 @@ export const LandingPage: React.FC = () => {
               transition={{ delay: 1 }}
               style={trustBarHeroStyle}
             >
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Trusted by professionals at</span>
+              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.1em' }}>{t('landing.trustedBy')}</span>
               <div style={{
                 ...heroLogosStyle,
                 justifyContent: 'flex-start',
@@ -196,16 +196,15 @@ export const LandingPage: React.FC = () => {
               marginBottom: '24px', 
               lineHeight: 1.2 
             }}>
-              Stop Applying into <span style={{ color: 'var(--accent-primary)' }}>the Dark</span>.
+              {t('landing.problem.title1')}<span style={{ color: 'var(--accent-primary)' }}>{t('landing.problem.title2')}</span>.
             </h2>
             <p style={{ fontSize: '1.125rem', color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: 1.6 }}>
-              You've spent weeks on proposals. You've sent countless emails. You've waited for months only to get a generic rejection with no feedback. 
-              The problem isn't your vision—it's the language of funders you haven't mastered.
+              {t('landing.problem.subtitle')}
             </p>
             <div style={benefitListStyle}>
-              <BenefitItem text="Stop wasting time on mismatched opportunities." />
-              <BenefitItem text="Master the specific language of global funders." />
-              <BenefitItem text="Apply 10x faster with AI-trained success patterns." />
+              <BenefitItem text={t('landing.problem.b1')} />
+              <BenefitItem text={t('landing.problem.b2')} />
+              <BenefitItem text={t('landing.problem.b3')} />
             </div>
           </motion.div>
           <motion.div 
@@ -219,13 +218,13 @@ export const LandingPage: React.FC = () => {
           >
             <Card className="card-padding" style={{ border: '1px solid rgba(239, 68, 68, 0.2)', backgroundColor: 'rgba(239, 68, 68, 0.02)' }}>
               <h4 style={{ color: '#ef4444', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Shield size={18} /> The Old Way
+                <Shield size={18} /> {t('landing.problem.oldWay')}
               </h4>
               <ul style={{ listStyle: 'none', padding: 0, color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <li>❌ 40+ hours per proposal</li>
-                <li>❌ 80% rejection rate</li>
-                <li>❌ Generic ChatGPT drafts</li>
-                <li>❌ No match intelligence</li>
+                <li>{t('landing.problem.o1')}</li>
+                <li>{t('landing.problem.o2')}</li>
+                <li>{t('landing.problem.o3')}</li>
+                <li>{t('landing.problem.o4')}</li>
               </ul>
             </Card>
           </motion.div>
@@ -241,8 +240,8 @@ export const LandingPage: React.FC = () => {
           transition={{ duration: 0.6 }}
           style={sectionHeaderStyle}
         >
-          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '2.5rem' }}>Why Professionals Choose PATHEW</h2>
-          <p style={sectionSubtitleStyle}>Powerful tools designed to accelerate your career growth.</p>
+          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '2.5rem' }}>{t('landing.featuresTitle')}</h2>
+          <p style={sectionSubtitleStyle}>{t('landing.featuresSubtitle')}</p>
         </motion.div>
         
         {isMobile ? (
@@ -251,8 +250,8 @@ export const LandingPage: React.FC = () => {
               <FeatureCard 
                 key={`${f.title}-${i}`}
                 icon={f.icon} 
-                title={f.title} 
-                description={f.description} 
+                title={t(`landing.featuresList.${i}.title`, { defaultValue: f.title })} 
+                description={t(`landing.featuresList.${i}.desc`, { defaultValue: f.description })} 
               />
             ))}
           </div>
@@ -273,8 +272,8 @@ export const LandingPage: React.FC = () => {
                 <FeatureCard 
                   key={`${f.title}-${i}`}
                   icon={f.icon} 
-                  title={f.title} 
-                  description={f.description} 
+                  title={t(`landing.featuresList.${i % features.length}.title`, { defaultValue: f.title })} 
+                  description={t(`landing.featuresList.${i % features.length}.desc`, { defaultValue: f.description })} 
                 />
               ))}
             </motion.div>
@@ -290,14 +289,14 @@ export const LandingPage: React.FC = () => {
           viewport={{ once: true }}
           style={sectionHeaderStyle}
         >
-          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>How it Works</h2>
-          <p style={sectionSubtitleStyle}>Your journey to a better career in three simple steps.</p>
+          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>{t('landing.howItWorksTitle')}</h2>
+          <p style={sectionSubtitleStyle}>{t('landing.howItWorksSubtitle')}</p>
         </motion.div>
         
         <div className="grid-responsive">
-          <StepItem number="01" title="Complete Your Profile" description="Share your story, achievements, and goals through our intuitive onboarding wizard." />
-          <StepItem number="02" title="Get Matched" description="Our Assistant engine scans thousands of opportunities to find your perfect fit." />
-          <StepItem number="03" title="Apply with Confidence" description="Use smart-generated documents to stand out and land your dream role." />
+          <StepItem number="01" title={t('landing.steps.0.title')} description={t('landing.steps.0.desc')} />
+          <StepItem number="02" title={t('landing.steps.1.title')} description={t('landing.steps.1.desc')} />
+          <StepItem number="03" title={t('landing.steps.2.title')} description={t('landing.steps.2.desc')} />
         </div>
 
         <motion.div 
@@ -309,7 +308,7 @@ export const LandingPage: React.FC = () => {
         >
           <Link to="/signup">
             <Button variant="outline" style={{ gap: '10px', padding: '16px 40px' }}>
-              Learn More <ArrowRight size={18} />
+              {t('landing.learnMore')} <ArrowRight size={18} />
             </Button>
           </Link>
         </motion.div>
@@ -323,8 +322,8 @@ export const LandingPage: React.FC = () => {
           viewport={{ once: true }}
           style={sectionHeaderStyle}
         >
-          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '1.75rem' : '3.5rem' }}>ChatGPT learned from the internet. <br/> <span style={{ color: 'var(--accent-primary)' }}>PATHEW learned from winners.</span></h2>
-          <p style={sectionSubtitleStyle}>Unlike generic AI, our system is trained on over $50M in successful global opportunity applications.</p>
+          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '1.75rem' : '3.5rem' }}>{t('landing.compare.title1')} <br/> <span style={{ color: 'var(--accent-primary)' }}>{t('landing.compare.title2')}</span></h2>
+          <p style={sectionSubtitleStyle}>{t('landing.compare.subtitle')}</p>
         </motion.div>
 
         <div className="comparison-grid" style={{ 
@@ -333,22 +332,22 @@ export const LandingPage: React.FC = () => {
           gridTemplateColumns: isSmallDevice ? '1fr' : '1fr 1fr' 
         }}>
           <ComparisonColumn 
-            title="Generic AI" 
+            title={t('landing.compare.generic')} 
             items={[
-              'Bloated, generic drafts',
-              'No context of funder history',
-              'Hallucinates impact data',
-              'Standard internet knowledge'
+              t('landing.compare.g1'),
+              t('landing.compare.g2'),
+              t('landing.compare.g3'),
+              t('landing.compare.g4')
             ]} 
           />
           <ComparisonColumn 
-            title="PATHEW Assistant" 
+            title={t('landing.compare.pathew')} 
             highlight 
             items={[
-              'Precision match scoring',
-              'Success-pattern training',
-              'Verifiable impact narrative',
-              'Built for global standards'
+              t('landing.compare.p1'),
+              t('landing.compare.p2'),
+              t('landing.compare.p3'),
+              t('landing.compare.p4')
             ]} 
           />
         </div>
@@ -362,73 +361,61 @@ export const LandingPage: React.FC = () => {
           viewport={{ once: true }}
           style={sectionHeaderStyle}
         >
-          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>Pricing Plans</h2>
-          <p style={sectionSubtitleStyle}>Simple, credit-based pricing. Pay for what you create.</p>
+          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>{t('landing.pricingTitle')}</h2>
+          <p style={sectionSubtitleStyle}>{t('landing.pricingSubtitle')}</p>
         </motion.div>
         
         <div className="grid-responsive" style={{ alignItems: 'stretch' }}>
           <PricingCard 
             {...getPlanInfo('Starter', {
-              title: "Starter",
+              title: t('pricing.plans.starter.title'),
               price: "£11.99",
-              credits: "25 credits / month",
-              subtitle: "Perfect for individuals tackling a single application round.",
+              credits: t('pricing.plans.starter.credits'),
+              subtitle: t('pricing.plans.starter.subtitle'),
               generatesUpTo: [
-                { label: 'Cover Letters', count: '25×' },
-                { label: 'CVs / Resumes', count: '25×' },
-                { label: 'Proposals', count: '25×' },
-                { label: 'Grant Applications', count: '8×' },
-                { label: 'Rewrites', count: '100×' }
+                { label: t('pricing.labels.coverLetters'), count: '25×' },
+                { label: t('pricing.labels.cvs'), count: '25×' },
+                { label: t('pricing.labels.proposals'), count: '25×' },
+                { label: t('pricing.labels.grants'), count: '8×' },
+                { label: t('pricing.labels.rewrites'), count: '100×' }
               ]
             })}
-            includedFeatures={[
-              'View live job & grant opportunities',
-              'Percentage readiness score per application',
-              'AI-generated preparation plan – credit applies'
-            ]}
+            includedFeatures={t('pricing.features', { returnObjects: true }) as string[]}
           />
           <PricingCard 
             {...getPlanInfo('Growth', {
-              title: "Growth",
+              title: t('pricing.plans.growth.title'),
               price: "£25.00",
-              credits: "60 credits / month",
-              subtitle: "For freelancers and active job seekers applying across multiple roles.",
-              badge: "★ MOST POPULAR ★",
+              credits: t('pricing.plans.growth.credits'),
+              subtitle: t('pricing.plans.growth.subtitle'),
+              badge: t('pricing.plans.growth.badge'),
               generatesUpTo: [
-                { label: 'Cover Letters', count: '60×' },
-                { label: 'CVs / Resumes', count: '60×' },
-                { label: 'Proposals', count: '60×' },
-                { label: 'Grant Applications', count: '20×' },
-                { label: 'Rewrites', count: '240×' }
+                { label: t('pricing.labels.coverLetters'), count: '60×' },
+                { label: t('pricing.labels.cvs'), count: '60×' },
+                { label: t('pricing.labels.proposals'), count: '60×' },
+                { label: t('pricing.labels.grants'), count: '20×' },
+                { label: t('pricing.labels.rewrites'), count: '240×' }
               ]
             })}
-            includedFeatures={[
-              'View live job & grant opportunities',
-              'Percentage readiness score per application',
-              'AI-generated preparation plan – credit applies'
-            ]}
+            includedFeatures={t('pricing.features', { returnObjects: true }) as string[]}
           />
           <PricingCard 
             {...getPlanInfo('Power User', {
-              title: "Power User",
+              title: t('pricing.plans.power.title'),
               price: "£48.00",
-              credits: "120 credits / month",
-              subtitle: "For agencies, consultants and power users generating at scale.",
-              badge: "★ BEST VALUE ★",
+              credits: t('pricing.plans.power.credits'),
+              subtitle: t('pricing.plans.power.subtitle'),
+              badge: t('pricing.plans.power.badge'),
               badgeColor: "#3b82f6",
               generatesUpTo: [
-                { label: 'Cover Letters', count: '120×' },
-                { label: 'CVs / Resumes', count: '120×' },
-                { label: 'Proposals', count: '120×' },
-                { label: 'Grant Applications', count: '40×' },
-                { label: 'Rewrites', count: '480×' }
+                { label: t('pricing.labels.coverLetters'), count: '120×' },
+                { label: t('pricing.labels.cvs'), count: '120×' },
+                { label: t('pricing.labels.proposals'), count: '120×' },
+                { label: t('pricing.labels.grants'), count: '40×' },
+                { label: t('pricing.labels.rewrites'), count: '480×' }
               ]
             })}
-            includedFeatures={[
-              'View live job & grant opportunities',
-              'Percentage readiness score per application',
-              'AI-generated preparation plan – credit applies'
-            ]}
+            includedFeatures={t('pricing.features', { returnObjects: true }) as string[]}
           />
         </div>
 
@@ -440,9 +427,9 @@ export const LandingPage: React.FC = () => {
           style={{ maxWidth: '800px', margin: '80px auto 0' }}
         >
           <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <h3 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '16px' }}>Credit Cost Per Service</h3>
+            <h3 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '16px' }}>{t('landing.creditTitle')}</h3>
             <p style={{ color: 'var(--text-secondary)', fontSize: '1.125rem' }}>
-              Mix and match any service — credits work across your entire account.
+              {t('landing.creditSubtitle')}
             </p>
           </div>
 
@@ -451,23 +438,23 @@ export const LandingPage: React.FC = () => {
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                 <thead>
                   <tr style={{ backgroundColor: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)' }}>
-                    <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>Service</th>
-                    <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>Credits</th>
-                    <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>Notes</th>
+                    <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>{t('pricing.headers.service')}</th>
+                    <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>{t('pricing.headers.credits')}</th>
+                    <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>{t('pricing.headers.notes')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {(creditCostSettings.length > 0 ? creditCostSettings : [
-                    { service: 'Cover Letter', credits: 1, notes: 'per letter' },
-                    { service: 'CV / Resume', credits: 1, notes: 'per CV' },
-                    { service: 'Proposal', credits: 1, notes: 'per proposal' },
-                    { service: 'Grant Application', credits: 3, notes: 'per grant' },
-                    { service: 'Preparation Plan', credits: 3, notes: 'per plan' },
-                    { service: 'Any Rewrite', credits: 0.25, notes: 'per rewrite (¼ of original after 3 rewrites)' },
+                    { service: t('pricing.labels.coverLetters'), credits: 1, notes: t('pricing.perLetter') },
+                    { service: t('pricing.labels.cvs'), credits: 1, notes: t('pricing.perCV') },
+                    { service: t('pricing.labels.proposals'), credits: 1, notes: t('pricing.perProposal') },
+                    { service: t('pricing.labels.grants'), credits: 3, notes: t('pricing.perGrant') },
+                    { service: t('preparation.title'), credits: 3, notes: t('pricing.perPlan') },
+                    { service: t('pricing.labels.rewrites'), credits: 0.25, notes: t('pricing.perRewrite') },
                   ]).map((row, idx) => (
                     <tr key={idx} style={{ borderBottom: idx !== 5 ? '1px solid var(--border-color)' : 'none' }}>
                       <td style={{ padding: '16px 24px', fontWeight: 500 }}>{row.service}</td>
-                      <td style={{ padding: '16px 24px', color: 'var(--accent-primary)', fontWeight: 600 }}>{row.credits} {row.credits === 1 ? 'credit' : 'credits'}</td>
+                      <td style={{ padding: '16px 24px', color: 'var(--accent-primary)', fontWeight: 600 }}>{row.credits} {row.credits === 1 ? t('common.credit') : t('common.credits')}</td>
                       <td style={{ padding: '16px 24px', color: 'var(--text-muted)', fontSize: '0.875rem' }}>{row.notes || (row.service === 'Any Rewrite' ? 'per rewrite' : `per ${row.service.toLowerCase()}`)}</td>
                     </tr>
                   ))}
@@ -479,7 +466,7 @@ export const LandingPage: React.FC = () => {
           <div style={{ textAlign: 'center', marginTop: '32px' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', backgroundColor: 'rgba(245, 158, 11, 0.1)', padding: '12px 24px', borderRadius: 'var(--radius-full)', color: 'var(--accent-primary)', fontWeight: 600 }}>
               <Zap size={18} />
-              Need more? Users can top up their credits at any time.
+              {t('landing.pricingMore', 'Need more? Users can top up their credits at any time.')}
             </div>
           </div>
         </motion.div>
@@ -496,7 +483,7 @@ export const LandingPage: React.FC = () => {
              <Star size={24} fill="#00b67a" color="#00b67a" />
              <span style={{ fontWeight: 800, fontSize: '1.25rem', color: '#00b67a' }}>Trustpilot</span>
           </div>
-          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>See why thousands of professionals trust us</h2>
+          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>{t('landing.trustpilot')}</h2>
         </motion.div>
         
         <ReviewsCarousel />
@@ -510,23 +497,18 @@ export const LandingPage: React.FC = () => {
           viewport={{ once: true }}
           style={sectionHeaderStyle}
         >
-          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>Frequently Asked Questions</h2>
-          <p style={sectionSubtitleStyle}>Everything you need to know about Pathew Assistant.</p>
+          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>{t('landing.faqTitle')}</h2>
+          <p style={sectionSubtitleStyle}>{t('landing.faqSubtitle', 'Everything you need to know about Pathew Assistant.')}</p>
         </motion.div>
         
         <div style={faqContainerStyle}>
-          <FAQItem 
-            question="How does Pathew Assistant match me to opportunities?" 
-            answer="Our advanced AI engine analyzes your profile against thousands of data points in opportunity descriptions to provide a precision match score." 
-          />
-          <FAQItem 
-            question="Is my personal data secure?" 
-            answer="Yes, we use industry-standard encryption. Your full profile is only shared with recruiters when you explicitly choose to apply." 
-          />
-          <FAQItem 
-            question="Can I use the platform for free?" 
-            answer="Absolutely! Our Free plan allows you to explore matches and make up to 3 applications per month." 
-          />
+          {(t('landing.faqList', { returnObjects: true }) as any[]).map((faq, index) => (
+            <FAQItem 
+              key={index}
+              question={faq.question} 
+              answer={faq.answer} 
+            />
+          ))}
         </div>
       </section>
 
@@ -556,14 +538,14 @@ export const LandingPage: React.FC = () => {
               maxWidth: isSmallDevice ? '100%' : '300px',
               margin: isSmallDevice ? '20px auto 0' : '20px 0 0'
             }}>
-              The premium platform for global opportunity matching. Empowering professionals with Pathew Assistant.
+              {t('landing.footer.tagline')}
             </p>
           </div>
           
           <div className="grid-responsive" style={{ flex: 3, gap: '40px' }}>
-            <FooterCol title="Product" links={['Features', 'How it works', 'Pricing', 'API']} />
-            <FooterCol title="Company" links={['About', 'Careers', 'Blog', 'Contact']} />
-            <FooterCol title="Legal" links={['Privacy', 'Terms', 'Security', 'Cookies']} />
+            <FooterCol title={t('landing.footerCols.product')} links={t('landing.footerCols.productLinks', { returnObjects: true }) as string[]} />
+            <FooterCol title={t('landing.footerCols.company')} links={t('landing.footerCols.companyLinks', { returnObjects: true }) as string[]} />
+            <FooterCol title={t('landing.footerCols.legal')} links={t('landing.footerCols.legalLinks', { returnObjects: true }) as string[]} />
           </div>
         </div>
         
@@ -576,11 +558,11 @@ export const LandingPage: React.FC = () => {
           paddingTop: '32px',
           borderTop: '1px solid var(--border-color)',
         }}>
-          <p>© 2024 PATHEW. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} PATHEW. {t('landing.footer.rights')}</p>
           <div style={{ ...socialLinksStyle, justifyContent: 'center' }}>
-            <SocialIcon icon={FacebookIcon} label="Facebook" />
-            <SocialIcon icon={InstagramIcon} label="Instagram" />
-            <SocialIcon icon={TikTokIcon} label="TikTok" />
+            <SocialIcon icon={FacebookIcon} label={t('common.facebook', 'Facebook')} />
+            <SocialIcon icon={InstagramIcon} label={t('common.instagram', 'Instagram')} />
+            <SocialIcon icon={TikTokIcon} label={t('common.tiktok', 'TikTok')} />
           </div>
         </div>
         
@@ -715,7 +697,7 @@ const ReviewCard = ({ review }: { review: any }) => (
     </p>
 
     <div style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', fontWeight: 500 }}>
-      {new Date(review.review_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+      {new Date(review.review_date).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
     </div>
   </Card>
 );
@@ -788,7 +770,7 @@ const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedF
 
     <div style={{ marginBottom: '24px' }}>
       <div style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: '12px' }}>
-        GENERATES UP TO
+        {t('landing.generatesUpTo')}
       </div>
       <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
         {generatesUpTo.map((g: any) => (
@@ -802,7 +784,7 @@ const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedF
 
     <div style={{ flex: 1, marginBottom: '32px' }}>
       <div style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: '12px', textTransform: 'uppercase' }}>
-        INCLUDED IN EVERY PLAN
+        {t('landing.includedInEveryPlan')}
       </div>
       <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
         {includedFeatures.map((f: string) => (
@@ -815,8 +797,8 @@ const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedF
     </div>
 
     <div style={{ marginTop: 'auto' }}>
-      <Button onClick={handleSubscribe} variant={badge === '★ MOST POPULAR ★' ? 'primary' : 'outline'} style={{ width: '100%' }}>
-        Choose {title}
+      <Button onClick={handleSubscribe} variant={badge === t('pricing.plans.growth.badge') ? 'primary' : 'outline'} style={{ width: '100%' }}>
+        {t('landing.pricingChoose')} {title}
       </Button>
     </div>
   </motion.div>
@@ -962,7 +944,7 @@ const ComparisonColumn = ({ title, items, highlight }: any) => (
   >
     {highlight && (
       <div style={comparisonBadgeStyle}>
-        <Sparkles size={12} /> RECOMMENDED
+        <Sparkles size={12} /> {t('landing.compare.recommended')}
       </div>
     )}
 

@@ -22,17 +22,17 @@
     "getStarted": "Empezar gratis",
     "watchDemo": "Ver demo",
     "features": "Características",
-    "featuresTitle": "Todo lo que necesitas para conseguir el trabajo de tus sueños",
+    "featuresTitle": "Por qué los profesionales eligen PATHEW",
     "pricing": "Precios",
-    "pricingTitle": "Precios simples y transparentes",
-    "pricingSubtitle": "Comienza gratis, mejora cuando necesites más potencia.",
+    "pricingTitle": "Planes de Precios",
+    "pricingSubtitle": "Precios simples basados en créditos. Paga por lo que creas.",
     "faq": "Preguntas frecuentes",
     "faqTitle": "Preguntas frecuentes",
     "howItWorks": "Cómo funciona",
-    "howItWorksTitle": "Comienza en minutos",
+    "howItWorksTitle": "Cómo Funciona",
     "reviews": "Lo que dicen nuestros usuarios",
     "footer": {
-      "tagline": "Orientación profesional impulsada por Asistente para profesionales ambiciosos.",
+      "tagline": "La plataforma premium para el emparejamiento de oportunidades globales. Empoderando a profesionales con el Asistente Pathew.",
       "product": "Producto",
       "company": "Empresa",
       "legal": "Legal",
@@ -43,7 +43,110 @@
       "placements": "Colocaciones exitosas",
       "rating": "Valoración de usuarios"
     },
-    "heroTitleEnd": " con precisión."
+    "heroTitleEnd": " con precisión.",
+    "problem": {
+      "title1": "Deja de postular en ",
+      "title2": "la Oscuridad",
+      "subtitle": "Has pasado semanas en propuestas. Has enviado innumerables correos. Has esperado meses para un rechazo genérico. El problema no es tu visión, es el idioma de los financiadores.",
+      "b1": "Deja de perder tiempo en oportunidades no coincidentes.",
+      "b2": "Domina el lenguaje específico de los financiadores globales.",
+      "b3": "Postula 10 veces más rápido con patrones de éxito."
+    },
+    "featuresSubtitle": "Potentes herramientas diseñadas para acelerar tu crecimiento profesional.",
+    "featuresList": [
+      {
+        "title": "Descubrimiento Global",
+        "desc": "Oportunidades de miles de fuentes premium en todo el mundo."
+      },
+      {
+        "title": "Puntuación de Coincidencia",
+        "desc": "Averigua si encajas antes de solicitar."
+      },
+      {
+        "title": "Generación Inteligente",
+        "desc": "Genera automáticamente currículums y cartas de presentación a medida."
+      },
+      {
+        "title": "Privacidad Primero",
+        "desc": "Tus datos están encriptados y solo se comparten cuando decides."
+      }
+    ],
+    "howItWorksSubtitle": "Tu viaje hacia una mejor carrera en tres simples pasos.",
+    "steps": [
+      {
+        "title": "Completa tu Perfil",
+        "desc": "Comparte tu historia y metas a través de nuestro asistente intuitivo."
+      },
+      {
+        "title": "Encuentra Coincidencias",
+        "desc": "Nuestro motor escanea miles de oportunidades para ti."
+      },
+      {
+        "title": "Postula con Confianza",
+        "desc": "Usa documentos generados inteligentemente para destacar."
+      }
+    ],
+    "learnMore": "Aprender más",
+    "compare": {
+      "title1": "ChatGPT aprendió de internet.",
+      "title2": "PATHEW aprendió de los ganadores.",
+      "subtitle": "A diferencia de herramientas genéricas, nuestro sistema está entrenado en más de $50M en solicitudes exitosas.",
+      "generic": "Herramientas Genéricas",
+      "g1": "Borradores genéricos y pesados",
+      "g2": "Sin contexto de financiadores",
+      "g3": "Alucina datos de impacto",
+      "g4": "Conocimiento estándar de internet",
+      "pathew": "Asistente PATHEW",
+      "p1": "Puntuación de coincidencia precisa",
+      "p2": "Entrenamiento de patrones de éxito",
+      "p3": "Narrativa de impacto verificable",
+      "p4": "Construido para estándares globales",
+      "recommended": "RECOMENDADO"
+    },
+    "creditTitle": "Costo de Crédito por Servicio",
+    "creditSubtitle": "Combina cualquier servicio: los créditos funcionan en toda tu cuenta.",
+    "trustpilot": "Mira por qué miles de profesionales confían en nosotros",
+    "faqList": [
+      {
+        "question": "¿Cómo me empareja el Asistente Pathew con las oportunidades?",
+        "answer": "Nuestro avanzado motor de Asistente analiza su perfil frente a miles de puntos de datos en las descripciones de las oportunidades para proporcionar una puntuación de coincidencia de precisión."
+      },
+      {
+        "question": "¿Están seguros mis datos personales?",
+        "answer": "Sí, utilizamos el cifrado estándar de la industria. Su perfil completo solo se comparte con los reclutadores cuando decide explícitamente postularse."
+      },
+      {
+        "question": "¿Puedo usar la plataforma gratis?",
+        "answer": "¡Absolutamente! Nuestro plan gratuito le permite explorar coincidencias y realizar hasta 3 solicitudes por mes."
+      }
+    ],
+    "trustedBy": "Confiado por profesionales en",
+    "generatesUpTo": "GENERA HASTA",
+    "includedInEveryPlan": "INCLUIDO EN CADA PLAN",
+    "pricingChoose": "Elegir",
+    "footerCols": {
+      "product": "Producto",
+      "company": "Compañía",
+      "legal": "Legal",
+      "productLinks": [
+        "Funciones",
+        "Cómo funciona",
+        "Precios",
+        "API"
+      ],
+      "companyLinks": [
+        "Sobre nosotros",
+        "Carreras",
+        "Blog",
+        "Contacto"
+      ],
+      "legalLinks": [
+        "Privacidad",
+        "Términos",
+        "Seguridad",
+        "Cookies"
+      ]
+    }
   },
   "auth": {
     "login": "Iniciar sesión",
@@ -196,7 +299,9 @@
     "english": "English",
     "french": "Français",
     "german": "Deutsch",
-    "spanish": "Español"
+    "spanish": "Español",
+    "credit": "crédito",
+    "credits": "créditos"
   },
   "wallet": {
     "title": "Billetera y Créditos",
@@ -350,7 +455,25 @@
       "Ver oportunidades de trabajo y subvenciones en vivo",
       "Puntuación de preparación porcentual por solicitud",
       "Plan de preparación generado por el Asistente - se aplican créditos"
-    ]
+    ],
+    "labels": {
+      "coverLetters": "Cartas de presentación",
+      "cvs": "CVs / Currículums",
+      "proposals": "Propuestas",
+      "grants": "Solicitudes de subvención",
+      "rewrites": "Reescrituras"
+    },
+    "perLetter": "por carta",
+    "perCV": "por CV",
+    "perProposal": "por propuesta",
+    "perGrant": "por subvención",
+    "perPlan": "por plan",
+    "perRewrite": "por reescritura (¼ del original después de 3 reescrituras)",
+    "headers": {
+      "service": "Servicio",
+      "credits": "Créditos",
+      "notes": "Notas"
+    }
   },
   "grantBuilder": {
     "title": "Constructor de Subvenciones",

@@ -22,17 +22,17 @@
     "getStarted": "Kostenlos starten",
     "watchDemo": "Demo ansehen",
     "features": "Funktionen",
-    "featuresTitle": "Alles, was Sie brauchen, um Ihren Traumjob zu bekommen",
+    "featuresTitle": "Warum Profis PATHEW wählen",
     "pricing": "Preise",
-    "pricingTitle": "Einfache, transparente Preisgestaltung",
-    "pricingSubtitle": "Starten Sie kostenlos, upgraden Sie bei Bedarf.",
+    "pricingTitle": "Preispläne",
+    "pricingSubtitle": "Einfache, kreditbasierte Preisgestaltung. Zahlen Sie für das, was Sie erstellen.",
     "faq": "FAQ",
     "faqTitle": "Häufig gestellte Fragen",
     "howItWorks": "So funktioniert es",
-    "howItWorksTitle": "In wenigen Minuten loslegen",
+    "howItWorksTitle": "Wie es funktioniert",
     "reviews": "Was unsere Nutzer sagen",
     "footer": {
-      "tagline": "Vom Assistenten unterstützte Karriereberatung für ehrgeizige Fachleute.",
+      "tagline": "Die Premium-Plattform für den Abgleich globaler Möglichkeiten. Unterstützung von Fachleuten mit Pathew Assistant.",
       "product": "Produkt",
       "company": "Unternehmen",
       "legal": "Rechtliches",
@@ -43,7 +43,110 @@
       "placements": "Erfolgreiche Vermittlungen",
       "rating": "Nutzerbewertung"
     },
-    "heroTitleEnd": " mit Präzision."
+    "heroTitleEnd": " mit Präzision.",
+    "problem": {
+      "title1": "Hören Sie auf, sich ins ",
+      "title2": "Dunkle zu bewerben",
+      "subtitle": "Sie haben Wochen mit Angeboten verbracht. Unzählige E-Mails verschickt. Monate auf generische Absagen gewartet. Das Problem ist nicht Ihre Vision – es ist die Sprache der Förderer.",
+      "b1": "Verschwenden Sie keine Zeit mehr mit unpassenden Chancen.",
+      "b2": "Meistern Sie die spezifische Sprache globaler Geldgeber.",
+      "b3": "Bewerben Sie sich 10x schneller mit erfolgserprobten Mustern."
+    },
+    "featuresSubtitle": "Leistungsstarke Tools zur Beschleunigung Ihrer Karriere.",
+    "featuresList": [
+      {
+        "title": "Globale Entdeckung",
+        "desc": "Aggregierte Chancen aus tausenden Premium-Quellen."
+      },
+      {
+        "title": "Matching-Score",
+        "desc": "Wissen Sie genau, wie gut Sie passen, bevor Sie sich bewerben."
+      },
+      {
+        "title": "Intelligente Dokumente",
+        "desc": "Automatisch erstellte Lebensläufe und Anschreiben nach Maß."
+      },
+      {
+        "title": "Datenschutz zuerst",
+        "desc": "Ihre Daten sind verschlüsselt und werden nur auf Wunsch geteilt."
+      }
+    ],
+    "howItWorksSubtitle": "Ihr Weg zu einer besseren Karriere in drei einfachen Schritten.",
+    "steps": [
+      {
+        "title": "Profil vervollständigen",
+        "desc": "Teilen Sie Ihre Geschichte und Ziele über unseren intuitiven Assistenten."
+      },
+      {
+        "title": "Matches finden",
+        "desc": "Unsere Engine durchsucht tausende Möglichkeiten für Sie."
+      },
+      {
+        "title": "Selbstbewusst bewerben",
+        "desc": "Nutzen Sie intelligent generierte Dokumente, um aufzufallen."
+      }
+    ],
+    "learnMore": "Mehr erfahren",
+    "compare": {
+      "title1": "ChatGPT hat aus dem Internet gelernt.",
+      "title2": "PATHEW hat von Gewinnern gelernt.",
+      "subtitle": "Im Gegensatz zu generischen Tools ist unser System auf über 50 Millionen Dollar an erfolgreichen Bewerbungen trainiert.",
+      "generic": "Generische Tools",
+      "g1": "Aufgeblähte, generische Entwürfe",
+      "g2": "Kein Kontext zur Historie",
+      "g3": "Halluziniert Wirkungsdaten",
+      "g4": "Standard-Internetwissen",
+      "pathew": "PATHEW Assistant",
+      "p1": "Präzises Match-Scoring",
+      "p2": "Erfolgsmuster-Training",
+      "p3": "Verifizierbares Narrativ",
+      "p4": "Für globale Standards gebaut",
+      "recommended": "EMPFEHLUNG"
+    },
+    "creditTitle": "Kreditkosten pro Service",
+    "creditSubtitle": "Kombinieren Sie jeden Service — Kredite gelten für Ihr gesamtes Konto.",
+    "trustpilot": "Sehen Sie, warum uns tausende Fachleute vertrauen",
+    "faqList": [
+      {
+        "question": "Wie gleicht der Pathew Assistant mich mit Möglichkeiten ab?",
+        "answer": "Unsere fortschrittliche Assistant-Engine analysiert Ihr Profil anhand von Tausenden von Datenpunkten in Stellenbeschreibungen, um einen präzisen Match-Score zu liefern."
+      },
+      {
+        "question": "Sind meine persönlichen Daten sicher?",
+        "answer": "Ja, wir verwenden Verschlüsselung nach Industriestandard. Ihr vollständiges Profil wird nur dann mit Personalvermittlern geteilt, wenn Sie sich explizit für eine Bewerbung entscheiden."
+      },
+      {
+        "question": "Kann ich die Plattform kostenlos nutzen?",
+        "answer": "Absolut! Unser kostenloser Plan ermöglicht es Ihnen, Matches zu erkunden und bis zu 3 Bewerbungen pro Monat einzureichen."
+      }
+    ],
+    "trustedBy": "Vertraut von Fachleuten bei",
+    "generatesUpTo": "GENERIERET BIS ZU",
+    "includedInEveryPlan": "IN JEDEM PLAN ENTHALTEN",
+    "pricingChoose": "Wählen",
+    "footerCols": {
+      "product": "Produkt",
+      "company": "Unternehmen",
+      "legal": "Rechtliches",
+      "productLinks": [
+        "Funktionen",
+        "Wie es funktioniert",
+        "Preise",
+        "API"
+      ],
+      "companyLinks": [
+        "Über uns",
+        "Karriere",
+        "Blog",
+        "Kontakt"
+      ],
+      "legalLinks": [
+        "Datenschutz",
+        "Bedingungen",
+        "Sicherheit",
+        "Cookies"
+      ]
+    }
   },
   "auth": {
     "login": "Anmelden",
@@ -196,7 +299,9 @@
     "english": "English",
     "french": "Français",
     "german": "Deutsch",
-    "spanish": "Español"
+    "spanish": "Español",
+    "credit": "Kredit",
+    "credits": "Kredite"
   },
   "wallet": {
     "title": "Brieftasche & Guthaben",
@@ -350,7 +455,25 @@
       "Aktuelle Job- & Fördermöglichkeiten ansehen",
       "Prozentualer Bereitschaftsscore pro Bewerbung",
       "Vom Assistenten generierter Vorbereitungsplan – Gutschrift gilt"
-    ]
+    ],
+    "labels": {
+      "coverLetters": "Anschreiben",
+      "cvs": "Lebensläufe",
+      "proposals": "Vorschläge",
+      "grants": "Förderanträge",
+      "rewrites": "Überarbeitungen"
+    },
+    "perLetter": "pro Brief",
+    "perCV": "pro Lebenslauf",
+    "perProposal": "pro Vorschlag",
+    "perGrant": "pro Zuschuss",
+    "perPlan": "pro Plan",
+    "perRewrite": "pro Überarbeitung (¼ des Originals nach 3 Überarbeitungen)",
+    "headers": {
+      "service": "Dienstleistung",
+      "credits": "Kredite",
+      "notes": "Hinweise"
+    }
   },
   "grantBuilder": {
     "title": "Zuschuss-Generator",

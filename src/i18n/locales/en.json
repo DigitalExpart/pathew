@@ -22,17 +22,17 @@
     "getStarted": "Get Started Free",
     "watchDemo": "Watch Demo",
     "features": "Features",
-    "featuresTitle": "Everything You Need to Land Your Dream Role",
+    "featuresTitle": "Why Professionals Choose PATHEW",
     "pricing": "Pricing",
-    "pricingTitle": "Simple, Transparent Pricing",
-    "pricingSubtitle": "Start free, upgrade when you need more power.",
+    "pricingTitle": "Pricing Plans",
+    "pricingSubtitle": "Simple, credit-based pricing. Pay for what you create.",
     "faq": "FAQ",
     "faqTitle": "Frequently Asked Questions",
     "howItWorks": "How It Works",
-    "howItWorksTitle": "Get Started in Minutes",
+    "howItWorksTitle": "How it Works",
     "reviews": "What Our Users Say",
     "footer": {
-      "tagline": "Assistant-powered career guidance for ambitious professionals.",
+      "tagline": "The premium platform for global opportunity matching. Empowering professionals with Pathew Assistant.",
       "product": "Product",
       "company": "Company",
       "legal": "Legal",
@@ -43,7 +43,115 @@
       "placements": "Successful Placements",
       "rating": "User Rating"
     },
-    "heroTitleEnd": " with Precision."
+    "heroTitleEnd": " with Precision.",
+    "problem": {
+      "title1": "Stop Applying into ",
+      "title2": "the Dark",
+      "subtitle": "You've spent weeks on proposals. You've sent countless emails. You've waited for months only to get a generic rejection with no feedback. The problem isn't your vision—it's the language of funders you haven't mastered.",
+      "b1": "Stop wasting time on mismatched opportunities.",
+      "b2": "Master the specific language of global funders.",
+      "b3": "Apply 10x faster with Assistant-trained success patterns.",
+      "oldWay": "The Old Way",
+      "o1": "❌ 40+ hours per proposal",
+      "o2": "❌ 80% rejection rate",
+      "o3": "❌ Generic ChatGPT drafts",
+      "o4": "❌ No match intelligence"
+    },
+    "featuresSubtitle": "Powerful tools designed to accelerate your career growth.",
+    "featuresList": [
+      {
+        "title": "Global Discovery",
+        "desc": "Aggregated opportunities from thousands of premium sources worldwide."
+      },
+      {
+        "title": "Assistant Match Scoring",
+        "desc": "Know exactly how well you fit before you even click apply."
+      },
+      {
+        "title": "Smart Document Generation",
+        "desc": "Auto-generate CVs and cover letters tailored to each opportunity."
+      },
+      {
+        "title": "Privacy First",
+        "desc": "Your data is encrypted and only shared when you choose to apply."
+      }
+    ],
+    "howItWorksSubtitle": "Your journey to a better career in three simple steps.",
+    "steps": [
+      {
+        "title": "Complete Your Profile",
+        "desc": "Share your story, achievements, and goals through our intuitive onboarding wizard."
+      },
+      {
+        "title": "Get Matched",
+        "desc": "Our Assistant engine scans thousands of opportunities to find your perfect fit."
+      },
+      {
+        "title": "Apply with Confidence",
+        "desc": "Use smart-generated documents to stand out and land your dream role."
+      }
+    ],
+    "learnMore": "Learn More",
+    "compare": {
+      "title1": "ChatGPT learned from the internet.",
+      "title2": "PATHEW learned from winners.",
+      "subtitle": "Unlike generic tools, our system is trained on over $50M in successful global opportunity applications.",
+      "generic": "Generic Tools",
+      "g1": "Bloated, generic drafts",
+      "g2": "No context of funder history",
+      "g3": "Hallucinates impact data",
+      "g4": "Standard internet knowledge",
+      "pathew": "PATHEW Assistant",
+      "p1": "Precision match scoring",
+      "p2": "Success-pattern training",
+      "p3": "Verifiable impact narrative",
+      "p4": "Built for global standards",
+      "recommended": "RECOMMENDED"
+    },
+    "creditTitle": "Credit Cost Per Service",
+    "creditSubtitle": "Mix and match any service — credits work across your entire account.",
+    "trustpilot": "See why thousands of professionals trust us",
+    "faqList": [
+      {
+        "question": "How does Pathew Assistant match me to opportunities?",
+        "answer": "Our advanced Assistant engine analyzes your profile against thousands of data points in opportunity descriptions to provide a precision match score."
+      },
+      {
+        "question": "Is my personal data secure?",
+        "answer": "Yes, we use industry-standard encryption. Your full profile is only shared with recruiters when you explicitly choose to apply."
+      },
+      {
+        "question": "Can I use the platform for free?",
+        "answer": "Absolutely! Our Free plan allows you to explore matches and make up to 3 applications per month."
+      }
+    ],
+    "trustedBy": "Trusted by professionals at",
+    "generatesUpTo": "GENERATES UP TO",
+    "includedInEveryPlan": "INCLUDED IN EVERY PLAN",
+    "pricingChoose": "Choose",
+    "footerCols": {
+      "product": "Product",
+      "company": "Company",
+      "legal": "Legal",
+      "productLinks": [
+        "Features",
+        "How it works",
+        "Pricing",
+        "API"
+      ],
+      "companyLinks": [
+        "About",
+        "Careers",
+        "Blog",
+        "Contact"
+      ],
+      "legalLinks": [
+        "Privacy",
+        "Terms",
+        "Security",
+        "Cookies"
+      ]
+    }
   },
   "auth": {
     "login": "Log In",
@@ -196,7 +304,9 @@
     "english": "English",
     "french": "Français",
     "german": "Deutsch",
-    "spanish": "Español"
+    "spanish": "Español",
+    "credit": "credit",
+    "credits": "credits"
   },
   "wallet": {
     "title": "Wallet & Credits",
@@ -350,7 +460,25 @@
       "View live job & grant opportunities",
       "Percentage readiness score per application",
       "Assistant-generated preparation plan – credit applies"
-    ]
+    ],
+    "labels": {
+      "coverLetters": "Cover Letters",
+      "cvs": "CVs / Resumes",
+      "proposals": "Proposals",
+      "grants": "Grant Applications",
+      "rewrites": "Rewrites"
+    },
+    "perLetter": "per letter",
+    "perCV": "per CV",
+    "perProposal": "per proposal",
+    "perGrant": "per grant",
+    "perPlan": "per plan",
+    "perRewrite": "per rewrite (¼ of original after 3 rewrites)",
+    "headers": {
+      "service": "Service",
+      "credits": "Credits",
+      "notes": "Notes"
+    }
   },
   "grantBuilder": {
     "title": "Grant Builder",
