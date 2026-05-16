@@ -63,13 +63,13 @@ export const PreparationPage: React.FC = () => {
     if (!user) return;
     setLoading(true);
     try {
-      const [{ data: opps }, { data: docs }] = await Promise.all([
-        supabase.from('opportunities').select('*').eq('user_id', user.id).order('created_at', { ascending: false }),
-        supabase.from('documents').select('*').eq('user_id', user.id).eq('type', 'Roadmap')
-      ]);
+      // 1. Fetch all roadmap documents for this user
+      const { data: docs } = await supabase
+        .from('documents')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('type', 'Roadmap');
 
-      setAllOpportunities(opps || []);
-      
       const parsedRoadmaps = (docs || []).map(doc => {
         try {
           return { dbId: doc.id, ...JSON.parse(doc.content) };
@@ -79,6 +79,26 @@ export const PreparationPage: React.FC = () => {
       }).filter(r => r !== null);
       
       setAllRoadmaps(parsedRoadmaps);
+
+      // 2. Extract unique opportunity IDs from roadmaps
+      const roadmapOppIds = parsedRoadmaps
+        .map(r => r.opportunity_id)
+        .filter(id => id !== null && id !== 'general');
+
+      // 3. Fetch opportunities that are either owned by the user OR referenced in roadmaps
+      let query = supabase.from('opportunities').select('*');
+      
+      if (roadmapOppIds.length > 0) {
+        // Construct the OR filter for owned OR referenced opportunities
+        const idList = roadmapOppIds.map(id => `"${id}"`).join(',');
+        query = query.or(`user_id.eq.${user.id},id.in.(${idList})`);
+      } else {
+        query = query.eq('user_id', user.id);
+      }
+
+      const { data: opps } = await query.order('created_at', { ascending: false });
+      setAllOpportunities(opps || []);
+      
     } catch (error) {
       console.error('Error fetching project selection:', error);
     } finally {
