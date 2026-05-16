@@ -12,7 +12,11 @@
     "logout": "Abmelden",
     "editProfile": "Profil bearbeiten",
     "darkMode": "Dunkelmodus",
-    "lightMode": "Hellmodus"
+    "lightMode": "Hellmodus",
+    "features": "Funktionen",
+    "howItWorks": "Wie es funktioniert",
+    "pricing": "Preise",
+    "contact": "Kontakt"
   },
   "landing": {
     "badge": "Unterstützt von Pathew Assistant",

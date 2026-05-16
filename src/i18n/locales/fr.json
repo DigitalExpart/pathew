@@ -12,7 +12,11 @@
     "logout": "Déconnexion",
     "editProfile": "Modifier le profil",
     "darkMode": "Mode sombre",
-    "lightMode": "Mode clair"
+    "lightMode": "Mode clair",
+    "features": "Fonctionnalités",
+    "howItWorks": "Comment ça marche",
+    "pricing": "Tarifs",
+    "contact": "Contact"
   },
   "landing": {
     "badge": "Propulsé par l'Assistant Pathew",

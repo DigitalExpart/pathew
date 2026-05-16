@@ -12,7 +12,11 @@
     "logout": "Logout",
     "editProfile": "Edit Profile",
     "darkMode": "Dark Mode",
-    "lightMode": "Light Mode"
+    "lightMode": "Light Mode",
+    "features": "Features",
+    "howItWorks": "How it works",
+    "pricing": "Pricing",
+    "contact": "Contact"
   },
   "landing": {
     "badge": "Powered by Pathew Assistant",

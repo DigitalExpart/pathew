@@ -12,7 +12,11 @@
     "logout": "Cerrar sesión",
     "editProfile": "Editar perfil",
     "darkMode": "Modo oscuro",
-    "lightMode": "Modo claro"
+    "lightMode": "Modo claro",
+    "features": "Funciones",
+    "howItWorks": "Cómo funciona",
+    "pricing": "Precios",
+    "contact": "Contacto"
   },
   "landing": {
     "badge": "Desarrollado por el Asistente Pathew",
