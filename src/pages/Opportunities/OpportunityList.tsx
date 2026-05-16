@@ -73,7 +73,6 @@ export const OpportunityList: React.FC = () => {
           description: opp.description,
           type: opp.type,
           status: 'Saved',
-          company: opp.organization_name || opp.funder_name || opp.company || '',
           organization_name: opp.organization_name,
           funder_name: opp.funder_name,
           location: opp.location,
