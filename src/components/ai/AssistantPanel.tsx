@@ -97,13 +97,11 @@ export const AssistantPanel: React.FC = () => {
 
   const handleMediaUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    const { user } = useAuth(); // Local access check
     if (!file || !user) return;
 
     setMediaUploading(true);
     try {
       const fileExt = file.name.split('.').pop();
-      const fileName = `${user.id}/${Math.random()}.${fileExt}`;
       const filePath = `${user.id}/assistant_refs/${Math.random()}.${fileExt}`;
 
       const { error: uploadError } = await supabase.storage
