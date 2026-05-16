@@ -159,7 +159,7 @@ export const ProfilePage: React.FC = () => {
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {profile?.goals?.length ? (
                   profile.goals.map((goal: string, i: number) => (
-                    <Badge key={i} variant="primary" style={{ padding: '8px 12px' }}>{t(`setup.goalsList.${goal}`, goal)}</Badge>
+                    <Badge key={i} variant="primary" style={{ padding: '8px 12px' }}>{t(`setup.goalsList.${goal}`, goal) as string}</Badge>
                   ))
                 ) : (
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{t('profile.noGoals')}</p>

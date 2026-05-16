@@ -177,7 +177,7 @@ export const Dashboard: React.FC = () => {
                 <p style={statLabelStyle}>{t('dashboard.topGoals')}</p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
                   {profile?.goals?.length ? (
-                    profile.goals.map((g: any, i: number) => <Badge key={i} variant="primary">{t(`setup.goalsList.${g}`, g)}</Badge>)
+                    profile.goals.map((g: any, i: number) => <Badge key={i} variant="primary">{t(`setup.goalsList.${g}`, g) as string}</Badge>)
                   ) : (
                     <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('dashboard.noGoals')}</p>
                   )}
