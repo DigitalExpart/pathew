@@ -380,7 +380,10 @@
     "clearConfirm": "Êtes-vous sûr de vouloir effacer tout l'historique ? Cette action est irréversible.",
     "creditCost": "1 Crédit (réduit à 0,25 après 3 réécritures)",
     "strongMatches": "Correspondances fortes",
-    "keyGaps": "Lacunes clés"
+    "keyGaps": "Lacunes clés",
+    "attachedReference": "[Référence jointe : {{name}}]",
+    "referenceUploadedNotify": "J'ai téléchargé un fichier de référence nommé \"{{name}}\". Veuillez l'utiliser comme contexte pour notre conversation.",
+    "uploadMedia": "Télécharger un média"
   },
   "common": {
     "loading": "Chargement...",

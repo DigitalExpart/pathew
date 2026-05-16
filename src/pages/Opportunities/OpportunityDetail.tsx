@@ -62,7 +62,7 @@ export const OpportunityDetail: React.FC = () => {
   const handleFitAnalysis = () => {
     if (!opp) return;
     (window as any).currentOpportunityId = opp.id;
-    openAssistant('Pathew Assistant', t('opportunities.compatibilityPrompts', { returnObjects: true }), undefined, {
+    openAssistant('Pathew Assistant', t('opportunities.compatibilityPrompts', { returnObjects: true }) as string[], undefined, {
       opportunityId: opp.id,
       opportunityDescription: opp.description,
       title: opp.title,

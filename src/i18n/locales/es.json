@@ -380,7 +380,10 @@
     "clearConfirm": "¿Seguro que quieres borrar todo el historial? Esta acción no se puede deshacer.",
     "creditCost": "1 Crédito (se reduce a 0,25 después de 3 reescrituras)",
     "strongMatches": "Coincidencias fuertes",
-    "keyGaps": "Brechas clave"
+    "keyGaps": "Brechas clave",
+    "attachedReference": "[Referencia adjunta: {{name}}]",
+    "referenceUploadedNotify": "He subido un archivo de referencia llamado \"{{name}}\". Por favor, úsalo como contexto para nuestra conversación.",
+    "uploadMedia": "Subir medios"
   },
   "common": {
     "loading": "Cargando...",

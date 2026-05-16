@@ -380,7 +380,10 @@
     "clearConfirm": "Weet je zeker dat je de volledige chatgeschiedenis wilt wissen? Dit kan niet ongedaan worden gemaakt.",
     "creditCost": "1 Credit (verlaagd naar 0,25 na 3 herschrijvingen)",
     "strongMatches": "Sterke matches",
-    "keyGaps": "Belangrijke hiaten"
+    "keyGaps": "Belangrijke hiaten",
+    "attachedReference": "[Bijgevoegde referentie: {{name}}]",
+    "referenceUploadedNotify": "Ik heb een referentiebestand geüpload met de naam \"{{name}}\". Gebruik dit als context voor ons gesprek.",
+    "uploadMedia": "Media uploaden"
   },
   "common": {
     "loading": "Laden...",

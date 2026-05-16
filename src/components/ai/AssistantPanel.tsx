@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Send, Sparkles, RefreshCw, Check, History, AlertCircle, Download, Trash2, Copy, CheckCheck } from 'lucide-react';
+import { X, Send, Sparkles, RefreshCw, Check, History, AlertCircle, Download, Trash2, Copy, CheckCheck, Plus, FileText, Loader2 } from 'lucide-react';
 import { useAssistant } from '../../context/AssistantContext';
 import { Button } from '../ui/Button';
 import { useAuth } from '../../context/AuthContext';
@@ -25,6 +25,7 @@ export const AssistantPanel: React.FC = () => {
 
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<{ type: 'user' | 'assistant', text: string, data?: any, isError?: boolean }[]>([]);
+  const [mediaUploading, setMediaUploading] = useState(false);
   const [activeTab, setActiveTab] = useState<'chat' | 'history'>('chat');
   const lastRequestIdRef = useRef<number | null>(null);
 
@@ -87,6 +88,43 @@ export const AssistantPanel: React.FC = () => {
     setIsGenerating(false);
   };
 
+  const handleMediaUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    const { user } = useAuth(); // Local access check
+    if (!file || !user) return;
+
+    setMediaUploading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.id}/${Math.random()}.${fileExt}`;
+      const filePath = `assistant_refs/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('portfolio')
+        .upload(filePath, file);
+
+      if (uploadError) throw uploadError;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('portfolio')
+        .getPublicUrl(filePath);
+
+      setMessages(prev => [...prev, { 
+        type: 'user', 
+        text: t('assistant.attachedReference', { name: file.name }),
+        data: { mediaUrl: publicUrl, fileName: file.name }
+      }]);
+      
+      // Auto-notify assistant
+      handleSend(t('assistant.referenceUploadedNotify', { name: file.name }));
+
+    } catch (error) {
+      console.error('Error uploading media:', error);
+    } finally {
+      setMediaUploading(false);
+    }
+  };
+
   const handleInsert = (fullText: string) => {
     if (!onInsert) return;
     
@@ -147,6 +185,19 @@ export const AssistantPanel: React.FC = () => {
                   {res.isError && <AlertCircle size={16} style={{ marginBottom: '8px', display: 'block' }} />}
                   
                   {res.text}
+
+                  {res.data?.mediaUrl && (
+                    <div style={mediaPreviewStyle}>
+                      {res.data.mediaUrl.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                        <img src={res.data.mediaUrl} alt="Reference" style={mediaImgStyle} />
+                      ) : (
+                        <div style={mediaFileStyle}>
+                          <FileText size={20} color="var(--accent-primary)" />
+                          <span style={{ fontSize: '0.8125rem' }}>{res.data.fileName}</span>
+                        </div>
+                      )}
+                    </div>
+                  )}
 
                   {res.data?.matchSummary && (
                     <div style={matchSummaryStyle}>
@@ -219,6 +270,24 @@ export const AssistantPanel: React.FC = () => {
               ))}
             </div>
             <div style={inputWrapperStyle}>
+              <input 
+                type="file" 
+                id="assistant-media-upload" 
+                style={{ display: 'none' }} 
+                onChange={handleMediaUpload}
+              />
+              <button 
+                onClick={() => document.getElementById('assistant-media-upload')?.click()}
+                style={{ ...sendButtonStyle, marginRight: '8px' }}
+                disabled={mediaUploading}
+                title={t('assistant.uploadMedia')}
+              >
+                {mediaUploading ? (
+                  <Loader2 size={18} className="animate-spin" color="var(--accent-primary)" />
+                ) : (
+                  <Plus size={18} color="var(--accent-primary)" />
+                )}
+              </button>
               <textarea
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
@@ -699,3 +768,24 @@ const matchListStyle: React.CSSProperties = {
   color: 'var(--text-secondary)',
 };
 
+const mediaPreviewStyle: React.CSSProperties = {
+  marginTop: '12px',
+  borderRadius: '8px',
+  overflow: 'hidden',
+  border: '1px solid var(--border-color)',
+  backgroundColor: 'rgba(0,0,0,0.2)',
+};
+
+const mediaImgStyle: React.CSSProperties = {
+  width: '100%',
+  maxHeight: '200px',
+  objectFit: 'cover',
+  display: 'block',
+};
+
+const mediaFileStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '10px',
+  padding: '12px',
+};

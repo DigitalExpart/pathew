@@ -380,7 +380,10 @@
     "clearConfirm": "Möchten Sie wirklich den gesamten Chatverlauf löschen? Dies kann nicht rückgängig gemacht werden.",
     "creditCost": "1 Credit (reduziert auf 0,25 nach 3 Überarbeitungen)",
     "strongMatches": "Starke Übereinstimmungen",
-    "keyGaps": "Wichtige Lücken"
+    "keyGaps": "Wichtige Lücken",
+    "attachedReference": "[Angehängte Referenz: {{name}}]",
+    "referenceUploadedNotify": "Ich habe eine Referenzdatei namens \"{{name}}\" hochgeladen. Bitte verwenden Sie diese als Kontext für unser Gespräch.",
+    "uploadMedia": "Medien hochladen"
   },
   "common": {
     "loading": "Laden...",
