@@ -1,7 +1,8 @@
 import React from 'react';
-import { Search, Bell, HelpCircle, ChevronDown, Coins, Sparkles, UserCircle, LogOut, LayoutDashboard, Menu } from 'lucide-react';
+import { Search, Bell, HelpCircle, ChevronDown, Coins, Sparkles, UserCircle, LogOut, LayoutDashboard, Menu, Sun, Moon } from 'lucide-react';
 import { mockUser } from '../../data/mockData';
 import { useAssistant } from '../../context/AssistantContext';
+import { useTheme } from '../../context/ThemeContext';
 
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -13,6 +14,7 @@ interface TopBarProps {
 
 export const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
   const { user, profile, signOut } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const { openAssistant } = useAssistant();
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = React.useState(false);
@@ -147,6 +149,10 @@ export const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
                 <Link to="/profile" style={dropdownItemStyle} onClick={() => setIsDropdownOpen(false)}>
                   <UserCircle size={18} /> Edit Profile
                 </Link>
+                <button onClick={toggleTheme} style={dropdownItemStyle}>
+                  {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+                  {theme === 'light' ? 'Dark Mode' : 'Light Mode'}
+                </button>
                 <div style={dividerMenuStyle} />
                 <button onClick={handleLogout} style={logoutBtnStyle}>
                   <LogOut size={18} /> Logout
