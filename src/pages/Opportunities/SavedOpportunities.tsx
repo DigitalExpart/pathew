@@ -6,9 +6,11 @@ import { Badge } from '../../components/ui/Badge';
 import { MapPin, Calendar, ChevronRight, Activity, Bookmark, Trash2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { useTranslation } from 'react-i18next';
 
 export const SavedOpportunities: React.FC = () => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [savedOpps, setSavedOpps] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const navigate = useNavigate();
@@ -53,25 +55,25 @@ export const SavedOpportunities: React.FC = () => {
   return (
     <div style={containerStyle}>
       <header style={headerStyle}>
-        <h1 style={titleStyle}>Saved Items</h1>
-        <p style={subtitleStyle}>You have {savedOpps.length} saved opportunities to review.</p>
+        <h1 style={titleStyle}>{t('savedItems.title')}</h1>
+        <p style={subtitleStyle}>{t('savedItems.subtitle', { count: savedOpps.length })}</p>
       </header>
 
       <div style={gridStyle}>
         {loading ? (
           <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>
-            <p>Loading your saved items...</p>
+            <p>{t('common.loading')}</p>
           </div>
         ) : savedOpps.length === 0 ? (
           <div style={emptyStateStyle}>
             <Bookmark size={48} color="var(--text-muted)" />
-            <h2>No saved items yet</h2>
-            <p>Explore opportunities and save the ones you're interested in.</p>
+            <h2>{t('savedItems.empty')}</h2>
+            <p>{t('savedItems.emptySubtitle')}</p>
             <Button 
               style={{ marginTop: '16px' }}
               onClick={() => navigate('/opportunities')}
             >
-              Explore Opportunities
+              {t('savedItems.explore')}
             </Button>
           </div>
         ) : (
@@ -80,7 +82,7 @@ export const SavedOpportunities: React.FC = () => {
               <div style={cardHeaderStyle}>
                 <div style={matchBadgeStyle}>
                   <span style={matchScoreStyle}>{opp.match_score || 0}%</span>
-                  <span style={matchTextStyle}>Match</span>
+                  <span style={matchTextStyle}>{t('savedItems.match')}</span>
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   <Badge variant="outline" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
@@ -121,13 +123,13 @@ export const SavedOpportunities: React.FC = () => {
                   style={{ flex: 1, gap: '4px' }}
                   onClick={() => handleRemove(opp.id)}
                 >
-                  <Trash2 size={16} /> Remove
+                  <Trash2 size={16} /> {t('savedItems.remove')}
                 </Button>
                 <Button 
                   style={{ flex: 1, gap: '4px' }}
                   onClick={() => navigate(`/opportunities/${opp.id}`)}
                 >
-                  Prepare <ChevronRight size={16} />
+                  {t('opportunities.prepare')} <ChevronRight size={16} />
                 </Button>
               </div>
             </Card>

@@ -6,9 +6,11 @@ import { User, CheckCircle2, Sparkles, Target, Briefcase, BookOpen, FileEdit, Aw
 import { Badge } from '../../components/ui/Badge';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export const ProfilePage: React.FC = () => {
   const { user, profile } = useAuth();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     full_name: '',
@@ -75,8 +77,8 @@ export const ProfilePage: React.FC = () => {
         animate={{ opacity: 1, y: 0 }}
         style={headerStyle}
       >
-        <h1 style={{ ...titleStyle, fontSize: isMobile ? '1.75rem' : '2.5rem' }}>Professional Profile</h1>
-        <p style={subtitleStyle}>Your comprehensive career summary and goals.</p>
+        <h1 style={{ ...titleStyle, fontSize: isMobile ? '1.75rem' : '2.5rem' }}>{t('profile.title')}</h1>
+        <p style={subtitleStyle}>{t('profile.subtitle')}</p>
       </motion.header>
 
       <div className="grid-responsive" style={{
@@ -103,17 +105,17 @@ export const ProfilePage: React.FC = () => {
                   )}
                 </div>
                 <div style={{ marginTop: '16px' }}>
-                  <h2 style={{ fontSize: '1.75rem', fontWeight: 700 }}>{formData.full_name || 'Anonymous User'}</h2>
+                  <h2 style={{ fontSize: '1.75rem', fontWeight: 700 }}>{formData.full_name || t('common.anonymous')}</h2>
                   <p style={{ color: 'var(--text-secondary)', marginTop: '4px' }}>{formData.email}</p>
                   <div style={{ marginTop: '16px', display: 'flex', gap: '8px', justifyContent: 'center' }}>
                     <Badge variant="primary">{profile?.subscription_plan || 'Free'} Plan</Badge>
-                    <Badge variant="outline">Verified Professional</Badge>
+                    <Badge variant="outline">{t('profile.verifiedProfessional')}</Badge>
                   </div>
                 </div>
               </div>
 
               <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '32px' }}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '16px', color: 'var(--text-primary)' }}>My Story</h3>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '16px', color: 'var(--text-primary)' }}>{t('profile.myStory')}</h3>
                 <div style={{ position: 'relative' }}>
                   <p style={{ 
                     color: 'var(--text-secondary)', 
@@ -126,7 +128,7 @@ export const ProfilePage: React.FC = () => {
                     overflow: 'hidden',
                     transition: 'all 0.3s ease'
                   }}>
-                    {formData.story || 'No bio provided yet. Use the Edit Profile to share your professional journey.'}
+                    {formData.story || t('profile.noBio')}
                   </p>
                   
                   {formData.story && formData.story.length > 250 && (
@@ -143,7 +145,7 @@ export const ProfilePage: React.FC = () => {
                         cursor: 'pointer'
                       }}
                     >
-                      {isStoryExpanded ? 'Show Less' : 'Read Full Story'}
+                      {isStoryExpanded ? t('profile.showLess') : t('profile.readMore')}
                     </button>
                   )}
                 </div>
@@ -153,32 +155,32 @@ export const ProfilePage: React.FC = () => {
 
           {/* Goals & Skills */}
           <div className="grid-responsive" style={{ gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr' }}>
-            <Card title="Career Goals" icon={Target}>
+            <Card title={t('profile.careerGoals')} icon={Target}>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {profile?.goals?.length ? (
                   profile.goals.map((goal: string, i: number) => (
                     <Badge key={i} variant="primary" style={{ padding: '8px 12px' }}>{goal}</Badge>
                   ))
                 ) : (
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>No goals set yet.</p>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{t('profile.noGoals')}</p>
                 )}
               </div>
             </Card>
-            <Card title="Core Skills" icon={Sparkles}>
+            <Card title={t('profile.coreSkills')} icon={Sparkles}>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {profile?.skills?.length ? (
                   profile.skills.map((skill: string, i: number) => (
                     <Badge key={i} variant="secondary" style={{ padding: '8px 12px' }}>{skill}</Badge>
                   ))
                 ) : (
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>No skills listed yet.</p>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{t('profile.noSkills')}</p>
                 )}
               </div>
             </Card>
           </div>
 
           {/* Experience */}
-          <Card title="Work Experience" icon={Briefcase}>
+          <Card title={t('profile.workExperience')} icon={Briefcase}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {profile?.experience?.length ? (
                 profile.experience.map((exp: any, i: number, arr: any[]) => (
@@ -195,13 +197,13 @@ export const ProfilePage: React.FC = () => {
                   </div>
                 ))
               ) : (
-                <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '20px' }}>No experience added yet.</p>
+                <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '20px' }}>{t('profile.noExperience')}</p>
               )}
             </div>
           </Card>
 
           {/* Education */}
-          <Card title="Education" icon={BookOpen}>
+          <Card title={t('profile.education')} icon={BookOpen}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {profile?.education?.length ? (
                 profile.education.map((edu: any, i: number) => (
@@ -217,7 +219,7 @@ export const ProfilePage: React.FC = () => {
                   </div>
                 ))
               ) : (
-                <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '20px' }}>No education details added yet.</p>
+                <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '20px' }}>{t('profile.noEducation')}</p>
               )}
             </div>
           </Card>
@@ -229,25 +231,25 @@ export const ProfilePage: React.FC = () => {
           transition={{ delay: 0.2 }}
           style={sidebarStyle}
         >
-          <Card title="Profile Status" glass>
+          <Card title={t('profile.profileStatus')} glass>
             <div style={strengthContainerStyle}>
               <div style={progressBarContainerStyle}>
                 <div style={{ ...progressBarFillStyle, width: `${strength}%` }}></div>
               </div>
               <p style={{ fontSize: '0.875rem', marginTop: '12px' }}>
-                Your profile is <span style={{ fontWeight: 700, color: 'var(--accent-primary)' }}>{strength}% complete</span>.
+                {t('profile.profileComplete', { percent: strength })}
               </p>
               <Button 
                 variant="primary" 
                 style={{ marginTop: '24px', width: '100%', gap: '8px' }}
                 onClick={() => navigate('/profile')}
               >
-                <FileEdit size={18} /> Edit Profile
+                <FileEdit size={18} /> {t('profile.editProfile')}
               </Button>
             </div>
           </Card>
 
-          <Card title="Achievements" icon={Award} style={{ marginTop: '20px' }}>
+          <Card title={t('profile.achievements')} icon={Award} style={{ marginTop: '20px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {profile?.achievements?.length ? (
                 profile.achievements.map((ach: string, i: number) => (
@@ -257,7 +259,7 @@ export const ProfilePage: React.FC = () => {
                   </div>
                 ))
               ) : (
-                <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>No achievements listed.</p>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{t('profile.noAchievements')}</p>
               )}
             </div>
           </Card>

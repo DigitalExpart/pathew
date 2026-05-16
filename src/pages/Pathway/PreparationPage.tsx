@@ -23,12 +23,14 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { useAssistant } from '../../context/AssistantContext';
 import { supabase } from '../../lib/supabase';
+import { useTranslation } from 'react-i18next';
 
 export const PreparationPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { user } = useAuth();
   const { openAssistant } = useAssistant();
+  const { t } = useTranslation();
   
   const planType = searchParams.get('type') || '90-day';
   const oppId = searchParams.get('oppId');
@@ -394,8 +396,8 @@ export const PreparationPage: React.FC = () => {
     return (
       <div style={containerStyle}>
         <header style={headerStyle}>
-          <h1 style={titleStyle}>Preparation Projects</h1>
-          <p style={subtitleStyle}>Active preparation roadmaps for your career opportunities.</p>
+          <h1 style={titleStyle}>{t('preparation.title')}</h1>
+          <p style={subtitleStyle}>{t('preparation.subtitle')}</p>
         </header>
 
         <div style={projectGridStyle}>
@@ -417,8 +419,8 @@ export const PreparationPage: React.FC = () => {
                     <h3 style={projectTitleStyle}>{opp.title}</h3>
                     <p style={projectCompanyStyle}>{opp.organization_name || opp.funder_name || opp.company || ''}</p>
                     <div style={projectMetaStyle}>
-                      <Badge variant="success">{roadmapProgress}% Complete</Badge>
-                      <span style={weekCountStyle}>{roadmap?.weeks?.length} Weeks</span>
+                      <Badge variant="success">{roadmapProgress}% {t('preparation.complete')}</Badge>
+                      <span style={weekCountStyle}>{roadmap?.weeks?.length} {t('preparation.weeks')}</span>
                     </div>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
@@ -442,7 +444,7 @@ export const PreparationPage: React.FC = () => {
           {/* Show roadmaps whose opportunity couldn't be fetched */}
           {orphanedRoadmaps.map(roadmap => {
             const roadmapProgress = Math.round(((roadmap.completedWeeks?.length || 0) / (roadmap.weeks?.length || 1)) * 100);
-            const displayTitle = roadmap.title?.replace('Roadmap: ', '').replace(/^\d+-day\s*/i, '').trim() || 'Preparation Plan';
+            const displayTitle = roadmap.title?.replace('Roadmap: ', '').replace(/^\d+-day\s*/i, '').trim() || t('preparation.title');
             
             return (
               <Card 
@@ -515,9 +517,9 @@ export const PreparationPage: React.FC = () => {
         {!loading && activeProjects.length === 0 && orphanedRoadmaps.length === 0 && !generalRoadmap && (
           <div style={{ textAlign: 'center', padding: '60px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-xl)' }}>
             <Zap size={48} color="var(--text-muted)" style={{ marginBottom: '16px' }} />
-            <h3>No active roadmaps</h3>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>Generate a preparation plan from any opportunity detail page to see it here.</p>
-            <Button onClick={() => navigate('/opportunities')}>Browse Opportunities</Button>
+            <h3>{t('preparation.noRoadmaps')}</h3>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>{t('preparation.noRoadmapsSubtitle')}</p>
+            <Button onClick={() => navigate('/opportunities')}>{t('preparation.browseOpportunities')}</Button>
           </div>
         )}
       </div>
@@ -528,7 +530,7 @@ export const PreparationPage: React.FC = () => {
     <div style={containerStyle}>
       <header style={headerStyle}>
         <Button variant="ghost" size="sm" onClick={() => navigate('/preparation')} style={{ marginBottom: '16px', padding: 0 }}>
-          <ArrowLeft size={16} /> Back to Projects
+          <ArrowLeft size={16} /> {t('preparation.backToProjects')}
         </Button>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
           <div>
@@ -543,7 +545,7 @@ export const PreparationPage: React.FC = () => {
           </div>
           <div style={{ textAlign: 'right' }}>
              <Badge variant="primary" style={{ marginBottom: '8px' }}>{planType.toUpperCase()} ROADMAP</Badge>
-             <h3 style={{ fontSize: '1.5rem', fontWeight: 800 }}>{progress}% Complete</h3>
+             <h3 style={{ fontSize: '1.5rem', fontWeight: 800 }}>{progress}% {t('preparation.complete')}</h3>
           </div>
         </div>
         
@@ -557,11 +559,11 @@ export const PreparationPage: React.FC = () => {
           <div style={sectionHeaderStyle}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <Layout size={20} color="var(--accent-primary)" />
-              <h2 style={sectionTitleStyle}>Weekly Roadmap</h2>
+              <h2 style={sectionTitleStyle}>{t('preparation.weeklyRoadmap')}</h2>
             </div>
             <Button variant="outline" size="sm" onClick={generateNewPlan} disabled={loading}>
               {loading ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />} 
-              Regenerate Plan
+              {t('preparation.regeneratePlan')}
             </Button>
           </div>
 
@@ -599,7 +601,7 @@ export const PreparationPage: React.FC = () => {
                       )}
                     </div>
                     <div>
-                      <h4 style={weekTitleStyle}>Week {week.number}: {week.title}</h4>
+                      <h4 style={weekTitleStyle}>{t('preparation.week')} {week.number}: {week.title}</h4>
                       <p style={{ ...weekDescStyle, color: 'var(--accent-primary)', marginBottom: '4px', fontWeight: 600 }}>
                         {(() => {
                           const startDateStr = plan.startDate || plan.created_at || new Date().toISOString();
@@ -614,22 +616,22 @@ export const PreparationPage: React.FC = () => {
                     </div>
                   </div>
                   <Badge variant={completedWeeks.includes(week.number) ? "success" : "outline"}>
-                    {completedWeeks.includes(week.number) ? "Completed" : "Pending"}
+                    {completedWeeks.includes(week.number) ? t('preparation.completed') : t('preparation.pending')}
                   </Badge>
                 </div>
               </Card>
             )) || (
               <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>
                 <Target size={48} style={{ marginBottom: '16px', opacity: 0.3 }} />
-                <p>No roadmap generated yet for this project.</p>
-                <Button style={{ marginTop: '16px' }} onClick={generateNewPlan}>Generate Roadmap</Button>
+                <p>{t('preparation.noRoadmaps')}</p>
+                <Button style={{ marginTop: '16px' }} onClick={generateNewPlan}>{t('preparation.generateRoadmap')}</Button>
               </div>
             )}
           </div>
         </section>
 
         <section style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <Card title="Plan Calendar" icon={CalendarIcon}>
+          <Card title={t('preparation.planCalendar')} icon={CalendarIcon}>
             <div style={calendarHeaderStyle}>
               <button style={calNavButtonStyle} onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)))}>
                 <ChevronLeft size={16} />
@@ -682,13 +684,13 @@ export const PreparationPage: React.FC = () => {
             </div>
           </Card>
 
-          <Card title="Preparation Stats" icon={Trophy}>
+          <Card title={t('preparation.preparationStats')} icon={Trophy}>
             <div style={statsListStyle}>
                <div style={statItemStyle}>
                   <Target size={18} color="var(--accent-primary)" />
                   <div style={{ flex: 1 }}>
-                     <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Current Streak</p>
-                     <p style={{ fontWeight: 700 }}>{completedWeeks.length} Weeks</p>
+                     <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('preparation.currentStreak')}</p>
+                     <p style={{ fontWeight: 700 }}>{completedWeeks.length} {t('preparation.weeks')}</p>
                   </div>
                </div>
                <div style={statItemStyle}>

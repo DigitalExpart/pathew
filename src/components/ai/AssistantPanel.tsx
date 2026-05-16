@@ -5,8 +5,10 @@ import { Button } from '../ui/Button';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { usePathewAssistant } from '../../hooks/usePathewAssistant';
+import { useTranslation } from 'react-i18next';
 
 export const AssistantPanel: React.FC = () => {
+  const { t } = useTranslation();
   const { 
     isAssistantPanelOpen, 
     setAssistantPanelOpen, 
@@ -111,7 +113,7 @@ export const AssistantPanel: React.FC = () => {
           <div style={iconBoxStyle}>
             <Sparkles size={18} color="var(--accent-primary)" />
           </div>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 700 }}>PATHEW Assistant</h2>
+          <h2 style={{ fontSize: '1.25rem', fontWeight: 700 }}>{t('assistant.title')}</h2>
         </div>
         <button onClick={() => setAssistantPanelOpen(false)} style={closeButtonStyle}>
           <X size={20} />
@@ -123,13 +125,13 @@ export const AssistantPanel: React.FC = () => {
           onClick={() => setActiveTab('chat')}
           style={{ ...tabButtonStyle, borderBottomColor: activeTab === 'chat' ? 'var(--accent-primary)' : 'transparent' }}
         >
-          Assistant
+          {t('assistant.tabAssistant')}
         </button>
         <button 
           onClick={() => setActiveTab('history')}
           style={{ ...tabButtonStyle, borderBottomColor: activeTab === 'history' ? 'var(--accent-primary)' : 'transparent' }}
         >
-          <History size={14} style={{ marginRight: '6px' }} /> History
+          <History size={14} style={{ marginRight: '6px' }} /> {t('assistant.tabHistory')}
         </button>
       </div>
 
@@ -179,7 +181,7 @@ export const AssistantPanel: React.FC = () => {
                         style={smallBtnStyle}
                         onClick={() => handleInsert(res.text)}
                       >
-                        <Check size={14} /> Insert
+                        <Check size={14} /> {t('assistant.insert')}
                       </Button>
                       <Button 
                         variant="outline" 
@@ -187,10 +189,10 @@ export const AssistantPanel: React.FC = () => {
                         style={smallBtnStyle}
                         onClick={() => handleDownload(res.text)}
                       >
-                        <Download size={14} /> Download
+                        <Download size={14} /> {t('assistant.download')}
                       </Button>
                       <Button variant="outline" size="sm" style={smallBtnStyle} onClick={() => handleSend(messages[i-1].text)}>
-                        <RefreshCw size={14} /> Regenerate
+                        <RefreshCw size={14} /> {t('assistant.regenerate')}
                       </Button>
                     </div>
                   )}
@@ -207,7 +209,7 @@ export const AssistantPanel: React.FC = () => {
           <div style={footerStyle}>
             <div style={creditWarningStyle}>
               <Sparkles size={12} color="var(--accent-primary)" />
-              <span>1 Credit (drops to 0.25 after 3 rewrites)</span>
+              <span>{t('assistant.creditCost')}</span>
             </div>
             <div style={chipsContainerStyle}>
               {suggestedPrompts.map((prompt, i) => (
@@ -221,7 +223,7 @@ export const AssistantPanel: React.FC = () => {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleSend())}
-                placeholder="Ask anything..."
+                placeholder={t('assistant.placeholder')}
                 style={textareaStyle}
               />
               <button onClick={() => handleSend()} style={sendButtonStyle} disabled={isGenerating}>
@@ -237,6 +239,7 @@ export const AssistantPanel: React.FC = () => {
 
 const HistoryTab = ({ onInsert }: { onInsert: (text: string) => void }) => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [history, setHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -329,7 +332,7 @@ const HistoryTab = ({ onInsert }: { onInsert: (text: string) => void }) => {
           backgroundColor: 'var(--bg-secondary)'
         }}>
           <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
-            {history.length} saved response{history.length !== 1 ? 's' : ''}
+            {history.length === 1 ? t('assistant.savedResponses', { count: 1 }) : t('assistant.savedResponsesPlural', { count: history.length })}
           </span>
           <button
             onClick={handleClearAll}
@@ -351,7 +354,7 @@ const HistoryTab = ({ onInsert }: { onInsert: (text: string) => void }) => {
             }}
           >
             <Trash2 size={12} />
-            {clearingAll ? 'Clearing...' : 'Clear All'}
+            {clearingAll ? t('common.loading') : t('assistant.clearAll')}
           </button>
         </div>
       )}
@@ -361,7 +364,7 @@ const HistoryTab = ({ onInsert }: { onInsert: (text: string) => void }) => {
         {history.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
             <History size={32} style={{ marginBottom: '12px', opacity: 0.4 }} />
-            <p>No generation history yet.</p>
+            <p>{t('assistant.noHistory')}</p>
           </div>
         ) : (
           history.map((item) => (
@@ -372,10 +375,9 @@ const HistoryTab = ({ onInsert }: { onInsert: (text: string) => void }) => {
                   {new Date(item.created_at).toLocaleDateString()} • {item.session?.task || 'General'}
                 </span>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
-                  {/* Copy button */}
                   <button
                     onClick={() => handleCopy(item.content, item.id)}
-                    title="Copy to clipboard"
+                    title={t('assistant.copy')}
                     style={iconActionBtnStyle}
                   >
                     {copiedId === item.id
@@ -386,12 +388,11 @@ const HistoryTab = ({ onInsert }: { onInsert: (text: string) => void }) => {
                   <button
                     onClick={() => handleDelete(item.id)}
                     disabled={deletingId === item.id}
-                    title="Delete this response"
+                    title={t('assistant.deleteResponse')}
                     style={{ ...iconActionBtnStyle, opacity: deletingId === item.id ? 0.5 : 1 }}
                   >
                     <Trash2 size={14} color="#ef4444" />
                   </button>
-                  {/* Insert button */}
                   <button
                     style={{
                       ...smallBtnStyle,
@@ -406,7 +407,7 @@ const HistoryTab = ({ onInsert }: { onInsert: (text: string) => void }) => {
                     }}
                     onClick={() => onInsert(item.content)}
                   >
-                    Insert
+                    {t('assistant.insert')}
                   </button>
                 </div>
               </div>

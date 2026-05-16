@@ -7,6 +7,7 @@ import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap, Plus, Star } fro
 import { supabase } from '../../lib/supabase';
 import { Link } from 'react-router-dom';
 import { StripeCheckoutModal } from '../../components/payment/StripeCheckoutModal';
+import { useTranslation } from 'react-i18next';
 import logo from '../../assets/images/logo.png';
 
 const features = [
@@ -17,6 +18,7 @@ const features = [
 ];
 
 export const LandingPage: React.FC = () => {
+  const { t } = useTranslation();
   const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
   const [isTablet, setIsTablet] = React.useState(window.innerWidth <= 1024 && window.innerWidth > 768);
 
@@ -71,21 +73,20 @@ export const LandingPage: React.FC = () => {
           style={heroContentStyle}
         >
           <div style={{ display: 'flex', justifyContent: isSmallDevice ? 'center' : 'flex-start' }}>
-            <Badge text="Powered by Pathew Assistant" />
+            <Badge text={t('landing.badge')} />
           </div>
           <h1 style={{
             ...heroTitleStyle,
             fontSize: isMobile ? '2.25rem' : '5rem',
             lineHeight: isMobile ? 1.3 : 1.2,
           }}>
-            Apply for Your Next <span style={{ color: 'var(--accent-primary)' }}>Opportunity</span> with Precision.
+            {t('landing.heroTitle')} <span style={{ color: 'var(--accent-primary)' }}>{t('landing.heroTitleHighlight')}</span>
           </h1>
           <p style={{
             ...heroSubtitleStyle,
             margin: isSmallDevice ? '0 auto 48px' : '0 0 48px 0',
           }}>
-            The ultimate platform for professionals to find, match, and apply for high-impact opportunities worldwide. 
-            Stop searching, start matching with Pathew Assistant.
+            {t('landing.heroSubtitle')}
           </p>
           <div style={{
             ...heroActionsStyle,
@@ -95,12 +96,12 @@ export const LandingPage: React.FC = () => {
             <Link to="/signup">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Button size="lg" style={{ gap: '12px', padding: '16px 32px', width: '100%' }}>
-                  Create Your Profile <ArrowRight size={20} />
+                  {t('landing.getStarted')} <ArrowRight size={20} />
                 </Button>
               </motion.div>
             </Link>
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button size="lg" variant="outline" style={{ padding: '16px 32px', width: '100%' }}>Watch Demo</Button>
+              <Button size="lg" variant="outline" style={{ padding: '16px 32px', width: '100%' }}>{t('landing.watchDemo')}</Button>
             </motion.div>
           </div>
 
@@ -135,9 +136,9 @@ export const LandingPage: React.FC = () => {
               gap: isMobile ? '24px' : '48px',
             }}
           >
-            <StatItem count="50k+" label="Opportunities" />
-            <StatItem count="98%" label="Match Accuracy" />
-            <StatItem count="120+" label="Countries" />
+            <StatItem count="50k+" label={t('landing.stats.opportunities') || "Opportunities"} />
+            <StatItem count="98%" label={t('landing.stats.matchAccuracy') || "Match Accuracy"} />
+            <StatItem count="120+" label={t('landing.stats.countries') || "Countries"} />
           </motion.div>
         </motion.div>
         
