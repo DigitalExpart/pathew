@@ -5,8 +5,10 @@ import { Mail, Lock, Globe, ArrowLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
 import { supabase } from '../../lib/supabase';
+import { useTranslation } from 'react-i18next';
 
 export const LoginPage: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
@@ -36,7 +38,7 @@ export const LoginPage: React.FC = () => {
   return (
     <div style={authWrapperStyle}>
       <Link to="/" style={backButtonStyle}>
-        <ArrowLeft size={20} /> Back to Home
+        <ArrowLeft size={20} /> {t('common.backToHome')}
       </Link>
       
       <div style={authContentStyle}>
@@ -45,14 +47,14 @@ export const LoginPage: React.FC = () => {
         </Link>
 
         <Card style={{ padding: '40px' }}>
-          <h2 style={{ marginBottom: '8px' }}>Welcome back</h2>
+          <h2 style={{ marginBottom: '8px' }}>{t('auth.welcomeBack')}</h2>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>
-            Enter your credentials to access your account.
+            {t('auth.loginDesc')}
           </p>
 
           <form onSubmit={handleLogin} style={formStyle}>
             <div style={inputGroupStyle}>
-              <label style={labelStyle}>Email Address</label>
+              <label style={labelStyle}>{t('auth.email')}</label>
               <div style={inputWrapperStyle}>
                 <Mail size={18} color="var(--text-muted)" />
                 <input 
@@ -70,8 +72,8 @@ export const LoginPage: React.FC = () => {
 
             <div style={inputGroupStyle}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <label style={labelStyle}>Password</label>
-                <a href="#" style={forgotLinkStyle}>Forgot password?</a>
+                <label style={labelStyle}>{t('auth.password')}</label>
+                <a href="#" style={forgotLinkStyle}>{t('auth.forgotPassword')}</a>
               </div>
               <div style={inputWrapperStyle}>
                 <Lock size={18} color="var(--text-muted)" />
@@ -87,13 +89,13 @@ export const LoginPage: React.FC = () => {
             </div>
 
             <Button type="submit" style={{ width: '100%', marginTop: '12px' }} disabled={loading}>
-              {loading ? 'Signing in...' : 'Sign In'}
+              {loading ? t('auth.signingIn') : t('auth.signIn')}
             </Button>
           </form>
 
           <div style={dividerWrapperStyle}>
             <div style={lineStyle}></div>
-            <span style={dividerTextStyle}>Or continue with</span>
+            <span style={dividerTextStyle}>{t('auth.orContinueWith')}</span>
             <div style={lineStyle}></div>
           </div>
 
@@ -110,7 +112,7 @@ export const LoginPage: React.FC = () => {
           </div>
 
           <p style={footerTextStyle}>
-            Don't have an account? <Link to="/signup" style={linkStyle}>Create account</Link>
+            {t('auth.noAccount')} <Link to="/signup" style={linkStyle}>{t('auth.createAccount')}</Link>
           </p>
         </Card>
       </div>
@@ -120,6 +122,7 @@ export const LoginPage: React.FC = () => {
 
 export const SignUpPage: React.FC = () => {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [isSubmitted, setIsSubmitted] = React.useState(false);
   const [formData, setFormData] = React.useState({
     fullName: '',
@@ -187,16 +190,16 @@ export const SignUpPage: React.FC = () => {
             <div style={verifyIconStyle}>
               <Mail size={48} color="var(--accent-primary)" />
             </div>
-            <h2 style={{ marginBottom: '16px' }}>Verify your email</h2>
+            <h2 style={{ marginBottom: '16px' }}>{t('auth.verifyEmail')}</h2>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: 1.6 }}>
-              We've sent a verification link to <strong style={{ color: 'var(--text-primary)' }}>{formData.email}</strong>. 
-              Please click the link to activate your account.
+              {t('auth.verifyEmailDesc')} <strong style={{ color: 'var(--text-primary)' }}>{formData.email}</strong>. 
+              {t('auth.verifyEmailSubDesc')}
             </p>
             <Button onClick={() => navigate('/login')} style={{ width: '100%' }}>
-              Back to Login
+              {t('auth.backToLogin')}
             </Button>
             <p style={{ marginTop: '24px', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-              Didn't receive the email? <a href="#" style={linkStyle}>Resend link</a>
+              {t('auth.didntReceiveEmail')} <a href="#" style={linkStyle}>{t('auth.resendLink')}</a>
             </p>
           </Card>
         </div>
@@ -207,7 +210,7 @@ export const SignUpPage: React.FC = () => {
   return (
     <div style={authWrapperStyle}>
       <Link to="/" style={backButtonStyle}>
-        <ArrowLeft size={20} /> Back to Home
+        <ArrowLeft size={20} /> {t('common.backToHome')}
       </Link>
       
       <div style={authContentStyle}>
@@ -216,14 +219,14 @@ export const SignUpPage: React.FC = () => {
         </Link>
 
         <Card style={{ padding: '40px' }}>
-          <h2 style={{ marginBottom: '8px' }}>Create an account</h2>
+          <h2 style={{ marginBottom: '8px' }}>{t('auth.createAccountTitle')}</h2>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>
-            Start your journey with Pathew Assistant.
+            {t('auth.signUpDesc')}
           </p>
 
           <form onSubmit={handleSignUp} style={formStyle}>
             <div style={inputGroupStyle}>
-              <label style={labelStyle}>Full Name</label>
+              <label style={labelStyle}>{t('auth.fullName')}</label>
               <input 
                 type="text" 
                 placeholder="First and last name" 
@@ -235,7 +238,7 @@ export const SignUpPage: React.FC = () => {
             </div>
 
             <div style={inputGroupStyle}>
-              <label style={labelStyle}>Email Address</label>
+              <label style={labelStyle}>{t('auth.email')}</label>
               <input 
                 type="email" 
                 placeholder="name@company.com" 
@@ -247,7 +250,7 @@ export const SignUpPage: React.FC = () => {
             </div>
 
             <div style={inputGroupStyle}>
-              <label style={labelStyle}>Password</label>
+              <label style={labelStyle}>{t('auth.password')}</label>
               <input 
                 type="password" 
                 placeholder="Min. 8 characters" 
@@ -256,12 +259,12 @@ export const SignUpPage: React.FC = () => {
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
                 required 
               />
-              <p style={helperTextStyle}>Must contain at least 8 characters, one uppercase and one number.</p>
+              <p style={helperTextStyle}>{t('auth.passwordHint')}</p>
               {errors.password && <p style={errorTextStyle}>{errors.password}</p>}
             </div>
 
             <div style={inputGroupStyle}>
-              <label style={labelStyle}>Confirm Password</label>
+              <label style={labelStyle}>{t('auth.confirmPassword')}</label>
               <input 
                 type="password" 
                 placeholder="Repeat password" 
@@ -282,7 +285,7 @@ export const SignUpPage: React.FC = () => {
                   onChange={(e) => setFormData({...formData, marketingConsent: e.target.checked})}
                 />
                 <label htmlFor="marketing" style={checkboxLabelStyle}>
-                  I want to receive product updates and opportunity alerts
+                  {t('auth.marketingConsent')}
                 </label>
               </div>
 
@@ -295,7 +298,7 @@ export const SignUpPage: React.FC = () => {
                   required
                 />
                 <label htmlFor="terms" style={checkboxLabelStyle}>
-                  I agree to the <Link to="/terms" style={linkStyle}>Terms & Conditions</Link>
+                  {t('auth.agreeTo')} <Link to="/terms" style={linkStyle}>{t('auth.terms')}</Link>
                 </label>
               </div>
               {errors.terms && <p style={errorTextStyle}>{errors.terms}</p>}
@@ -309,7 +312,7 @@ export const SignUpPage: React.FC = () => {
                   required
                 />
                 <label htmlFor="privacy" style={checkboxLabelStyle}>
-                  I agree to the <Link to="/privacy-policy" style={linkStyle}>Privacy Policy</Link>
+                  {t('auth.agreeTo')} <Link to="/privacy-policy" style={linkStyle}>{t('auth.privacy')}</Link>
                 </label>
               </div>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: '28px' }}>
@@ -321,12 +324,12 @@ export const SignUpPage: React.FC = () => {
             {authError && <p style={errorTextStyle}>{authError}</p>}
 
             <Button type="submit" style={{ width: '100%', marginTop: '12px' }} disabled={loading}>
-              {loading ? 'Creating account...' : 'Create Account'}
+              {loading ? t('auth.creatingAccount') : t('auth.createAccountBtn')}
             </Button>
           </form>
 
           <p style={footerTextStyle}>
-            Already have an account? <Link to="/login" style={linkStyle}>Log in</Link>
+            {t('auth.hasAccount')} <Link to="/login" style={linkStyle}>{t('auth.login')}</Link>
           </p>
         </Card>
       </div>

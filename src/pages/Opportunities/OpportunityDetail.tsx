@@ -23,12 +23,14 @@ import { useAssistant } from '../../context/AssistantContext';
 import { Sparkles } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
+import { useTranslation } from 'react-i18next';
 
 export const OpportunityDetail: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user, profile } = useAuth();
   const { openAssistant } = useAssistant();
+  const { t } = useTranslation();
   
   const [opp, setOpp] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
@@ -129,18 +131,18 @@ export const OpportunityDetail: React.FC = () => {
   return (
     <div style={containerStyle}>
       <Link to={opp?.type === 'job' ? "/jobs" : "/opportunities"} style={backLinkStyle}>
-        <ArrowLeft size={18} /> Back to {opp?.type === 'job' ? 'Jobs' : 'Opportunities'}
+        <ArrowLeft size={18} /> {t('opportunities.backToOpportunities')}
       </Link>
 
       {loading && (
         <div style={{ textAlign: 'center', padding: '100px' }}>
-          <p>Loading details...</p>
+          <p>{t('common.loading')}</p>
         </div>
       )}
 
       {!loading && !opp && (
         <div style={{ textAlign: 'center', padding: '100px' }}>
-          <p>Opportunity not found.</p>
+          <p>{t('opportunities.notFound')}</p>
         </div>
       )}
 
@@ -161,14 +163,14 @@ export const OpportunityDetail: React.FC = () => {
             onClick={handleSave}
             disabled={saving}
           >
-            {saving ? 'Saving...' : 'Save'}
+            {saving ? t('common.saving') : t('common.save')}
           </Button>
           <Button 
             style={{ gap: '8px' }}
             onClick={handleApply}
             disabled={applying}
           >
-            {applying ? 'Processing...' : `Apply on ${opp?.source_name || 'Original Site'}`} <ExternalLink size={16} />
+            {applying ? t('common.loading') : `${t('opportunities.apply')} on ${opp?.source_name || 'Original Site'}`} <ExternalLink size={16} />
           </Button>
         </div>
       </div>
@@ -176,10 +178,10 @@ export const OpportunityDetail: React.FC = () => {
       <div style={layoutGridStyle}>
         <div style={contentColStyle}>
           <Card style={{ marginBottom: '24px' }}>
-            <h2 style={sectionTitleStyle}>Description</h2>
+            <h2 style={sectionTitleStyle}>{t('opportunities.description')}</h2>
             <p style={descriptionStyle}>{opp.description}</p>
             
-            <h2 style={{ ...sectionTitleStyle, marginTop: '32px' }}>Requirement Comparison</h2>
+            <h2 style={{ ...sectionTitleStyle, marginTop: '32px' }}>{t('opportunities.requirementComparison')}</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
               {(opp.requirements || []).map((req: string, i: number) => {
                 const searchReq = req?.toLowerCase() || '';
@@ -209,15 +211,15 @@ export const OpportunityDetail: React.FC = () => {
                         {req}
                       </span>
                     </div>
-                    {!hasSkill && <Badge variant="outline" style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)', fontSize: '0.7rem' }}>Skill Gap</Badge>}
+                    {!hasSkill && <Badge variant="outline" style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)', fontSize: '0.7rem' }}>{t('opportunities.skillGap')}</Badge>}
                   </div>
                 );
               })}
             </div>
 
-            <Card title="Get Preparation Plan" icon={Target} style={{ backgroundColor: 'rgba(245, 158, 11, 0.03)', borderColor: 'var(--accent-glow)', marginTop: '32px' }}>
+            <Card title={t('opportunities.getPreparationPlan')} icon={Target} style={{ backgroundColor: 'rgba(245, 158, 11, 0.03)', borderColor: 'var(--accent-glow)', marginTop: '32px' }}>
               <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>
-                Based on the comparison above, our Assistant can generate a roadmap to help you bridge your identified gaps.
+                {t('opportunities.preparationPlanDesc')}
               </p>
               <div style={{ 
                 display: 'flex', 
@@ -244,27 +246,27 @@ export const OpportunityDetail: React.FC = () => {
             </Card>
           </Card>
 
-          <Card title="Prepare Your Application">
+          <Card title={t('opportunities.prepareApplication')}>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
-              Generate tailored documents specifically for this role based on your profile and the requirements above.
+              {t('opportunities.prepareApplicationDesc')}
             </p>
             <div style={docGenGridStyle}>
               <DocGenCard 
                 icon={FileText} 
-                title="Tailored CV" 
-                desc="Optimize your experience for this role." 
+                title={t('builders.cv.title')}
+                desc={t('builders.cv.desc')}
                 path="/cv-builder"
               />
               <DocGenCard 
                 icon={FileEdit} 
-                title="Cover Letter" 
-                desc="Write a compelling narrative." 
+                title={t('builders.coverLetter.title')}
+                desc={t('builders.coverLetter.desc')}
                 path="/cover-letter"
               />
               <DocGenCard 
                 icon={Send} 
-                title="Proposal" 
-                desc="Structure your pitch perfectly." 
+                title={t('builders.proposal.title')}
+                desc={t('builders.proposal.desc')}
                 path="/proposal"
               />
             </div>
@@ -273,9 +275,9 @@ export const OpportunityDetail: React.FC = () => {
 
         <div style={sidebarColStyle}>
           <Card style={{ marginBottom: '24px', textAlign: 'center' }}>
-            <h3 style={matchScoreTitleStyle}>Assistant Analysis</h3>
+            <h3 style={matchScoreTitleStyle}>{t('assistant.title')}</h3>
             <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '12px' }}>
-              Get a detailed analysis of your fit for this opportunity.
+              {t('opportunities.analysisDesc')}
             </p>
             
             <Button 
@@ -285,18 +287,18 @@ export const OpportunityDetail: React.FC = () => {
               onClick={handleFitAnalysis}
             >
               <Sparkles size={14} />
-              Analyze Fit
+              {t('opportunities.analyzeFit')}
             </Button>
           </Card>
 
-          <Card title="At a Glance">
+          <Card title={t('opportunities.atAGlance')}>
             <div style={infoGridStyle}>
-              <InfoItem icon={MapPin} label="Location" value={opp.location || 'Remote / Various'} />
-              <InfoItem icon={Calendar} label="Deadline" value={opp.deadline || 'No deadline'} />
-              <InfoItem icon={Globe} label="Type" value={opp.type} />
-              {opp.salary && <InfoItem icon={Briefcase} label="Salary" value={opp.salary} />}
-              {opp.amount && <InfoItem icon={Gift} label="Funding" value={opp.amount} />}
-              {opp.work_mode && <InfoItem icon={Target} label="Mode" value={opp.work_mode} />}
+              <InfoItem icon={MapPin} label={t('opportunities.location')} value={opp.location || 'Remote / Various'} />
+              <InfoItem icon={Calendar} label={t('opportunities.deadline')} value={opp.deadline || 'No deadline'} />
+              <InfoItem icon={Globe} label={t('opportunities.type')} value={opp.type} />
+              {opp.salary && <InfoItem icon={Briefcase} label={t('opportunities.salary')} value={opp.salary} />}
+              {opp.amount && <InfoItem icon={Gift} label={t('opportunities.funding')} value={opp.amount} />}
+              {opp.work_mode && <InfoItem icon={Target} label={t('opportunities.mode')} value={opp.work_mode} />}
             </div>
           </Card>
 
@@ -304,10 +306,10 @@ export const OpportunityDetail: React.FC = () => {
             <Card style={{ marginTop: '24px', borderColor: 'rgba(239, 68, 68, 0.2)', backgroundColor: 'rgba(239, 68, 68, 0.02)' }}>
               <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '12px' }}>
                 <AlertCircle size={20} color="#ef4444" />
-                <h3 style={{ fontSize: '1rem', color: '#ef4444', fontWeight: 700 }}>Priority Gaps</h3>
+                <h3 style={{ fontSize: '1rem', color: '#ef4444', fontWeight: 700 }}>{t('opportunities.priorityGaps')}</h3>
               </div>
               <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '12px' }}>
-                Our Assistant suggests focusing on these areas first:
+                {t('opportunities.priorityGapsDesc')}
               </p>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {(opp.missingRequirements || []).map((req: any, i: number) => (
@@ -323,11 +325,11 @@ export const OpportunityDetail: React.FC = () => {
         <div style={modalOverlayStyle}>
           <Card style={modalContentStyle}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h3 style={{ fontSize: '1.25rem' }}>Preparation Plan</h3>
+              <h3 style={{ fontSize: '1.25rem' }}>{t('opportunities.preparationPlan')}</h3>
               <Button variant="ghost" size="sm" onClick={() => setIsModalOpen(false)}>✕</Button>
             </div>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
-              Select a duration for your tailored preparation plan to bridge the identified gaps.
+              {t('opportunities.preparationPlanSelectDesc')}
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               {['Quick', '90-day', '180-day', '365-day'].map(duration => (
