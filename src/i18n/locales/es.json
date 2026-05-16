@@ -154,7 +154,8 @@
         "Cookies"
       ]
     },
-    "pricingMore": "¿Necesitas más? Los usuarios pueden recargar sus créditos en cualquier momento."
+    "pricingMore": "¿Necesitas más? Los usuarios pueden recargar sus créditos en cualquier momento.",
+    "faqSubtitle": "Todo lo que necesitas saber sobre el Asistente de Pathew."
   },
   "auth": {
     "login": "Iniciar sesión",

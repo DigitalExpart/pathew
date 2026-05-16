@@ -498,7 +498,7 @@ export const LandingPage: React.FC = () => {
           style={sectionHeaderStyle}
         >
           <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>{t('landing.faqTitle')}</h2>
-          <p style={sectionSubtitleStyle}>{t('landing.faqSubtitle', 'Everything you need to know about Pathew Assistant.')}</p>
+          <p style={sectionSubtitleStyle}>{t('landing.faqSubtitle')}</p>
         </motion.div>
         
         <div style={faqContainerStyle}>

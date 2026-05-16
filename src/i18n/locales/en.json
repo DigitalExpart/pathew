@@ -159,7 +159,8 @@
         "Cookies"
       ]
     },
-    "pricingMore": "Need more? Users can top up their credits at any time."
+    "pricingMore": "Need more? Users can top up their credits at any time.",
+    "faqSubtitle": "Everything you need to know about Pathew Assistant."
   },
   "auth": {
     "login": "Log In",
