@@ -196,5 +196,173 @@
     "french": "Français",
     "german": "Deutsch",
     "spanish": "Español"
+  },
+  "wallet": {
+    "title": "Portefeuille et Crédits",
+    "subtitle": "Gérez vos crédits et consultez l'historique des transactions.",
+    "availableBalance": "Solde disponible",
+    "creditsReady": "Crédits prêts pour votre prochaine candidature",
+    "upgradePlan": "Changer de forfait",
+    "recentTransactions": "Transactions récentes",
+    "noTransactions": "Aucune transaction pour le moment."
+  },
+  "builders": {
+    "editingMode": "Mode d'édition",
+    "livePreview": "Aperçu en direct",
+    "cv": {
+      "title": "CV sur mesure",
+      "desc": "Optimisez votre expérience pour ce rôle."
+    },
+    "coverLetter": {
+      "title": "Lettre de motivation",
+      "desc": "Rédigez un récit convaincant."
+    },
+    "proposal": {
+      "title": "Proposition",
+      "desc": "Structurez parfaitement votre argumentaire."
+    }
+  },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Gérez votre compte PATHEW et vos préférences.",
+    "tabs": {
+      "notifications": "Notifications",
+      "security": "Sécurité",
+      "billing": "Facturation",
+      "privacy": "Confidentialité et Données",
+      "preferences": "Préférences",
+      "account": "Suppression de compte"
+    },
+    "notifications": {
+      "title": "Préférences de notification",
+      "email": "Notifications par e-mail",
+      "emailDesc": "Recevez des mises à jour sur les nouveaux matchs et examens de documents.",
+      "push": "Notifications Push",
+      "pushDesc": "Obtenez des alertes instantanées sur votre appareil mobile et de bureau.",
+      "newsletter": "Newsletter",
+      "newsletterDesc": "Restez informé avec nos conseils hebdomadaires."
+    },
+    "security": {
+      "title": "Sécurité et Confidentialité",
+      "currentPassword": "Mot de passe actuel",
+      "newPassword": "Nouveau mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "updateSecurity": "Mettre à jour la sécurité",
+      "twoFactor": "Authentification à deux facteurs",
+      "twoFactorDesc": "Sécurisez votre compte avec une couche supplémentaire.",
+      "enable": "Activer"
+    },
+    "assistant": {
+      "tone": "Ton de voix par défaut",
+      "language": "Langue préférée",
+      "autoSave": "Sauvegarde automatique de l'historique",
+      "autoSaveDesc": "Enregistrez automatiquement tout le contenu généré."
+    },
+    "billing": {
+      "title": "Facturation et Abonnement",
+      "currentPlan": "Forfait actuel",
+      "nextRenewal": "Prochain renouvellement:",
+      "changePlan": "Changer de forfait",
+      "paymentMethod": "Mode de paiement",
+      "noPaymentMethod": "Aucun mode de paiement",
+      "addPaymentMethod": "Ajoutez un mode de paiement pour vous abonner",
+      "billingHistory": "Historique de facturation",
+      "date": "Date",
+      "invoice": "Facture",
+      "amount": "Montant",
+      "status": "Statut",
+      "action": "Action",
+      "download": "Télécharger",
+      "noHistory": "Aucun historique de facturation trouvé"
+    },
+    "privacy": {
+      "title": "Confidentialité et Données",
+      "dataExport": "Exportation de données",
+      "dataExportDesc": "Téléchargez une copie de toutes vos données personnelles.",
+      "exportZip": "Exporter les données (ZIP)",
+      "tracking": "Suivi et Analyse",
+      "trackingDesc": "Autorisez-nous à collecter des données d'utilisation anonymes.",
+      "analytics": "Suivi analytique",
+      "analyticsDesc": "Partager des métriques d'utilisation anonymes."
+    },
+    "preferences": {
+      "title": "Consentement et Préférences",
+      "desc": "Gérez comment nous communiquons avec vous.",
+      "opportunityAlerts": "Alertes d'opportunités hebdomadaires",
+      "opportunityAlertsDesc": "Recevez des matchs personnalisés dans votre boîte de réception.",
+      "productUpdates": "Mises à jour du produit",
+      "productUpdatesDesc": "Restez informé des nouvelles fonctionnalités.",
+      "refreshState": "Rafraîchir l'état"
+    },
+    "account": {
+      "title": "Suppression de compte",
+      "warning": "Avertissement : Cette action est permanente.",
+      "warningDesc": "Toutes vos données seront définitivement effacées.",
+      "contactSupport": "Si vous rencontrez des problèmes, vous pouvez contacter le support.",
+      "requestDeletion": "Demander la suppression du compte",
+      "areYouSure": "Êtes-vous absolument sûr ? Cela ne peut pas être annulé.",
+      "confirmDeletion": "Confirmer la suppression permanente",
+      "cancel": "Annuler"
+    }
+  },
+  "pricing": {
+    "title": "Forfaits Tarifaires",
+    "subtitle": "Tarification simple basée sur les crédits. Payez pour ce que vous créez.",
+    "month": "/mois",
+    "generatesUpTo": "GÉNÈRE JUSQU'À",
+    "included": "INCLUS DANS CHAQUE FORFAIT",
+    "choose": "Choisir",
+    "creditCost": "Coût en crédits par service",
+    "creditCostSubtitle": "Mélangez n'importe quel service - les crédits fonctionnent sur tout votre compte.",
+    "service": "Service",
+    "credits": "Crédits",
+    "notes": "Notes",
+    "needMore": "Besoin de plus ? Rechargez vos crédits à tout moment.",
+    "plans": {
+      "starter": {
+        "title": "Débutant",
+        "credits": "25 crédits / mois",
+        "subtitle": "Idéal pour une seule session de candidatures."
+      },
+      "growth": {
+        "title": "Croissance",
+        "credits": "60 crédits / mois",
+        "subtitle": "Pour les indépendants et les chercheurs d'emploi actifs.",
+        "badge": "★ LE PLUS POPULAIRE ★"
+      },
+      "power": {
+        "title": "Utilisateur Pro",
+        "credits": "120 crédits / mois",
+        "subtitle": "Pour les agences et les utilisateurs intensifs.",
+        "badge": "★ MEILLEURE VALEUR ★"
+      }
+    },
+    "services": {
+      "coverLetter": "Lettre de motivation",
+      "cv": "CV",
+      "proposal": "Proposition",
+      "grant": "Demande de subvention",
+      "prep": "Plan de préparation",
+      "rewrite": "Toute réécriture"
+    },
+    "features": [
+      "Voir les offres d'emploi et de subventions",
+      "Score de préparation pour chaque candidature",
+      "Plan de préparation généré par l'IA"
+    ]
+  },
+  "grantBuilder": {
+    "title": "Constructeur de Subventions",
+    "subtitle": "Créez des propositions multi-pages et des CV ciblés.",
+    "editMode": "Mode Édition",
+    "preview": "Aperçu",
+    "saveDraft": "Enregistrer le brouillon",
+    "docSetup": "Configuration du document",
+    "docType": "Type de document",
+    "targetPageCount": "Nombre de pages cible",
+    "customQuestions": "Questions personnalisées",
+    "addQuestion": "+ Ajouter une question",
+    "wordLimit": "Limite de mots :",
+    "assistant": "Assistant"
   }
 }

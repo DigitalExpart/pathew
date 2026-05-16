@@ -3,8 +3,10 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Download, Eye, Save, Settings2, X, Sparkles } from 'lucide-react';
 import { useAssistant } from '../../context/AssistantContext';
+import { useTranslation } from 'react-i18next';
 
 export const GrantBuilderPage: React.FC = () => {
+  const { t } = useTranslation();
   const [docType, setDocType] = useState('Full Grant Proposal');
   const [pageCount, setPageCount] = useState('5 Pages');
   const [previewMode, setPreviewMode] = useState(false);
@@ -35,17 +37,17 @@ export const GrantBuilderPage: React.FC = () => {
     <div style={containerStyle}>
       <header style={headerStyle}>
         <div>
-          <h1 style={titleStyle}>Grant Builder</h1>
-          <p style={subtitleStyle}>Create multi-page proposals and targeted CVs tailored for success.</p>
+          <h1 style={titleStyle}>{t('grantBuilder.title')}</h1>
+          <p style={subtitleStyle}>{t('grantBuilder.subtitle')}</p>
         </div>
         <div style={headerActionsStyle}>
           <Button variant="outline" onClick={() => setPreviewMode(!previewMode)}>
             <Eye size={16} style={{ marginRight: '8px' }} />
-            {previewMode ? 'Edit Mode' : 'Preview'}
+            {previewMode ? t('grantBuilder.editMode') : t('grantBuilder.preview')}
           </Button>
           <Button style={{ backgroundColor: '#22c55e', color: '#000' }}>
             <Save size={16} style={{ marginRight: '8px' }} />
-            Save Draft
+            {t('grantBuilder.saveDraft')}
           </Button>
         </div>
       </header>
@@ -53,9 +55,9 @@ export const GrantBuilderPage: React.FC = () => {
       <div style={layoutGridStyle}>
         {/* Settings Sidebar */}
         <aside style={settingsSidebarStyle}>
-          <Card title="Document Setup" icon={Settings2}>
+          <Card title={t('grantBuilder.docSetup')} icon={Settings2}>
             <div style={formGroupStyle}>
-              <label style={labelStyle}>Document Type</label>
+              <label style={labelStyle}>{t('grantBuilder.docType')}</label>
               <select 
                 style={selectStyle}
                 value={docType}
@@ -73,7 +75,7 @@ export const GrantBuilderPage: React.FC = () => {
 
             {(docType === 'Full Grant Proposal' || docType === 'Academic CV') && (
               <div style={formGroupStyle}>
-                <label style={labelStyle}>Target Page Count</label>
+                <label style={labelStyle}>{t('grantBuilder.targetPageCount')}</label>
                 <select 
                   style={selectStyle}
                   value={pageCount}
@@ -90,7 +92,7 @@ export const GrantBuilderPage: React.FC = () => {
           </Card>
 
           {docType.includes('Proposal') && (
-            <Card title="Custom Questions" style={{ marginTop: '24px' }}>
+            <Card title={t('grantBuilder.customQuestions')} style={{ marginTop: '24px' }}>
               <div style={questionsListStyle}>
                 {questions.map((q, idx) => (
                   <div key={q.id} style={questionItemStyle}>
@@ -105,13 +107,13 @@ export const GrantBuilderPage: React.FC = () => {
                       style={inputStyle} 
                     />
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Word limit:</span>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('grantBuilder.wordLimit')}</span>
                       <input type="number" defaultValue={q.limit} style={smallInputStyle} />
                     </div>
                   </div>
                 ))}
                 <Button variant="outline" size="sm" onClick={addQuestion} style={{ width: '100%' }}>
-                  + Add Question
+                  {t('grantBuilder.addQuestion')}
                 </Button>
               </div>
             </Card>
@@ -130,7 +132,7 @@ export const GrantBuilderPage: React.FC = () => {
                 onClick={openAIGrantHelp}
               >
                 <Sparkles size={14} />
-                <span>Assistant</span>
+                <span>{t('assistant.title', 'Assistant')}</span>
               </button>
             </div>
             <div style={{ display: 'flex', gap: '12px' }}>

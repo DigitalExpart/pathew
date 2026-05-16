@@ -3,8 +3,10 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { CheckCircle, Zap } from 'lucide-react';
 import { StripeCheckoutModal } from '../../components/payment/StripeCheckoutModal';
+import { useTranslation } from 'react-i18next';
 
 const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedFeatures, badge, badgeColor = 'var(--accent-primary)' }: any) => {
+  const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const handleSubscribe = (e: any) => {
@@ -27,7 +29,7 @@ const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedF
     <h3 style={tierNameStyle}>{title}</h3>
     <div style={priceContainerStyle}>
       <span style={priceStyle}>{price}</span>
-      <span style={periodStyle}>/month</span>
+      <span style={periodStyle}>{t('pricing.month')}</span>
     </div>
     <div style={creditsLabelStyle}>
       {credits}
@@ -38,7 +40,7 @@ const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedF
 
     <div style={{ marginBottom: '24px' }}>
       <div style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: '12px' }}>
-        GENERATES UP TO
+        {t('pricing.generatesUpTo')}
       </div>
       <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
         {generatesUpTo.map((g: any) => (
@@ -52,7 +54,7 @@ const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedF
 
     <div style={{ flex: 1, marginBottom: '32px' }}>
       <div style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: '12px', textTransform: 'uppercase' }}>
-        INCLUDED IN EVERY PLAN
+        {t('pricing.included')}
       </div>
       <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
         {includedFeatures.map((f: string) => (
@@ -65,8 +67,8 @@ const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedF
     </div>
 
     <div style={{ marginTop: 'auto' }}>
-      <Button onClick={handleSubscribe} variant={badge === '★ MOST POPULAR ★' ? 'primary' : 'outline'} style={{ width: '100%' }}>
-        Choose {title}
+      <Button onClick={handleSubscribe} variant={badge ? 'primary' : 'outline'} style={{ width: '100%' }}>
+        {t('pricing.choose')} {title}
       </Button>
     </div>
   </Card>
@@ -83,78 +85,80 @@ const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedF
 };
 
 export const PricingPage: React.FC = () => {
+  const { t } = useTranslation();
+
   return (
     <div style={containerStyle}>
       <header style={headerStyle}>
-        <h1 style={titleStyle}>Pricing Plans</h1>
-        <p style={subtitleStyle}>Simple, credit-based pricing. Pay for what you create.</p>
+        <h1 style={titleStyle}>{t('pricing.title')}</h1>
+        <p style={subtitleStyle}>{t('pricing.subtitle')}</p>
       </header>
 
       <div style={gridStyle}>
         <PricingCard 
-          title="Starter" 
+          title={t('pricing.plans.starter.title', 'Starter')}
           price="£11.99" 
-          credits="25 credits / month"
-          subtitle="Perfect for individuals tackling a single application round."
+          credits={t('pricing.plans.starter.credits')}
+          subtitle={t('pricing.plans.starter.subtitle')}
           generatesUpTo={[
-            { label: 'Cover Letters', count: '25×' },
-            { label: 'CVs / Resumes', count: '25×' },
-            { label: 'Proposals', count: '25×' },
-            { label: 'Grant Applications', count: '8×' },
-            { label: 'Rewrites', count: '100×' }
+            { label: t('pricing.services.coverLetter'), count: '25×' },
+            { label: t('pricing.services.cv'), count: '25×' },
+            { label: t('pricing.services.proposal'), count: '25×' },
+            { label: t('pricing.services.grant'), count: '8×' },
+            { label: t('pricing.services.rewrite'), count: '100×' }
           ]}
           includedFeatures={[
-            'View live job & grant opportunities',
-            'Percentage readiness score per application',
-            'AI-generated preparation plan – credit applies'
+            t('pricing.features.0', 'View live job & grant opportunities'),
+            t('pricing.features.1', 'Percentage readiness score per application'),
+            t('pricing.features.2', 'AI-generated preparation plan – credit applies')
           ]}
         />
         <PricingCard 
-          title="Growth" 
+          title={t('pricing.plans.growth.title', 'Growth')}
           price="£25.00" 
-          credits="60 credits / month"
-          subtitle="For freelancers and active job seekers applying across multiple roles."
-          badge="★ MOST POPULAR ★"
+          credits={t('pricing.plans.growth.credits')}
+          subtitle={t('pricing.plans.growth.subtitle')}
+          badge={t('pricing.plans.growth.badge', '★ MOST POPULAR ★')}
           generatesUpTo={[
-            { label: 'Cover Letters', count: '60×' },
-            { label: 'CVs / Resumes', count: '60×' },
-            { label: 'Proposals', count: '60×' },
-            { label: 'Grant Applications', count: '20×' },
-            { label: 'Rewrites', count: '240×' }
+            { label: t('pricing.services.coverLetter'), count: '60×' },
+            { label: t('pricing.services.cv'), count: '60×' },
+            { label: t('pricing.services.proposal'), count: '60×' },
+            { label: t('pricing.services.grant'), count: '20×' },
+            { label: t('pricing.services.rewrite'), count: '240×' }
           ]}
           includedFeatures={[
-            'View live job & grant opportunities',
-            'Percentage readiness score per application',
-            'AI-generated preparation plan – credit applies'
+            t('pricing.features.0', 'View live job & grant opportunities'),
+            t('pricing.features.1', 'Percentage readiness score per application'),
+            t('pricing.features.2', 'AI-generated preparation plan – credit applies')
           ]}
         />
         <PricingCard 
-          title="Power User" 
+          title={t('pricing.plans.power.title', 'Power User')}
           price="£48.00" 
-          credits="120 credits / month"
-          subtitle="For agencies, consultants and power users generating at scale."
-          badge="★ BEST VALUE ★"
+          credits={t('pricing.plans.power.credits')}
+          subtitle={t('pricing.plans.power.subtitle')}
+          badge={t('pricing.plans.power.badge', '★ BEST VALUE ★')}
           badgeColor="#3b82f6"
           generatesUpTo={[
-            { label: 'Cover Letters', count: '120×' },
-            { label: 'CVs / Resumes', count: '120×' },
-            { label: 'Proposals', count: '120×' },
-            { label: 'Grant Applications', count: '40×' },
-            { label: 'Rewrites', count: '480×' }
+            { label: t('pricing.services.coverLetter'), count: '120×' },
+            { label: t('pricing.services.cv'), count: '120×' },
+            { label: t('pricing.services.proposal'), count: '120×' },
+            { label: t('pricing.services.grant'), count: '40×' },
+            { label: t('pricing.services.rewrite'), count: '480×' }
           ]}
           includedFeatures={[
-            'View live job & grant opportunities',
-            'Percentage readiness score per application',
-            'AI-generated preparation plan – credit applies'
+            t('pricing.features.0', 'View live job & grant opportunities'),
+            t('pricing.features.1', 'Percentage readiness score per application'),
+            t('pricing.features.2', 'AI-generated preparation plan – credit applies')
           ]}
         />
       </div>
 
       <div style={{ maxWidth: '800px', margin: '80px auto 0' }}>
         <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <h3 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '16px' }}>Credit Cost Per Service</h3>
+          <h3 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '16px' }}>{t('pricing.creditCost')}</h3>
           <p style={{ color: 'var(--text-secondary)', fontSize: '1.125rem' }}>
-            Mix and match any service — credits work across your entire account.
+            {t('pricing.creditCostSubtitle')}
           </p>
         </div>
 
@@ -163,19 +167,19 @@ export const PricingPage: React.FC = () => {
             <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
               <thead>
                 <tr style={{ backgroundColor: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)' }}>
-                  <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>Service</th>
-                  <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>Credits</th>
-                  <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>Notes</th>
+                  <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>{t('pricing.service')}</th>
+                  <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>{t('pricing.credits')}</th>
+                  <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>{t('pricing.notes')}</th>
                 </tr>
               </thead>
               <tbody>
                 {[
-                  { service: 'Cover Letter', credits: '1 credit', notes: 'per letter' },
-                  { service: 'CV / Resume', credits: '1 credit', notes: 'per CV' },
-                  { service: 'Proposal', credits: '1 credit', notes: 'per proposal' },
-                  { service: 'Grant Application', credits: '3 credits', notes: 'per grant' },
-                  { service: 'Preparation Plan', credits: '3 credits', notes: 'per plan' },
-                  { service: 'Any Rewrite', credits: '0.25 credits', notes: 'per rewrite (¼ of original after 3 rewrites)' },
+                  { service: t('pricing.services.coverLetter'), credits: '1 credit', notes: 'per letter' },
+                  { service: t('pricing.services.cv'), credits: '1 credit', notes: 'per CV' },
+                  { service: t('pricing.services.proposal'), credits: '1 credit', notes: 'per proposal' },
+                  { service: t('pricing.services.grant'), credits: '3 credits', notes: 'per grant' },
+                  { service: t('pricing.services.prep'), credits: '3 credits', notes: 'per plan' },
+                  { service: t('pricing.services.rewrite'), credits: '0.25 credits', notes: 'per rewrite (¼ of original after 3 rewrites)' },
                 ].map((row, idx) => (
                   <tr key={idx} style={{ borderBottom: idx !== 5 ? '1px solid var(--border-color)' : 'none' }}>
                     <td style={{ padding: '16px 24px', fontWeight: 500 }}>{row.service}</td>
@@ -191,7 +195,7 @@ export const PricingPage: React.FC = () => {
         <div style={{ textAlign: 'center', marginTop: '32px' }}>
           <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', backgroundColor: 'rgba(245, 158, 11, 0.1)', padding: '12px 24px', borderRadius: 'var(--radius-full)', color: 'var(--accent-primary)', fontWeight: 600 }}>
             <Zap size={18} />
-            Need more? Users can top up their credits at any time.
+            {t('pricing.needMore')}
           </div>
         </div>
       </div>

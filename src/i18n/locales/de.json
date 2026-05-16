@@ -196,5 +196,173 @@
     "french": "Français",
     "german": "Deutsch",
     "spanish": "Español"
+  },
+  "wallet": {
+    "title": "Brieftasche & Guthaben",
+    "subtitle": "Verwalten Sie Ihre Guthaben und Transaktionen.",
+    "availableBalance": "Verfügbares Guthaben",
+    "creditsReady": "Guthaben bereit für Ihre nächste Bewerbung",
+    "upgradePlan": "Plan aktualisieren",
+    "recentTransactions": "Letzte Transaktionen",
+    "noTransactions": "Noch keine Transaktionen."
+  },
+  "builders": {
+    "editingMode": "Bearbeitungsmodus",
+    "livePreview": "Live-Vorschau",
+    "cv": {
+      "title": "Maßgeschneiderter Lebenslauf",
+      "desc": "Optimieren Sie Ihre Erfahrung für diese Rolle."
+    },
+    "coverLetter": {
+      "title": "Anschreiben",
+      "desc": "Schreiben Sie eine überzeugende Erzählung."
+    },
+    "proposal": {
+      "title": "Vorschlag",
+      "desc": "Strukturieren Sie Ihren Pitch perfekt."
+    }
+  },
+  "settings": {
+    "title": "Einstellungen",
+    "subtitle": "Verwalten Sie Ihr PATHEW-Konto und Ihre Einstellungen.",
+    "tabs": {
+      "notifications": "Benachrichtigungen",
+      "security": "Sicherheit",
+      "billing": "Abrechnung",
+      "privacy": "Datenschutz & Daten",
+      "preferences": "Präferenzen",
+      "account": "Kontolöschung"
+    },
+    "notifications": {
+      "title": "Benachrichtigungseinstellungen",
+      "email": "E-Mail-Benachrichtigungen",
+      "emailDesc": "Erhalten Sie Updates zu neuen Übereinstimmungen.",
+      "push": "Push-Benachrichtigungen",
+      "pushDesc": "Erhalten Sie sofortige Warnungen.",
+      "newsletter": "Newsletter",
+      "newsletterDesc": "Bleiben Sie auf dem Laufenden."
+    },
+    "security": {
+      "title": "Sicherheit & Datenschutz",
+      "currentPassword": "Aktuelles Passwort",
+      "newPassword": "Neues Passwort",
+      "confirmPassword": "Passwort bestätigen",
+      "updateSecurity": "Sicherheit aktualisieren",
+      "twoFactor": "Zwei-Faktor-Authentifizierung",
+      "twoFactorDesc": "Sichern Sie Ihr Konto zusätzlich ab.",
+      "enable": "Aktivieren"
+    },
+    "assistant": {
+      "tone": "Standard-Sprachton",
+      "language": "Bevorzugte Sprache",
+      "autoSave": "Verlauf automatisch speichern",
+      "autoSaveDesc": "Generierte Inhalte automatisch speichern."
+    },
+    "billing": {
+      "title": "Abrechnung & Abonnement",
+      "currentPlan": "Aktueller Plan",
+      "nextRenewal": "Nächste Verlängerung:",
+      "changePlan": "Plan ändern",
+      "paymentMethod": "Zahlungsmethode",
+      "noPaymentMethod": "Keine Zahlungsmethode",
+      "addPaymentMethod": "Zahlungsmethode hinzufügen",
+      "billingHistory": "Abrechnungsverlauf",
+      "date": "Datum",
+      "invoice": "Rechnung",
+      "amount": "Betrag",
+      "status": "Status",
+      "action": "Aktion",
+      "download": "Herunterladen",
+      "noHistory": "Kein Abrechnungsverlauf gefunden"
+    },
+    "privacy": {
+      "title": "Datenschutz & Daten",
+      "dataExport": "Datenexport",
+      "dataExportDesc": "Laden Sie eine Kopie Ihrer Daten herunter.",
+      "exportZip": "Daten als ZIP exportieren",
+      "tracking": "Tracking & Analysen",
+      "trackingDesc": "Anonyme Nutzungsdaten sammeln.",
+      "analytics": "Analyse-Tracking",
+      "analyticsDesc": "Anonyme Nutzungsmetriken teilen."
+    },
+    "preferences": {
+      "title": "Zustimmung & Präferenzen",
+      "desc": "Verwalten Sie Ihre Kommunikation.",
+      "opportunityAlerts": "Wöchentliche Chancen-Benachrichtigungen",
+      "opportunityAlertsDesc": "Personalisierte Matches erhalten.",
+      "productUpdates": "Produktupdates",
+      "productUpdatesDesc": "Über neue Funktionen informiert bleiben.",
+      "refreshState": "Status aktualisieren"
+    },
+    "account": {
+      "title": "Kontolöschung",
+      "warning": "Warnung: Diese Aktion ist endgültig.",
+      "warningDesc": "Alle Ihre Daten werden dauerhaft gelöscht.",
+      "contactSupport": "Kontaktieren Sie den Support für Hilfe.",
+      "requestDeletion": "Kontolöschung anfordern",
+      "areYouSure": "Sind Sie absolut sicher? Dies kann nicht rückgängig gemacht werden.",
+      "confirmDeletion": "Dauerhafte Löschung bestätigen",
+      "cancel": "Abbrechen"
+    }
+  },
+  "pricing": {
+    "title": "Preise",
+    "subtitle": "Einfache Guthaben-basierte Preisgestaltung. Zahlen Sie für das, was Sie erstellen.",
+    "month": "/Monat",
+    "generatesUpTo": "GENERIERT BIS ZU",
+    "included": "IN JEDEM PLAN ENTHALTEN",
+    "choose": "Wählen Sie",
+    "creditCost": "Guthabenkosten pro Service",
+    "creditCostSubtitle": "Mischen und anpassen Sie jeden Service — Guthaben gelten für Ihr gesamtes Konto.",
+    "service": "Service",
+    "credits": "Guthaben",
+    "notes": "Notizen",
+    "needMore": "Brauchen Sie mehr? Laden Sie Ihre Guthaben jederzeit auf.",
+    "plans": {
+      "starter": {
+        "title": "Anfänger",
+        "credits": "25 Guthaben / Monat",
+        "subtitle": "Perfekt für Einzelpersonen bei einer einzigen Bewerbungsrunde."
+      },
+      "growth": {
+        "title": "Wachstum",
+        "credits": "60 Guthaben / Monat",
+        "subtitle": "Für Freiberufler und aktive Arbeitssucher.",
+        "badge": "★ AM BELIEBTESTEN ★"
+      },
+      "power": {
+        "title": "Power-Nutzer",
+        "credits": "120 Guthaben / Monat",
+        "subtitle": "Für Agenturen, Berater und Vielnutzer.",
+        "badge": "★ BESTER WERT ★"
+      }
+    },
+    "services": {
+      "coverLetter": "Anschreiben",
+      "cv": "Lebenslauf",
+      "proposal": "Vorschlag",
+      "grant": "Zuschussantrag",
+      "prep": "Vorbereitungsplan",
+      "rewrite": "Jegliche Umschreibung"
+    },
+    "features": [
+      "Live-Jobs & Zuschüsse anzeigen",
+      "Bereitschaftsscore pro Bewerbung",
+      "KI-generierter Vorbereitungsplan"
+    ]
+  },
+  "grantBuilder": {
+    "title": "Zuschuss-Generator",
+    "subtitle": "Erstellen Sie mehrseitige Vorschläge und gezielte Lebensläufe.",
+    "editMode": "Bearbeitungsmodus",
+    "preview": "Vorschau",
+    "saveDraft": "Entwurf speichern",
+    "docSetup": "Dokument-Setup",
+    "docType": "Dokumenttyp",
+    "targetPageCount": "Ziel-Seitenzahl",
+    "customQuestions": "Benutzerdefinierte Fragen",
+    "addQuestion": "+ Frage hinzufügen",
+    "wordLimit": "Wortlimit:",
+    "assistant": "Assistent"
   }
 }

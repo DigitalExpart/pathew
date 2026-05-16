@@ -13,6 +13,7 @@ import {
   Sparkles
 } from 'lucide-react';
 import { useAssistant } from '../../context/AssistantContext';
+import { useTranslation } from 'react-i18next';
 
 interface DocumentBuilderProps {
   type: 'CV' | 'Cover Letter' | 'Proposal';
@@ -28,6 +29,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
   const [content, setContent] = useState(initialContent);
   const [isSaved, setIsSaved] = useState(false);
   const { openAssistant } = useAssistant();
+  const { t } = useTranslation();
 
   const handleSave = () => {
     setIsSaved(true);
@@ -55,12 +57,12 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
       <header style={headerStyle}>
         <div>
           <h1 style={titleStyle}>{initialTitle}</h1>
-          <p style={subtitleStyle}>{type} Builder • Editing Mode</p>
+          <p style={subtitleStyle}>{type} Builder • {t('builders.editingMode')}</p>
         </div>
         <div style={actionsStyle}>
           <Button variant="outline" onClick={handleSave} style={{ gap: '8px' }}>
             {isSaved ? <CheckCircle size={18} color="#22c55e" /> : <Save size={18} />}
-            {isSaved ? 'Saved' : 'Save Draft'}
+            {isSaved ? t('common.saved') : t('common.saveDraft')}
           </Button>
           <div style={dividerStyle}></div>
           <Button variant="secondary" style={{ gap: '8px' }}>
@@ -87,7 +89,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
               onClick={openAIDocumentHelp}
             >
               <Sparkles size={16} />
-              <span>Assistant</span>
+              <span>{t('assistant.title')}</span>
             </button>
           </div>
           
@@ -105,7 +107,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
         <section style={previewColStyle}>
           <div style={previewHeaderStyle}>
             <Eye size={16} /> 
-            <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>Live Preview</span>
+            <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>{t('builders.livePreview')}</span>
           </div>
           
           <div style={documentWrapperStyle}>

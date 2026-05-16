@@ -4,12 +4,12 @@ import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { 
-  Bell, 
-  Lock, 
-  Sparkles, 
-  CreditCard, 
-  Globe, 
+import {
+  Bell,
+  Lock,
+  Sparkles,
+  CreditCard,
+  Globe,
   ShieldCheck,
   Mail,
   Smartphone,
@@ -21,8 +21,10 @@ import {
   CheckCircle2,
   XCircle
 } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export const SettingsPage: React.FC = () => {
+  const { t } = useTranslation();
   const { user, profile, refreshProfile, signOut } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('notifications');
@@ -179,20 +181,20 @@ export const SettingsPage: React.FC = () => {
   };
 
   const tabs = [
-    { id: 'notifications', label: 'Notifications', icon: Bell },
-    { id: 'security', label: 'Security', icon: Lock },
-    { id: 'Assistant', label: 'Assistant', icon: Sparkles },
-    { id: 'billing', label: 'Billing', icon: CreditCard },
-    { id: 'privacy', label: 'Privacy & Data', icon: Shield },
-    { id: 'preferences', label: 'Preferences', icon: CheckSquare },
-    { id: 'account', label: 'Account Deletion', icon: AlertTriangle },
+    { id: 'notifications', label: t('settings.tabs.notifications'), icon: Bell },
+    { id: 'security', label: t('settings.tabs.security'), icon: Lock },
+    { id: 'Assistant', label: t('assistant.title'), icon: Sparkles },
+    { id: 'billing', label: t('settings.tabs.billing'), icon: CreditCard },
+    { id: 'privacy', label: t('settings.tabs.privacy'), icon: Shield },
+    { id: 'preferences', label: t('settings.tabs.preferences'), icon: CheckSquare },
+    { id: 'account', label: t('settings.tabs.account'), icon: AlertTriangle },
   ];
 
   return (
     <div style={containerStyle}>
       <header style={headerStyle}>
-        <h1 style={titleStyle}>Settings</h1>
-        <p style={subtitleStyle}>Manage your PATHEW account and platform preferences.</p>
+        <h1 style={titleStyle}>{t('settings.title')}</h1>
+        <p style={subtitleStyle}>{t('settings.subtitle')}</p>
       </header>
 
       <div style={layoutStyle}>
@@ -217,26 +219,26 @@ export const SettingsPage: React.FC = () => {
         {/* Content Area */}
         <div style={contentStyle}>
           {activeTab === 'notifications' && (
-            <Card title="Notification Preferences" icon={Bell}>
+            <Card title={t('settings.notifications.title')} icon={Bell}>
               <div style={notificationListStyle}>
                 <NotificationToggle 
                   icon={Mail} 
-                  title="Email Notifications" 
-                  desc="Receive updates about new matches and document reviews." 
+                  title={t('settings.notifications.email')}
+                  desc={t('settings.notifications.emailDesc')}
                   enabled={settings.email} 
                   onToggle={() => handleToggle('email')}
                 />
                 <NotificationToggle 
                   icon={Smartphone} 
-                  title="Push Notifications" 
-                  desc="Get instant alerts on your desktop and mobile device." 
+                  title={t('settings.notifications.push')}
+                  desc={t('settings.notifications.pushDesc')}
                   enabled={settings.push} 
                   onToggle={() => handleToggle('push')}
                 />
                 <NotificationToggle 
                   icon={Globe} 
-                  title="Newsletter" 
-                  desc="Stay updated with our weekly tips and success stories." 
+                  title={t('settings.notifications.newsletter')}
+                  desc={t('settings.notifications.newsletterDesc')}
                   enabled={settings.newsletter} 
                   onToggle={() => handleToggle('newsletter')}
                 />
@@ -245,10 +247,10 @@ export const SettingsPage: React.FC = () => {
           )}
 
           {activeTab === 'security' && (
-            <Card title="Security & Privacy" icon={Lock}>
+            <Card title={t('settings.security.title')} icon={Lock}>
               <form onSubmit={handleUpdatePassword}>
                 <div style={formGroupStyle}>
-                  <label style={labelStyle}>Current Password</label>
+                  <label style={labelStyle}>{t('settings.security.currentPassword')}</label>
                   <input 
                     type="password" 
                     placeholder="••••••••" 
@@ -259,7 +261,7 @@ export const SettingsPage: React.FC = () => {
                 </div>
                 <div style={formGridStyle}>
                   <div style={formGroupStyle}>
-                    <label style={labelStyle}>New Password</label>
+                    <label style={labelStyle}>{t('settings.security.newPassword')}</label>
                     <input 
                       type="password" 
                       placeholder="••••••••" 
@@ -269,7 +271,7 @@ export const SettingsPage: React.FC = () => {
                     />
                   </div>
                   <div style={formGroupStyle}>
-                    <label style={labelStyle}>Confirm Password</label>
+                    <label style={labelStyle}>{t('settings.security.confirmPassword')}</label>
                     <input 
                       type="password" 
                       placeholder="••••••••" 
@@ -289,10 +291,10 @@ export const SettingsPage: React.FC = () => {
                 <div style={securityBannerStyle}>
                   <ShieldCheck size={20} color="var(--accent-primary)" />
                   <div>
-                    <p style={{ fontWeight: 600 }}>Two-Factor Authentication</p>
-                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Secure your account with an additional security layer.</p>
+                    <p style={{ fontWeight: 600 }}>{t('settings.security.twoFactor')}</p>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('settings.security.twoFactorDesc')}</p>
                   </div>
-                  <Button variant="outline" size="sm" type="button" style={{ marginLeft: 'auto' }}>Enable</Button>
+                  <Button variant="outline" size="sm" type="button" style={{ marginLeft: 'auto' }}>{t('settings.security.enable')}</Button>
                 </div>
                 <Button 
                   style={{ marginTop: '24px', minWidth: '160px' }} 
@@ -305,18 +307,18 @@ export const SettingsPage: React.FC = () => {
                     </span>
                   ) : passwordStatus === 'success' ? (
                     <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <CheckCircle2 size={18} /> Password Updated!
+                      <CheckCircle2 size={18} /> {t('common.saved', 'Updated!')}
                     </span>
-                  ) : 'Update Security'}
+                  ) : t('settings.security.updateSecurity')}
                 </Button>
               </form>
             </Card>
           )}
 
           {activeTab === 'Assistant' && (
-            <Card title="Pathew Assistant Settings" icon={Sparkles}>
+            <Card title={t('assistant.title')} icon={Sparkles}>
               <div style={formGroupStyle}>
-                <label style={labelStyle}>Default Tone of Voice</label>
+                <label style={labelStyle}>{t('settings.assistant.tone')}</label>
                 <select 
                   style={selectStyle}
                   value={assistantSettings.tone}
@@ -329,7 +331,7 @@ export const SettingsPage: React.FC = () => {
                 </select>
               </div>
               <div style={formGroupStyle}>
-                <label style={labelStyle}>Preferred Language</label>
+                <label style={labelStyle}>{t('settings.assistant.language')}</label>
                 <select 
                   style={selectStyle}
                   value={assistantSettings.language}
@@ -344,8 +346,8 @@ export const SettingsPage: React.FC = () => {
               </div>
               <div style={toggleItemStyle} onClick={() => handleAssistantChange('autoSave', !assistantSettings.autoSave)} className="cursor-pointer">
                 <div style={{ flex: 1 }}>
-                  <p style={{ fontWeight: 600 }}>Auto-Save Assistant History</p>
-                  <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Save all generated content to your account history automatically.</p>
+                  <p style={{ fontWeight: 600 }}>{t('settings.assistant.autoSave')}</p>
+                  <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('settings.assistant.autoSaveDesc')}</p>
                 </div>
                 <div style={{
                   width: '44px',
@@ -370,12 +372,12 @@ export const SettingsPage: React.FC = () => {
           )}
 
           {activeTab === 'billing' && (
-            <Card title="Billing & Subscription" icon={CreditCard}>
+            <Card title={t('settings.billing.title')} icon={CreditCard}>
               <div style={planCardStyle}>
                 <div>
-                  <p style={{ color: 'var(--accent-primary)', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase' }}>Current Plan</p>
-                  <h3 style={{ fontSize: '1.5rem', marginTop: '4px' }}>{profile?.subscription_plan || 'Free Explorer'}</h3>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>Next renewal: {profile?.renewal_date || 'N/A'}</p>
+                  <p style={{ color: 'var(--accent-primary)', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase' }}>{t('settings.billing.currentPlan')}</p>
+                  <h3 style={{ fontSize: '1.5rem', marginTop: '4px' }}>{profile?.subscription_plan || t('profile.freePlan', 'Free Plan')}</h3>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{t('settings.billing.nextRenewal')} {profile?.renewal_date || 'N/A'}</p>
                 </div>
                 <div style={{ textAlign: 'right' }}>
                   <h3 style={{ fontSize: '1.5rem' }}>{profile?.subscription_plan === 'Professional' ? '$29' : profile?.subscription_plan === 'Elite' ? '$99' : '$0'}<span style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>/mo</span></h3>
@@ -385,18 +387,18 @@ export const SettingsPage: React.FC = () => {
                     style={{ marginTop: '8px' }}
                     onClick={() => navigate('/wallet')}
                   >
-                    Change Plan
+                    {t('settings.billing.changePlan')}
                   </Button>
                 </div>
               </div>
               
               <div style={{ marginTop: '32px' }}>
-                <h4 style={{ marginBottom: '16px', fontSize: '1rem' }}>Payment Method</h4>
+                <h4 style={{ marginBottom: '16px', fontSize: '1rem' }}>{t('settings.billing.paymentMethod')}</h4>
                 <div style={paymentMethodStyle}>
                   <CreditCard size={20} color="var(--text-secondary)" />
                   <div style={{ flex: 1 }}>
-                    <p style={{ fontWeight: 600 }}>{profile?.payment_method ? `${profile.payment_method.brand} ending in ${profile.payment_method.last4}` : 'No payment method'}</p>
-                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{profile?.payment_method ? `Expires ${profile.payment_method.expiry}` : 'Add a payment method to subscribe'}</p>
+                    <p style={{ fontWeight: 600 }}>{profile?.payment_method ? `${profile.payment_method.brand} ending in ${profile.payment_method.last4}` : t('settings.billing.noPaymentMethod')}</p>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{profile?.payment_method ? `Expires ${profile.payment_method.expiry}` : t('settings.billing.addPaymentMethod')}</p>
                   </div>
                   <Button variant="ghost" size="sm">Edit</Button>
                 </div>
@@ -405,17 +407,17 @@ export const SettingsPage: React.FC = () => {
               <div style={{ marginTop: '32px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
                   <History size={18} color="var(--text-secondary)" />
-                  <h4 style={{ fontSize: '1rem' }}>Billing History</h4>
+                  <h4 style={{ fontSize: '1rem' }}>{t('settings.billing.billingHistory')}</h4>
                 </div>
                 <div style={tableWrapperStyle}>
                   <table style={tableStyle}>
                     <thead>
                       <tr>
-                        <th style={thStyle}>Date</th>
-                        <th style={thStyle}>Invoice</th>
-                        <th style={thStyle}>Amount</th>
-                        <th style={thStyle}>Status</th>
-                        <th style={thStyle}>Action</th>
+                        <th style={thStyle}>{t('settings.billing.date')}</th>
+                        <th style={thStyle}>{t('settings.billing.invoice')}</th>
+                        <th style={thStyle}>{t('settings.billing.amount')}</th>
+                        <th style={thStyle}>{t('settings.billing.status')}</th>
+                        <th style={thStyle}>{t('settings.billing.action')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -436,11 +438,11 @@ export const SettingsPage: React.FC = () => {
                                 {item.status}
                               </span>
                             </td>
-                            <td style={tdStyle}><Button variant="ghost" size="sm">Download</Button></td>
+                            <td style={tdStyle}><Button variant="ghost" size="sm">{t('settings.billing.download')}</Button></td>
                           </tr>
                         ))
                       ) : (
-                        <tr><td colSpan={5} style={{ ...tdStyle, textAlign: 'center', padding: '32px', color: 'var(--text-muted)' }}>No billing history found</td></tr>
+                        <tr><td colSpan={5} style={{ ...tdStyle, textAlign: 'center', padding: '32px', color: 'var(--text-muted)' }}>{t('settings.billing.noHistory')}</td></tr>
                       )}
                     </tbody>
                   </table>
@@ -450,25 +452,25 @@ export const SettingsPage: React.FC = () => {
           )}
 
           {activeTab === 'privacy' && (
-            <Card title="Privacy & Data" icon={Shield}>
+            <Card title={t('settings.privacy.title')} icon={Shield}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 <div>
-                  <h4 style={{ fontSize: '1rem', marginBottom: '8px' }}>Data Export</h4>
+                  <h4 style={{ fontSize: '1rem', marginBottom: '8px' }}>{t('settings.privacy.dataExport')}</h4>
                   <p style={{ color: 'var(--text-secondary)', marginBottom: '16px', fontSize: '0.875rem' }}>
-                    Download a copy of all your personal data, saved opportunities, and generated documents.
+                    {t('settings.privacy.dataExportDesc')}
                   </p>
-                  <Button variant="outline">Export Data as ZIP</Button>
+                  <Button variant="outline">{t('settings.privacy.exportZip')}</Button>
                 </div>
                 <div style={dividerMenuStyle} />
                 <div>
-                  <h4 style={{ fontSize: '1rem', marginBottom: '8px' }}>Tracking & Analytics</h4>
+                  <h4 style={{ fontSize: '1rem', marginBottom: '8px' }}>{t('settings.privacy.tracking')}</h4>
                   <p style={{ color: 'var(--text-secondary)', marginBottom: '16px', fontSize: '0.875rem' }}>
-                    Allow us to collect anonymous usage data to help improve the platform.
+                    {t('settings.privacy.trackingDesc')}
                   </p>
                   <div style={toggleItemStyle}>
                     <div style={{ flex: 1 }}>
-                      <p style={{ fontWeight: 600 }}>Analytics Tracking</p>
-                      <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Share anonymous usage metrics.</p>
+                      <p style={{ fontWeight: 600 }}>{t('settings.privacy.analytics')}</p>
+                      <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('settings.privacy.analyticsDesc')}</p>
                     </div>
                     <input type="checkbox" defaultChecked />
                   </div>
@@ -478,10 +480,10 @@ export const SettingsPage: React.FC = () => {
           )}
 
           {activeTab === 'preferences' && (
-            <Card title="Consent & Preferences" icon={CheckSquare}>
+            <Card title={t('settings.preferences.title')} icon={CheckSquare}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-                  Manage how we communicate with you and your marketing preferences.
+                  {t('settings.preferences.desc')}
                 </p>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                   <label style={checkboxLabelStyle}>
@@ -492,8 +494,8 @@ export const SettingsPage: React.FC = () => {
                       style={checkboxStyle} 
                     />
                     <div>
-                      <p style={{ fontWeight: 600 }}>Weekly Opportunity Alerts</p>
-                      <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Get personalized matches delivered to your inbox.</p>
+                      <p style={{ fontWeight: 600 }}>{t('settings.preferences.opportunityAlerts')}</p>
+                      <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('settings.preferences.opportunityAlertsDesc')}</p>
                     </div>
                   </label>
                   <label style={checkboxLabelStyle}>
@@ -504,8 +506,8 @@ export const SettingsPage: React.FC = () => {
                       style={checkboxStyle} 
                     />
                     <div>
-                      <p style={{ fontWeight: 600 }}>Product Updates</p>
-                      <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Stay informed about new features and improvements.</p>
+                      <p style={{ fontWeight: 600 }}>{t('settings.preferences.productUpdates')}</p>
+                      <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('settings.preferences.productUpdatesDesc')}</p>
                     </div>
                   </label>
                 </div>
@@ -513,23 +515,23 @@ export const SettingsPage: React.FC = () => {
                   style={{ alignSelf: 'flex-start', marginTop: '12px' }}
                   onClick={refreshProfile}
                 >
-                  Refresh State
+                  {t('settings.preferences.refreshState')}
                 </Button>
               </div>
             </Card>
           )}
 
           {activeTab === 'account' && (
-            <Card title="Account Deletion" icon={AlertTriangle} style={{ border: '1px solid #ef4444' }}>
+            <Card title={t('settings.account.title')} icon={AlertTriangle} style={{ border: '1px solid #ef4444' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div style={{ padding: '16px', backgroundColor: 'rgba(239, 68, 68, 0.05)', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
-                  <p style={{ color: '#ef4444', fontWeight: 600, marginBottom: '4px' }}>Warning: This action is permanent.</p>
+                  <p style={{ color: '#ef4444', fontWeight: 600, marginBottom: '4px' }}>{t('settings.account.warning')}</p>
                   <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                    All your credits, documents, and profile data will be permanently erased. This cannot be undone.
+                    {t('settings.account.warningDesc')}
                   </p>
                 </div>
                 <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                  If you're having trouble or just want to take a break, you can always contact our support team instead.
+                  {t('settings.account.contactSupport')}
                 </p>
                 
                 {!showDeleteConfirm ? (
@@ -543,11 +545,11 @@ export const SettingsPage: React.FC = () => {
                       minWidth: '180px'
                     }}
                   >
-                    Request Account Deletion
+                    {t('settings.account.requestDeletion')}
                   </Button>
                 ) : (
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'flex-start' }}>
-                    <p style={{ color: '#ef4444', fontWeight: 700, fontSize: '0.875rem' }}>Are you absolutely sure? This cannot be undone.</p>
+                    <p style={{ color: '#ef4444', fontWeight: 700, fontSize: '0.875rem' }}>{t('settings.account.areYouSure')}</p>
                     <div style={{ display: 'flex', gap: '12px' }}>
                       <Button 
                         onClick={handleDeleteAccount}
@@ -561,16 +563,16 @@ export const SettingsPage: React.FC = () => {
                       >
                         {deleteLoading ? (
                           <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <Loader2 size={18} className="animate-spin" /> Deleting...
+                            <Loader2 size={18} className="animate-spin" /> {t('common.loading')}
                           </span>
-                        ) : 'Confirm Permanent Deletion'}
+                        ) : t('settings.account.confirmDeletion')}
                       </Button>
                       <Button 
                         variant="outline"
                         onClick={() => setShowDeleteConfirm(false)}
                         disabled={deleteLoading}
                       >
-                        Cancel
+                        {t('settings.account.cancel')}
                       </Button>
                     </div>
                   </div>

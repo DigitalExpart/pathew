@@ -5,8 +5,10 @@ import { Coins, ArrowUpRight, ArrowDownRight, Clock } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export const WalletPage: React.FC = () => {
+  const { t } = useTranslation();
   const { user, profile } = useAuth();
   const [transactions, setTransactions] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -36,8 +38,8 @@ export const WalletPage: React.FC = () => {
   return (
     <div style={containerStyle}>
       <header style={headerStyle}>
-        <h1 style={titleStyle}>Wallet & Credits</h1>
-        <p style={subtitleStyle}>Manage your platform credits and view transaction history.</p>
+        <h1 style={titleStyle}>{t('wallet.title')}</h1>
+        <p style={subtitleStyle}>{t('wallet.subtitle')}</p>
       </header>
 
       <div style={gridStyle}>
@@ -48,28 +50,28 @@ export const WalletPage: React.FC = () => {
               <Coins size={24} color="var(--accent-primary)" />
             </div>
             <span style={planBadgeStyle}>
-              {profile?.subscription_plan ? `${profile.subscription_plan} Plan` : 'Free Plan'}
+              {profile?.subscription_plan ? `${profile.subscription_plan} Plan` : t('profile.freePlan', 'Free Plan')}
             </span>
           </div>
           <div style={balanceContentStyle}>
-            <p style={balanceLabelStyle}>Available Balance</p>
+            <p style={balanceLabelStyle}>{t('wallet.availableBalance')}</p>
             <h2 style={balanceValueStyle}>{profile?.credits?.toLocaleString() || '0'}</h2>
-            <p style={balanceSubtextStyle}>Credits ready for your next application</p>
+            <p style={balanceSubtextStyle}>{t('wallet.creditsReady')}</p>
           </div>
           <div style={balanceFooterStyle}>
             <Link to="/pricing" style={{ width: '100%', display: 'flex', textDecoration: 'none' }}>
-              <Button variant="primary" style={{ width: '100%' }}>Upgrade Plan</Button>
+              <Button variant="primary" style={{ width: '100%' }}>{t('wallet.upgradePlan')}</Button>
             </Link>
           </div>
         </Card>
 
         {/* Transaction History */}
-        <Card title="Recent Transactions" icon={Clock} style={{ flex: 2 }}>
+        <Card title={t('wallet.recentTransactions')} icon={Clock} style={{ flex: 2 }}>
           <div style={txListStyle}>
             {loading ? (
-              <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px' }}>Loading history...</p>
+              <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px' }}>{t('common.loading')}</p>
             ) : transactions.length === 0 ? (
-              <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px' }}>No transactions yet.</p>
+              <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px' }}>{t('wallet.noTransactions')}</p>
             ) : (
               transactions.map(tx => (
                 <div key={tx.id} style={txItemStyle}>
