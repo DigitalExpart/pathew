@@ -49,10 +49,43 @@ export const OpportunityList: React.FC = () => {
     
     setSavingId(opp.id);
     try {
+      // Check if already saved by this user
+      const { data: existing } = await supabase
+        .from('opportunities')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('status', 'Saved')
+        .eq('title', opp.title)
+        .maybeSingle();
+      
+      if (existing) {
+        // Already saved — just update local UI
+        setOpportunities(prev => prev.map(o => o.id === opp.id ? { ...o, status: 'Saved' } : o));
+        return;
+      }
+
+      // Insert a user-owned copy with status 'Saved'
       const { error } = await supabase
         .from('opportunities')
-        .update({ status: 'Saved' })
-        .eq('id', opp.id);
+        .insert({
+          user_id: user.id,
+          title: opp.title,
+          description: opp.description,
+          type: opp.type,
+          status: 'Saved',
+          company: opp.organization_name || opp.funder_name || opp.company || '',
+          organization_name: opp.organization_name,
+          funder_name: opp.funder_name,
+          location: opp.location,
+          deadline: opp.deadline,
+          requirements: opp.requirements,
+          apply_link: opp.apply_link,
+          amount: opp.amount,
+          salary: opp.salary,
+          work_mode: opp.work_mode,
+          source_name: opp.source_name,
+          featured: false,
+        });
       
       if (error) throw error;
       
@@ -62,11 +95,12 @@ export const OpportunityList: React.FC = () => {
       // Record activity
       await supabase.from('activities').insert({
         user_id: user.id,
-        content: `Saved opportunity: ${opp.title} at ${opp.company}`
+        content: `Saved opportunity: ${opp.title}`
       });
 
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error saving opportunity:', error);
+      alert(`Could not save: ${error.message}`);
     } finally {
       setSavingId(null);
     }
