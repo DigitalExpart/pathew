@@ -15,10 +15,10 @@
     "lightMode": "Modo claro"
   },
   "landing": {
-    "badge": "Plataforma de carrera impulsada por IA",
-    "heroTitle": "Tu copiloto de",
-    "heroTitleHighlight": "carrera con IA",
-    "heroSubtitle": "Pathew usa IA para conectarte con las mejores oportunidades, construir tus documentos de solicitud y guiar tu preparación — todo en un solo lugar.",
+    "badge": "Desarrollado por el Asistente Pathew",
+    "heroTitle": "Solicita tu próxima ",
+    "heroTitleHighlight": "oportunidad",
+    "heroSubtitle": "La plataforma definitiva para profesionales para encontrar, emparejar y solicitar oportunidades de alto impacto en todo el mundo. Deja de buscar, comienza a emparejar con el Asistente Pathew.",
     "getStarted": "Empezar gratis",
     "watchDemo": "Ver demo",
     "features": "Características",
@@ -32,7 +32,7 @@
     "howItWorksTitle": "Comienza en minutos",
     "reviews": "Lo que dicen nuestros usuarios",
     "footer": {
-      "tagline": "Orientación profesional impulsada por IA para profesionales ambiciosos.",
+      "tagline": "Orientación profesional impulsada por Asistente para profesionales ambiciosos.",
       "product": "Producto",
       "company": "Empresa",
       "legal": "Legal",
@@ -42,7 +42,8 @@
       "users": "Usuarios activos",
       "placements": "Colocaciones exitosas",
       "rating": "Valoración de usuarios"
-    }
+    },
+    "heroTitleEnd": " con precisión."
   },
   "auth": {
     "login": "Iniciar sesión",
@@ -71,7 +72,7 @@
     "quickActions": "Acciones rápidas",
     "exploreOpportunities": "Explorar oportunidades",
     "buildCV": "Crear CV",
-    "aiAssistant": "Asistente de IA",
+    "aiAssistant": "Asistente Pathew",
     "credits": "Créditos",
     "viewAll": "Ver todo",
     "noActivity": "Sin actividad reciente.",
@@ -346,9 +347,9 @@
       "rewrite": "Cualquier reescritura"
     },
     "features": [
-      "Ver trabajos y subvenciones en vivo",
-      "Puntuación de preparación por solicitud",
-      "Plan de preparación generado por IA"
+      "Ver oportunidades de trabajo y subvenciones en vivo",
+      "Puntuación de preparación porcentual por solicitud",
+      "Plan de preparación generado por el Asistente - se aplican créditos"
     ]
   },
   "grantBuilder": {
@@ -440,7 +441,7 @@
       "role1": "Fundadora",
       "desc1": "Dedicada a romper barreras geográficas.",
       "role2": "Jefa de Producto",
-      "desc2": "Estratega enfocada en herramientas de IA intuitivas.",
+      "desc2": "Estratega de productos enfocado en la creación de herramientas de Asistente intuitivas que empoderen el crecimiento profesional.",
       "role3": "Gerente de Crecimiento",
       "desc3": "Líder estratégico para la expansión global."
     },

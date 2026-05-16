@@ -15,10 +15,10 @@
     "lightMode": "Mode clair"
   },
   "landing": {
-    "badge": "Plateforme de carrière propulsée par l'IA",
-    "heroTitle": "Votre copilote de",
-    "heroTitleHighlight": "carrière IA",
-    "heroSubtitle": "Pathew utilise l'IA pour vous associer aux meilleures opportunités, construire vos documents de candidature et guider votre préparation — tout en un seul endroit.",
+    "badge": "Propulsé par l'Assistant Pathew",
+    "heroTitle": "Postulez à votre prochaine ",
+    "heroTitleHighlight": "opportunité",
+    "heroSubtitle": "La plateforme ultime pour les professionnels pour trouver, faire correspondre et postuler à des opportunités mondiales à fort impact. Arrêtez de chercher, commencez à faire correspondre avec l'Assistant Pathew.",
     "getStarted": "Commencer gratuitement",
     "watchDemo": "Voir la démo",
     "features": "Fonctionnalités",
@@ -32,7 +32,7 @@
     "howItWorksTitle": "Démarrez en quelques minutes",
     "reviews": "Ce que disent nos utilisateurs",
     "footer": {
-      "tagline": "Orientation professionnelle propulsée par l'IA pour les professionnels ambitieux.",
+      "tagline": "Une orientation professionnelle propulsée par l'Assistant pour les professionnels ambitieux.",
       "product": "Produit",
       "company": "Entreprise",
       "legal": "Mentions légales",
@@ -42,7 +42,8 @@
       "users": "Utilisateurs actifs",
       "placements": "Placements réussis",
       "rating": "Note des utilisateurs"
-    }
+    },
+    "heroTitleEnd": " avec précision."
   },
   "auth": {
     "login": "Se connecter",
@@ -71,7 +72,7 @@
     "quickActions": "Actions rapides",
     "exploreOpportunities": "Explorer les opportunités",
     "buildCV": "Créer un CV",
-    "aiAssistant": "Assistant IA",
+    "aiAssistant": "Assistant Pathew",
     "credits": "Crédits",
     "viewAll": "Voir tout",
     "noActivity": "Aucune activité récente.",
@@ -346,9 +347,9 @@
       "rewrite": "Toute réécriture"
     },
     "features": [
-      "Voir les offres d'emploi et de subventions",
-      "Score de préparation pour chaque candidature",
-      "Plan de préparation généré par l'IA"
+      "Voir les offres d'emploi et les subventions en direct",
+      "Score d'état de préparation en pourcentage par candidature",
+      "Plan de préparation généré par l'Assistant - des crédits s'appliquent"
     ]
   },
   "grantBuilder": {
@@ -440,7 +441,7 @@
       "role1": "Fondatrice",
       "desc1": "Dédiée à briser les barrières géographiques pour les talents du monde entier.",
       "role2": "Chef de Produit",
-      "desc2": "Stratège concentrée sur la création d'outils IA intuitifs.",
+      "desc2": "Stratège produit concentré sur la création d'outils d'Assistant intuitifs qui favorisent la croissance professionnelle.",
       "role3": "Responsable Croissance",
       "desc3": "Lead stratégique pour l'expansion globale."
     },

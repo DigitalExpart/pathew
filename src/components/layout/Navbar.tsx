@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, LogOut, LayoutDashboard, UserCircle, ChevronDown, Menu, X, Sun, Moon } from 'lucide-react';
+import { User, LogOut, LayoutDashboard, UserCircle, ChevronDown, Menu, X, Sun, Moon, Globe } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { Button } from '../ui/Button';

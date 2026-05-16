@@ -15,10 +15,10 @@
     "lightMode": "Hellmodus"
   },
   "landing": {
-    "badge": "KI-gestützte Karriereplattform",
-    "heroTitle": "Ihr KI-Karriere-",
-    "heroTitleHighlight": "Copilot",
-    "heroSubtitle": "Pathew nutzt KI, um Sie mit den besten Möglichkeiten zu verbinden, Ihre Bewerbungsunterlagen zu erstellen und Ihre Vorbereitung zu begleiten — alles an einem Ort.",
+    "badge": "Unterstützt von Pathew Assistant",
+    "heroTitle": "Bewerben Sie sich auf Ihre nächste ",
+    "heroTitleHighlight": "Gelegenheit",
+    "heroSubtitle": "Die ultimative Plattform für Fachleute, um weltweit hochwirksame Möglichkeiten zu finden, abzugleichen und sich zu bewerben. Hören Sie auf zu suchen, beginnen Sie mit dem Matching durch den Pathew Assistant.",
     "getStarted": "Kostenlos starten",
     "watchDemo": "Demo ansehen",
     "features": "Funktionen",
@@ -32,7 +32,7 @@
     "howItWorksTitle": "In wenigen Minuten loslegen",
     "reviews": "Was unsere Nutzer sagen",
     "footer": {
-      "tagline": "KI-gestützte Karriereberatung für ambitionierte Fachkräfte.",
+      "tagline": "Vom Assistenten unterstützte Karriereberatung für ehrgeizige Fachleute.",
       "product": "Produkt",
       "company": "Unternehmen",
       "legal": "Rechtliches",
@@ -42,7 +42,8 @@
       "users": "Aktive Nutzer",
       "placements": "Erfolgreiche Vermittlungen",
       "rating": "Nutzerbewertung"
-    }
+    },
+    "heroTitleEnd": " mit Präzision."
   },
   "auth": {
     "login": "Anmelden",
@@ -71,7 +72,7 @@
     "quickActions": "Schnellaktionen",
     "exploreOpportunities": "Möglichkeiten erkunden",
     "buildCV": "Lebenslauf erstellen",
-    "aiAssistant": "KI-Assistent",
+    "aiAssistant": "Pathew Assistant",
     "credits": "Credits",
     "viewAll": "Alle anzeigen",
     "noActivity": "Noch keine Aktivität.",
@@ -346,9 +347,9 @@
       "rewrite": "Jegliche Umschreibung"
     },
     "features": [
-      "Live-Jobs & Zuschüsse anzeigen",
-      "Bereitschaftsscore pro Bewerbung",
-      "KI-generierter Vorbereitungsplan"
+      "Aktuelle Job- & Fördermöglichkeiten ansehen",
+      "Prozentualer Bereitschaftsscore pro Bewerbung",
+      "Vom Assistenten generierter Vorbereitungsplan – Gutschrift gilt"
     ]
   },
   "grantBuilder": {
@@ -440,7 +441,7 @@
       "role1": "Gründerin",
       "desc1": "Gewidmet dem Abbau geografischer Barrieren.",
       "role2": "Produktleitung",
-      "desc2": "Fokussiert auf intuitive KI-Tools.",
+      "desc2": "Produktstratege mit Fokus auf die Entwicklung intuitiver Assistant-Tools, die das berufliche Wachstum fördern.",
       "role3": "Wachstumsmanager",
       "desc3": "Strategischer Lead für globale Expansion."
     },

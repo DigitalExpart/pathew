@@ -15,10 +15,10 @@
     "lightMode": "Light Mode"
   },
   "landing": {
-    "badge": "AI-Powered Career Platform",
-    "heroTitle": "Your AI Career",
-    "heroTitleHighlight": "Copilot",
-    "heroSubtitle": "Pathew uses AI to match you with the perfect opportunities, build your application documents, and guide your preparation — all in one place.",
+    "badge": "Powered by Pathew Assistant",
+    "heroTitle": "Apply for Your Next ",
+    "heroTitleHighlight": "Opportunity",
+    "heroSubtitle": "The ultimate platform for professionals to find, match, and apply for high-impact opportunities worldwide. Stop searching, start matching with Pathew Assistant.",
     "getStarted": "Get Started Free",
     "watchDemo": "Watch Demo",
     "features": "Features",
@@ -32,7 +32,7 @@
     "howItWorksTitle": "Get Started in Minutes",
     "reviews": "What Our Users Say",
     "footer": {
-      "tagline": "AI-powered career guidance for ambitious professionals.",
+      "tagline": "Assistant-powered career guidance for ambitious professionals.",
       "product": "Product",
       "company": "Company",
       "legal": "Legal",
@@ -42,7 +42,8 @@
       "users": "Active Users",
       "placements": "Successful Placements",
       "rating": "User Rating"
-    }
+    },
+    "heroTitleEnd": " with Precision."
   },
   "auth": {
     "login": "Log In",
@@ -71,7 +72,7 @@
     "quickActions": "Quick Actions",
     "exploreOpportunities": "Explore Opportunities",
     "buildCV": "Build CV",
-    "aiAssistant": "AI Assistant",
+    "aiAssistant": "Pathew Assistant",
     "credits": "Credits",
     "viewAll": "View All",
     "noActivity": "No recent activity yet.",
@@ -348,7 +349,7 @@
     "features": [
       "View live job & grant opportunities",
       "Percentage readiness score per application",
-      "AI-generated preparation plan – credit applies"
+      "Assistant-generated preparation plan – credit applies"
     ]
   },
   "grantBuilder": {
@@ -440,7 +441,7 @@
       "role1": "Founder",
       "desc1": "The visionary behind PATHEW, dedicated to breaking down geographical barriers for talent worldwide.",
       "role2": "Head of Product",
-      "desc2": "Product strategist focused on building intuitive AI tools that empower professional growth.",
+      "desc2": "Product strategist focused on building intuitive Assistant tools that empower professional growth.",
       "role3": "Growth Manager",
       "desc3": "Strategic lead for global expansion, ensuring the PATHEW Assistant reaches every corner of the globe."
     },
