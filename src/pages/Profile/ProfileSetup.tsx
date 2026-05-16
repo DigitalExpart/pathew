@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { 
@@ -52,6 +53,7 @@ const steps = [
 ];
 
 export const ProfileSetup: React.FC = () => {
+  const { t } = useTranslation();
   const { user, profile, refreshProfile } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -332,6 +334,7 @@ export const ProfileSetup: React.FC = () => {
 
 // Step Components
 const StoryStep = ({ data, update }: any) => {
+  const { t } = useTranslation();
   const { openAssistant } = useAssistant();
 
   return (
@@ -379,6 +382,7 @@ const StoryStep = ({ data, update }: any) => {
 };
 
 const EducationStep = ({ data, update }: any) => {
+  const { t } = useTranslation();
   const educations = data.education.length > 0 ? data.education : [{ school: '', degree: '', field: '', year: '' }];
 
   const addEducation = () => update('education', [...educations, { school: '', degree: '', field: '', year: '' }]);
@@ -469,6 +473,7 @@ const EducationStep = ({ data, update }: any) => {
 };
 
 const ExperienceStep = ({ data, update }: any) => {
+  const { t } = useTranslation();
   const { openAssistant } = useAssistant();
   const experiences = data.experience.length > 0 ? data.experience : [{ company: '', title: '', description: '', duration: '' }];
 
@@ -567,6 +572,7 @@ const ExperienceStep = ({ data, update }: any) => {
 };
 
 const CertificationsStep = ({ data, update }: any) => {
+  const { t } = useTranslation();
   const certifications = data.certifications.length > 0 ? data.certifications : [{ title: '', organization: '', level: '', tutor: '', year: '' }];
 
   const addCert = () => update('certifications', [...certifications, { title: '', organization: '', level: '', tutor: '', year: '' }]);
@@ -670,6 +676,7 @@ const CertificationsStep = ({ data, update }: any) => {
 };
 
 const GoalsStep = ({ data, update }: any) => {
+  const { t } = useTranslation();
   const [showManual, setShowManual] = useState(false);
   const isMobile = window.innerWidth <= 768;
   
@@ -735,6 +742,7 @@ const GoalsStep = ({ data, update }: any) => {
 };
 
 const AchievementStep = ({ data, update }: any) => {
+  const { t } = useTranslation();
   const { openAssistant } = useAssistant();
   const achievements = data.achievements.length > 0 ? data.achievements : [''];
 
@@ -794,6 +802,7 @@ const AchievementStep = ({ data, update }: any) => {
 };
 
 const ProjectsStep = ({ data, update }: any) => {
+  const { t } = useTranslation();
   const projects = data.projects.length > 0 ? data.projects : [
     { id: 1, title: '', description: '', isSaved: false },
     { id: 2, title: '', description: '', isSaved: false },
@@ -886,6 +895,7 @@ const ProjectsStep = ({ data, update }: any) => {
 };
 
 const OrganisationStep = ({ data, update }: any) => {
+  const { t } = useTranslation();
   return (
     <div style={formGridStyle}>
       <div style={inputGroupStyle}>
@@ -903,6 +913,7 @@ const OrganisationStep = ({ data, update }: any) => {
 };
 
 const PortfolioStep = ({ data, update, onUpload, uploading }: any) => {
+  const { t } = useTranslation();
   const [newProject, setNewProject] = useState({ title: '', description: '', url: '' });
   const isMobile = window.innerWidth <= 768;
 
