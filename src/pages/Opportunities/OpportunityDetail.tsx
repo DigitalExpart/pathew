@@ -62,12 +62,7 @@ export const OpportunityDetail: React.FC = () => {
   const handleFitAnalysis = () => {
     if (!opp) return;
     (window as any).currentOpportunityId = opp.id;
-    openAssistant('Pathew Assistant', [
-      'Explain my compatibility',
-      'Generate a readiness plan',
-      'Identify my strengths and gaps',
-      'Suggest next steps'
-    ], undefined, {
+    openAssistant('Pathew Assistant', t('opportunities.compatibilityPrompts', { returnObjects: true }), undefined, {
       opportunityId: opp.id,
       opportunityDescription: opp.description,
       title: opp.title,
@@ -109,7 +104,7 @@ export const OpportunityDetail: React.FC = () => {
       if (user) {
         await supabase.from('activities').insert({
           user_id: user.id,
-          content: `Viewed application for ${opp.title} at ${opp.organization_name || opp.funder_name}`
+          content: t('opportunities.activity.viewedApp', { title: opp.title, company: opp.organization_name || opp.funder_name })
         });
       }
 
@@ -154,7 +149,7 @@ export const OpportunityDetail: React.FC = () => {
           <div style={companyLogoStyle}>{(opp.organization_name || opp.funder_name || 'O').charAt(0)}</div>
           <div>
             <h1 style={titleStyle}>{opp.title}</h1>
-            <p style={companyNameStyle}>{opp.organization_name || opp.funder_name || 'Various Sources'}</p>
+            <p style={companyNameStyle}>{opp.organization_name || opp.funder_name || t('opportunities.variousSources')}</p>
           </div>
         </div>
         <div style={headerActionsStyle}>
@@ -170,7 +165,7 @@ export const OpportunityDetail: React.FC = () => {
             onClick={handleApply}
             disabled={applying}
           >
-            {applying ? t('common.loading') : `${t('opportunities.apply')} on ${opp?.source_name || 'Original Site'}`} <ExternalLink size={16} />
+            {applying ? t('common.loading') : `${t('opportunities.apply')} ${t('common.on')} ${opp?.source_name || t('opportunities.originalSite')}`} <ExternalLink size={16} />
           </Button>
         </div>
       </div>
@@ -226,7 +221,7 @@ export const OpportunityDetail: React.FC = () => {
                 flexWrap: 'wrap', 
                 gap: '12px' 
               }}>
-                {['Quick', '90-Day', '180-Day', '365-Day'].map(duration => (
+                {['Quick', '90-day', '180-day', '365-day'].map(duration => (
                   <Button 
                     key={duration} 
                     variant="outline" 
@@ -239,7 +234,7 @@ export const OpportunityDetail: React.FC = () => {
                       minWidth: '100px'
                     }}
                   >
-                    {duration}
+                    {t(`dashboard.horizons.${duration.toLowerCase()}`)}
                   </Button>
                 ))}
               </div>
@@ -293,8 +288,8 @@ export const OpportunityDetail: React.FC = () => {
 
           <Card title={t('opportunities.atAGlance')}>
             <div style={infoGridStyle}>
-              <InfoItem icon={MapPin} label={t('opportunities.location')} value={opp.location || 'Remote / Various'} />
-              <InfoItem icon={Calendar} label={t('opportunities.deadline')} value={opp.deadline || 'No deadline'} />
+              <InfoItem icon={MapPin} label={t('opportunities.location')} value={opp.location || `${t('opportunities.remoteOnly')} / ${t('opportunities.variousSources')}`} />
+              <InfoItem icon={Calendar} label={t('opportunities.deadline')} value={opp.deadline || t('opportunities.noDeadline')} />
               <InfoItem icon={Globe} label={t('opportunities.type')} value={opp.type} />
               {opp.salary && <InfoItem icon={Briefcase} label={t('opportunities.salary')} value={opp.salary} />}
               {opp.amount && <InfoItem icon={Gift} label={t('opportunities.funding')} value={opp.amount} />}
@@ -334,7 +329,7 @@ export const OpportunityDetail: React.FC = () => {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
               {['Quick', '90-day', '180-day', '365-day'].map(duration => (
                 <Button key={duration} variant="outline" onClick={() => handleCreatePlan(duration)}>
-                  {duration}
+                  {t(`dashboard.horizons.${duration.toLowerCase()}`)}
                 </Button>
               ))}
             </div>

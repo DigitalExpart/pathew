@@ -138,8 +138,8 @@ export const OpportunityList: React.FC = () => {
           </Button>
           {!isMobile && <div style={dividerStyle}></div>}
           <select style={{ ...selectStyle, flex: isMobile ? 1 : 'none' }}>
-            <option>Sort by: Newest</option>
-            <option>Sort by: Deadline</option>
+            <option>{t('opportunities.sortBy.newest')}</option>
+            <option>{t('opportunities.sortBy.deadline')}</option>
           </select>
         </div>
       </div>
@@ -168,7 +168,7 @@ export const OpportunityList: React.FC = () => {
                 <div style={{ display: 'flex', gap: '8px' }}>
                   {opp.featured && (
                     <Badge variant="primary" style={{ backgroundColor: 'rgba(245,158,11,0.1)', color: '#f59e0b', borderColor: 'rgba(245,158,11,0.2)' }}>
-                      <Star size={12} fill="currentColor" /> Featured
+                      <Star size={12} fill="currentColor" /> {t('opportunities.featured')}
                     </Badge>
                   )}
                   <Badge variant="outline" style={{ textTransform: 'capitalize' }}>{opp.type}</Badge>
@@ -178,7 +178,7 @@ export const OpportunityList: React.FC = () => {
 
             <div style={{ flex: 1, marginTop: '20px' }}>
               <h3 style={oppTitleStyle}>{opp.title}</h3>
-              <p style={companyStyle}>{opp.organization_name || opp.funder_name || 'Various Sources'}</p>
+              <p style={companyStyle}>{opp.organization_name || opp.funder_name || t('opportunities.variousSources')}</p>
               
               <div style={metaGridStyle}>
                 <div style={metaItemStyle}>
@@ -187,7 +187,7 @@ export const OpportunityList: React.FC = () => {
                 </div>
                 <div style={metaItemStyle}>
                   <Calendar size={14} color="var(--text-muted)" />
-                  <span>Due {opp.deadline}</span>
+                  <span>{t('opportunities.due', { date: opp.deadline })}</span>
                 </div>
               </div>
 
@@ -195,7 +195,7 @@ export const OpportunityList: React.FC = () => {
                 {opp.requirements?.slice(0, 3).map((req: string, i: number) => (
                   <span key={i} style={tagStyle}>{req}</span>
                 ))}
-                {opp.requirements?.length > 3 && <span style={tagStyle}>+{opp.requirements.length - 3} more</span>}
+                {opp.requirements?.length > 3 && <span style={tagStyle}>{t('opportunities.more', { count: opp.requirements.length - 3 })}</span>}
               </div>
             </div>
 

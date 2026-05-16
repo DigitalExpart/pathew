@@ -45,7 +45,10 @@
     "stats": {
       "users": "Usuarios activos",
       "placements": "Colocaciones exitosas",
-      "rating": "Valoración de usuarios"
+      "rating": "Valoración de usuarios",
+      "matchAccuracy": "Precisión de ajuste",
+      "opportunities": "Oportunidades",
+      "countries": "Países"
     },
     "heroTitleEnd": " con precisión.",
     "problem": {
@@ -150,7 +153,8 @@
         "Seguridad",
         "Cookies"
       ]
-    }
+    },
+    "pricingMore": "¿Necesitas más? Los usuarios pueden recargar sus créditos en cualquier momento."
   },
   "auth": {
     "login": "Iniciar sesión",
@@ -167,7 +171,21 @@
     "welcomeBack": "Bienvenido de nuevo",
     "createAccount": "Crear tu cuenta",
     "loginSubtitle": "Inicia sesión para acceder a tu panel de carrera",
-    "registerSubtitle": "Únete a miles de profesionales que aceleran su carrera"
+    "registerSubtitle": "Únete a miles de profesionales que aceleran su carrera",
+    "errors": {
+      "passwordMismatch": "Las contraseñas no coinciden",
+      "passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
+      "acceptTerms": "Debes aceptar los Términos y Condiciones",
+      "acceptPrivacy": "Debes aceptar la Política de Privacidad",
+      "failedLogin": "Error al iniciar sesión",
+      "failedSignUp": "Error al registrarse"
+    },
+    "placeholders": {
+      "fullName": "Nombre y apellido",
+      "email": "nombre@empresa.com",
+      "password": "Mín. 8 caracteres",
+      "repeatPassword": "Repetir contraseña"
+    }
   },
   "dashboard": {
     "title": "Panel de control",
@@ -183,7 +201,31 @@
     "credits": "Créditos",
     "viewAll": "Ver todo",
     "noActivity": "Sin actividad reciente.",
-    "noDeadlines": "Sin fechas límite próximas."
+    "noDeadlines": "Sin fechas límite próximas.",
+    "greeting": "¡Buenos días, {{name}}! 👋",
+    "scanning": "Escaneando...",
+    "quickScan": "Escaneo rápido",
+    "docsGenerated": "Docs generados",
+    "pendingReviews": "Revisiones pendientes",
+    "prepPlan": "Plan de preparación",
+    "readinessScore": "Puntuación de preparación",
+    "topGoals": "Objetivos principales",
+    "noGoals": "Aún no hay objetivos.",
+    "achievements": "Logros",
+    "noAchievements": "No hay logros listados.",
+    "nextSteps": "Próximos pasos",
+    "nextUp": "Siguiente",
+    "refine": "Refinar {{title}}",
+    "completeProfileToSeeSteps": "Completa tu perfil para ver los siguientes pasos.",
+    "match": "Match",
+    "noOppsFound": "No se han encontrado oportunidades. ¡Prueba un escaneo rápido!",
+    "noRecentActivity": "No hay actividad reciente.",
+    "horizons": {
+      "quick": "Rápido",
+      "90-day": "90 días",
+      "180-day": "180 días",
+      "365-day": "365 días"
+    }
   },
   "opportunities": {
     "title": "Explorar oportunidades",
@@ -201,14 +243,59 @@
     "location": "Ubicación",
     "deadline": "Vence",
     "type": "Tipo",
-    "remote": "Remoto"
+    "remote": "Remoto",
+    "sortBy": {
+      "newest": "Ordenar por: Más reciente",
+      "deadline": "Ordenar por: Plazo"
+    },
+    "featured": "Destacado",
+    "variousSources": "Fuentes diversas",
+    "due": "Vence el {{date}}",
+    "more": "+{{count}} más",
+    "backToOpportunities": "Volver a las oportunidades",
+    "notFound": "Oportunidad no encontrada.",
+    "apply": "Postular",
+    "originalSite": "Sitio original",
+    "description": "Descripción",
+    "requirementComparison": "Comparación de requisitos",
+    "skillGap": "Brecha de habilidades",
+    "getPreparationPlan": "Obtener un plan de preparación",
+    "preparationPlanDesc": "Cierra tus brechas de habilidades con una hoja de ruta estructurada adaptada a este rol específico.",
+    "prepareApplication": "Prepara tu solicitud",
+    "prepareApplicationDesc": "Genera documentos de alta calidad optimizados para esta oportunidad utilizando los datos de tu perfil.",
+    "analysisDesc": "Obtén un desglose detallado de cómo encajas en este rol y qué destacar.",
+    "analyzeFit": "Analizar mi compatibilidad",
+    "atAGlance": "De un vistazo",
+    "noDeadline": "No se especificó fecha límite",
+    "funding": "Financiación",
+    "salary": "Salario",
+    "mode": "Modo",
+    "priorityGaps": "Brechas prioritarias a cerrar",
+    "priorityGapsDesc": "Nuestro Asistente identificó estos como requisitos críticos que actualmente te faltan. Enfócate en estos en tu preparación.",
+    "preparationPlan": "Plan de preparación",
+    "preparationPlanSelectDesc": "Elige un plazo para tu hoja de ruta de preparación. El Asistente adaptará los pasos en consecuencia.",
+    "compatibilityPrompts": [
+      "Explicar mi compatibilidad",
+      "Generar un plan de preparación",
+      "Identificar mis fortalezas y brechas",
+      "Sugerir próximos pasos"
+    ],
+    "activity": {
+      "viewedApp": "Vio la solicitud para {{title}} en {{company}}"
+    },
+    "remoteOnly": "Remoto"
   },
   "jobs": {
     "title": "Ofertas de empleo",
     "subtitle": "Ofertas de empleo seleccionadas que coinciden con tu perfil.",
     "applyNow": "Aplicar ahora",
     "viewDetails": "Ver detalles",
-    "noJobs": "No se encontraron empleos que coincidan con tus criterios."
+    "noJobs": "No se encontraron empleos que coincidan con tus criterios.",
+    "loading": "Cargando sus roles...",
+    "noApplications": "Aún no se han encontrado roles",
+    "noApplicationsSubtitle": "Explora oportunidades de trabajo que coincidan con tu perfil.",
+    "browseOpps": "Explorar oportunidades",
+    "foundRoles": "Se han encontrado {{count}} roles que coinciden con tu perfil."
   },
   "savedItems": {
     "title": "Elementos guardados",
@@ -240,7 +327,8 @@
     "noAchievements": "Sin logros listados.",
     "noBio": "Sin biografía proporcionada. Usa Editar perfil para compartir tu trayectoria.",
     "freePlan": "Plan gratuito",
-    "verifiedProfessional": "Profesional verificado"
+    "verifiedProfessional": "Profesional verificado",
+    "planLabel": "Plan"
   },
   "preparation": {
     "title": "Proyectos de preparación",
@@ -259,7 +347,19 @@
     "completed": "Completado",
     "pending": "Pendiente",
     "complete": "Completo",
-    "week": "Semana"
+    "week": "Semana",
+    "generalGrowth": "Crecimiento profesional general",
+    "overallReadiness": "Preparación general",
+    "personalRoadmap": "Hoja de ruta personal",
+    "roadmapTitle": "Hoja de ruta: {{title}}",
+    "generalGrowthRoadmap": "Hoja de ruta de crecimiento general",
+    "tailoredFor": "Diseñado específicamente para {{company}}. Sigue tu progreso semanalmente.",
+    "trackWeekly": "Sigue tu progreso semanal y mantente enfocado en tus metas profesionales.",
+    "roadmapBadge": "HOJA DE RUTA {{type}}",
+    "assistantWorking": "El Asistente Pathew está trabajando...",
+    "tailoringRoadmap": "Personalizando tu hoja de ruta en función de los requisitos y tus habilidades actuales.",
+    "focusArea": "Área de enfoque",
+    "deleteRoadmap": "Eliminar hoja de ruta"
   },
   "assistant": {
     "title": "Asistente PATHEW",
@@ -305,7 +405,8 @@
     "german": "Deutsch",
     "spanish": "Español",
     "credit": "crédito",
-    "credits": "créditos"
+    "credits": "créditos",
+    "on": "en"
   },
   "wallet": {
     "title": "Billetera y Créditos",
@@ -477,7 +578,8 @@
       "service": "Servicio",
       "credits": "Créditos",
       "notes": "Notas"
-    }
+    },
+    "anyRewrite": "Cualquier reescritura"
   },
   "grantBuilder": {
     "title": "Constructor de Subvenciones",
@@ -491,7 +593,27 @@
     "customQuestions": "Preguntas personalizadas",
     "addQuestion": "+ Añadir Pregunta",
     "wordLimit": "Límite de palabras:",
-    "assistant": "Asistente"
+    "assistant": "Asistente",
+    "docTypes": {
+      "full": "Propuesta de subvención completa",
+      "onePage": "Propuesta de una página",
+      "ukCV": "CV UK",
+      "usCV": "CV US",
+      "euCV": "CV EU",
+      "academicCV": "CV Académico",
+      "coverLetter": "Carta de presentación"
+    },
+    "pages": {
+      "one": "1 página",
+      "two": "2 páginas",
+      "three": "3 páginas",
+      "five": "5 páginas",
+      "tenPlus": "10+ páginas"
+    },
+    "words": "palabras",
+    "placeholder": "Comience a escribir su documento...",
+    "questionPlaceholder": "Título de la pregunta o sección",
+    "abstract": "Resumen del proyecto"
   },
   "contact": {
     "title1": "Ponte en ",
@@ -633,5 +755,114 @@
         }
       ]
     }
+  },
+  "editProfile": {
+    "title": "Editar perfil profesional",
+    "backToProfile": "Volver al perfil",
+    "saveChanges": "Guardar cambios",
+    "basicInfo": "Información básica",
+    "fullName": "Nombre completo",
+    "primaryOrg": "Organización principal",
+    "personalDetails": "Detalles personales",
+    "dob": "Fecha de nacimiento",
+    "maritalStatus": "Estado civil",
+    "selectStatus": "Seleccionar estado",
+    "single": "Soltero/a",
+    "married": "Casado/a",
+    "divorced": "Divorciado/a",
+    "gender": "Género",
+    "selectGender": "Seleccionar género",
+    "male": "Masculino",
+    "female": "Femenino",
+    "other": "Otro",
+    "preferNotToSay": "Prefiero no decirlo",
+    "languagesSpoken": "Idiomas hablados",
+    "searchLanguages": "Buscar y añadir idiomas (ej. Inglés, Francés, Español...)",
+    "addLanguage": "Añadir \"{{name}}\"",
+    "homeAddress": "Dirección particular",
+    "streetAddress": "Dirección",
+    "country": "País",
+    "selectCountry": "Seleccionar país",
+    "city": "Ciudad",
+    "postalCode": "Código postal",
+    "certifications": "Certificaciones",
+    "certTitle": "Título",
+    "certOrg": "Organización",
+    "certLevel": "Nivel",
+    "selectLevel": "Seleccionar nivel",
+    "beginner": "Principiante",
+    "intermediate": "Intermedio",
+    "pro": "Profesional",
+    "year": "Año",
+    "addCertification": "Añadir certificación",
+    "detailedManagement": "Gestión detallada del perfil",
+    "profileWizardDesc": "Para actualizar tu biografía, habilidades, educación o experiencia laboral, utiliza nuestro Asistente de perfil interactivo.",
+    "launchWizard": "Iniciar asistente de perfil",
+    "privacyNote": "Nota de privacidad",
+    "privacyNoteDesc": "Tus datos personales como la fecha de nacimiento y el estado civil se utilizan para mejorar el ajuste del Asistente y nunca se comparten públicamente sin tu consentimiento."
+  },
+  "setup": {
+    "steps": {
+      "story": "Tu historia",
+      "education": "Educación",
+      "experience": "Experiencia",
+      "certifications": "Certificaciones",
+      "goals": "Metas",
+      "achievements": "Logros",
+      "projects": "Proyectos",
+      "organisation": "Organización",
+      "portfolio": "Portafolio"
+    },
+    "subtitle": "Cuéntanos más sobre ti para ayudar a nuestro Asistente a encontrar las mejores coincidencias.",
+    "saveAndContinue": "Guardar y continuar",
+    "saveAndComplete": "Guardar y completar",
+    "polishWithAssistant": "Pulir con el Asistente",
+    "bioLabel": "Bio / Historia personal",
+    "bioPlaceholder": "Comparte tus antecedentes, pasiones y lo que te motiva profesionalmente...",
+    "skillsLabel": "Habilidades clave (separadas por comas)",
+    "skillsPlaceholder": "React, TypeScript, Gestión de proyectos...",
+    "suggestSkills": "Sugerir habilidades",
+    "institution": "Institución",
+    "degree": "Título",
+    "fieldOfStudy": "Campo de estudio",
+    "graduationYear": "Año de graduación",
+    "addAnotherEducation": "Añadir otra educación",
+    "company": "Empresa",
+    "jobTitle": "Título del puesto",
+    "duration": "Duración",
+    "description": "Descripción",
+    "rewriteWithAssistant": "Reescribir con el Asistente",
+    "addAnotherExperience": "Añadir otra experiencia",
+    "certTitle": "Título de la certificación",
+    "issuingOrg": "Organización emisora",
+    "expLevel": "Nivel de experiencia",
+    "instructor": "Nombre del tutor/instructor",
+    "yearGiven": "Año otorgado",
+    "addAnotherCert": "Añadir otra certificación",
+    "lookingFor": "¿Qué estás buscando?",
+    "goalsList": {
+      "Full-time Roles": "Roles a tiempo completo",
+      "Contract Work": "Trabajo por contrato",
+      "Freelance Projects": "Proyectos freelance",
+      "Fellowships": "Becas de investigación",
+      "Grants": "Subvenciones",
+      "Leadership Positions": "Posiciones de liderazgo",
+      "Others (Add manually)": "Otros (Añadir manualmente)"
+    },
+    "customGoal": "Especifica tu meta personalizada",
+    "customGoalPlaceholder": "ej. Investigación académica, Mentoría...",
+    "achievementLabel": "Logro #{{index}}",
+    "addAnotherAchievement": "Añadir otro logro",
+    "projectLabel": "Proyecto #{{index}}",
+    "addProject": "Añadir proyecto",
+    "portfolioTitle": "Título del proyecto",
+    "portfolioDesc": "Breve descripción...",
+    "uploadFile": "Subir archivo",
+    "uploading": "Subiendo...",
+    "fileReady": "Archivo listo ✓",
+    "addToPortfolio": "Añadir al portafolio",
+    "externalPortfolio": "Enlace de portafolio externo (opcional)",
+    "errorFile": "Por favor, sube un archivo primero",
+    "errorTitle": "Por favor, añade un título"
   }
 }

@@ -45,7 +45,10 @@
     "stats": {
       "users": "Actieve gebruikers",
       "placements": "Succesvolle plaatsingen",
-      "rating": "Gebruikerswaardering"
+      "rating": "Gebruikerswaardering",
+      "matchAccuracy": "Match-precisie",
+      "opportunities": "Mogelijkheden",
+      "countries": "Landen"
     },
     "heroTitleEnd": " met Precisie.",
     "problem": {
@@ -96,12 +99,12 @@
       "title2": "PATHEW leerde van winnaars.",
       "subtitle": "In tegenstelling tot generieke tools is ons systeem getraind op meer dan $50 miljoen aan succesvolle aanvragen.",
       "generic": "Generieke Tools",
-      "g1": "Opgeblähte, generieke ontwerpen",
+      "g1": "Onhandige, generieke concepten",
       "g2": "Geen context over historie",
       "g3": "Hallucineert impactgegevens",
       "g4": "Standaard internetkennis",
       "pathew": "PATHEW Assistant",
-      "p1": "Präzises Match-Scoring",
+      "p1": "Precieze match-scoring",
       "p2": "Erfolgspatroon-Training",
       "p3": "Verifieerbaar narratief",
       "p4": "Gebouwd voor wereldwijde standaarden",
@@ -150,7 +153,8 @@
         "Beveiliging",
         "Cookies"
       ]
-    }
+    },
+    "pricingMore": "Meer nodig? Gebruikers kunnen hun credits op elk moment opwaarderen."
   },
   "auth": {
     "login": "Inloggen",
@@ -167,7 +171,21 @@
     "welcomeBack": "Welkom terug",
     "createAccount": "Maak je account aan",
     "loginSubtitle": "Log in om toegang te krijgen tot je carrière-dashboard",
-    "registerSubtitle": "Sluit je aan bij duizenden professionals die hun carrière versnellen"
+    "registerSubtitle": "Sluit je aan bij duizenden professionals die hun carrière versnellen",
+    "errors": {
+      "passwordMismatch": "Wachtwoorden komen niet overeen",
+      "passwordTooShort": "Wachtwoord moet minimaal 8 tekens lang zijn",
+      "acceptTerms": "Je moet de algemene voorwaarden accepteren",
+      "acceptPrivacy": "Je moet het privacybeleid accepteren",
+      "failedLogin": "Inloggen mislukt",
+      "failedSignUp": "Registreren mislukt"
+    },
+    "placeholders": {
+      "fullName": "Voor- en achternaam",
+      "email": "naam@bedrijf.com",
+      "password": "Min. 8 tekens",
+      "repeatPassword": "Wachtwoord herhalen"
+    }
   },
   "dashboard": {
     "title": "Dashboard",
@@ -183,7 +201,31 @@
     "credits": "Credits",
     "viewAll": "Bekijk alles",
     "noActivity": "Nog geen recente activiteit.",
-    "noDeadlines": "Geen aankomende deadlines."
+    "noDeadlines": "Geen aankomende deadlines.",
+    "greeting": "Goedemorgen, {{name}}! 👋",
+    "scanning": "Scannen...",
+    "quickScan": "Snelle scan",
+    "docsGenerated": "Documenten gegenereerd",
+    "pendingReviews": "Wachtende beoordelingen",
+    "prepPlan": "Voorbereidingsplan",
+    "readinessScore": "Bereidheidsscore",
+    "topGoals": "Belangrijkste doelen",
+    "noGoals": "Nog geen doelen gesteld.",
+    "achievements": "Prestaties",
+    "noAchievements": "Geen prestaties vermeld.",
+    "nextSteps": "Volgende stappen",
+    "nextUp": "Volgende",
+    "refine": "{{title}} verfijnen",
+    "completeProfileToSeeSteps": "Vul je profiel in om je volgende stappen te zien.",
+    "match": "Match",
+    "noOppsFound": "Nog geen kansen gevonden. Probeer een snelle scan!",
+    "noRecentActivity": "Geen recente activiteit om weer te geven.",
+    "horizons": {
+      "quick": "Snel",
+      "90-day": "90 dagen",
+      "180-day": "180 dagen",
+      "365-day": "365 dagen"
+    }
   },
   "opportunities": {
     "title": "Ontdek kansen",
@@ -201,14 +243,59 @@
     "location": "Locatie",
     "deadline": "Deadline",
     "type": "Type",
-    "remote": "Remote"
+    "remote": "Remote",
+    "sortBy": {
+      "newest": "Sorteer op: Nieuwste",
+      "deadline": "Sorteer op: Deadline"
+    },
+    "featured": "Aanbevolen",
+    "variousSources": "Diverse bronnen",
+    "due": "Deadline: {{date}}",
+    "more": "+{{count}} meer",
+    "backToOpportunities": "Terug naar kansen",
+    "notFound": "Kans niet gevonden.",
+    "apply": "Solliciteren",
+    "originalSite": "Originele site",
+    "description": "Beschrijving",
+    "requirementComparison": "Vergelijking van vereisten",
+    "skillGap": "Vaardigheidskloof",
+    "getPreparationPlan": "Vraag een voorbereidingsplan aan",
+    "preparationPlanDesc": "Dicht je vaardigheidskloof met een gestructureerd stappenplan dat is afgestemd op deze specifieke rol.",
+    "prepareApplication": "Bereid je sollicitatie voor",
+    "prepareApplicationDesc": "Genereer hoogwaardige documenten die zijn geoptimaliseerd voor deze kans met behulp van je profielgegevens.",
+    "analysisDesc": "Krijg een gedetailleerd overzicht van hoe je bij deze rol past en wat je moet benadrukken.",
+    "analyzeFit": "Analyseer mijn match",
+    "atAGlance": "In een oogopslag",
+    "noDeadline": "Geen deadline opgegeven",
+    "funding": "Financiering",
+    "salary": "Salaris",
+    "mode": "Modus",
+    "priorityGaps": "Prioritaire hiaten om te dichten",
+    "priorityGapsDesc": "Onze Assistant heeft deze geïdentificeerd als kritieke vereisten die je momenteel mist. Focus hierop in je voorbereiding.",
+    "preparationPlan": "Voorbereidingsplan",
+    "preparationPlanSelectDesc": "Kies een tijdsbestek voor je voorbereidingsstappenplan. De Assistant zal de stappen dienovereenkomstig aanpassen.",
+    "compatibilityPrompts": [
+      "Leg mijn compatibiliteit uit",
+      "Genereer een bereidheidsplan",
+      "Identificeer mijn sterke punten en hiaten",
+      "Suggereer volgende stappen"
+    ],
+    "activity": {
+      "viewedApp": "Sollicitatie voor {{title}} bij {{company}} bekeken"
+    },
+    "remoteOnly": "Op afstand"
   },
   "jobs": {
     "title": "Vacatures",
     "subtitle": "Gecureerde vacatures die passen bij je profiel.",
     "applyNow": "Nu solliciteren",
     "viewDetails": "Bekijk details",
-    "noJobs": "Geen vacatures gevonden die voldoen aan je criteria."
+    "noJobs": "Geen vacatures gevonden die voldoen aan je criteria.",
+    "loading": "Je rollen laden...",
+    "noApplications": "Nog geen rollen gevonden",
+    "noApplicationsSubtitle": "Ontdek vacatures die passen bij je profiel.",
+    "browseOpps": "Blader door kansen",
+    "foundRoles": "{{count}} rollen gevonden die passen bij je profiel."
   },
   "savedItems": {
     "title": "Opgeslagen items",
@@ -240,7 +327,8 @@
     "noAchievements": "Geen prestaties vermeld.",
     "noBio": "Nog geen biografie verstrekt. Gebruik Profiel bewerken om je traject te delen.",
     "freePlan": "Gratis plan",
-    "verifiedProfessional": "Geverifieerde professional"
+    "verifiedProfessional": "Geverifieerde professional",
+    "planLabel": "Plan"
   },
   "preparation": {
     "title": "Voorbereidingsprojecten",
@@ -259,7 +347,19 @@
     "completed": "Voltooid",
     "pending": "In afwachting",
     "complete": "Compleet",
-    "week": "Week"
+    "week": "Week",
+    "generalGrowth": "Algemene carrièreontwikkeling",
+    "overallReadiness": "Algemene paraatheid",
+    "personalRoadmap": "Persoonlijk stappenplan",
+    "roadmapTitle": "Stappenplan: {{title}}",
+    "generalGrowthRoadmap": "Algemeen stappenplan",
+    "tailoredFor": "Speciaal afgestemd op {{company}}. Volg wekelijks je voortgang.",
+    "trackWeekly": "Volg je wekelijkse voortgang en blijf op koers voor je carrièredoelen.",
+    "roadmapBadge": "{{type}} STAPPENPLAN",
+    "assistantWorking": "Pathew Assistant is aan het werk...",
+    "tailoringRoadmap": "Je stappenplan wordt op maat gemaakt op basis van de vereisten en je huidige vaardigheden.",
+    "focusArea": "Aandachtsgebied",
+    "deleteRoadmap": "Stappenplan verwijderen"
   },
   "assistant": {
     "title": "PATHEW Assistant",
@@ -306,7 +406,8 @@
     "spanish": "Español",
     "dutch": "Nederlands",
     "credit": "credit",
-    "credits": "credits"
+    "credits": "credits",
+    "on": "op"
   },
   "wallet": {
     "title": "Portemonnee & Credits",
@@ -478,7 +579,8 @@
       "service": "Service",
       "credits": "Credits",
       "notes": "Notities"
-    }
+    },
+    "anyRewrite": "Elke herschrijving"
   },
   "grantBuilder": {
     "title": "Subsidiebouwer",
@@ -492,7 +594,27 @@
     "customQuestions": "Aangepaste vragen",
     "addQuestion": "+ Vraag toevoegen",
     "wordLimit": "Woordlimiet:",
-    "assistant": "Assistent"
+    "assistant": "Assistent",
+    "docTypes": {
+      "full": "Volledig subsidievoorstel",
+      "onePage": "Voorstel van één pagina",
+      "ukCV": "UK CV",
+      "usCV": "US CV",
+      "euCV": "EU CV",
+      "academicCV": "Academisch CV",
+      "coverLetter": "Sollicitatiebrief"
+    },
+    "pages": {
+      "one": "1 pagina",
+      "two": "2 pagina's",
+      "three": "3 pagina's",
+      "five": "5 pagina's",
+      "tenPlus": "10+ pagina's"
+    },
+    "words": "woorden",
+    "placeholder": "Begin met het typen van je document...",
+    "questionPlaceholder": "Vraag- of sectietitel",
+    "abstract": "Projectsamenvatting"
   },
   "contact": {
     "title1": "Neem ",
@@ -634,5 +756,114 @@
         }
       ]
     }
+  },
+  "editProfile": {
+    "title": "Professioneel profiel bewerken",
+    "backToProfile": "Terug naar profiel",
+    "saveChanges": "Wijzigingen opslaan",
+    "basicInfo": "Basisgegevens",
+    "fullName": "Volledige naam",
+    "primaryOrg": "Primaire organisatie",
+    "personalDetails": "Persoonlijke gegevens",
+    "dob": "Geboortedatum",
+    "maritalStatus": "Burgerlijke staat",
+    "selectStatus": "Selecteer status",
+    "single": "Alleenstaand",
+    "married": "Getrouwd",
+    "divorced": "Gescheiden",
+    "gender": "Geslacht",
+    "selectGender": "Selecteer geslacht",
+    "male": "Man",
+    "female": "Vrouw",
+    "other": "Anders",
+    "preferNotToSay": "Zeg ik liever niet",
+    "languagesSpoken": "Gesproken talen",
+    "searchLanguages": "Zoek en voeg talen toe (bijv. Engels, Frans, Spaans...)",
+    "addLanguage": "\"{{name}}\" toevoegen",
+    "homeAddress": "Huisadres",
+    "streetAddress": "Adres",
+    "country": "Land",
+    "selectCountry": "Selecteer land",
+    "city": "Stad",
+    "postalCode": "Postcode",
+    "certifications": "Certificeringen",
+    "certTitle": "Titel",
+    "certOrg": "Organisatie",
+    "certLevel": "Niveau",
+    "selectLevel": "Selecteer niveau",
+    "beginner": "Beginner",
+    "intermediate": "Gemiddeld",
+    "pro": "Pro",
+    "year": "Jaar",
+    "addCertification": "Certificering toevoegen",
+    "detailedManagement": "Gedetailleerd profielbeheer",
+    "profileWizardDesc": "Om je bio, vaardigheden, opleiding of werkervaring bij te werken, gebruik je onze interactieve profielhulp.",
+    "launchWizard": "Start profielhulp",
+    "privacyNote": "Privacyverklaring",
+    "privacyNoteDesc": "Je persoonlijke gegevens zoals geboortedatum en burgerlijke staat worden gebruikt om de Assistant-matching te verbeteren en worden nooit zonder je toestemming openbaar gedeeld."
+  },
+  "setup": {
+    "steps": {
+      "story": "Jouw verhaal",
+      "education": "Opleiding",
+      "experience": "Ervaring",
+      "certifications": "Certificeringen",
+      "goals": "Doelen",
+      "achievements": "Prestaties",
+      "projects": "Projecten",
+      "organisation": "Organisatie",
+      "portfolio": "Portfolio"
+    },
+    "subtitle": "Vertel ons meer over jezelf om onze Assistant te helpen de beste matches te vinden.",
+    "saveAndContinue": "Opslaan en doorgaan",
+    "saveAndComplete": "Opslaan en voltooien",
+    "polishWithAssistant": "Verfijnen met Assistant",
+    "bioLabel": "Bio / Persoonlijk verhaal",
+    "bioPlaceholder": "Deel je achtergrond, passies en wat je professioneel drijft...",
+    "skillsLabel": "Kernvaardigheden (gescheiden door komma's)",
+    "skillsPlaceholder": "React, TypeScript, Projectbeheer...",
+    "suggestSkills": "Vaardigheden suggereren",
+    "institution": "Instituut",
+    "degree": "Graad",
+    "fieldOfStudy": "Studierichting",
+    "graduationYear": "Afstudeerjaar",
+    "addAnotherEducation": "Nog een opleiding toevoegen",
+    "company": "Bedrijf",
+    "jobTitle": "Functietitel",
+    "duration": "Looptijd",
+    "description": "Beschrijving",
+    "rewriteWithAssistant": "Herschrijven met Assistant",
+    "addAnotherExperience": "Nog een ervaring toevoegen",
+    "certTitle": "Titel certificering",
+    "issuingOrg": "Uitgevende organisatie",
+    "expLevel": "Ervaringsniveau",
+    "instructor": "Naam docent/instructeur",
+    "yearGiven": "Jaar van uitgifte",
+    "addAnotherCert": "Nog een certificering toevoegen",
+    "lookingFor": "Waar ben je naar op zoek?",
+    "goalsList": {
+      "Full-time Roles": "Fulltime functies",
+      "Contract Work": "Contractwerk",
+      "Freelance Projects": "Freelance projecten",
+      "Fellowships": "Fellowships",
+      "Grants": "Subsidies",
+      "Leadership Positions": "Leidinggevende posities",
+      "Others (Add manually)": "Overige (Handmatig toevoegen)"
+    },
+    "customGoal": "Specificeer je eigen doel",
+    "customGoalPlaceholder": "bijv. Academisch onderzoek, mentorschap...",
+    "achievementLabel": "Prestatie #{{index}}",
+    "addAnotherAchievement": "Nog een prestatie toevoegen",
+    "projectLabel": "Project #{{index}}",
+    "addProject": "Project toevoegen",
+    "portfolioTitle": "Projecttitel",
+    "portfolioDesc": "Korte beschrijving...",
+    "uploadFile": "Bestand uploaden",
+    "uploading": "Uploaden...",
+    "fileReady": "Bestand gereed ✓",
+    "addToPortfolio": "Toevoegen aan portfolio",
+    "externalPortfolio": "Externe portfolio-link (optioneel)",
+    "errorFile": "Upload eerst een bestand",
+    "errorTitle": "Voeg een titel toe"
   }
 }

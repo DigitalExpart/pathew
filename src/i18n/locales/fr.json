@@ -45,7 +45,10 @@
     "stats": {
       "users": "Utilisateurs actifs",
       "placements": "Placements réussis",
-      "rating": "Note des utilisateurs"
+      "rating": "Note des utilisateurs",
+      "matchAccuracy": "Précision de l'adéquation",
+      "opportunities": "Opportunités",
+      "countries": "Pays"
     },
     "heroTitleEnd": " avec précision.",
     "problem": {
@@ -150,7 +153,8 @@
         "Sécurité",
         "Cookies"
       ]
-    }
+    },
+    "pricingMore": "Besoin de plus ? Les utilisateurs peuvent recharger leurs crédits à tout moment."
   },
   "auth": {
     "login": "Se connecter",
@@ -167,7 +171,21 @@
     "welcomeBack": "Bon retour",
     "createAccount": "Créer votre compte",
     "loginSubtitle": "Connectez-vous pour accéder à votre tableau de bord",
-    "registerSubtitle": "Rejoignez des milliers de professionnels qui accélèrent leur carrière"
+    "registerSubtitle": "Rejoignez des milliers de professionnels qui accélèrent leur carrière",
+    "errors": {
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "passwordTooShort": "Le mot de passe doit comporter au moins 8 caractères",
+      "acceptTerms": "Vous devez accepter les conditions générales",
+      "acceptPrivacy": "Vous devez accepter la politique de confidentialité",
+      "failedLogin": "Échec de la connexion",
+      "failedSignUp": "Échec de l'inscription"
+    },
+    "placeholders": {
+      "fullName": "Prénom et nom",
+      "email": "nom@entreprise.com",
+      "password": "Min. 8 caractères",
+      "repeatPassword": "Répéter le mot de passe"
+    }
   },
   "dashboard": {
     "title": "Tableau de bord",
@@ -183,7 +201,31 @@
     "credits": "Crédits",
     "viewAll": "Voir tout",
     "noActivity": "Aucune activité récente.",
-    "noDeadlines": "Aucune échéance à venir."
+    "noDeadlines": "Aucune échéance à venir.",
+    "greeting": "Bonjour, {{name}} ! 👋",
+    "scanning": "Analyse en cours...",
+    "quickScan": "Analyse rapide",
+    "docsGenerated": "Docs générés",
+    "pendingReviews": "Examens en attente",
+    "prepPlan": "Plan de préparation",
+    "readinessScore": "Score de préparation",
+    "topGoals": "Objectifs principaux",
+    "noGoals": "Aucun objectif défini.",
+    "achievements": "Réalisations",
+    "noAchievements": "Aucune réalisation répertoriée.",
+    "nextSteps": "Prochaines étapes",
+    "nextUp": "Suivant",
+    "refine": "Affiner {{title}}",
+    "completeProfileToSeeSteps": "Complétez votre profil pour voir les prochaines étapes.",
+    "match": "Match",
+    "noOppsFound": "Aucune opportunité trouvée. Essayez une analyse rapide !",
+    "noRecentActivity": "Aucune activité récente à afficher.",
+    "horizons": {
+      "quick": "Rapide",
+      "90-day": "90 jours",
+      "180-day": "180 jours",
+      "365-day": "365 jours"
+    }
   },
   "opportunities": {
     "title": "Explorer les opportunités",
@@ -201,14 +243,59 @@
     "location": "Lieu",
     "deadline": "Échéance",
     "type": "Type",
-    "remote": "Télétravail"
+    "remote": "Télétravail",
+    "sortBy": {
+      "newest": "Trier par : Plus récent",
+      "deadline": "Trier par : Échéance"
+    },
+    "featured": "En vedette",
+    "variousSources": "Sources diverses",
+    "due": "Échéance : {{date}}",
+    "more": "+{{count}} de plus",
+    "backToOpportunities": "Retour aux opportunités",
+    "notFound": "Opportunité introuvable.",
+    "apply": "Postuler",
+    "originalSite": "Site original",
+    "description": "Description",
+    "requirementComparison": "Comparaison des exigences",
+    "skillGap": "Écart de compétences",
+    "getPreparationPlan": "Obtenir un plan de préparation",
+    "preparationPlanDesc": "Comblez vos lacunes en compétences avec une feuille de route structurée adaptée à ce rôle spécifique.",
+    "prepareApplication": "Préparez votre candidature",
+    "prepareApplicationDesc": "Générez des documents de haute qualité optimisés pour cette opportunité en utilisant les données de votre profil.",
+    "analysisDesc": "Obtenez une analyse détaillée de la façon dont vous correspondez à ce rôle et de ce qu'il faut mettre en avant.",
+    "analyzeFit": "Analyser ma compatibilité",
+    "atAGlance": "En un coup d'œil",
+    "noDeadline": "Aucune date limite spécifiée",
+    "funding": "Financement",
+    "salary": "Salaire",
+    "mode": "Mode",
+    "priorityGaps": "Écarts prioritaires à combler",
+    "priorityGapsDesc": "Notre Assistant a identifié ces points comme des exigences critiques qui vous manquent actuellement. Concentrez-vous sur ceux-ci dans votre préparation.",
+    "preparationPlan": "Plan de préparation",
+    "preparationPlanSelectDesc": "Choisissez un délai pour votre feuille de route de préparation. L'Assistant adaptera les étapes en conséquence.",
+    "compatibilityPrompts": [
+      "Expliquer ma compatibilité",
+      "Générer un plan de préparation",
+      "Identifier mes points forts et mes lacunes",
+      "Suggérer les prochaines étapes"
+    ],
+    "activity": {
+      "viewedApp": "A consulté la candidature pour {{title}} chez {{company}}"
+    },
+    "remoteOnly": "À distance"
   },
   "jobs": {
     "title": "Offres d'emploi",
     "subtitle": "Offres d'emploi sélectionnées correspondant à votre profil.",
     "applyNow": "Postuler maintenant",
     "viewDetails": "Voir les détails",
-    "noJobs": "Aucun emploi trouvé correspondant à vos critères."
+    "noJobs": "Aucun emploi trouvé correspondant à vos critères.",
+    "loading": "Chargement de vos rôles...",
+    "noApplications": "Aucun rôle trouvé pour le moment",
+    "noApplicationsSubtitle": "Explorez les opportunités d'emploi qui correspondent à votre profil.",
+    "browseOpps": "Parcourir les opportunités",
+    "foundRoles": "{{count}} rôles trouvés correspondant à votre profil."
   },
   "savedItems": {
     "title": "Éléments sauvegardés",
@@ -240,7 +327,8 @@
     "noAchievements": "Aucune réalisation répertoriée.",
     "noBio": "Aucune biographie fournie. Utilisez Modifier le profil pour partager votre parcours.",
     "freePlan": "Forfait gratuit",
-    "verifiedProfessional": "Professionnel vérifié"
+    "verifiedProfessional": "Professionnel vérifié",
+    "planLabel": "Plan"
   },
   "preparation": {
     "title": "Projets de préparation",
@@ -259,7 +347,19 @@
     "completed": "Terminé",
     "pending": "En attente",
     "complete": "Complet",
-    "week": "Semaine"
+    "week": "Semaine",
+    "generalGrowth": "Croissance de carrière générale",
+    "overallReadiness": "Préparation globale",
+    "personalRoadmap": "Feuille de route personnelle",
+    "roadmapTitle": "Feuille de route : {{title}}",
+    "generalGrowthRoadmap": "Feuille de route de croissance générale",
+    "tailoredFor": "Spécifiquement adapté pour {{company}}. Suivez vos progrès chaque semaine.",
+    "trackWeekly": "Suivez vos progrès hebdomadaires et restez sur la bonne voie pour vos objectifs de carrière.",
+    "roadmapBadge": "FEUILLE DE ROUTE {{type}}",
+    "assistantWorking": "L'Assistant Pathew travaille...",
+    "tailoringRoadmap": "Adaptation de votre feuille de route en fonction des exigences et de vos compétences actuelles.",
+    "focusArea": "Domaine de concentration",
+    "deleteRoadmap": "Supprimer la feuille de route"
   },
   "assistant": {
     "title": "Assistant PATHEW",
@@ -305,7 +405,8 @@
     "german": "Deutsch",
     "spanish": "Español",
     "credit": "crédit",
-    "credits": "crédits"
+    "credits": "crédits",
+    "on": "sur"
   },
   "wallet": {
     "title": "Portefeuille et Crédits",
@@ -477,7 +578,8 @@
       "service": "Service",
       "credits": "Crédits",
       "notes": "Notes"
-    }
+    },
+    "anyRewrite": "Toute réécriture"
   },
   "grantBuilder": {
     "title": "Constructeur de Subventions",
@@ -491,7 +593,27 @@
     "customQuestions": "Questions personnalisées",
     "addQuestion": "+ Ajouter une question",
     "wordLimit": "Limite de mots :",
-    "assistant": "Assistant"
+    "assistant": "Assistant",
+    "docTypes": {
+      "full": "Proposition de subvention complète",
+      "onePage": "Proposition d'une page",
+      "ukCV": "CV UK",
+      "usCV": "CV US",
+      "euCV": "CV EU",
+      "academicCV": "CV Académique",
+      "coverLetter": "Lettre de motivation"
+    },
+    "pages": {
+      "one": "1 page",
+      "two": "2 pages",
+      "three": "3 pages",
+      "five": "5 pages",
+      "tenPlus": "10+ pages"
+    },
+    "words": "mots",
+    "placeholder": "Commencez à taper votre document...",
+    "questionPlaceholder": "Titre de la question ou de la section",
+    "abstract": "Résumé du projet"
   },
   "contact": {
     "title1": "Entrez en ",
@@ -633,5 +755,114 @@
         }
       ]
     }
+  },
+  "editProfile": {
+    "title": "Modifier le profil professionnel",
+    "backToProfile": "Retour au profil",
+    "saveChanges": "Enregistrer les modifications",
+    "basicInfo": "Informations de base",
+    "fullName": "Nom complet",
+    "primaryOrg": "Organisation principale",
+    "personalDetails": "Détails personnels",
+    "dob": "Date de naissance",
+    "maritalStatus": "État civil",
+    "selectStatus": "Sélectionner le statut",
+    "single": "Célibataire",
+    "married": "Marié(e)",
+    "divorced": "Divorcé(e)",
+    "gender": "Genre",
+    "selectGender": "Sélectionner le genre",
+    "male": "Homme",
+    "female": "Femme",
+    "other": "Autre",
+    "preferNotToSay": "Préfère ne pas le dire",
+    "languagesSpoken": "Langues parlées",
+    "searchLanguages": "Rechercher et ajouter des langues (ex: anglais, français, espagnol...)",
+    "addLanguage": "Ajouter \"{{name}}\"",
+    "homeAddress": "Adresse personnelle",
+    "streetAddress": "Adresse",
+    "country": "Pays",
+    "selectCountry": "Sélectionner le pays",
+    "city": "Ville",
+    "postalCode": "Code postal",
+    "certifications": "Certifications",
+    "certTitle": "Titre",
+    "certOrg": "Organisation",
+    "certLevel": "Niveau",
+    "selectLevel": "Sélectionner le niveau",
+    "beginner": "Débutant",
+    "intermediate": "Intermédiaire",
+    "pro": "Pro",
+    "year": "Année",
+    "addCertification": "Ajouter une certification",
+    "detailedManagement": "Gestion détaillée du profil",
+    "profileWizardDesc": "Pour mettre à jour votre biographie, vos compétences, vos études ou votre expérience professionnelle, veuillez utiliser notre assistant de profil interactif.",
+    "launchWizard": "Lancer l'assistant de profil",
+    "privacyNote": "Note sur la confidentialité",
+    "privacyNoteDesc": "Vos données personnelles telles que la date de naissance et l'état civil sont utilisées pour améliorer l'adéquation de l'Assistant et ne sont jamais partagées publiquement sans votre consentement."
+  },
+  "setup": {
+    "steps": {
+      "story": "Votre histoire",
+      "education": "Éducation",
+      "experience": "Expérience",
+      "certifications": "Certifications",
+      "goals": "Objectifs",
+      "achievements": "Réalisations",
+      "projects": "Projets",
+      "organisation": "Organisation",
+      "portfolio": "Portfolio"
+    },
+    "subtitle": "Dites-nous en plus sur vous pour aider notre Assistant à trouver les meilleures correspondances.",
+    "saveAndContinue": "Enregistrer et continuer",
+    "saveAndComplete": "Enregistrer et terminer",
+    "polishWithAssistant": "Améliorer avec l'Assistant",
+    "bioLabel": "Bio / Histoire personnelle",
+    "bioPlaceholder": "Partagez votre parcours, vos passions et ce qui vous motive professionnellement...",
+    "skillsLabel": "Compétences clés (séparées par des virgules)",
+    "skillsPlaceholder": "React, TypeScript, Gestion de projet...",
+    "suggestSkills": "Suggérer des compétences",
+    "institution": "Institution",
+    "degree": "Diplôme",
+    "fieldOfStudy": "Domaine d'études",
+    "graduationYear": "Année de remise des diplômes",
+    "addAnotherEducation": "Ajouter une autre éducation",
+    "company": "Entreprise",
+    "jobTitle": "Titre du poste",
+    "duration": "Durée",
+    "description": "Description",
+    "rewriteWithAssistant": "Réécrire avec l'Assistant",
+    "addAnotherExperience": "Ajouter une autre expérience",
+    "certTitle": "Titre de la certification",
+    "issuingOrg": "Organisation émettrice",
+    "expLevel": "Niveau d'expérience",
+    "instructor": "Nom du tuteur/instructeur",
+    "yearGiven": "Année d'obtention",
+    "addAnotherCert": "Ajouter une autre certification",
+    "lookingFor": "Que recherchez-vous ?",
+    "goalsList": {
+      "Full-time Roles": "Postes à plein temps",
+      "Contract Work": "Travail contractuel",
+      "Freelance Projects": "Projets en freelance",
+      "Fellowships": "Bourses d'excellence",
+      "Grants": "Subventions",
+      "Leadership Positions": "Postes de direction",
+      "Others (Add manually)": "Autres (Ajouter manuellement)"
+    },
+    "customGoal": "Spécifiez votre objectif personnalisé",
+    "customGoalPlaceholder": "ex: Recherche académique, Mentorat...",
+    "achievementLabel": "Réalisation #{{index}}",
+    "addAnotherAchievement": "Ajouter une autre réalisation",
+    "projectLabel": "Projet #{{index}}",
+    "addProject": "Ajouter un projet",
+    "portfolioTitle": "Titre du projet",
+    "portfolioDesc": "Brève description...",
+    "uploadFile": "Télécharger un fichier",
+    "uploading": "Téléchargement...",
+    "fileReady": "Fichier prêt ✓",
+    "addToPortfolio": "Ajouter au portfolio",
+    "externalPortfolio": "Lien portfolio externe (facultatif)",
+    "errorFile": "Veuillez d'abord télécharger un fichier",
+    "errorTitle": "Veuillez ajouter un titre"
   }
 }

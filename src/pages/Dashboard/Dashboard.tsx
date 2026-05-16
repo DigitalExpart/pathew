@@ -114,7 +114,7 @@ export const Dashboard: React.FC = () => {
     <div style={{ ...containerStyle, padding: isMobile ? '20px' : '0' }}>
       <header style={headerStyle}>
         <div>
-          <h1 style={{ ...titleStyle, fontSize: isMobile ? '1.5rem' : '2rem' }}>Good morning, {firstName}! 👋</h1>
+          <h1 style={{ ...titleStyle, fontSize: isMobile ? '1.5rem' : '2rem' }}>{t('dashboard.greeting', { name: firstName })}</h1>
           <p style={subtitleStyle}>{t('dashboard.subtitle')}</p>
         </div>
         <Button 
@@ -128,14 +128,14 @@ export const Dashboard: React.FC = () => {
           }}
         >
           <Zap size={18} fill="currentColor" className={scanning ? 'animate-pulse' : ''} />
-          {scanning ? 'Scanning...' : 'Quick Scan'}
+          {scanning ? t('dashboard.scanning') : t('dashboard.quickScan')}
         </Button>
       </header>      {/* Stats Grid */}
       <div className="grid-responsive" style={{ marginBottom: '32px' }}>
         <StatCard icon={Users} label={t('nav.opportunities')} value={stats.opps.toString()} trend="+0" />
         <StatCard icon={Briefcase} label={t('nav.jobs')} value={stats.jobs.toString()} trend="+0" />
-        <StatCard icon={FileCheck} label="Docs Generated" value={stats.docs.toString()} trend="+0" />
-        <StatCard icon={Clock} label="Pending Reviews" value={stats.reviews.toString()} />
+        <StatCard icon={FileCheck} label={t('dashboard.docsGenerated')} value={stats.docs.toString()} trend="+0" />
+        <StatCard icon={Clock} label={t('dashboard.pendingReviews')} value={stats.reviews.toString()} />
       </div>
 
       <div className="flex-responsive" style={{ gap: '32px' }}>
@@ -145,7 +145,7 @@ export const Dashboard: React.FC = () => {
           {/* Preparation Plan */}
           <div>
             <div style={sectionHeaderStyle}>
-              <h2 style={sectionTitleStyle}>Preparation Plan</h2>
+              <h2 style={sectionTitleStyle}>{t('dashboard.prepPlan')}</h2>
               <div className="desktop-only" style={horizonSelectorStyle}>
                 {['Quick', '90-day', '180-day', '365-day'].map(horizon => (
                    <button 
@@ -159,7 +159,7 @@ export const Dashboard: React.FC = () => {
                       navigate(`/preparation?type=${horizon.toLowerCase()}`);
                     }}
                   >
-                    {horizon}
+                    {t(`dashboard.horizons.${horizon.toLowerCase()}`)}
                   </button>
                 ))}
               </div>
@@ -167,48 +167,48 @@ export const Dashboard: React.FC = () => {
             
             <div className="stack-on-mobile" style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
               <Card style={{ flex: 1, backgroundColor: 'var(--bg-tertiary)' }}>
-                <p style={statLabelStyle}>Readiness Score</p>
+                <p style={statLabelStyle}>{t('dashboard.readinessScore')}</p>
                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', marginTop: '8px' }}>
                   <h3 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--accent-primary)' }}>{readinessScore}%</h3>
                   <span style={{ color: 'var(--text-muted)', marginBottom: '6px' }}>/ 100</span>
                 </div>
               </Card>
               <Card style={{ flex: 2 }}>
-                <p style={statLabelStyle}>Top Goals</p>
+                <p style={statLabelStyle}>{t('dashboard.topGoals')}</p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
                   {profile?.goals?.length ? (
-                    profile.goals.map((g, i) => <Badge key={i} variant="primary">{g}</Badge>)
+                    profile.goals.map((g: any, i: number) => <Badge key={i} variant="primary">{g}</Badge>)
                   ) : (
-                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>No goals set yet.</p>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('dashboard.noGoals')}</p>
                   )}
                 </div>
               </Card>
               <Card style={{ flex: 2 }}>
-                <p style={statLabelStyle}>Achievements</p>
+                <p style={statLabelStyle}>{t('dashboard.achievements')}</p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
                   {profile?.achievements?.length ? (
-                    profile.achievements.map((a, i) => <Badge key={i} variant="secondary">{a}</Badge>)
+                    profile.achievements.map((a: any, i: number) => <Badge key={i} variant="secondary">{a}</Badge>)
                   ) : (
-                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>No achievements listed.</p>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('dashboard.noAchievements')}</p>
                   )}
                 </div>
               </Card>
             </div>
 
-            <Card title="Next Steps" icon={Target}>
+            <Card title={t('dashboard.nextSteps')} icon={Target}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 {profile?.projects?.slice(0, 3).map((proj: any) => (
                   <div key={proj.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', gap: '12px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                       <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2px solid var(--accent-primary)', flexShrink: 0 }} />
-                      <span style={{ fontWeight: 500, fontSize: '0.9375rem' }}>Refine {proj.title}</span>
+                      <span style={{ fontWeight: 500, fontSize: '0.9375rem' }}>{t('dashboard.refine', { title: proj.title })}</span>
                     </div>
-                    <Badge variant="outline">Next Up</Badge>
+                    <Badge variant="outline">{t('dashboard.nextUp')}</Badge>
                   </div>
                 ))}
                 {!profile?.projects?.length && (
                   <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px' }}>
-                    Complete your profile to see your next steps.
+                    {t('dashboard.completeProfileToSeeSteps')}
                   </p>
                 )}
               </div>
@@ -237,14 +237,14 @@ export const Dashboard: React.FC = () => {
                     <div style={matchCircleStyle}>
                       <span style={matchValueStyle}>{opp.match_score}%</span>
                     </div>
-                    <span style={matchLabelStyle}>Match</span>
+                    <span style={matchLabelStyle}>{t('dashboard.match')}</span>
                   </div>
                 </div>
               </Card>
             ))}
             {!recentOpps.length && (
               <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '40px' }}>
-                No opportunities found yet. Try a Quick Scan!
+                {t('dashboard.noOppsFound')}
               </p>
             )}
             </div>
@@ -273,7 +273,7 @@ export const Dashboard: React.FC = () => {
               ))}
               {!recentActivity.length && (
                 <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', textAlign: 'center', padding: '20px' }}>
-                  No recent activity to show.
+                  {t('dashboard.noRecentActivity')}
                 </p>
               )}
             </div>

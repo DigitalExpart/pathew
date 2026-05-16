@@ -50,7 +50,7 @@ export const WalletPage: React.FC = () => {
               <Coins size={24} color="var(--accent-primary)" />
             </div>
             <span style={planBadgeStyle}>
-              {profile?.subscription_plan ? `${profile.subscription_plan} Plan` : t('profile.freePlan', 'Free Plan')}
+              {profile?.subscription_plan ? `${profile.subscription_plan} ${t('profile.planLabel')}` : t('profile.freePlan')}
             </span>
           </div>
           <div style={balanceContentStyle}>

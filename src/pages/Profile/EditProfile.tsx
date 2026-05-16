@@ -4,6 +4,7 @@ import { Button } from '../../components/ui/Button';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { 
   User,
   MapPin, 
@@ -19,6 +20,7 @@ import {
 
 
 export const EditProfile: React.FC = () => {
+  const { t } = useTranslation();
   const { user, profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
@@ -108,12 +110,12 @@ export const EditProfile: React.FC = () => {
     <div style={containerStyle}>
       <header style={headerStyle}>
         <button onClick={() => navigate('/career-profile')} style={backBtnStyle}>
-          <ArrowLeft size={18} /> Back to Profile
+          <ArrowLeft size={18} /> {t('editProfile.backToProfile')}
         </button>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px' }}>
-          <h1 style={titleStyle}>Edit Professional Profile</h1>
+          <h1 style={titleStyle}>{t('editProfile.title')}</h1>
           <Button onClick={handleSave} disabled={loading} style={{ gap: '8px' }}>
-            <Save size={18} /> {loading ? 'Saving...' : 'Save Changes'}
+            <Save size={18} /> {loading ? t('common.saving') : t('editProfile.saveChanges')}
           </Button>
         </div>
       </header>
@@ -121,10 +123,10 @@ export const EditProfile: React.FC = () => {
       <div style={gridStyle}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           {/* Basic Information */}
-          <Card title="Basic Information" icon={User}>
+          <Card title={t('editProfile.basicInfo')} icon={User}>
             <div style={formGridStyle}>
               <div style={inputGroupStyle}>
-                <label style={labelStyle}>Full Name</label>
+                <label style={labelStyle}>{t('editProfile.fullName')}</label>
                 <input 
                   style={inputStyle} 
                   value={formData.full_name}
@@ -132,7 +134,7 @@ export const EditProfile: React.FC = () => {
                 />
               </div>
               <div style={inputGroupStyle}>
-                <label style={labelStyle}>Primary Organisation</label>
+                <label style={labelStyle}>{t('editProfile.primaryOrg')}</label>
                 <input 
                   style={inputStyle} 
                   value={formData.organisation}
@@ -143,10 +145,10 @@ export const EditProfile: React.FC = () => {
           </Card>
 
           {/* Personal Details */}
-          <Card title="Personal Details" icon={Heart}>
+          <Card title={t('editProfile.personalDetails')} icon={Heart}>
             <div style={formGridStyle}>
               <div style={inputGroupStyle}>
-                <label style={labelStyle}>Date of Birth</label>
+                <label style={labelStyle}>{t('editProfile.dob')}</label>
                 <input 
                   type="date"
                   style={inputStyle} 
@@ -155,34 +157,34 @@ export const EditProfile: React.FC = () => {
                 />
               </div>
               <div style={inputGroupStyle}>
-                <label style={labelStyle}>Marital Status</label>
+                <label style={labelStyle}>{t('editProfile.maritalStatus')}</label>
                 <select 
                   style={inputStyle} 
                   value={formData.marital_status}
                   onChange={(e) => updateField('marital_status', e.target.value)}
                 >
-                  <option value="">Select Status</option>
-                  <option value="Single">Single</option>
-                  <option value="Married">Married</option>
-                  <option value="Divorced">Divorced</option>
+                  <option value="">{t('editProfile.selectStatus')}</option>
+                  <option value="Single">{t('editProfile.single')}</option>
+                  <option value="Married">{t('editProfile.married')}</option>
+                  <option value="Divorced">{t('editProfile.divorced')}</option>
                 </select>
               </div>
               <div style={inputGroupStyle}>
-                <label style={labelStyle}>Gender</label>
+                <label style={labelStyle}>{t('editProfile.gender')}</label>
                 <select 
                   style={inputStyle} 
                   value={formData.gender}
                   onChange={(e) => updateField('gender', e.target.value)}
                 >
-                  <option value="">Select Gender</option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
-                  <option value="Other">Other</option>
-                  <option value="Prefer not to say">Prefer not to say</option>
+                  <option value="">{t('editProfile.selectGender')}</option>
+                  <option value="Male">{t('editProfile.male')}</option>
+                  <option value="Female">{t('editProfile.female')}</option>
+                  <option value="Other">{t('editProfile.other')}</option>
+                  <option value="Prefer not to say">{t('editProfile.preferNotToSay')}</option>
                 </select>
               </div>
               <div style={{ ...inputGroupStyle, gridColumn: 'span 2' }}>
-                <label style={labelStyle}>Languages Spoken</label>
+                <label style={labelStyle}>{t('editProfile.languagesSpoken')}</label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
                   {formData.languages.map((lang: string) => (
                     <div key={lang} style={tagStyle}>
@@ -197,7 +199,7 @@ export const EditProfile: React.FC = () => {
                   <div style={inputWithIconStyle}>
                     <SearchIcon size={16} />
                     <input 
-                      placeholder="Search and add languages (e.g. English, French, Spanish...)"
+                      placeholder={t('editProfile.searchLanguages')}
                       style={bareInputStyle} 
                       onFocus={() => setIsLangDropdownOpen(true)}
                       onChange={(e) => {
@@ -232,7 +234,7 @@ export const EditProfile: React.FC = () => {
                             setIsLangDropdownOpen(false);
                           }}
                         >
-                          Add "{searchTerm}"
+                          {t('editProfile.addLanguage', { name: searchTerm })}
                         </div>
                       )}
                     </div>
@@ -243,10 +245,10 @@ export const EditProfile: React.FC = () => {
           </Card>
 
           {/* Address Details */}
-          <Card title="Home Address" icon={MapPin}>
+          <Card title={t('editProfile.homeAddress')} icon={MapPin}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div style={inputGroupStyle}>
-                <label style={labelStyle}>Street Address</label>
+                <label style={labelStyle}>{t('editProfile.streetAddress')}</label>
                 <input 
                   placeholder="123 Career Avenue"
                   style={inputStyle} 
@@ -256,18 +258,18 @@ export const EditProfile: React.FC = () => {
               </div>
               <div style={formGridStyle}>
                 <div style={inputGroupStyle}>
-                  <label style={labelStyle}>Country</label>
+                  <label style={labelStyle}>{t('editProfile.country')}</label>
                   <select 
                     style={inputStyle} 
                     value={formData.country}
                     onChange={(e) => updateField('country', e.target.value)}
                   >
-                    <option value="">Select Country</option>
+                    <option value="">{t('editProfile.selectCountry')}</option>
                     {countries.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
                 <div style={inputGroupStyle}>
-                  <label style={labelStyle}>City</label>
+                  <label style={labelStyle}>{t('editProfile.city')}</label>
                   <div style={inputWithIconStyle}>
                     <MapPin size={16} />
                     <input 
@@ -279,7 +281,7 @@ export const EditProfile: React.FC = () => {
                   </div>
                 </div>
                 <div style={inputGroupStyle}>
-                  <label style={labelStyle}>Postal Code</label>
+                  <label style={labelStyle}>{t('editProfile.postalCode')}</label>
                   <input 
                     placeholder="100001"
                     style={inputStyle} 
@@ -292,7 +294,7 @@ export const EditProfile: React.FC = () => {
           </Card>
 
           {/* Certifications Management */}
-          <Card title="Certifications" icon={Award}>
+          <Card title={t('editProfile.certifications')} icon={Award}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               {formData.certifications.map((cert: any, index: number) => (
                 <div key={index} style={{ padding: '20px', backgroundColor: 'var(--bg-secondary)', borderRadius: '12px', border: '1px solid var(--border-color)', position: 'relative' }}>
@@ -304,7 +306,7 @@ export const EditProfile: React.FC = () => {
                   </button>
                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                     <div style={inputGroupStyle}>
-                      <label style={labelStyle}>Title</label>
+                      <label style={labelStyle}>{t('editProfile.certTitle')}</label>
                       <input 
                         style={inputStyle} 
                         value={cert.title}
@@ -316,7 +318,7 @@ export const EditProfile: React.FC = () => {
                       />
                     </div>
                     <div style={inputGroupStyle}>
-                      <label style={labelStyle}>Organization</label>
+                      <label style={labelStyle}>{t('editProfile.certOrg')}</label>
                       <input 
                         style={inputStyle} 
                         value={cert.organization}
@@ -328,7 +330,7 @@ export const EditProfile: React.FC = () => {
                       />
                     </div>
                     <div style={inputGroupStyle}>
-                      <label style={labelStyle}>Level</label>
+                      <label style={labelStyle}>{t('editProfile.certLevel')}</label>
                       <select 
                         style={inputStyle} 
                         value={cert.level}
@@ -338,14 +340,14 @@ export const EditProfile: React.FC = () => {
                           updateField('certifications', newCerts);
                         }}
                       >
-                        <option value="">Select Level</option>
-                        <option value="Beginner">Beginner</option>
-                        <option value="Intermediate">Intermediate</option>
-                        <option value="Pro">Pro</option>
+                        <option value="">{t('editProfile.selectLevel')}</option>
+                        <option value="Beginner">{t('editProfile.beginner')}</option>
+                        <option value="Intermediate">{t('editProfile.intermediate')}</option>
+                        <option value="Pro">{t('editProfile.pro')}</option>
                       </select>
                     </div>
                     <div style={inputGroupStyle}>
-                      <label style={labelStyle}>Year</label>
+                      <label style={labelStyle}>{t('editProfile.year')}</label>
                       <input 
                         style={inputStyle} 
                         value={cert.year}
@@ -364,7 +366,7 @@ export const EditProfile: React.FC = () => {
                 style={{ borderStyle: 'dashed' }}
                 onClick={() => updateField('certifications', [...formData.certifications, { title: '', organization: '', level: '', tutor: '', year: '' }])}
               >
-                <Plus size={18} style={{ marginRight: '8px' }} /> Add Certification
+                <Plus size={18} style={{ marginRight: '8px' }} /> {t('editProfile.addCertification')}
               </Button>
             </div>
           </Card>
@@ -373,18 +375,18 @@ export const EditProfile: React.FC = () => {
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           {/* Action Card */}
-          <Card title="Detailed Profile Management">
+          <Card title={t('editProfile.detailedManagement')}>
             <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '20px' }}>
-              To update your Bio, Skills, Education, or Work Experience, please use our interactive Profile Wizard.
+              {t('editProfile.profileWizardDesc')}
             </p>
             <Button variant="outline" onClick={() => navigate('/profile-setup')} style={{ width: '100%' }}>
-              Launch Profile Wizard
+              {t('editProfile.launchWizard')}
             </Button>
           </Card>
 
           <div style={infoCardStyle}>
-            <h3>Privacy Note</h3>
-            <p>Your personal details like Date of Birth and Marital Status are used to improve AI matching and are never shared publicly without your consent.</p>
+            <h3>{t('editProfile.privacyNote')}</h3>
+            <p>{t('editProfile.privacyNoteDesc')}</p>
           </div>
         </div>
       </div>

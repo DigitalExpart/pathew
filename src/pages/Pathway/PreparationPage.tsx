@@ -304,7 +304,7 @@ export const PreparationPage: React.FC = () => {
       // Split content into lines or by bullet points
       const subParts = content.split(/\n|(?=\s*[\-*•])|(?=\s*\d+\.\s+)/);
       
-      let title = 'Focus Area';
+      let title = t('preparation.focusArea');
       const tasks: string[] = [];
       
       subParts.forEach((part, idx) => {
@@ -428,7 +428,7 @@ export const PreparationPage: React.FC = () => {
                     <button 
                       onClick={(e) => handleDeletePlan(e, roadmap!.dbId)}
                       style={deleteButtonStyle}
-                      title="Delete Roadmap"
+                      title={t('preparation.deleteRoadmap')}
                     >
                       <Trash2 size={16} />
                     </button>
@@ -458,10 +458,10 @@ export const PreparationPage: React.FC = () => {
                   </div>
                   <div style={{ flex: 1 }}>
                     <h3 style={projectTitleStyle}>{displayTitle}</h3>
-                    <p style={projectCompanyStyle}>{roadmap.planType?.toUpperCase() || '90-Day'} Roadmap</p>
+                    <p style={projectCompanyStyle}>{roadmap.planType?.toUpperCase() || '90-Day'} {t('preparation.title')}</p>
                     <div style={projectMetaStyle}>
-                      <Badge variant="success">{roadmapProgress}% Complete</Badge>
-                      <span style={weekCountStyle}>{roadmap.weeks?.length} Weeks</span>
+                      <Badge variant="success">{roadmapProgress}% {t('preparation.complete')}</Badge>
+                      <span style={weekCountStyle}>{roadmap.weeks?.length} {t('preparation.weeks')}</span>
                     </div>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
@@ -469,7 +469,7 @@ export const PreparationPage: React.FC = () => {
                     <button 
                       onClick={(e) => handleDeletePlan(e, roadmap.dbId)}
                       style={deleteButtonStyle}
-                      title="Delete Roadmap"
+                      title={t('preparation.deleteRoadmap')}
                     >
                       <Trash2 size={16} />
                     </button>
@@ -492,11 +492,11 @@ export const PreparationPage: React.FC = () => {
                   <Target size={24} color="var(--accent-primary)" />
                 </div>
                 <div style={{ flex: 1 }}>
-                  <h3 style={projectTitleStyle}>General Career Growth</h3>
-                  <p style={projectCompanyStyle}>Overall Readiness</p>
+                  <h3 style={projectTitleStyle}>{t('preparation.generalGrowth')}</h3>
+                  <p style={projectCompanyStyle}>{t('preparation.overallReadiness')}</p>
                   <div style={projectMetaStyle}>
-                    <Badge variant="outline">Personal Roadmap</Badge>
-                    <span style={weekCountStyle}>{generalRoadmap.weeks?.length} Weeks</span>
+                    <Badge variant="outline">{t('preparation.personalRoadmap')}</Badge>
+                    <span style={weekCountStyle}>{generalRoadmap.weeks?.length} {t('preparation.weeks')}</span>
                   </div>
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
@@ -504,7 +504,7 @@ export const PreparationPage: React.FC = () => {
                   <button 
                     onClick={(e) => handleDeletePlan(e, generalRoadmap.dbId)}
                     style={deleteButtonStyle}
-                    title="Delete Roadmap"
+                    title={t('preparation.deleteRoadmap')}
                   >
                     <Trash2 size={16} />
                   </button>
@@ -535,16 +535,16 @@ export const PreparationPage: React.FC = () => {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
           <div>
             <h1 style={titleStyle}>
-              {opportunity ? `Roadmap: ${opportunity.title}` : 'General Growth Roadmap'}
+              {opportunity ? t('preparation.roadmapTitle', { title: opportunity.title }) : t('preparation.generalGrowthRoadmap')}
             </h1>
             <p style={subtitleStyle}>
               {opportunity 
-                ? `Specifically tailored for ${opportunity.organization_name || opportunity.funder_name || opportunity.company || 'this opportunity'}. Track your progress weekly.` 
-                : 'Track your weekly progress and stay on target for your career goals.'}
+                ? t('preparation.tailoredFor', { company: opportunity.organization_name || opportunity.funder_name || opportunity.company || 'this opportunity' })
+                : t('preparation.trackWeekly')}
             </p>
           </div>
           <div style={{ textAlign: 'right' }}>
-             <Badge variant="primary" style={{ marginBottom: '8px' }}>{planType.toUpperCase()} ROADMAP</Badge>
+             <Badge variant="primary" style={{ marginBottom: '8px' }}>{t('preparation.roadmapBadge', { type: planType.toUpperCase() })}</Badge>
              <h3 style={{ fontSize: '1.5rem', fontWeight: 800 }}>{progress}% {t('preparation.complete')}</h3>
           </div>
         </div>
@@ -574,9 +574,9 @@ export const PreparationPage: React.FC = () => {
                   <Loader2 size={60} color="var(--accent-primary)" className="animate-spin" style={{ position: 'absolute', top: 0, left: 0, opacity: 0.2 }} />
                   <Sparkles size={30} color="var(--accent-primary)" style={{ position: 'absolute', top: '15px', left: '15px' }} />
                 </div>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>Pathew Assistant is working...</h3>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>{t('preparation.assistantWorking')}</h3>
                 <p style={{ color: 'var(--text-secondary)' }}>
-                  Tailoring your roadmap based on the {opportunity ? `requirements for ${opportunity.title}` : 'job description'} and your current skills.
+                  {t('preparation.tailoringRoadmap')}
                 </p>
               </div>
             ) : plan?.weeks?.map((week: any) => (

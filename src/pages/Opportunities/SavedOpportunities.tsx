@@ -103,7 +103,7 @@ export const SavedOpportunities: React.FC = () => {
                   </div>
                   <div style={metaItemStyle}>
                     <Calendar size={14} color="var(--text-muted)" />
-                    <span>Due {opp.deadline}</span>
+                    <span>{t('opportunities.due', { date: opp.deadline })}</span>
                   </div>
                 </div>
 
@@ -112,7 +112,7 @@ export const SavedOpportunities: React.FC = () => {
                     <span key={i} style={tagStyle}>{req}</span>
                   ))}
                   {(opp.requirements?.length > 3) && (
-                    <span style={tagStyle}>+{opp.requirements.length - 3} more</span>
+                    <span style={tagStyle}>{t('opportunities.more', { count: opp.requirements.length - 3 })}</span>
                   )}
                 </div>
               </div>

@@ -7,11 +7,11 @@ import { useTranslation } from 'react-i18next';
 
 export const GrantBuilderPage: React.FC = () => {
   const { t } = useTranslation();
-  const [docType, setDocType] = useState('Full Grant Proposal');
-  const [pageCount, setPageCount] = useState('5 Pages');
+  const [docType, setDocType] = useState(t('grantBuilder.docTypes.full'));
+  const [pageCount, setPageCount] = useState(t('grantBuilder.pages.five'));
   const [previewMode, setPreviewMode] = useState(false);
-  const [content, setContent] = useState('Start drafting your proposal here...');
-  const [questions, setQuestions] = useState([{ id: 1, text: 'Project Abstract', limit: 250 }]);
+  const [content, setContent] = useState(t('grantBuilder.placeholder'));
+  const [questions, setQuestions] = useState([{ id: 1, text: t('grantBuilder.abstract'), limit: 250 }]);
   const { openAssistant } = useAssistant();
 
   const addQuestion = () => {
@@ -63,17 +63,17 @@ export const GrantBuilderPage: React.FC = () => {
                 value={docType}
                 onChange={(e) => setDocType(e.target.value)}
               >
-                <option>Full Grant Proposal</option>
-                <option>One-Page Proposal</option>
-                <option>UK CV</option>
-                <option>US CV</option>
-                <option>EU CV</option>
-                <option>Academic CV</option>
-                <option>Cover Letter</option>
+                <option value={t('grantBuilder.docTypes.full')}>{t('grantBuilder.docTypes.full')}</option>
+                <option value={t('grantBuilder.docTypes.onePage')}>{t('grantBuilder.docTypes.onePage')}</option>
+                <option value={t('grantBuilder.docTypes.ukCV')}>{t('grantBuilder.docTypes.ukCV')}</option>
+                <option value={t('grantBuilder.docTypes.usCV')}>{t('grantBuilder.docTypes.usCV')}</option>
+                <option value={t('grantBuilder.docTypes.euCV')}>{t('grantBuilder.docTypes.euCV')}</option>
+                <option value={t('grantBuilder.docTypes.academicCV')}>{t('grantBuilder.docTypes.academicCV')}</option>
+                <option value={t('grantBuilder.docTypes.coverLetter')}>{t('grantBuilder.docTypes.coverLetter')}</option>
               </select>
             </div>
 
-            {(docType === 'Full Grant Proposal' || docType === 'Academic CV') && (
+            {(docType === t('grantBuilder.docTypes.full') || docType === t('grantBuilder.docTypes.academicCV')) && (
               <div style={formGroupStyle}>
                 <label style={labelStyle}>{t('grantBuilder.targetPageCount')}</label>
                 <select 
@@ -81,17 +81,17 @@ export const GrantBuilderPage: React.FC = () => {
                   value={pageCount}
                   onChange={(e) => setPageCount(e.target.value)}
                 >
-                  <option>1 Page</option>
-                  <option>2 Pages</option>
-                  <option>3 Pages</option>
-                  <option>5 Pages</option>
-                  <option>10+ Pages</option>
+                  <option value={t('grantBuilder.pages.one')}>{t('grantBuilder.pages.one')}</option>
+                  <option value={t('grantBuilder.pages.two')}>{t('grantBuilder.pages.two')}</option>
+                  <option value={t('grantBuilder.pages.three')}>{t('grantBuilder.pages.three')}</option>
+                  <option value={t('grantBuilder.pages.five')}>{t('grantBuilder.pages.five')}</option>
+                  <option value={t('grantBuilder.pages.tenPlus')}>{t('grantBuilder.pages.tenPlus')}</option>
                 </select>
               </div>
             )}
           </Card>
 
-          {docType.includes('Proposal') && (
+          {docType.includes(t('grantBuilder.docTypes.onePage').split(' ')[1]) && (
             <Card title={t('grantBuilder.customQuestions')} style={{ marginTop: '24px' }}>
               <div style={questionsListStyle}>
                 {questions.map((q, idx) => (
@@ -102,7 +102,7 @@ export const GrantBuilderPage: React.FC = () => {
                     </div>
                     <input 
                       type="text" 
-                      placeholder="Question or Section Title" 
+                      placeholder={t('grantBuilder.questionPlaceholder')} 
                       defaultValue={q.text}
                       style={inputStyle} 
                     />
@@ -125,7 +125,7 @@ export const GrantBuilderPage: React.FC = () => {
           <div style={editorToolbarStyle}>
             <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
               <span style={{ fontWeight: 600 }}>{docType}</span>
-              <span style={{ color: 'var(--text-muted)' }}>• {content.split(' ').length} words</span>
+              <span style={{ color: 'var(--text-muted)' }}>• {content.split(' ').length} {t('grantBuilder.words')}</span>
               <div style={toolbarDividerStyle}></div>
               <button 
                 style={AssistantGrantHelpButtonStyle}
@@ -160,7 +160,7 @@ export const GrantBuilderPage: React.FC = () => {
                 style={textareaStyle}
                 value={content}
                 onChange={(e) => setContent(e.target.value)}
-                placeholder="Start typing your document..."
+                placeholder={t('grantBuilder.placeholder')}
               />
             )}
           </div>

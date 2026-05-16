@@ -257,7 +257,7 @@ export const ProfileSetup: React.FC = () => {
                           overflow: 'hidden',
                         }}
                       >
-                        {step.title}
+                        {t(`setup.steps.${step.id}`)}
                       </motion.span>
                     )}
                   </motion.div>
@@ -285,9 +285,9 @@ export const ProfileSetup: React.FC = () => {
           maxWidth: '800px',
         }}>
           <div style={{ marginBottom: '32px', textAlign: isMobile ? 'center' : 'left' }}>
-            <h1 style={{ fontSize: isMobile ? '1.5rem' : '2rem', marginBottom: '8px' }}>{steps[currentStep].title}</h1>
+            <h1 style={{ fontSize: isMobile ? '1.5rem' : '2rem', marginBottom: '8px' }}>{t(`setup.steps.${steps[currentStep].id}`)}</h1>
             <p style={{ color: 'var(--text-secondary)', fontSize: isMobile ? '0.875rem' : '1rem' }}>
-              Tell us more about yourself to help our Assistant find the best matches.
+              {t('setup.subtitle')}
             </p>
           </div>
 
@@ -316,10 +316,10 @@ export const ProfileSetup: React.FC = () => {
                 disabled={loading}
                 style={{ visibility: currentStep === 0 ? 'hidden' : 'visible', gap: '8px' }}
               >
-                <ChevronLeft size={18} /> Back
+                <ChevronLeft size={18} /> {t('common.back')}
               </Button>
               <Button onClick={handleNext} disabled={loading} style={{ gap: '8px' }}>
-                {loading ? 'Saving...' : currentStep === steps.length - 1 ? 'Save and Complete' : 'Save and Continue'} 
+                {loading ? t('common.save') : currentStep === steps.length - 1 ? t('setup.saveAndComplete') : t('setup.saveAndContinue')} 
                 {!loading && <ChevronRight size={18} />}
               </Button>
             </div>
@@ -339,16 +339,16 @@ const StoryStep = ({ data, update }: any) => {
 
       <div style={inputGroupStyle}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-          <label style={labelStyle}>Bio / Personal Story</label>
+          <label style={labelStyle}>{t('setup.bioLabel')}</label>
           <button 
             style={AssistantLinkButtonStyle}
             onClick={() => openAssistant('Personal Story', ['Rewrite this to be more professional', 'Turn my notes into a story', 'Polish this summary'], (text) => update('story', text), { bio: data.story })}
           >
-            <Sparkles size={14} /> Polish with Assistant
+            <Sparkles size={14} /> {t('setup.polishWithAssistant')}
           </button>
         </div>
         <textarea 
-          placeholder="Share your background, passions, and what drives you professionally..." 
+          placeholder={t('setup.bioPlaceholder')} 
           style={textareaStyle}
           value={data.story}
           onChange={(e) => update('story', e.target.value)}
@@ -356,19 +356,19 @@ const StoryStep = ({ data, update }: any) => {
       </div>
       <div style={inputGroupStyle}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-          <label style={labelStyle}>Core Skills (Comma separated)</label>
+          <label style={labelStyle}>{t('setup.skillsLabel')}</label>
           <button 
             style={AssistantLinkButtonStyle}
             onClick={() => openAssistant('Skills Assistant', ['Suggest skills based on my bio', 'Group my skills by category', 'Improve this list'], (text) => {
               update('goals', [...data.goals, text]);
             }, { bio: data.story })}
           >
-            <Sparkles size={14} /> Suggest Skills
+            <Sparkles size={14} /> {t('setup.suggestSkills')}
           </button>
         </div>
         <input 
           type="text" 
-          placeholder="React, TypeScript, Project Management..." 
+          placeholder={t('setup.skillsPlaceholder')} 
           style={inputStyle} 
           value={data.skills.join(', ')}
           onChange={(e) => update('skills', e.target.value.split(',').map(s => s.trim()))}
@@ -412,7 +412,7 @@ const EducationStep = ({ data, update }: any) => {
           
           <div style={formGridStyle}>
             <div style={inputGroupStyle}>
-              <label style={labelStyle}>Institution</label>
+              <label style={labelStyle}>{t('setup.institution')}</label>
               <input 
                 type="text" 
                 placeholder="Stanford University" 
@@ -423,7 +423,7 @@ const EducationStep = ({ data, update }: any) => {
             </div>
             <div className="stack-on-mobile" style={{ display: 'flex', gap: '16px' }}>
               <div style={{ ...inputGroupStyle, flex: 1 }}>
-                <label style={labelStyle}>Degree</label>
+                <label style={labelStyle}>{t('setup.degree')}</label>
                 <input 
                   type="text" 
                   placeholder="Master of Science" 
@@ -433,7 +433,7 @@ const EducationStep = ({ data, update }: any) => {
                 />
               </div>
               <div style={{ ...inputGroupStyle, flex: 1 }}>
-                <label style={labelStyle}>Field of Study</label>
+                <label style={labelStyle}>{t('setup.fieldOfStudy')}</label>
                 <input 
                   type="text" 
                   placeholder="Computer Science" 
@@ -443,7 +443,7 @@ const EducationStep = ({ data, update }: any) => {
                 />
               </div>
               <div style={{ ...inputGroupStyle, flex: 1 }}>
-                <label style={labelStyle}>Graduation Year</label>
+                <label style={labelStyle}>{t('setup.graduationYear')}</label>
                 <input 
                   type="text" 
                   placeholder="2022" 
@@ -462,7 +462,7 @@ const EducationStep = ({ data, update }: any) => {
         onClick={addEducation}
         style={{ width: '100%', borderStyle: 'dashed' }}
       >
-        <Plus size={18} style={{ marginRight: '8px' }} /> Add Another Education
+        <Plus size={18} style={{ marginRight: '8px' }} /> {t('setup.addAnotherEducation')}
       </Button>
     </div>
   );
@@ -504,7 +504,7 @@ const ExperienceStep = ({ data, update }: any) => {
           <div style={formGridStyle}>
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
               <div style={inputGroupStyle}>
-                <label style={labelStyle}>Company</label>
+                <label style={labelStyle}>{t('setup.company')}</label>
                 <input 
                   type="text" 
                   placeholder="TechFlow Inc." 
@@ -514,7 +514,7 @@ const ExperienceStep = ({ data, update }: any) => {
                 />
               </div>
               <div style={inputGroupStyle}>
-                <label style={labelStyle}>Job Title</label>
+                <label style={labelStyle}>{t('setup.jobTitle')}</label>
                 <input 
                   type="text" 
                   placeholder="Senior Frontend Engineer" 
@@ -525,7 +525,7 @@ const ExperienceStep = ({ data, update }: any) => {
               </div>
             </div>
             <div style={inputGroupStyle}>
-              <label style={labelStyle}>Duration</label>
+              <label style={labelStyle}>{t('setup.duration')}</label>
               <input 
                 type="text" 
                 placeholder="Jan 2020 - Present" 
@@ -536,12 +536,12 @@ const ExperienceStep = ({ data, update }: any) => {
             </div>
             <div style={inputGroupStyle}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
-                <label style={labelStyle}>Description</label>
+                <label style={labelStyle}>{t('setup.description')}</label>
                 <button 
                   style={AssistantLinkButtonStyle}
                   onClick={() => openAssistant('Experience Assistant', ['Improve this description', 'Turn into bullet points', 'Make it more achievement-oriented'], (text) => handleChange(index, 'description', text), { description: exp.description })}
                 >
-                  <Sparkles size={14} /> Rewrite with Assistant
+                  <Sparkles size={14} /> {t('setup.rewriteWithAssistant')}
                 </button>
               </div>
               <textarea 
@@ -560,7 +560,7 @@ const ExperienceStep = ({ data, update }: any) => {
         onClick={addExperience}
         style={{ width: '100%', borderStyle: 'dashed' }}
       >
-        <Plus size={18} style={{ marginRight: '8px' }} /> Add Another Experience
+        <Plus size={18} style={{ marginRight: '8px' }} /> {t('setup.addAnotherExperience')}
       </Button>
     </div>
   );
@@ -600,7 +600,7 @@ const CertificationsStep = ({ data, update }: any) => {
           
           <div style={formGridStyle}>
             <div style={inputGroupStyle}>
-              <label style={labelStyle}>Certification Title</label>
+              <label style={labelStyle}>{t('setup.certTitle')}</label>
               <input 
                 type="text" 
                 placeholder="Google Data Analytics Professional Certificate" 
@@ -610,7 +610,7 @@ const CertificationsStep = ({ data, update }: any) => {
               />
             </div>
             <div style={inputGroupStyle}>
-              <label style={labelStyle}>Issuing Organization</label>
+              <label style={labelStyle}>{t('setup.issuingOrg')}</label>
               <input 
                 type="text" 
                 placeholder="Udemy, Coursera, Google, etc." 
@@ -621,20 +621,20 @@ const CertificationsStep = ({ data, update }: any) => {
             </div>
             <div className="stack-on-mobile" style={{ display: 'flex', gap: '16px' }}>
               <div style={{ ...inputGroupStyle, flex: 1 }}>
-                <label style={labelStyle}>Experience Level</label>
+                <label style={labelStyle}>{t('setup.expLevel')}</label>
                 <select 
                   style={inputStyle} 
                   value={cert.level}
                   onChange={(e) => handleChange(index, 'level', e.target.value)}
                 >
-                  <option value="">Select Level</option>
-                  <option value="Beginner">Beginner</option>
-                  <option value="Intermediate">Intermediate</option>
-                  <option value="Pro">Pro</option>
+                  <option value="">{t('editProfile.selectLevel')}</option>
+                  <option value="Beginner">{t('editProfile.beginner')}</option>
+                  <option value="Intermediate">{t('editProfile.intermediate')}</option>
+                  <option value="Pro">{t('editProfile.pro')}</option>
                 </select>
               </div>
               <div style={{ ...inputGroupStyle, flex: 1 }}>
-                <label style={labelStyle}>Tutor/Instructor Name</label>
+                <label style={labelStyle}>{t('setup.instructor')}</label>
                 <input 
                   type="text" 
                   placeholder="Dr. John Doe" 
@@ -644,7 +644,7 @@ const CertificationsStep = ({ data, update }: any) => {
                 />
               </div>
               <div style={{ ...inputGroupStyle, flex: 1 }}>
-                <label style={labelStyle}>Year Given</label>
+                <label style={labelStyle}>{t('setup.yearGiven')}</label>
                 <input 
                   type="text" 
                   placeholder="2023" 
@@ -663,7 +663,7 @@ const CertificationsStep = ({ data, update }: any) => {
         onClick={addCert}
         style={{ width: '100%', borderStyle: 'dashed' }}
       >
-        <Plus size={18} style={{ marginRight: '8px' }} /> Add Another Certification
+        <Plus size={18} style={{ marginRight: '8px' }} /> {t('setup.addAnotherCert')}
       </Button>
     </div>
   );
@@ -683,7 +683,7 @@ const GoalsStep = ({ data, update }: any) => {
   return (
     <div style={formGridStyle}>
       <div style={inputGroupStyle}>
-        <label style={labelStyle}>What are you looking for?</label>
+        <label style={labelStyle}>{t('setup.lookingFor')}</label>
         <div style={{
           ...goalsGridStyle,
           gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
@@ -706,7 +706,7 @@ const GoalsStep = ({ data, update }: any) => {
               }}>
                 {data.goals.includes(label) && <Check size={12} color="#000" />}
               </div>
-              <label style={{ flex: 1, cursor: 'pointer' }}>{label}</label>
+              <label style={{ flex: 1, cursor: 'pointer' }}>{t(`setup.goalsList.${label}`, { defaultValue: label })}</label>
             </div>
           ))}
           <div 
@@ -714,17 +714,17 @@ const GoalsStep = ({ data, update }: any) => {
             onClick={() => setShowManual(!showManual)}
           >
             <div style={{ width: '18px', height: '18px', borderRadius: '4px', border: '2px solid var(--border-color)', backgroundColor: showManual ? 'var(--bg-tertiary)' : 'transparent' }} />
-            <label style={{ flex: 1, cursor: 'pointer' }}>Others (Add manually)</label>
+            <label style={{ flex: 1, cursor: 'pointer' }}>{t('setup.goalsList.Others (Add manually)')}</label>
           </div>
         </div>
       </div>
       
       {showManual && (
         <div style={inputGroupStyle}>
-          <label style={labelStyle}>Specify your custom goal</label>
+          <label style={labelStyle}>{t('setup.customGoal')}</label>
           <input 
             type="text" 
-            placeholder="e.g. Academic Research, Mentorship..." 
+            placeholder={t('setup.customGoalPlaceholder')} 
             style={inputStyle}
             onBlur={(e) => e.target.value && toggleGoal(e.target.value)}
           />
@@ -755,20 +755,20 @@ const AchievementStep = ({ data, update }: any) => {
       {achievements.map((ach: string, index: number) => (
         <div key={index} style={{ ...inputGroupStyle, padding: '16px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
-            <label style={labelStyle}>Achievement #{index + 1}</label>
+            <label style={labelStyle}>{t('setup.achievementLabel', { index: index + 1 })}</label>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               <button 
                 style={AssistantLinkButtonStyle}
                 onClick={() => openAssistant('Achievement Assistant', ['Make this more impactful', 'Quantify this accomplishment'], (text) => updateAchievement(index, text), { achievement: ach })}
               >
-                <Sparkles size={14} /> Polish
+                <Sparkles size={14} /> {t('assistant.regenerate')}
               </button>
               {achievements.length > 1 && (
                 <button 
-                  style={{ ...AssistantLinkButtonStyle, color: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.05)' }}
+                   style={{ ...AssistantLinkButtonStyle, color: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.05)' }}
                   onClick={() => removeAchievement(index)}
                 >
-                  Remove
+                  {t('common.delete')}
                 </button>
               )}
             </div>
@@ -787,7 +787,7 @@ const AchievementStep = ({ data, update }: any) => {
         onClick={addAchievement}
         style={{ width: '100%', borderStyle: 'dashed', marginTop: '8px' }}
       >
-        + Add another achievement
+        + {t('setup.addAnotherAchievement')}
       </Button>
     </div>
   );
@@ -828,7 +828,7 @@ const ProjectsStep = ({ data, update }: any) => {
           <div style={{ ...listHeaderStyle, marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <label style={{ ...labelStyle, color: proj.isSaved ? 'var(--accent-primary)' : 'var(--text-secondary)' }}>
-                Project #{index + 1}
+                {t('setup.projectLabel', { index: index + 1 })}
               </label>
               {proj.isSaved && <Check size={14} color="var(--accent-primary)" />}
             </div>
@@ -843,7 +843,7 @@ const ProjectsStep = ({ data, update }: any) => {
                 }} 
                 onClick={() => updateProject(proj.id, 'isSaved', !proj.isSaved)}
               >
-                {proj.isSaved ? 'Saved' : 'Save'}
+                {proj.isSaved ? t('opportunities.saved') : t('opportunities.save')}
               </button>
               {projects.length > 1 && (
                 <button style={removeBtnStyle} onClick={() => removeProject(proj.id)}>
@@ -855,14 +855,14 @@ const ProjectsStep = ({ data, update }: any) => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', flex: 1 }}>
             <input 
               type="text" 
-              placeholder="Project Title" 
+              placeholder={t('setup.portfolioTitle')} 
               style={inputStyle}
               disabled={proj.isSaved}
               value={proj.title}
               onChange={(e) => updateProject(proj.id, 'title', e.target.value)}
             />
             <textarea 
-              placeholder="Brief description..." 
+              placeholder={t('setup.portfolioDesc')} 
               style={{ ...textareaStyle, flex: 1, minHeight: '100px' }}
               value={proj.description}
               onChange={(e) => updateProject(proj.id, 'description', e.target.value)}
@@ -878,7 +878,7 @@ const ProjectsStep = ({ data, update }: any) => {
       >
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
           <Plus size={24} />
-          <span>Add Project</span>
+          <span>{t('setup.addProject')}</span>
         </div>
       </Button>
     </div>
@@ -889,7 +889,7 @@ const OrganisationStep = ({ data, update }: any) => {
   return (
     <div style={formGridStyle}>
       <div style={inputGroupStyle}>
-        <label style={labelStyle}>Primary Organisation</label>
+        <label style={labelStyle}>{t('editProfile.primaryOrg')}</label>
         <input 
           type="text" 
           placeholder="Current Company or Institution" 
@@ -908,11 +908,11 @@ const PortfolioStep = ({ data, update, onUpload, uploading }: any) => {
 
   const handleAddProject = async () => {
     if (!newProject.url) {
-      alert('Please upload a file first');
+      alert(t('setup.errorFile'));
       return;
     }
     if (!newProject.title) {
-      alert('Please add a title');
+      alert(t('setup.errorTitle'));
       return;
     }
     
@@ -963,13 +963,13 @@ const PortfolioStep = ({ data, update, onUpload, uploading }: any) => {
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             <input 
               type="text" 
-              placeholder="Project Title" 
+              placeholder={t('setup.portfolioTitle')} 
               style={inputStyle} 
               value={newProject.title}
               onChange={(e) => setNewProject({ ...newProject, title: e.target.value })}
             />
             <textarea 
-              placeholder="Brief description..." 
+              placeholder={t('setup.portfolioDesc')} 
               style={{ ...textareaStyle, minHeight: '60px', padding: '8px' }} 
               value={newProject.description}
               onChange={(e) => setNewProject({ ...newProject, description: e.target.value })}
@@ -993,7 +993,7 @@ const PortfolioStep = ({ data, update, onUpload, uploading }: any) => {
             disabled={uploading}
             style={{ width: '100%', borderStyle: 'dashed' }}
           >
-            {uploading ? 'Uploading...' : newProject.url ? 'File Ready ✓' : 'Upload File'}
+            {uploading ? t('setup.uploading') : newProject.url ? t('setup.fileReady') : t('setup.uploadFile')}
           </Button>
 
           <Button 
@@ -1002,13 +1002,13 @@ const PortfolioStep = ({ data, update, onUpload, uploading }: any) => {
             disabled={!newProject.url || !newProject.title}
             style={{ width: '100%' }}
           >
-            Add to Portfolio
+            {t('setup.addToPortfolio')}
           </Button>
         </Card>
       </div>
 
       <div style={inputGroupStyle}>
-        <label style={labelStyle}>External Portfolio Link (Optional)</label>
+        <label style={labelStyle}>{t('setup.externalPortfolio')}</label>
         <input 
           type="url" 
           placeholder="https://yourportfolio.com" 

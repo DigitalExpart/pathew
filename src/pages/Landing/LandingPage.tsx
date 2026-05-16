@@ -136,9 +136,9 @@ export const LandingPage: React.FC = () => {
               gap: isMobile ? '24px' : '48px',
             }}
           >
-            <StatItem count="50k+" label={t('landing.stats.opportunities') || "Opportunities"} />
-            <StatItem count="98%" label={t('landing.stats.matchAccuracy') || "Match Accuracy"} />
-            <StatItem count="120+" label={t('landing.stats.countries') || "Countries"} />
+            <StatItem count="50k+" label={t('landing.stats.opportunities')} />
+            <StatItem count="98%" label={t('landing.stats.matchAccuracy')} />
+            <StatItem count="120+" label={t('landing.stats.countries')} />
           </motion.div>
         </motion.div>
         
@@ -450,12 +450,12 @@ export const LandingPage: React.FC = () => {
                     { service: t('pricing.labels.proposals'), credits: 1, notes: t('pricing.perProposal') },
                     { service: t('pricing.labels.grants'), credits: 3, notes: t('pricing.perGrant') },
                     { service: t('preparation.title'), credits: 3, notes: t('pricing.perPlan') },
-                    { service: t('pricing.labels.rewrites'), credits: 0.25, notes: t('pricing.perRewrite') },
+                    { service: t('pricing.anyRewrite'), credits: 0.25, notes: t('pricing.perRewrite') },
                   ]).map((row, idx) => (
                     <tr key={idx} style={{ borderBottom: idx !== 5 ? '1px solid var(--border-color)' : 'none' }}>
                       <td style={{ padding: '16px 24px', fontWeight: 500 }}>{row.service}</td>
                       <td style={{ padding: '16px 24px', color: 'var(--accent-primary)', fontWeight: 600 }}>{row.credits} {row.credits === 1 ? t('common.credit') : t('common.credits')}</td>
-                      <td style={{ padding: '16px 24px', color: 'var(--text-muted)', fontSize: '0.875rem' }}>{row.notes || (row.service === 'Any Rewrite' ? 'per rewrite' : `per ${row.service.toLowerCase()}`)}</td>
+                      <td style={{ padding: '16px 24px', color: 'var(--text-muted)', fontSize: '0.875rem' }}>{row.notes}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -466,7 +466,7 @@ export const LandingPage: React.FC = () => {
           <div style={{ textAlign: 'center', marginTop: '32px' }}>
             <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', backgroundColor: 'rgba(245, 158, 11, 0.1)', padding: '12px 24px', borderRadius: 'var(--radius-full)', color: 'var(--accent-primary)', fontWeight: 600 }}>
               <Zap size={18} />
-              {t('landing.pricingMore', 'Need more? Users can top up their credits at any time.')}
+              {t('landing.pricingMore')}
             </div>
           </div>
         </motion.div>

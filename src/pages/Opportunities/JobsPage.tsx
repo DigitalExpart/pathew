@@ -5,8 +5,10 @@ import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { Briefcase, MapPin, ExternalLink } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { useTranslation } from 'react-i18next';
 
 export const JobsPage: React.FC = () => {
+  const { t } = useTranslation();
   const [jobs, setJobs] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
   const navigate = useNavigate();
@@ -40,8 +42,8 @@ export const JobsPage: React.FC = () => {
   return (
     <div style={{ ...containerStyle, padding: isMobile ? '0' : '0' }}>
       <header style={{ ...headerStyle, textAlign: isMobile ? 'center' : 'left' }}>
-        <h1 style={{ ...titleStyle, fontSize: isMobile ? '1.75rem' : '2.5rem' }}>Explore Jobs</h1>
-        <p style={subtitleStyle}>Found {jobs.length} roles matching your profile.</p>
+        <h1 style={{ ...titleStyle, fontSize: isMobile ? '1.75rem' : '2.5rem' }}>{t('jobs.title')}</h1>
+        <p style={subtitleStyle}>{t('jobs.foundRoles', { count: jobs.length })}</p>
       </header>
 
       <div className="grid-responsive" style={{
@@ -50,15 +52,15 @@ export const JobsPage: React.FC = () => {
       }}>
         {loading ? (
           <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '40px' }}>
-            <p>Loading your applications...</p>
+            <p>{t('jobs.loading')}</p>
           </div>
         ) : jobs.length === 0 ? (
           <div style={emptyStateStyle}>
             <Briefcase size={48} color="var(--text-muted)" />
-            <h2>No applications yet</h2>
-            <p>Start applying to opportunities to track them here.</p>
+            <h2>{t('jobs.noApplications')}</h2>
+            <p>{t('jobs.noApplicationsSubtitle')}</p>
             <Button style={{ marginTop: '16px' }} onClick={() => navigate('/opportunities')}>
-              Browse Opportunities
+              {t('jobs.browseOpps')}
             </Button>
           </div>
         ) : (
@@ -71,10 +73,10 @@ export const JobsPage: React.FC = () => {
                 <div style={{ display: 'flex', gap: '8px' }}>
                   {job.featured && (
                     <Badge variant="primary" style={{ backgroundColor: 'rgba(245,158,11,0.1)', color: '#f59e0b', borderColor: 'rgba(245,158,11,0.2)' }}>
-                      Featured
+                      {t('opportunities.featured')}
                     </Badge>
                   )}
-                  <Badge variant="outline">{job.work_mode || 'Remote'}</Badge>
+                  <Badge variant="outline">{job.work_mode || t('opportunities.remote')}</Badge>
                 </div>
               </div>
 
@@ -100,13 +102,13 @@ export const JobsPage: React.FC = () => {
                   style={{ flex: 1 }}
                   onClick={() => window.open(job.apply_link, '_blank')}
                 >
-                  Apply <ExternalLink size={14} style={{ marginLeft: '4px' }} />
+                  {t('opportunities.apply')} <ExternalLink size={14} style={{ marginLeft: '4px' }} />
                 </Button>
                 <Button 
                   style={{ flex: 1, gap: '4px' }}
                   onClick={() => navigate(`/opportunities/${job.id}`)}
                 >
-                  Prepare
+                  {t('opportunities.prepare')}
                 </Button>
               </div>
             </Card>

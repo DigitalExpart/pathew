@@ -29,7 +29,7 @@ export const LoginPage: React.FC = () => {
       if (error) throw error;
       navigate('/dashboard');
     } catch (err: any) {
-      setError(err.message || 'Failed to sign in');
+      setError(err.message || t('auth.errors.failedLogin'));
     } finally {
       setLoading(false);
     }
@@ -59,7 +59,7 @@ export const LoginPage: React.FC = () => {
                 <Mail size={18} color="var(--text-muted)" />
                 <input 
                   type="email" 
-                  placeholder="name@company.com" 
+                  placeholder={t('auth.placeholders.email')} 
                   style={inputStyle} 
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -140,16 +140,16 @@ export const SignUpPage: React.FC = () => {
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = t('auth.errors.passwordMismatch');
     }
     if (formData.password.length < 8) {
-      newErrors.password = 'Password must be at least 8 characters';
+      newErrors.password = t('auth.errors.passwordTooShort');
     }
     if (!formData.termsAccepted) {
-      newErrors.terms = 'You must accept the Terms & Conditions';
+      newErrors.terms = t('auth.errors.acceptTerms');
     }
     if (!formData.privacyAccepted) {
-      newErrors.privacy = 'You must accept the Privacy Policy';
+      newErrors.privacy = t('auth.errors.acceptPrivacy');
     }
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -175,7 +175,7 @@ export const SignUpPage: React.FC = () => {
         if (error) throw error;
         setIsSubmitted(true);
       } catch (err: any) {
-        setAuthError(err.message || 'Failed to sign up');
+        setAuthError(err.message || t('auth.errors.failedSignUp'));
       } finally {
         setLoading(false);
       }
@@ -229,7 +229,7 @@ export const SignUpPage: React.FC = () => {
               <label style={labelStyle}>{t('auth.fullName')}</label>
               <input 
                 type="text" 
-                placeholder="First and last name" 
+                placeholder={t('auth.placeholders.fullName')} 
                 style={baseInputStyle} 
                 value={formData.fullName}
                 onChange={(e) => setFormData({...formData, fullName: e.target.value})}
@@ -241,7 +241,7 @@ export const SignUpPage: React.FC = () => {
               <label style={labelStyle}>{t('auth.email')}</label>
               <input 
                 type="email" 
-                placeholder="name@company.com" 
+                placeholder={t('auth.placeholders.email')} 
                 style={baseInputStyle} 
                 value={formData.email}
                 onChange={(e) => setFormData({...formData, email: e.target.value})}
@@ -253,7 +253,7 @@ export const SignUpPage: React.FC = () => {
               <label style={labelStyle}>{t('auth.password')}</label>
               <input 
                 type="password" 
-                placeholder="Min. 8 characters" 
+                placeholder={t('auth.placeholders.password')} 
                 style={baseInputStyle} 
                 value={formData.password}
                 onChange={(e) => setFormData({...formData, password: e.target.value})}
@@ -267,7 +267,7 @@ export const SignUpPage: React.FC = () => {
               <label style={labelStyle}>{t('auth.confirmPassword')}</label>
               <input 
                 type="password" 
-                placeholder="Repeat password" 
+                placeholder={t('auth.placeholders.repeatPassword')} 
                 style={baseInputStyle} 
                 value={formData.confirmPassword}
                 onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}

@@ -45,7 +45,10 @@
     "stats": {
       "users": "Active Users",
       "placements": "Successful Placements",
-      "rating": "User Rating"
+      "rating": "User Rating",
+      "matchAccuracy": "Match Accuracy",
+      "opportunities": "Opportunities",
+      "countries": "Countries"
     },
     "heroTitleEnd": " with Precision.",
     "problem": {
@@ -155,7 +158,8 @@
         "Security",
         "Cookies"
       ]
-    }
+    },
+    "pricingMore": "Need more? Users can top up their credits at any time."
   },
   "auth": {
     "login": "Log In",
@@ -172,7 +176,21 @@
     "welcomeBack": "Welcome Back",
     "createAccount": "Create Your Account",
     "loginSubtitle": "Sign in to access your career dashboard",
-    "registerSubtitle": "Join thousands of professionals accelerating their careers"
+    "registerSubtitle": "Join thousands of professionals accelerating their careers",
+    "errors": {
+      "passwordMismatch": "Passwords do not match",
+      "passwordTooShort": "Password must be at least 8 characters",
+      "acceptTerms": "You must accept the Terms & Conditions",
+      "acceptPrivacy": "You must accept the Privacy Policy",
+      "failedLogin": "Failed to sign in",
+      "failedSignUp": "Failed to sign up"
+    },
+    "placeholders": {
+      "fullName": "First and last name",
+      "email": "name@company.com",
+      "password": "Min. 8 characters",
+      "repeatPassword": "Repeat password"
+    }
   },
   "dashboard": {
     "title": "Dashboard",
@@ -188,7 +206,31 @@
     "credits": "Credits",
     "viewAll": "View All",
     "noActivity": "No recent activity yet.",
-    "noDeadlines": "No upcoming deadlines."
+    "noDeadlines": "No upcoming deadlines.",
+    "greeting": "Good morning, {{name}}! 👋",
+    "scanning": "Scanning...",
+    "quickScan": "Quick Scan",
+    "docsGenerated": "Docs Generated",
+    "pendingReviews": "Pending Reviews",
+    "prepPlan": "Preparation Plan",
+    "readinessScore": "Readiness Score",
+    "topGoals": "Top Goals",
+    "noGoals": "No goals set yet.",
+    "achievements": "Achievements",
+    "noAchievements": "No achievements listed.",
+    "nextSteps": "Next Steps",
+    "nextUp": "Next Up",
+    "refine": "Refine {{title}}",
+    "completeProfileToSeeSteps": "Complete your profile to see your next steps.",
+    "match": "Match",
+    "noOppsFound": "No opportunities found yet. Try a Quick Scan!",
+    "noRecentActivity": "No recent activity to show.",
+    "horizons": {
+      "quick": "Quick",
+      "90-day": "90-day",
+      "180-day": "180-day",
+      "365-day": "365-day"
+    }
   },
   "opportunities": {
     "title": "Explore Opportunities",
@@ -206,14 +248,59 @@
     "location": "Location",
     "deadline": "Due",
     "type": "Type",
-    "remote": "Remote"
+    "remote": "Remote",
+    "sortBy": {
+      "newest": "Sort by: Newest",
+      "deadline": "Sort by: Deadline"
+    },
+    "featured": "Featured",
+    "variousSources": "Various Sources",
+    "due": "Due {{date}}",
+    "more": "+{{count}} more",
+    "backToOpportunities": "Back to Opportunities",
+    "notFound": "Opportunity not found.",
+    "apply": "Apply",
+    "originalSite": "Original Site",
+    "description": "Description",
+    "requirementComparison": "Requirement Comparison",
+    "skillGap": "Skill Gap",
+    "getPreparationPlan": "Get a Preparation Plan",
+    "preparationPlanDesc": "Close your skill gaps with a structured roadmap tailored for this specific role.",
+    "prepareApplication": "Prepare Your Application",
+    "prepareApplicationDesc": "Generate high-quality documents optimized for this opportunity using your profile data.",
+    "analysisDesc": "Get a detailed breakdown of how you match this role and what to highlight.",
+    "analyzeFit": "Analyze My Fit",
+    "atAGlance": "At a Glance",
+    "noDeadline": "No deadline specified",
+    "funding": "Funding",
+    "salary": "Salary",
+    "mode": "Mode",
+    "priorityGaps": "Priority Gaps to Close",
+    "priorityGapsDesc": "Our Assistant identified these as critical requirements you currently lack. Focus on these in your preparation.",
+    "preparationPlan": "Preparation Plan",
+    "preparationPlanSelectDesc": "Choose a timeframe for your preparation roadmap. The Assistant will tailor the steps accordingly.",
+    "compatibilityPrompts": [
+      "Explain my compatibility",
+      "Generate a readiness plan",
+      "Identify my strengths and gaps",
+      "Suggest next steps"
+    ],
+    "activity": {
+      "viewedApp": "Viewed application for {{title}} at {{company}}"
+    },
+    "remoteOnly": "Remote"
   },
   "jobs": {
     "title": "Job Opportunities",
     "subtitle": "Curated job listings matched to your profile.",
     "applyNow": "Apply Now",
     "viewDetails": "View Details",
-    "noJobs": "No jobs found matching your criteria."
+    "noJobs": "No jobs found matching your criteria.",
+    "loading": "Loading your roles...",
+    "noApplications": "No roles found yet",
+    "noApplicationsSubtitle": "Explore job opportunities that match your profile.",
+    "browseOpps": "Browse Opportunities",
+    "foundRoles": "Found {{count}} roles matching your profile."
   },
   "savedItems": {
     "title": "Saved Items",
@@ -245,7 +332,8 @@
     "noAchievements": "No achievements listed.",
     "noBio": "No bio provided yet. Use the Edit Profile to share your professional journey.",
     "freePlan": "Free Plan",
-    "verifiedProfessional": "Verified Professional"
+    "verifiedProfessional": "Verified Professional",
+    "planLabel": "Plan"
   },
   "preparation": {
     "title": "Preparation Projects",
@@ -264,7 +352,19 @@
     "completed": "Completed",
     "pending": "Pending",
     "complete": "Complete",
-    "week": "Week"
+    "week": "Week",
+    "generalGrowth": "General Career Growth",
+    "overallReadiness": "Overall Readiness",
+    "personalRoadmap": "Personal Roadmap",
+    "roadmapTitle": "Roadmap: {{title}}",
+    "generalGrowthRoadmap": "General Growth Roadmap",
+    "tailoredFor": "Specifically tailored for {{company}}. Track your progress weekly.",
+    "trackWeekly": "Track your weekly progress and stay on target for your career goals.",
+    "roadmapBadge": "{{type}} ROADMAP",
+    "assistantWorking": "Pathew Assistant is working...",
+    "tailoringRoadmap": "Tailoring your roadmap based on the requirements and your current skills.",
+    "focusArea": "Focus Area",
+    "deleteRoadmap": "Delete Roadmap"
   },
   "assistant": {
     "title": "PATHEW Assistant",
@@ -310,7 +410,8 @@
     "german": "Deutsch",
     "spanish": "Español",
     "credit": "credit",
-    "credits": "credits"
+    "credits": "credits",
+    "on": "on"
   },
   "wallet": {
     "title": "Wallet & Credits",
@@ -482,7 +583,8 @@
       "service": "Service",
       "credits": "Credits",
       "notes": "Notes"
-    }
+    },
+    "anyRewrite": "Any Rewrite"
   },
   "grantBuilder": {
     "title": "Grant Builder",
@@ -496,7 +598,27 @@
     "customQuestions": "Custom Questions",
     "addQuestion": "+ Add Question",
     "wordLimit": "Word limit:",
-    "assistant": "Assistant"
+    "assistant": "Assistant",
+    "docTypes": {
+      "full": "Full Grant Proposal",
+      "onePage": "One-Page Proposal",
+      "ukCV": "UK CV",
+      "usCV": "US CV",
+      "euCV": "EU CV",
+      "academicCV": "Academic CV",
+      "coverLetter": "Cover Letter"
+    },
+    "pages": {
+      "one": "1 Page",
+      "two": "2 Pages",
+      "three": "3 Pages",
+      "five": "5 Pages",
+      "tenPlus": "10+ Pages"
+    },
+    "words": "words",
+    "placeholder": "Start typing your document...",
+    "questionPlaceholder": "Question or Section Title",
+    "abstract": "Project Abstract"
   },
   "contact": {
     "title1": "Get in ",
@@ -638,5 +760,114 @@
         }
       ]
     }
+  },
+  "editProfile": {
+    "title": "Edit Professional Profile",
+    "backToProfile": "Back to Profile",
+    "saveChanges": "Save Changes",
+    "basicInfo": "Basic Information",
+    "fullName": "Full Name",
+    "primaryOrg": "Primary Organisation",
+    "personalDetails": "Personal Details",
+    "dob": "Date of Birth",
+    "maritalStatus": "Marital Status",
+    "selectStatus": "Select Status",
+    "single": "Single",
+    "married": "Married",
+    "divorced": "Divorced",
+    "gender": "Gender",
+    "selectGender": "Select Gender",
+    "male": "Male",
+    "female": "Female",
+    "other": "Other",
+    "preferNotToSay": "Prefer not to say",
+    "languagesSpoken": "Languages Spoken",
+    "searchLanguages": "Search and add languages (e.g. English, French, Spanish...)",
+    "addLanguage": "Add \"{{name}}\"",
+    "homeAddress": "Home Address",
+    "streetAddress": "Street Address",
+    "country": "Country",
+    "selectCountry": "Select Country",
+    "city": "City",
+    "postalCode": "Postal Code",
+    "certifications": "Certifications",
+    "certTitle": "Title",
+    "certOrg": "Organization",
+    "certLevel": "Level",
+    "selectLevel": "Select Level",
+    "beginner": "Beginner",
+    "intermediate": "Intermediate",
+    "pro": "Pro",
+    "year": "Year",
+    "addCertification": "Add Certification",
+    "detailedManagement": "Detailed Profile Management",
+    "profileWizardDesc": "To update your Bio, Skills, Education, or Work Experience, please use our interactive Profile Wizard.",
+    "launchWizard": "Launch Profile Wizard",
+    "privacyNote": "Privacy Note",
+    "privacyNoteDesc": "Your personal details like Date of Birth and Marital Status are used to improve Assistant matching and are never shared publicly without your consent."
+  },
+  "setup": {
+    "steps": {
+      "story": "Your Story",
+      "education": "Education",
+      "experience": "Experience",
+      "certifications": "Certifications",
+      "goals": "Goals",
+      "achievements": "Achievements",
+      "projects": "Projects",
+      "organisation": "Organisation",
+      "portfolio": "Portfolio"
+    },
+    "subtitle": "Tell us more about yourself to help our Assistant find the best matches.",
+    "saveAndContinue": "Save and Continue",
+    "saveAndComplete": "Save and Complete",
+    "polishWithAssistant": "Polish with Assistant",
+    "bioLabel": "Bio / Personal Story",
+    "bioPlaceholder": "Share your background, passions, and what drives you professionally...",
+    "skillsLabel": "Core Skills (Comma separated)",
+    "skillsPlaceholder": "React, TypeScript, Project Management...",
+    "suggestSkills": "Suggest Skills",
+    "institution": "Institution",
+    "degree": "Degree",
+    "fieldOfStudy": "Field of Study",
+    "graduationYear": "Graduation Year",
+    "addAnotherEducation": "Add Another Education",
+    "company": "Company",
+    "jobTitle": "Job Title",
+    "duration": "Duration",
+    "description": "Description",
+    "rewriteWithAssistant": "Rewrite with Assistant",
+    "addAnotherExperience": "Add Another Experience",
+    "certTitle": "Certification Title",
+    "issuingOrg": "Issuing Organization",
+    "expLevel": "Experience Level",
+    "instructor": "Tutor/Instructor Name",
+    "yearGiven": "Year Given",
+    "addAnotherCert": "Add Another Certification",
+    "lookingFor": "What are you looking for?",
+    "goalsList": {
+      "Full-time Roles": "Full-time Roles",
+      "Contract Work": "Contract Work",
+      "Freelance Projects": "Freelance Projects",
+      "Fellowships": "Fellowships",
+      "Grants": "Grants",
+      "Leadership Positions": "Leadership Positions",
+      "Others (Add manually)": "Others (Add manually)"
+    },
+    "customGoal": "Specify your custom goal",
+    "customGoalPlaceholder": "e.g. Academic Research, Mentorship...",
+    "achievementLabel": "Achievement #{{index}}",
+    "addAnotherAchievement": "Add another achievement",
+    "projectLabel": "Project #{{index}}",
+    "addProject": "Add Project",
+    "portfolioTitle": "Project Title",
+    "portfolioDesc": "Brief description...",
+    "uploadFile": "Upload File",
+    "uploading": "Uploading...",
+    "fileReady": "File Ready ✓",
+    "addToPortfolio": "Add to Portfolio",
+    "externalPortfolio": "External Portfolio Link (Optional)",
+    "errorFile": "Please upload a file first",
+    "errorTitle": "Please add a title"
   }
 }
