@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Send, Sparkles, RefreshCw, Check, History, AlertCircle, Download } from 'lucide-react';
+import { X, Send, Sparkles, RefreshCw, Check, History, AlertCircle, Download, Trash2, Copy, CheckCheck } from 'lucide-react';
 import { useAssistant } from '../../context/AssistantContext';
 import { Button } from '../ui/Button';
 import { useAuth } from '../../context/AuthContext';
@@ -239,47 +239,194 @@ const HistoryTab = ({ onInsert }: { onInsert: (text: string) => void }) => {
   const { user } = useAuth();
   const [history, setHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [clearingAll, setClearingAll] = useState(false);
+
+  const fetchHistory = async () => {
+    if (!user) return;
+    const { data, error } = await supabase
+      .from('assistant_messages')
+      .select('*, session:assistant_sessions(*)')
+      .eq('user_id', user.id)
+      .eq('role', 'assistant')
+      .order('created_at', { ascending: false })
+      .limit(50);
+    
+    if (!error) setHistory(data || []);
+    setLoading(false);
+  };
 
   useEffect(() => {
-    const fetchHistory = async () => {
-      if (!user) return;
-      const { data, error } = await supabase
-        .from('assistant_messages')
-        .select('*, session:assistant_sessions(*)')
-        .eq('user_id', user.id)
-        .eq('role', 'assistant')
-        .order('created_at', { ascending: false })
-        .limit(20);
-      
-      if (!error) setHistory(data || []);
-      setLoading(false);
-    };
     fetchHistory();
   }, [user]);
+
+  const handleCopy = async (text: string, id: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    } catch {
+      // Fallback
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      setCopiedId(id);
+      setTimeout(() => setCopiedId(null), 2000);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    setDeletingId(id);
+    try {
+      const { error } = await supabase
+        .from('assistant_messages')
+        .delete()
+        .eq('id', id);
+      if (!error) {
+        setHistory(prev => prev.filter(item => item.id !== id));
+      }
+    } catch (err) {
+      console.error('Delete error:', err);
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const handleClearAll = async () => {
+    if (!user) return;
+    if (!window.confirm('Are you sure you want to clear all chat history? This cannot be undone.')) return;
+    setClearingAll(true);
+    try {
+      const { error } = await supabase
+        .from('assistant_messages')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('role', 'assistant');
+      if (!error) setHistory([]);
+    } catch (err) {
+      console.error('Clear all error:', err);
+    } finally {
+      setClearingAll(false);
+    }
+  };
 
   if (loading) return <div style={{ padding: '20px', textAlign: 'center' }}>Loading history...</div>;
 
   return (
-    <div style={messagesStyle}>
-      {history.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
-          No generation history yet.
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+      {/* Header with Clear All */}
+      {history.length > 0 && (
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          padding: '12px 20px',
+          borderBottom: '1px solid var(--border-color)',
+          backgroundColor: 'var(--bg-secondary)'
+        }}>
+          <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+            {history.length} saved response{history.length !== 1 ? 's' : ''}
+          </span>
+          <button
+            onClick={handleClearAll}
+            disabled={clearingAll}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              padding: '6px 12px',
+              backgroundColor: 'rgba(239, 68, 68, 0.1)',
+              border: '1px solid rgba(239, 68, 68, 0.2)',
+              borderRadius: '8px',
+              color: '#ef4444',
+              fontSize: '0.75rem',
+              fontWeight: 600,
+              cursor: clearingAll ? 'not-allowed' : 'pointer',
+              transition: 'all 0.2s',
+              opacity: clearingAll ? 0.6 : 1
+            }}
+          >
+            <Trash2 size={12} />
+            {clearingAll ? 'Clearing...' : 'Clear All'}
+          </button>
         </div>
-      ) : (
-        history.map((item, i) => (
-          <div key={i} style={historyItemStyle}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-              <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                {new Date(item.created_at).toLocaleDateString()} • {item.session?.task || 'General'}
-              </span>
-              <button style={smallBtnStyle} onClick={() => onInsert(item.content)}>Insert</button>
-            </div>
-            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-              {item.content}
-            </p>
-          </div>
-        ))
       )}
+
+      {/* History list */}
+      <div style={{ ...messagesStyle, gap: '12px' }}>
+        {history.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>
+            <History size={32} style={{ marginBottom: '12px', opacity: 0.4 }} />
+            <p>No generation history yet.</p>
+          </div>
+        ) : (
+          history.map((item) => (
+            <div key={item.id} style={historyItemStyle}>
+              {/* Item header: date/task + action buttons */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', flex: 1, marginRight: '8px' }}>
+                  {new Date(item.created_at).toLocaleDateString()} • {item.session?.task || 'General'}
+                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px', flexShrink: 0 }}>
+                  {/* Copy button */}
+                  <button
+                    onClick={() => handleCopy(item.content, item.id)}
+                    title="Copy to clipboard"
+                    style={iconActionBtnStyle}
+                  >
+                    {copiedId === item.id
+                      ? <CheckCheck size={14} color="#22c55e" />
+                      : <Copy size={14} color="var(--text-muted)" />}
+                  </button>
+                  {/* Delete button */}
+                  <button
+                    onClick={() => handleDelete(item.id)}
+                    disabled={deletingId === item.id}
+                    title="Delete this response"
+                    style={{ ...iconActionBtnStyle, opacity: deletingId === item.id ? 0.5 : 1 }}
+                  >
+                    <Trash2 size={14} color="#ef4444" />
+                  </button>
+                  {/* Insert button */}
+                  <button
+                    style={{
+                      ...smallBtnStyle,
+                      padding: '4px 10px',
+                      backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                      border: '1px solid rgba(245, 158, 11, 0.2)',
+                      borderRadius: '6px',
+                      color: 'var(--accent-primary)',
+                      cursor: 'pointer',
+                      fontSize: '0.7rem',
+                      fontWeight: 700
+                    }}
+                    onClick={() => onInsert(item.content)}
+                  >
+                    Insert
+                  </button>
+                </div>
+              </div>
+              {/* Content preview */}
+              <p style={{
+                fontSize: '0.875rem',
+                color: 'var(--text-secondary)',
+                display: '-webkit-box',
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden',
+                lineHeight: 1.5,
+                margin: 0
+              }}>
+                {item.content}
+              </p>
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };
@@ -418,11 +565,24 @@ const tabButtonStyle: React.CSSProperties = {
 };
 
 const historyItemStyle: React.CSSProperties = {
-  padding: '16px',
+  padding: '14px 16px',
   backgroundColor: 'var(--bg-tertiary)',
   borderRadius: '12px',
   border: '1px solid var(--border-color)',
-  marginBottom: '12px',
+  transition: 'border-color 0.2s ease',
+};
+
+const iconActionBtnStyle: React.CSSProperties = {
+  background: 'none',
+  border: '1px solid var(--border-color)',
+  borderRadius: '6px',
+  padding: '5px 6px',
+  cursor: 'pointer',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  transition: 'all 0.15s ease',
+  backgroundColor: 'var(--bg-primary)',
 };
 
 const creditWarningStyle: React.CSSProperties = {
