@@ -22,10 +22,12 @@ export const AssistantPanel: React.FC = () => {
   
   const { profile: _profile } = useAuth();
   const { generate, isLoading, error } = usePathewAssistant();
+  const { user } = useAuth();
 
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState<{ type: 'user' | 'assistant', text: string, data?: any, isError?: boolean }[]>([]);
   const [mediaUploading, setMediaUploading] = useState(false);
+  const [pendingMedia, setPendingMedia] = useState<{ url: string, name: string } | null>(null);
   const [activeTab, setActiveTab] = useState<'chat' | 'history'>('chat');
   const lastRequestIdRef = useRef<number | null>(null);
 
@@ -59,8 +61,13 @@ export const AssistantPanel: React.FC = () => {
   const handleSend = async (text: string = input) => {
     if (!text.trim() || isLoading) return;
     
-    setMessages(prev => [...prev, { type: 'user', text }]);
+    setMessages(prev => [...prev, { 
+      type: 'user', 
+      text,
+      data: pendingMedia ? { mediaUrl: pendingMedia.url, fileName: pendingMedia.name } : undefined
+    }]);
     setInput('');
+    setPendingMedia(null);
     setIsGenerating(true);
 
     const result = await generate({
@@ -105,19 +112,16 @@ export const AssistantPanel: React.FC = () => {
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
+      const { data } = supabase.storage
         .from('portfolio')
         .getPublicUrl(filePath);
 
-      setMessages(prev => [...prev, { 
-        type: 'user', 
-        text: t('assistant.attachedReference', { name: file.name }),
-        data: { mediaUrl: publicUrl, fileName: file.name }
-      }]);
-      
-      // Auto-notify assistant
-      handleSend(t('assistant.referenceUploadedNotify', { name: file.name }));
+      const publicUrl = data.publicUrl;
 
+      setPendingMedia({ url: publicUrl, name: file.name });
+      
+      // Auto-notify assistant about the specific upload if needed, 
+      // but usually we wait for user to send their message with the attachment
     } catch (error) {
       console.error('Error uploading media:', error);
     } finally {
@@ -188,7 +192,7 @@ export const AssistantPanel: React.FC = () => {
 
                   {res.data?.mediaUrl && (
                     <div style={mediaPreviewStyle}>
-                      {res.data.mediaUrl.match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                      {(res.data.mediaUrl.split('?')[0].match(/\.(jpg|jpeg|png|gif|webp)$/i)) ? (
                         <img src={res.data.mediaUrl} alt="Reference" style={mediaImgStyle} />
                       ) : (
                         <div style={mediaFileStyle}>
@@ -258,6 +262,23 @@ export const AssistantPanel: React.FC = () => {
 
         {activeTab === 'chat' && (
           <div style={footerStyle}>
+            {pendingMedia && (
+              <div style={pendingMediaWrapperStyle}>
+                <div style={pendingMediaBadgeStyle}>
+                  {pendingMedia.url.split('?')[0].match(/\.(jpg|jpeg|png|gif|webp)$/i) ? (
+                    <img src={pendingMedia.url} alt="Pending" style={pendingMediaImgStyle} />
+                  ) : (
+                    <FileText size={16} color="var(--accent-primary)" />
+                  )}
+                  <span style={{ fontSize: '0.75rem', maxWidth: '150px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {pendingMedia.name}
+                  </span>
+                  <button onClick={() => setPendingMedia(null)} style={removeMediaBtnStyle}>
+                    <X size={12} />
+                  </button>
+                </div>
+              </div>
+            )}
             <div style={creditWarningStyle}>
               <Sparkles size={12} color="var(--accent-primary)" />
               <span>{t('assistant.creditCost')}</span>
@@ -788,4 +809,44 @@ const mediaFileStyle: React.CSSProperties = {
   alignItems: 'center',
   gap: '10px',
   padding: '12px',
+};
+const pendingMediaWrapperStyle: React.CSSProperties = {
+  marginBottom: '12px',
+  display: 'flex',
+  gap: '8px',
+};
+
+const pendingMediaBadgeStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+  padding: '6px 10px',
+  backgroundColor: 'var(--bg-tertiary)',
+  borderRadius: '8px',
+  border: '1px solid var(--accent-primary)',
+  position: 'relative',
+};
+
+const pendingMediaImgStyle: React.CSSProperties = {
+  width: '24px',
+  height: '24px',
+  borderRadius: '4px',
+  objectFit: 'cover',
+};
+
+const removeMediaBtnStyle: React.CSSProperties = {
+  background: 'var(--bg-secondary)',
+  border: 'none',
+  borderRadius: '50%',
+  width: '16px',
+  height: '16px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  cursor: 'pointer',
+  color: 'var(--text-primary)',
+  position: 'absolute',
+  top: '-8px',
+  right: '-8px',
+  boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
 };
