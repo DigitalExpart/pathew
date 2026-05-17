@@ -2,7 +2,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Shell } from './components/layout/Shell';
 import { AdminShell } from './components/layout/AdminShell';
 import { AssistantProvider } from './context/AssistantContext';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, RequireAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { AdminProvider, RequireAdmin } from './context/AdminContext';
 import { AssistantPanel } from './components/ai/AssistantPanel';
@@ -61,34 +61,34 @@ function App() {
             <Route path="/privacy-policy" element={<PublicPrivacyPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/how-it-works" element={<HowItWorksPage />} />
-            <Route path="/profile-setup" element={<Shell><ProfileSetup /></Shell>} />
+            <Route path="/profile-setup" element={<RequireAuth><Shell><ProfileSetup /></Shell></RequireAuth>} />
             
             {/* Protected Routes (Authenticated) */}
-            <Route path="/dashboard" element={<Shell><Dashboard /></Shell>} />
-            <Route path="/opportunities" element={<Shell><OpportunityList /></Shell>} />
-            <Route path="/fellowships" element={<Shell><OpportunityList /></Shell>} />
-            <Route path="/grants" element={<Shell><OpportunityList /></Shell>} />
-            <Route path="/jobs" element={<Shell><JobsPage /></Shell>} />
-            <Route path="/opportunities/:id" element={<Shell><OpportunityDetail /></Shell>} />
-            <Route path="/career-profile" element={<Shell><ProfilePage /></Shell>} />
-            <Route path="/profile" element={<Shell><EditProfile /></Shell>} />
-            <Route path="/cv-builder" element={<Shell><CVBuilderPage /></Shell>} />
-            <Route path="/cover-letter" element={<Shell><CoverLetterPage /></Shell>} />
-            <Route path="/proposal" element={<Shell><ProposalPage /></Shell>} />
+            <Route path="/dashboard" element={<RequireAuth><Shell><Dashboard /></Shell></RequireAuth>} />
+            <Route path="/opportunities" element={<RequireAuth><Shell><OpportunityList /></Shell></RequireAuth>} />
+            <Route path="/fellowships" element={<RequireAuth><Shell><OpportunityList /></Shell></RequireAuth>} />
+            <Route path="/grants" element={<RequireAuth><Shell><OpportunityList /></Shell></RequireAuth>} />
+            <Route path="/jobs" element={<RequireAuth><Shell><JobsPage /></Shell></RequireAuth>} />
+            <Route path="/opportunities/:id" element={<RequireAuth><Shell><OpportunityDetail /></Shell></RequireAuth>} />
+            <Route path="/career-profile" element={<RequireAuth><Shell><ProfilePage /></Shell></RequireAuth>} />
+            <Route path="/profile" element={<RequireAuth><Shell><EditProfile /></Shell></RequireAuth>} />
+            <Route path="/cv-builder" element={<RequireAuth><Shell><CVBuilderPage /></Shell></RequireAuth>} />
+            <Route path="/cover-letter" element={<RequireAuth><Shell><CoverLetterPage /></Shell></RequireAuth>} />
+            <Route path="/proposal" element={<RequireAuth><Shell><ProposalPage /></Shell></RequireAuth>} />
             
             {/* New Routes */}
-            <Route path="/wallet" element={<Shell><WalletPage /></Shell>} />
-            <Route path="/pricing" element={<Shell><PricingPage /></Shell>} />
-            <Route path="/saved" element={<Shell><SavedOpportunities /></Shell>} />
-            <Route path="/grant-builder" element={<Shell><GrantBuilderPage /></Shell>} />
-            <Route path="/settings" element={<Shell><SettingsPage /></Shell>} />
-            <Route path="/notifications" element={<Shell><NotificationsPage /></Shell>} />
-            <Route path="/preparation" element={<Shell><PreparationPage /></Shell>} />
+            <Route path="/wallet" element={<RequireAuth><Shell><WalletPage /></Shell></RequireAuth>} />
+            <Route path="/pricing" element={<RequireAuth><Shell><PricingPage /></Shell></RequireAuth>} />
+            <Route path="/saved" element={<RequireAuth><Shell><SavedOpportunities /></Shell></RequireAuth>} />
+            <Route path="/grant-builder" element={<RequireAuth><Shell><GrantBuilderPage /></Shell></RequireAuth>} />
+            <Route path="/settings" element={<RequireAuth><Shell><SettingsPage /></Shell></RequireAuth>} />
+            <Route path="/notifications" element={<RequireAuth><Shell><NotificationsPage /></Shell></RequireAuth>} />
+            <Route path="/preparation" element={<RequireAuth><Shell><PreparationPage /></Shell></RequireAuth>} />
 
             {/* Sub Admin Routes */}
-            <Route path="/sub-admin" element={<Shell><SubAdminDashboard /></Shell>} />
-            <Route path="/sub-admin/opportunities/new" element={<Shell><SubAdminOpportunityForm /></Shell>} />
-            <Route path="/sub-admin/opportunities/:id/edit" element={<Shell><SubAdminOpportunityForm /></Shell>} />
+            <Route path="/sub-admin" element={<RequireAuth><Shell><SubAdminDashboard /></Shell></RequireAuth>} />
+            <Route path="/sub-admin/opportunities/new" element={<RequireAuth><Shell><SubAdminOpportunityForm /></Shell></RequireAuth>} />
+            <Route path="/sub-admin/opportunities/:id/edit" element={<RequireAuth><Shell><SubAdminOpportunityForm /></Shell></RequireAuth>} />
 
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminLogin />} />
