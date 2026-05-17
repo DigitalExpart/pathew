@@ -222,9 +222,9 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
 
             {/* Generation settings configurations */}
             <Card style={settingsCardStyle}>
-              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+              <h3 style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', fontWeight: 700, marginBottom: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
                 <Settings size={18} color="var(--accent-primary)" />
-                3. AI Settings & Style Prefs
+                3. Pathew Assistant Settings & Style Prefs
               </h3>
 
               <div style={settingsGridStyle}>
@@ -263,13 +263,13 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                     <input 
                       type="range" 
                       min="100" 
-                      max="1000" 
+                      max="3500" 
                       step="50"
                       value={builder.wordLimit}
                       onChange={(e) => builder.setWordLimit(Number(e.target.value))}
                       style={{ flex: 1, accentColor: 'var(--accent-primary)' }}
                     />
-                    <span style={{ fontSize: '0.875rem', fontWeight: 700 }}>{builder.wordLimit} words</span>
+                    <span style={{ fontSize: '0.875rem', fontWeight: 700, whiteSpace: 'nowrap' }}>{builder.wordLimit} words</span>
                   </div>
                 </div>
               </div>
@@ -286,10 +286,13 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                 style={{ 
                   gap: '8px',
                   boxShadow: '0 4px 15px var(--accent-glow)',
-                  width: isMobile ? '100%' : 'auto' 
+                  width: isMobile ? '100%' : 'auto',
+                  padding: isMobile ? '14px 20px' : '12px 24px',
+                  fontSize: isMobile ? '0.9rem' : '0.875rem',
+                  justifyContent: 'center'
                 }}
               >
-                Tailor suitability & Gaps
+                Analyse Suitability & Gaps
                 <ArrowRight size={16} />
               </Button>
             </div>
@@ -305,7 +308,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                 Analyzing suitability fit...
               </h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', maxWidth: '380px' }}>
-                Claude is parsing your past documents, matching keywords against opportunity requirements, and preparing progressive profile questions...
+                Pathew Assistant is parsing your documents, matching keywords against opportunity requirements, and preparing progressive profile questions...
               </p>
               <div style={progressBarContainerStyle}>
                 <div style={progressBarShimmerStyle} />
@@ -346,7 +349,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
             {builder.isGenerating ? (
               <Card style={{ padding: '60px', textAlign: 'center' }}>
                 <Sparkles size={36} color="var(--accent-primary)" className="animate-spin" style={{ margin: '0 auto 16px' }} />
-                <p>Generating document draft with Claude...</p>
+                <p>Pathew Assistant is generating your tailored draft...</p>
               </Card>
             ) : (
               <BuilderEditor 
@@ -476,7 +479,7 @@ const settingsCardStyle: React.CSSProperties = {
 
 const settingsGridStyle: React.CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
   gap: '20px',
 };
 
@@ -511,7 +514,7 @@ const sourcesFooterStyle: React.CSSProperties = {
 };
 
 const loadingContainerStyle: React.CSSProperties = {
-  padding: '80px 40px',
+  padding: '60px 20px',
   display: 'flex',
   justifyContent: 'center',
   textAlign: 'center',

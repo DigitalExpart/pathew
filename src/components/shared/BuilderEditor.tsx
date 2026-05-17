@@ -175,7 +175,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
           <Card style={aiBoxStyle}>
             <div style={aiBoxHeaderStyle}>
               <Sparkles size={16} color="var(--accent-primary)" />
-              <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>Tailor this section with Claude</span>
+              <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>Tailor this section with Pathew Assistant</span>
             </div>
             <textarea 
               value={instruction}
@@ -222,7 +222,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
 
               {/* Watermark/Footer */}
               <div style={paperFooterStyle}>
-                <span>Powered by PATHEW AI-First Pipeline</span>
+                <span>Powered by Pathew Assistant</span>
                 <span>Page 1 of 1</span>
               </div>
             </div>

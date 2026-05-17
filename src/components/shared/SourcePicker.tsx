@@ -168,7 +168,7 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
   return (
     <div style={containerStyle}>
       <h3 style={titleStyle}>1. Select Background Materials</h3>
-      <p style={subtitleStyle}>Select one or more sources. AI will use these to draft and tailor your document automatically.</p>
+      <p style={subtitleStyle}>Select one or more sources. Pathew Assistant will use these to draft and tailor your document automatically.</p>
 
       {/* Selectable Sources Grid */}
       <div style={sourcesGridStyle}>

@@ -42,8 +42,8 @@ export const MissingInfoPanel: React.FC<MissingInfoPanelProps> = ({
           <div>
             <h4 style={alertTitleStyle}>Targeted Tailoring Enabled</h4>
             <p style={alertDescStyle}>
-              PATHEW analyzed your profile and the target opportunity. To write the highest converting copy, please answer these final {missingFields.length} details. 
-              We don't need any other long forms!
+              Pathew Assistant analyzed your profile and the target opportunity. To write the highest converting copy, please answer these final {missingFields.length} details. 
+              No other long forms needed!
             </p>
           </div>
         </div>
