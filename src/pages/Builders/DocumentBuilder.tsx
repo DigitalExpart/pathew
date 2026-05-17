@@ -1,19 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import { useBuilderAi } from '../../hooks/useBuilderAi';
+import { SourcePicker } from '../../components/shared/SourcePicker';
+import { ContextSummary } from '../../components/shared/ContextSummary';
+import { MissingInfoPanel } from '../../components/shared/MissingInfoPanel';
+import { BuilderEditor } from '../../components/shared/BuilderEditor';
 import { Button } from '../../components/ui/Button';
+import { Card } from '../../components/ui/Card';
+import { Badge } from '../../components/ui/Badge';
+import { supabase } from '../../lib/supabase';
 import { 
-  Download, 
-  Eye, 
-  Type, 
-  Bold, 
-  Italic, 
-  List, 
-  Save,
+  Sparkles, 
+  ArrowRight, 
+  Settings, 
+  Compass, 
   CheckCircle,
-  FileDown,
-  Sparkles
+  Briefcase
 } from 'lucide-react';
-import { useAssistant } from '../../context/AssistantContext';
-import { useTranslation } from 'react-i18next';
 
 interface DocumentBuilderProps {
   type: 'CV' | 'Cover Letter' | 'Proposal';
@@ -26,11 +30,33 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
   initialTitle, 
   initialContent 
 }) => {
-  const [content, setContent] = useState(initialContent);
-  const [isSaved, setIsSaved] = useState(false);
-  const { openAssistant } = useAssistant();
-  const { t } = useTranslation();
+  const { user } = useAuth();
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const oppIdParam = searchParams.get('oppId');
 
+  // Map builder type keys
+  const getBuilderTypeKey = () => {
+    if (type === 'CV') return 'cv';
+    if (type === 'Cover Letter') return 'cover_letter';
+    return 'grant';
+  };
+
+  // Initialize unified AI hook
+  const builder = useBuilderAi({
+    builderType: getBuilderTypeKey(),
+    defaultDocumentType: type,
+    initialOpportunityId: oppIdParam,
+  });
+
+  // Ensure default content from page parameters is present if no AI draft exists yet
+  useEffect(() => {
+    if (!builder.draftContent && initialContent) {
+      builder.setDraftContent(initialContent);
+    }
+  }, [initialContent]);
+
+  const [oppDetails, setOppDetails] = useState<any>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   useEffect(() => {
@@ -39,294 +65,485 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleSave = () => {
-    setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 2000);
-  };
-
-  const openAIDocumentHelp = () => {
-    const prompts = {
-      'CV': ['Write a professional summary', 'Improve my bullet points', 'Tailor to a role', 'Shorten this section'],
-      'Cover Letter': ['Write from scratch', 'Make it more formal', 'Rewrite for InnovateX', 'Make it personal'],
-      'Proposal': ['Generate proposal draft', 'Outline the structure', 'Improve clarity', 'Make it concise']
+  // Fetch opportunity metadata if launched from dashboard link
+  useEffect(() => {
+    const fetchOpp = async () => {
+      const activeId = oppIdParam || builder.opportunityId;
+      if (activeId && activeId !== 'general') {
+        try {
+          const { data } = await supabase
+            .from('opportunities')
+            .select('*')
+            .eq('id', activeId)
+            .maybeSingle();
+          if (data) {
+            setOppDetails(data);
+            builder.setOpportunityId(data.id);
+            builder.setOpportunityText(data.description || '');
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
     };
-    openAssistant(`${type} Builder`, prompts[type], (text) => {
-      setContent(prev => prev + '\n\n' + text);
-    }, {
-      title: initialTitle,
-      content: content,
-      type: type,
-      opportunityId: (window as any).currentOpportunityId // Temporary bridge if not in props
-    });
+    fetchOpp();
+  }, [oppIdParam]);
+
+  // Stepper Header
+  const renderStepper = () => {
+    const steps = [
+      { key: 'sources', label: '1. Sources & Target' },
+      { key: 'missing', label: '2. Progressive Gaps' },
+      { key: 'editor', label: '3. Perfect & Export' },
+    ];
+
+    return (
+      <div style={stepperContainerStyle}>
+        {steps.map((s, idx) => {
+          const isActive = builder.stage === s.key || (builder.stage === 'extraction' && s.key === 'sources');
+          const isDone = 
+            (builder.stage === 'missing' && s.key === 'sources') ||
+            (builder.stage === 'editor' && (s.key === 'sources' || s.key === 'missing'));
+
+          return (
+            <React.Fragment key={s.key}>
+              <div style={stepWrapperStyle}>
+                <span style={{ 
+                  ...stepIconStyle,
+                  backgroundColor: isActive ? 'var(--accent-primary)' : isDone ? 'rgba(16,185,129,0.1)' : 'var(--bg-tertiary)',
+                  borderColor: isActive ? 'var(--accent-primary)' : isDone ? '#10b981' : 'var(--border-color)',
+                  color: isActive ? '#fff' : isDone ? '#10b981' : 'var(--text-secondary)'
+                }}>
+                  {isDone ? <CheckCircle size={14} /> : idx + 1}
+                </span>
+                <span style={{ 
+                  ...stepLabelStyle, 
+                  color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
+                  fontWeight: isActive ? 700 : 500 
+                }}>
+                  {s.label}
+                </span>
+              </div>
+              {idx < steps.length - 1 && (
+                <div style={{ 
+                  ...stepLineStyle,
+                  backgroundColor: isDone ? '#10b981' : 'var(--border-color)' 
+                }} />
+              )}
+            </React.Fragment>
+          );
+        })}
+      </div>
+    );
   };
 
-  // Dynamic Responsive Styles
-  const containerStyle: React.CSSProperties = {
-    height: isMobile ? 'auto' : 'calc(100vh - 120px)',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: isMobile ? '16px' : '0'
-  };
-
-  const headerStyle: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: isMobile ? 'column' : 'row',
-    justifyContent: 'space-between',
-    alignItems: isMobile ? 'stretch' : 'center',
-    marginBottom: isMobile ? '16px' : '24px',
-    gap: isMobile ? '16px' : '0'
-  };
-
-  const titleStyle: React.CSSProperties = {
-    fontSize: isMobile ? '1.25rem' : '1.5rem',
-    fontWeight: 700,
-    marginBottom: '2px'
-  };
-
-  const subtitleStyle: React.CSSProperties = {
-    fontSize: '0.8125rem',
-    color: 'var(--text-secondary)',
-  };
-
-  const actionsStyle: React.CSSProperties = {
-    display: 'flex',
-    gap: '8px',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    width: isMobile ? '100%' : 'auto',
-  };
-
-  const dividerStyle: React.CSSProperties = {
-    display: isMobile ? 'none' : 'block',
-    width: '1px',
-    height: '24px',
-    backgroundColor: 'var(--border-color)',
-    margin: '0 8px',
-  };
-
-  const editorGridStyle: React.CSSProperties = {
-    flex: 1,
-    display: 'grid',
-    gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
-    gap: isMobile ? '20px' : '24px',
-    overflow: isMobile ? 'visible' : 'hidden',
-  };
-
-  const editorColStyle: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-    backgroundColor: 'var(--bg-secondary)',
-    borderRadius: 'var(--radius-xl)',
-    border: '1px solid var(--border-color)',
-    overflow: 'hidden',
-    height: isMobile ? '350px' : 'auto',
-  };
-
-  const toolbarStyle: React.CSSProperties = {
-    padding: '10px 12px',
-    display: 'flex',
-    gap: '6px',
-    borderBottom: '1px solid var(--border-color)',
-    backgroundColor: 'rgba(0,0,0,0.1)',
-    flexWrap: 'wrap'
-  };
-
-  const toolbarButtonStyle: React.CSSProperties = {
-    padding: '6px 8px',
-    borderRadius: '6px',
-    color: 'var(--text-secondary)',
-    display: 'flex',
-    alignItems: 'center',
-    transition: 'all 0.2s ease',
-  };
-
-  const AssistantToolbarButtonStyle: React.CSSProperties = {
-    ...toolbarButtonStyle,
-    color: 'var(--accent-primary)',
-    fontWeight: 600,
-    fontSize: '0.75rem',
-    gap: '6px',
-    backgroundColor: 'rgba(245, 158, 11, 0.05)',
-    border: '1px solid rgba(245, 158, 11, 0.1)',
-  };
-
-  const toolbarDividerStyle: React.CSSProperties = {
-    width: '1px',
-    height: '18px',
-    backgroundColor: 'var(--border-color)',
-    margin: '0 4px',
-    alignSelf: 'center'
-  };
-
-  const editorWrapperStyle: React.CSSProperties = {
-    flex: 1,
-    padding: isMobile ? '16px' : '24px',
-  };
-
-  const editorAreaStyle: React.CSSProperties = {
-    width: '100%',
-    height: '100%',
-    background: 'none',
-    border: 'none',
-    color: 'var(--text-primary)',
-    resize: 'none',
-    outline: 'none',
-    fontSize: '0.9375rem',
-    lineHeight: 1.6,
-    fontFamily: '"Courier New", Courier, monospace',
-  };
-
-  const previewColStyle: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: 'column',
-  };
-
-  const previewHeaderStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px',
-    marginBottom: '12px',
-    color: 'var(--text-secondary)',
-  };
-
-  const documentWrapperStyle: React.CSSProperties = {
-    flex: 1,
-    backgroundColor: '#f1f5f9',
-    borderRadius: 'var(--radius-xl)',
-    padding: isMobile ? '16px' : '40px',
-    overflowY: 'auto',
-    display: 'flex',
-    justifyContent: 'center',
-    height: isMobile ? '400px' : 'auto',
-    minHeight: isMobile ? '300px' : '0',
-  };
-
-  const documentPageStyle: React.CSSProperties = {
-    width: '100%',
-    maxWidth: '600px',
-    minHeight: isMobile ? 'auto' : '800px',
-    backgroundColor: '#fff',
-    color: '#1e293b',
-    padding: isMobile ? '24px' : '60px',
-    boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-    fontFamily: 'serif',
-  };
-
-  const docHeaderStyle: React.CSSProperties = {
-    textAlign: 'center',
-    marginBottom: isMobile ? '20px' : '40px',
-    borderBottom: '2px solid #334155',
-    paddingBottom: isMobile ? '10px' : '20px',
-  };
-
-  const docTitleStyle: React.CSSProperties = {
-    fontSize: isMobile ? '1.25rem' : '1.75rem',
-    letterSpacing: '0.1em',
-    marginBottom: '8px',
-  };
-
-  const docContactStyle: React.CSSProperties = {
-    fontSize: isMobile ? '0.75rem' : '0.875rem',
-    color: '#64748b',
-    lineHeight: 1.4
-  };
-
-  const docBodyStyle: React.CSSProperties = {
-    lineHeight: 1.6,
-    fontSize: isMobile ? '0.8125rem' : '0.9375rem',
-  };
-
-  const ToolbarButton = ({ icon: Icon, label }: any) => (
-    <button style={toolbarButtonStyle}>
-      <Icon size={18} />
-      {label && <span style={{ fontSize: '0.75rem', marginLeft: '6px' }}>{label}</span>}
-    </button>
-  );
+  if (!user) {
+    return (
+      <div style={{ textAlign: 'center', padding: '60px' }}>
+        <p>Please sign in to access the builders.</p>
+        <Button onClick={() => navigate('/login')} style={{ marginTop: '16px' }}>Sign In</Button>
+      </div>
+    );
+  }
 
   return (
-    <div style={containerStyle}>
-      <header style={headerStyle}>
+    <div style={layoutContainerStyle}>
+      {/* Title block */}
+      <header style={headerBlockStyle}>
         <div>
-          <h1 style={titleStyle}>{initialTitle}</h1>
-          <p style={subtitleStyle}>{type} Builder • {t('builders.editingMode')}</p>
+          <h1 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 800, marginBottom: '4px' }}>
+            {initialTitle || `Tailored ${type} Workspace`}
+          </h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+            {type === 'CV' && 'Create a highly tailored master resume focusing heavily on opportunity matches.'}
+            {type === 'Cover Letter' && 'Draft a personal, high-converting letter tailored specifically to requirements.'}
+            {type === 'Proposal' && 'Organize, structure, and answer funding requirements in persuasive proposal sections.'}
+          </p>
         </div>
-        <div style={actionsStyle}>
-          <Button 
-            variant="outline" 
-            onClick={handleSave} 
-            style={{ gap: '8px', flex: isMobile ? 1 : 'none', justifyContent: 'center' }}
-          >
-            {isSaved ? <CheckCircle size={18} color="#22c55e" /> : <Save size={18} />}
-            {isSaved ? t('opportunities.saved') : t('grantBuilder.saveDraft')}
-          </Button>
-          <div style={dividerStyle}></div>
-          <Button 
-            variant="secondary" 
-            style={{ gap: '8px', flex: isMobile ? 1 : 'none', justifyContent: 'center' }}
-          >
-            <FileDown size={18} /> DOCX
-          </Button>
-          <Button 
-            style={{ gap: '8px', flex: isMobile ? 1 : 'none', justifyContent: 'center' }}
-          >
-            <Download size={18} /> PDF
-          </Button>
-        </div>
+
+        {/* Stepper display */}
+        {!isMobile && renderStepper()}
       </header>
 
-      <div style={editorGridStyle}>
-        {/* Editor Sidebar */}
-        <section style={editorColStyle}>
-          <div style={toolbarStyle}>
-            <ToolbarButton icon={Bold} />
-            <ToolbarButton icon={Italic} />
-            <ToolbarButton icon={List} />
-            <div style={toolbarDividerStyle}></div>
-            <ToolbarButton icon={Type} label="Heading" />
-            <div style={toolbarDividerStyle}></div>
-            <button 
-              style={AssistantToolbarButtonStyle}
-              onClick={openAIDocumentHelp}
-            >
-              <Sparkles size={16} />
-              <span>{t('assistant.title')}</span>
-            </button>
-          </div>
-          
-          <div style={editorWrapperStyle}>
-            <textarea 
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              style={editorAreaStyle}
-              spellCheck={false}
-            />
-          </div>
-        </section>
+      {/* Main stage displays */}
+      <div style={{ flex: 1 }}>
+        
+        {/* STAGE 1: SOURCES AND OPPORTUNITY TARGET */}
+        {builder.stage === 'sources' && (
+          <div style={sourcesStageWrapperStyle}>
+            
+            {/* Target Job/Opportunity Selector */}
+            <Card style={oppTargetCardStyle}>
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '16px' }}>
+                <div style={iconBoxStyle}>
+                  <Compass size={20} color="var(--accent-primary)" />
+                </div>
+                <div>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 700 }}>2. Target Opportunity Link or Description</h3>
+                  <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                    Paste the job description, funder requirements, or opportunity details to align your document.
+                  </p>
+                </div>
+              </div>
 
-        {/* Live Preview */}
-        <section style={previewColStyle}>
-          <div style={previewHeaderStyle}>
-            <Eye size={16} /> 
-            <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>{t('builders.livePreview')}</span>
-          </div>
-          
-          <div style={documentWrapperStyle}>
-            <div style={documentPageStyle}>
-              {/* This mimics a real A4 paper */}
-              <div style={docHeaderStyle}>
-                <h2 style={docTitleStyle}>ALEX JOHNSON</h2>
-                <p style={docContactStyle}>San Francisco, CA • alex.j@example.com • (555) 000-1234</p>
+              {oppDetails ? (
+                <div style={oppDetailSummaryBoxStyle}>
+                  <Briefcase size={16} color="var(--accent-primary)" />
+                  <div style={{ flex: 1 }}>
+                    <h4 style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                      {oppDetails.title}
+                    </h4>
+                    <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
+                      {oppDetails.organization_name || oppDetails.funder_name || 'PATHEW listing'} • {oppDetails.location || 'Remote'}
+                    </p>
+                  </div>
+                  <Badge variant="outline" style={{ textTransform: 'capitalize' }}>
+                    {oppDetails.type}
+                  </Badge>
+                </div>
+              ) : (
+                <textarea 
+                  placeholder="Paste target job listing, scholarship requirements, or funding proposal description here..."
+                  value={builder.opportunityText}
+                  onChange={(e) => builder.setOpportunityText(e.target.value)}
+                  style={textareaStyle}
+                />
+              )}
+            </Card>
+
+            {/* Profile background sources picker */}
+            <SourcePicker 
+              sources={builder.sources}
+              selectedSourceIds={builder.selectedSourceIds}
+              onChangeSelected={builder.setSelectedSourceIds}
+              onRefreshSources={builder.loadSources}
+              userId={user.id}
+            />
+
+            {/* Generation settings configurations */}
+            <Card style={settingsCardStyle}>
+              <h3 style={{ fontSize: '1.05rem', fontWeight: 700, marginBottom: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <Settings size={18} color="var(--accent-primary)" />
+                3. AI Settings & Style Prefs
+              </h3>
+
+              <div style={settingsGridStyle}>
+                <div>
+                  <label style={labelStyle}>Tone of Voice</label>
+                  <select 
+                    value={builder.tone}
+                    onChange={(e) => builder.setTone(e.target.value)}
+                    style={selectInputStyle}
+                  >
+                    <option value="Professional & Academic">Professional & Academic (Formal & polished)</option>
+                    <option value="Creative & Narrative">Creative & Narrative (Story-driven & expressive)</option>
+                    <option value="Concise & Impactful">Concise & Impactful (Short, high-signal bullets)</option>
+                    <option value="Casual & Friendly">Casual & Friendly (Warm & approachable)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={labelStyle}>Target Spelling / Language</label>
+                  <select 
+                    value={builder.language}
+                    onChange={(e) => builder.setLanguage(e.target.value)}
+                    style={selectInputStyle}
+                  >
+                    <option value="English (UK)">UK English (-programme, -ise)</option>
+                    <option value="English (US)">US English (-program, -ize)</option>
+                    <option value="French">French (Français)</option>
+                    <option value="German">German (Deutsch)</option>
+                    <option value="Spanish">Spanish (Español)</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={labelStyle}>Word Target Limit</label>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                    <input 
+                      type="range" 
+                      min="100" 
+                      max="1000" 
+                      step="50"
+                      value={builder.wordLimit}
+                      onChange={(e) => builder.setWordLimit(Number(e.target.value))}
+                      style={{ flex: 1, accentColor: 'var(--accent-primary)' }}
+                    />
+                    <span style={{ fontSize: '0.875rem', fontWeight: 700 }}>{builder.wordLimit} words</span>
+                  </div>
+                </div>
               </div>
-              
-              <div style={docBodyStyle}>
-                {content.split('\n').map((line, i) => (
-                  <p key={i} style={{ marginBottom: '12px' }}>{line}</p>
-                ))}
-              </div>
+            </Card>
+
+            {/* Action triggering */}
+            <div style={sourcesFooterStyle}>
+              {builder.error && (
+                <p style={{ color: '#ef4444', fontSize: '0.875rem', margin: 0 }}>{builder.error}</p>
+              )}
+              <Button 
+                onClick={builder.startExtraction} 
+                disabled={builder.selectedSourceIds.length === 0 || (!builder.opportunityText && !builder.opportunityId)}
+                style={{ 
+                  gap: '8px',
+                  boxShadow: '0 4px 15px var(--accent-glow)',
+                  width: isMobile ? '100%' : 'auto' 
+                }}
+              >
+                Tailor suitability & Gaps
+                <ArrowRight size={16} />
+              </Button>
             </div>
           </div>
-        </section>
+        )}
+
+        {/* STAGE 2: LOADING SHIMMER GAUGE */}
+        {builder.stage === 'extraction' && (
+          <Card style={loadingContainerStyle}>
+            <div className="animate-pulse" style={loadingShimmerStyle}>
+              <Sparkles size={48} color="var(--accent-primary)" style={{ marginBottom: '20px' }} />
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>
+                Analyzing suitability fit...
+              </h3>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', maxWidth: '380px' }}>
+                Claude is parsing your past documents, matching keywords against opportunity requirements, and preparing progressive profile questions...
+              </p>
+              <div style={progressBarContainerStyle}>
+                <div style={progressBarShimmerStyle} />
+              </div>
+            </div>
+          </Card>
+        )}
+
+        {/* STAGE 3: PROGRESSIVE PROFILING (GAPS & SUMMARY) */}
+        {builder.stage === 'missing' && (
+          <div>
+            <ContextSummary matchSummary={builder.matchSummary} confidence={builder.confidence} />
+            <MissingInfoPanel 
+              missingFields={builder.missingFields}
+              answers={builder.missingAnswers}
+              onChangeAnswers={builder.setMissingAnswers}
+              onSubmit={() => builder.generateTailoredDraft(builder.sessionId, builder.missingAnswers)}
+              isLoading={builder.isGenerating}
+            />
+          </div>
+        )}
+
+        {/* STAGE 4: MAIN WORKSPACE (EDITOR, PREVIEW & TAILOR DRAWER) */}
+        {builder.stage === 'editor' && (
+          <div>
+            {/* Context Gaps expandable reference */}
+            <Card style={referenceExpandableCardStyle}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)' }}>
+                  ATS Match Fit Score: High • Gaps fully addressed in generation
+                </span>
+                <Badge variant="primary" style={{ backgroundColor: 'rgba(16,185,129,0.1)', color: '#10b981' }}>
+                  Validated
+                </Badge>
+              </div>
+            </Card>
+
+            {builder.isGenerating ? (
+              <Card style={{ padding: '60px', textAlign: 'center' }}>
+                <Sparkles size={36} color="var(--accent-primary)" className="animate-spin" style={{ margin: '0 auto 16px' }} />
+                <p>Generating document draft with Claude...</p>
+              </Card>
+            ) : (
+              <BuilderEditor 
+                draftContent={builder.draftContent}
+                onChangeContent={builder.setDraftContent}
+                onRegenerate={builder.regenerateDraft}
+                onSaveVersion={builder.saveDraftToDb}
+                savedVersions={builder.savedVersions}
+                currentVersionNumber={builder.currentVersionNumber}
+                onSelectVersion={(v) => {
+                  builder.setDraftContent(v.content);
+                  builder.setCurrentVersionNumber(v.version);
+                }}
+                isLoading={builder.isGenerating}
+                documentType={type}
+              />
+            )}
+          </div>
+        )}
+
       </div>
     </div>
   );
+};
+
+// Styles
+const layoutContainerStyle: React.CSSProperties = {
+  maxWidth: '1200px',
+  margin: '0 auto',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '24px',
+};
+
+const headerBlockStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  flexWrap: 'wrap',
+  gap: '20px',
+};
+
+const stepperContainerStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '16px',
+};
+
+const stepWrapperStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+};
+
+const stepIconStyle: React.CSSProperties = {
+  width: '24px',
+  height: '24px',
+  borderRadius: '50%',
+  border: '1px solid',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: '0.75rem',
+  fontWeight: 700,
+  transition: 'all 0.25s ease',
+};
+
+const stepLabelStyle: React.CSSProperties = {
+  fontSize: '0.8rem',
+  fontWeight: 500,
+};
+
+const stepLineStyle: React.CSSProperties = {
+  width: '40px',
+  height: '2px',
+  transition: 'background-color 0.25s ease',
+};
+
+const sourcesStageWrapperStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '24px',
+};
+
+const oppTargetCardStyle: React.CSSProperties = {
+  padding: '24px',
+};
+
+const iconBoxStyle: React.CSSProperties = {
+  width: '40px',
+  height: '40px',
+  backgroundColor: 'var(--bg-tertiary)',
+  borderRadius: '10px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+};
+
+const textareaStyle: React.CSSProperties = {
+  width: '100%',
+  height: '140px',
+  backgroundColor: 'var(--bg-secondary)',
+  border: '1px solid var(--border-color)',
+  borderRadius: 'var(--radius-lg)',
+  color: 'var(--text-primary)',
+  padding: '16px',
+  fontSize: '0.875rem',
+  outline: 'none',
+  fontFamily: 'inherit',
+  resize: 'vertical',
+  transition: 'border-color 0.2s ease',
+};
+
+const oppDetailSummaryBoxStyle: React.CSSProperties = {
+  backgroundColor: 'var(--bg-secondary)',
+  border: '1px solid var(--border-color)',
+  borderRadius: 'var(--radius-lg)',
+  padding: '16px 20px',
+  display: 'flex',
+  alignItems: 'center',
+  gap: '16px',
+};
+
+const settingsCardStyle: React.CSSProperties = {
+  padding: '24px',
+};
+
+const settingsGridStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+  gap: '20px',
+};
+
+const labelStyle: React.CSSProperties = {
+  fontSize: '0.85rem',
+  fontWeight: 650,
+  color: 'var(--text-secondary)',
+  marginBottom: '8px',
+  display: 'block',
+};
+
+const selectInputStyle: React.CSSProperties = {
+  backgroundColor: 'var(--bg-secondary)',
+  border: '1px solid var(--border-color)',
+  borderRadius: 'var(--radius-lg)',
+  color: 'var(--text-primary)',
+  padding: '12px 16px',
+  fontSize: '0.875rem',
+  outline: 'none',
+  width: '100%',
+  cursor: 'pointer',
+};
+
+const sourcesFooterStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  flexWrap: 'wrap',
+  gap: '16px',
+  paddingTop: '12px',
+  borderTop: '1px solid var(--border-color)',
+};
+
+const loadingContainerStyle: React.CSSProperties = {
+  padding: '80px 40px',
+  display: 'flex',
+  justifyContent: 'center',
+  textAlign: 'center',
+};
+
+const loadingShimmerStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+};
+
+const progressBarContainerStyle: React.CSSProperties = {
+  width: '240px',
+  height: '6px',
+  backgroundColor: 'var(--bg-tertiary)',
+  borderRadius: '3px',
+  marginTop: '24px',
+  overflow: 'hidden',
+  position: 'relative',
+};
+
+const progressBarShimmerStyle: React.CSSProperties = {
+  width: '60px',
+  height: '100%',
+  backgroundColor: 'var(--accent-primary)',
+  borderRadius: '3px',
+  position: 'absolute',
+  animation: 'shimmer 1.5s infinite linear',
+};
+
+const referenceExpandableCardStyle: React.CSSProperties = {
+  padding: '12px 20px',
+  backgroundColor: 'var(--bg-secondary)',
+  marginBottom: '16px',
 };

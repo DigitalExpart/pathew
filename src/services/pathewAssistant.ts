@@ -9,6 +9,8 @@ export interface AssistantRequestPayload {
   currentDraft?: string;
   tone?: string;
   language?: string;
+  sourceIds?: string[];
+  missingFieldsAnswers?: Record<string, string>;
 }
 
 export interface AssistantResponseData {
@@ -23,6 +25,14 @@ export interface AssistantResponseData {
   confidence: 'high' | 'medium' | 'low';
   sessionId: string;
   error?: string;
+  missingFields?: {
+    key: string;
+    label: string;
+    type: 'text' | 'textarea';
+    description?: string;
+  }[];
+  creditsRemaining?: number;
+  creditsDeducted?: number;
 }
 
 export const PathewAssistantService = {
