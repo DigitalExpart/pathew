@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   assistant_settings JSONB DEFAULT '{"tone": "Professional & Academic", "language": "English (UK)", "autoSave": true}',
   marketing_preferences JSONB DEFAULT '{"opportunityAlerts": true, "productUpdates": true}',
   subscription_plan TEXT DEFAULT 'Free',
+  role TEXT DEFAULT 'user' CHECK (role IN ('user', 'sub_admin')),
   renewal_date TIMESTAMPTZ,
   payment_method JSONB DEFAULT '{}',
   created_at TIMESTAMPTZ DEFAULT now(),

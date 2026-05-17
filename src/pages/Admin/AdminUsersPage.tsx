@@ -13,6 +13,7 @@ export const AdminUsersPage: React.FC = () => {
   const [editingUser, setEditingUser] = useState<any>(null);
   const [editCredits, setEditCredits] = useState('');
   const [editPlan, setEditPlan] = useState('');
+  const [editRole, setEditRole] = useState('user');
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -34,8 +35,17 @@ export const AdminUsersPage: React.FC = () => {
 
   const handleSaveEdit = async () => {
     if (!editingUser) return;
-    await supabase.from('profiles').update({ credits: parseInt(editCredits) || 0, subscription_plan: editPlan }).eq('id', editingUser.id);
-    setUsers(prev => prev.map(u => u.id === editingUser.id ? { ...u, credits: parseInt(editCredits) || 0, subscription_plan: editPlan } : u));
+    await supabase.from('profiles').update({ 
+      credits: parseInt(editCredits) || 0, 
+      subscription_plan: editPlan,
+      role: editRole 
+    }).eq('id', editingUser.id);
+    setUsers(prev => prev.map(u => u.id === editingUser.id ? { 
+      ...u, 
+      credits: parseInt(editCredits) || 0, 
+      subscription_plan: editPlan,
+      role: editRole 
+    } : u));
     setEditingUser(null);
   };
 
@@ -69,10 +79,17 @@ export const AdminUsersPage: React.FC = () => {
               <label style={editLabelStyle}>Credits</label>
               <input type="number" value={editCredits} onChange={e => setEditCredits(e.target.value)} style={editInputStyle} />
             </div>
-            <div style={{ marginBottom: '24px' }}>
+            <div style={{ marginBottom: '16px' }}>
               <label style={editLabelStyle}>Subscription Plan</label>
               <select value={editPlan} onChange={e => setEditPlan(e.target.value)} style={editInputStyle}>
                 {['Free', 'Starter', 'Growth', 'Power User'].map(p => <option key={p} value={p}>{p}</option>)}
+              </select>
+            </div>
+            <div style={{ marginBottom: '24px' }}>
+              <label style={editLabelStyle}>Role</label>
+              <select value={editRole} onChange={e => setEditRole(e.target.value)} style={editInputStyle}>
+                <option value="user">User</option>
+                <option value="sub_admin">Sub Admin</option>
               </select>
             </div>
             <div style={{ display: 'flex', gap: '12px' }}>
@@ -89,16 +106,16 @@ export const AdminUsersPage: React.FC = () => {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                {['User', 'Plan', 'Credits', 'Joined', 'Actions'].map(h => (
+                {['User', 'Role', 'Plan', 'Credits', 'Joined', 'Actions'].map(h => (
                   <th key={h} style={thStyle}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={5} style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>Loading users...</td></tr>
+                <tr><td colSpan={6} style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>Loading users...</td></tr>
               ) : filtered.length === 0 ? (
-                <tr><td colSpan={5} style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>No users found.</td></tr>
+                <tr><td colSpan={6} style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>No users found.</td></tr>
               ) : filtered.map(u => (
                 <tr key={u.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                   <td style={tdStyle}>
@@ -113,6 +130,18 @@ export const AdminUsersPage: React.FC = () => {
                     </div>
                   </td>
                   <td style={tdStyle}>
+                    <span style={{ 
+                      fontSize: '0.6875rem', 
+                      fontWeight: 700, 
+                      padding: '4px 8px', 
+                      borderRadius: '4px',
+                      backgroundColor: u.role === 'sub_admin' ? 'rgba(245,158,11,0.1)' : 'rgba(148,163,184,0.1)',
+                      color: u.role === 'sub_admin' ? '#f59e0b' : '#94a3b8'
+                    }}>
+                      {u.role === 'sub_admin' ? 'Sub Admin' : 'User'}
+                    </span>
+                  </td>
+                  <td style={tdStyle}>
                     <span style={{ ...planBadgeStyle, backgroundColor: planColor(u.subscription_plan).bg, color: planColor(u.subscription_plan).text }}>
                       {u.subscription_plan || 'Free'}
                     </span>
@@ -120,7 +149,7 @@ export const AdminUsersPage: React.FC = () => {
                   <td style={tdStyle}><span style={{ fontWeight: 700 }}>{u.credits ?? 0}</span></td>
                   <td style={tdStyle}><span style={{ color: '#64748b', fontSize: '0.8125rem' }}>{new Date(u.created_at).toLocaleDateString()}</span></td>
                   <td style={tdStyle}>
-                    <button onClick={() => { setEditingUser(u); setEditCredits(String(u.credits || 0)); setEditPlan(u.subscription_plan || 'Free'); }} style={actionBtnStyle}>
+                    <button onClick={() => { setEditingUser(u); setEditCredits(String(u.credits || 0)); setEditPlan(u.subscription_plan || 'Free'); setEditRole(u.role || 'user'); }} style={actionBtnStyle}>
                       <Edit3 size={14} /> Edit
                     </button>
                   </td>

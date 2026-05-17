@@ -41,6 +41,10 @@ import { AdminOpportunitiesPage } from './pages/Admin/AdminOpportunitiesPage';
 import { AdminOpportunityForm } from './pages/Admin/AdminOpportunityForm';
 import { AdminReviewsPage } from './pages/Admin/AdminReviewsPage';
 
+// Sub Admin Pages
+import { SubAdminDashboard } from './pages/SubAdmin/SubAdminDashboard';
+import { SubAdminOpportunityForm } from './pages/SubAdmin/SubAdminOpportunityForm';
+
 function App() {
   return (
     <ThemeProvider>
@@ -80,6 +84,11 @@ function App() {
             <Route path="/settings" element={<Shell><SettingsPage /></Shell>} />
             <Route path="/notifications" element={<Shell><NotificationsPage /></Shell>} />
             <Route path="/preparation" element={<Shell><PreparationPage /></Shell>} />
+
+            {/* Sub Admin Routes */}
+            <Route path="/sub-admin" element={<Shell><SubAdminDashboard /></Shell>} />
+            <Route path="/sub-admin/opportunities/new" element={<Shell><SubAdminOpportunityForm /></Shell>} />
+            <Route path="/sub-admin/opportunities/:id/edit" element={<Shell><SubAdminOpportunityForm /></Shell>} />
 
             {/* Admin Routes */}
             <Route path="/admin" element={<AdminLogin />} />

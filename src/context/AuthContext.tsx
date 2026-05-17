@@ -41,6 +41,7 @@ interface Profile {
     productUpdates: boolean;
   };
   subscription_plan?: string;
+  role?: 'user' | 'sub_admin';
   renewal_date?: string;
   payment_method?: {
     brand: string;

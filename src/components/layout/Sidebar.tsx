@@ -11,7 +11,8 @@ import {
   LogOut,
   Wallet,
   Clock,
-  X
+  X,
+  ShieldAlert
 } from 'lucide-react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -26,7 +27,7 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
-  const { signOut } = useAuth();
+  const { signOut, profile } = useAuth();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -54,6 +55,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         { icon: Send, label: t('nav.grantBuilder'), path: '/grant-builder' },
       ]
     },
+    ...(profile?.role === 'sub_admin' ? [
+      {
+        title: 'MANAGEMENT',
+        items: [
+          { icon: ShieldAlert, label: 'Access Sub Admin', path: '/sub-admin' }
+        ]
+      }
+    ] : []),
     {
       title: 'ACCOUNT',
       items: [
