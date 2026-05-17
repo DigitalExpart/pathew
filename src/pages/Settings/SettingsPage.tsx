@@ -45,6 +45,14 @@ export const SettingsPage: React.FC = () => {
   const [billingHistory, setBillingHistory] = useState<any[]>([]);
   const [billingLoading, setBillingLoading] = useState(false);
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   useEffect(() => {
     if (profile?.notification_settings) {
       setSettings(profile.notification_settings);
@@ -190,6 +198,266 @@ export const SettingsPage: React.FC = () => {
     { id: 'account', label: t('settings.tabs.account'), icon: AlertTriangle },
   ];
 
+  // Dynamic Responsive Styles
+  const containerStyle: React.CSSProperties = { 
+    maxWidth: '1000px', 
+    margin: '0 auto', 
+    padding: isMobile ? '16px' : '40px 20px' 
+  };
+
+  const headerStyle: React.CSSProperties = { 
+    marginBottom: isMobile ? '24px' : '40px' 
+  };
+
+  const titleStyle: React.CSSProperties = { 
+    fontSize: isMobile ? '1.75rem' : '2.75rem', 
+    fontWeight: 800,
+    marginBottom: '8px',
+    letterSpacing: '-0.025em'
+  };
+
+  const subtitleStyle: React.CSSProperties = { 
+    color: 'var(--text-secondary)',
+    fontSize: isMobile ? '0.9375rem' : '1.125rem'
+  };
+
+  const layoutStyle: React.CSSProperties = {
+    display: 'grid',
+    gridTemplateColumns: isMobile ? '1fr' : '240px 1fr',
+    gap: isMobile ? '24px' : '40px',
+    alignItems: 'start'
+  };
+
+  const sidebarStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: isMobile ? 'row' : 'column',
+    gap: '8px',
+    overflowX: isMobile ? 'auto' : 'visible',
+    paddingBottom: isMobile ? '8px' : '0',
+    margin: isMobile ? '0 -16px' : '0',
+    padding: isMobile ? '0 16px' : '0',
+    whiteSpace: isMobile ? 'nowrap' : 'normal',
+    scrollbarWidth: 'none',
+  };
+
+  const contentStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '24px'
+  };
+
+  const tabButtonStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    padding: isMobile ? '8px 16px' : '12px 16px',
+    borderRadius: 'var(--radius-md)',
+    border: 'none',
+    fontSize: '0.9375rem',
+    fontWeight: 600,
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    textAlign: 'left',
+    flexShrink: isMobile ? 0 : 1,
+  };
+
+  const formGridStyle: React.CSSProperties = {
+    display: 'grid',
+    gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+    gap: isMobile ? '16px' : '20px'
+  };
+
+  const formGroupStyle: React.CSSProperties = { 
+    marginBottom: '20px' 
+  };
+
+  const labelStyle: React.CSSProperties = { 
+    display: 'block', 
+    marginBottom: '8px', 
+    fontWeight: 600,
+    fontSize: '0.875rem',
+    color: 'var(--text-secondary)'
+  };
+
+  const inputStyle: React.CSSProperties = { 
+    width: '100%', 
+    padding: '12px 16px', 
+    backgroundColor: 'var(--bg-primary)', 
+    border: '1px solid var(--border-color)', 
+    borderRadius: 'var(--radius-md)', 
+    color: 'var(--text-primary)',
+    fontSize: '0.875rem',
+    outline: 'none'
+  };
+
+  const selectStyle: React.CSSProperties = {
+    ...inputStyle,
+    appearance: 'none',
+    cursor: 'pointer'
+  };
+
+  const toggleItemStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '16px',
+    padding: '16px',
+    backgroundColor: 'var(--bg-secondary)',
+    borderRadius: 'var(--radius-lg)',
+    border: '1px solid var(--border-color)',
+    marginBottom: '12px'
+  };
+
+  const iconBoxStyle: React.CSSProperties = {
+    width: '40px',
+    height: '40px',
+    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+    borderRadius: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0
+  };
+
+  const dividerMenuStyle: React.CSSProperties = {
+    height: '1px',
+    backgroundColor: 'var(--border-color)',
+    margin: '16px 0'
+  };
+
+  const notificationListStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px'
+  };
+
+  const securityBannerStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    alignItems: isMobile ? 'flex-start' : 'center',
+    gap: '16px',
+    padding: '20px',
+    backgroundColor: 'rgba(245, 158, 11, 0.05)',
+    border: '1px solid rgba(245, 158, 11, 0.2)',
+    borderRadius: 'var(--radius-lg)',
+    marginTop: '24px',
+    width: '100%'
+  };
+
+  const planCardStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    justifyContent: 'space-between',
+    alignItems: isMobile ? 'stretch' : 'center',
+    padding: '24px',
+    backgroundColor: 'var(--bg-tertiary)',
+    borderRadius: 'var(--radius-xl)',
+    border: '1px solid var(--border-color)',
+    gap: isMobile ? '16px' : '0'
+  };
+
+  const paymentMethodStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    alignItems: isMobile ? 'stretch' : 'center',
+    gap: '16px',
+    padding: '16px',
+    backgroundColor: 'var(--bg-primary)',
+    borderRadius: 'var(--radius-lg)',
+    border: '1px solid var(--border-color)'
+  };
+
+  const tableWrapperStyle: React.CSSProperties = {
+    width: '100%',
+    overflowX: 'auto',
+    backgroundColor: 'var(--bg-primary)',
+    borderRadius: 'var(--radius-lg)',
+    border: '1px solid var(--border-color)',
+  };
+
+  const tableStyle: React.CSSProperties = {
+    width: '100%',
+    borderCollapse: 'collapse',
+    fontSize: '0.875rem',
+    minWidth: '500px',
+  };
+
+  const thStyle: React.CSSProperties = {
+    textAlign: 'left',
+    padding: '12px 16px',
+    borderBottom: '1px solid var(--border-color)',
+    color: 'var(--text-muted)',
+    fontWeight: 600,
+    textTransform: 'uppercase',
+    fontSize: '0.75rem',
+    letterSpacing: '0.05em',
+  };
+
+  const tdStyle: React.CSSProperties = {
+    padding: '12px 16px',
+    borderBottom: '1px solid var(--border-color)',
+    color: 'var(--text-primary)',
+  };
+
+  const statusBadgeStyle: React.CSSProperties = {
+    padding: '4px 8px',
+    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+    color: '#22c55e',
+    borderRadius: '4px',
+    fontSize: '0.75rem',
+    fontWeight: 600,
+  };
+
+  const checkboxLabelStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: '12px',
+    padding: '16px',
+    backgroundColor: 'var(--bg-secondary)',
+    borderRadius: 'var(--radius-lg)',
+    border: '1px solid var(--border-color)',
+    cursor: 'pointer',
+  };
+
+  const checkboxStyle: React.CSSProperties = {
+    width: '20px',
+    height: '20px',
+    marginTop: '2px',
+    accentColor: 'var(--accent-primary)',
+  };
+
+  const NotificationToggle = ({ icon: Icon, title, desc, enabled, onToggle }: any) => (
+    <div style={toggleItemStyle} onClick={onToggle} className="cursor-pointer">
+      <div style={iconBoxStyle}>
+        <Icon size={20} color="var(--accent-primary)" />
+      </div>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <p style={{ fontWeight: 600, fontSize: isMobile ? '0.875rem' : '1rem' }} className="truncate">{title}</p>
+        <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{desc}</p>
+      </div>
+      <div style={{
+        width: '44px',
+        height: '24px',
+        backgroundColor: enabled ? 'var(--accent-primary)' : 'var(--bg-tertiary)',
+        borderRadius: '12px',
+        padding: '2px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: enabled ? 'flex-end' : 'flex-start',
+        transition: 'all 0.3s ease',
+        cursor: 'pointer',
+        flexShrink: 0
+      }}>
+        <div style={{
+          width: '20px',
+          height: '20px',
+          backgroundColor: enabled ? '#000' : 'var(--text-muted)',
+          borderRadius: '50%',
+          boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
+        }} />
+      </div>
+    </div>
+  );
+
   return (
     <div style={containerStyle}>
       <header style={headerStyle}>
@@ -219,7 +487,7 @@ export const SettingsPage: React.FC = () => {
         {/* Content Area */}
         <div style={contentStyle}>
           {activeTab === 'notifications' && (
-            <Card title={t('settings.notifications.title')} icon={Bell}>
+            <Card title={t('settings.notifications.title')} icon={Bell} style={{ padding: isMobile ? '16px' : '24px' }}>
               <div style={notificationListStyle}>
                 <NotificationToggle 
                   icon={Mail} 
@@ -247,7 +515,7 @@ export const SettingsPage: React.FC = () => {
           )}
 
           {activeTab === 'security' && (
-            <Card title={t('settings.security.title')} icon={Lock}>
+            <Card title={t('settings.security.title')} icon={Lock} style={{ padding: isMobile ? '16px' : '24px' }}>
               <form onSubmit={handleUpdatePassword}>
                 <div style={formGroupStyle}>
                   <label style={labelStyle}>{t('settings.security.currentPassword')}</label>
@@ -289,15 +557,27 @@ export const SettingsPage: React.FC = () => {
                 )}
 
                 <div style={securityBannerStyle}>
-                  <ShieldCheck size={20} color="var(--accent-primary)" />
+                  <ShieldCheck size={20} color="var(--accent-primary)" style={{ flexShrink: 0 }} />
                   <div>
-                    <p style={{ fontWeight: 600 }}>{t('settings.security.twoFactor')}</p>
+                    <p style={{ fontWeight: 600, fontSize: isMobile ? '0.875rem' : '1rem' }}>{t('settings.security.twoFactor')}</p>
                     <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('settings.security.twoFactorDesc')}</p>
                   </div>
-                  <Button variant="outline" size="sm" type="button" style={{ marginLeft: 'auto' }}>{t('settings.security.enable')}</Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    type="button" 
+                    style={{ 
+                      marginLeft: isMobile ? '0' : 'auto',
+                      width: isMobile ? '100%' : 'auto',
+                      marginTop: isMobile ? '8px' : '0',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    {t('settings.security.enable')}
+                  </Button>
                 </div>
                 <Button 
-                  style={{ marginTop: '24px', minWidth: '160px' }} 
+                  style={{ marginTop: '24px', minWidth: '160px', width: isMobile ? '100%' : 'auto', justifyContent: 'center' }} 
                   disabled={passwordLoading}
                   type="submit"
                 >
@@ -316,7 +596,7 @@ export const SettingsPage: React.FC = () => {
           )}
 
           {activeTab === 'Assistant' && (
-            <Card title={t('assistant.title')} icon={Sparkles}>
+            <Card title={t('assistant.title')} icon={Sparkles} style={{ padding: isMobile ? '16px' : '24px' }}>
               <div style={formGroupStyle}>
                 <label style={labelStyle}>{t('settings.assistant.tone')}</label>
                 <select 
@@ -345,8 +625,8 @@ export const SettingsPage: React.FC = () => {
                 </select>
               </div>
               <div style={toggleItemStyle} onClick={() => handleAssistantChange('autoSave', !assistantSettings.autoSave)} className="cursor-pointer">
-                <div style={{ flex: 1 }}>
-                  <p style={{ fontWeight: 600 }}>{t('settings.assistant.autoSave')}</p>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <p style={{ fontWeight: 600, fontSize: isMobile ? '0.875rem' : '1rem' }}>{t('settings.assistant.autoSave')}</p>
                   <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('settings.assistant.autoSaveDesc')}</p>
                 </div>
                 <div style={{
@@ -358,7 +638,8 @@ export const SettingsPage: React.FC = () => {
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: assistantSettings.autoSave ? 'flex-end' : 'flex-start',
-                  transition: 'all 0.3s ease'
+                  transition: 'all 0.3s ease',
+                  flexShrink: 0
                 }}>
                   <div style={{
                     width: '20px',
@@ -372,19 +653,19 @@ export const SettingsPage: React.FC = () => {
           )}
 
           {activeTab === 'billing' && (
-            <Card title={t('settings.billing.title')} icon={CreditCard}>
+            <Card title={t('settings.billing.title')} icon={CreditCard} style={{ padding: isMobile ? '16px' : '24px' }}>
               <div style={planCardStyle}>
                 <div>
                   <p style={{ color: 'var(--accent-primary)', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase' }}>{t('settings.billing.currentPlan')}</p>
                   <h3 style={{ fontSize: '1.5rem', marginTop: '4px' }}>{profile?.subscription_plan || t('profile.freePlan', 'Free Plan')}</h3>
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{t('settings.billing.nextRenewal')} {profile?.renewal_date || 'N/A'}</p>
                 </div>
-                <div style={{ textAlign: 'right' }}>
+                <div style={{ textAlign: isMobile ? 'left' : 'right' }}>
                   <h3 style={{ fontSize: '1.5rem' }}>{profile?.subscription_plan === 'Professional' ? '$29' : profile?.subscription_plan === 'Elite' ? '$99' : '$0'}<span style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>/mo</span></h3>
                   <Button 
                     variant="outline" 
                     size="sm" 
-                    style={{ marginTop: '8px' }}
+                    style={{ marginTop: '8px', width: isMobile ? '100%' : 'auto', justifyContent: 'center' }}
                     onClick={() => navigate('/wallet')}
                   >
                     {t('settings.billing.changePlan')}
@@ -393,21 +674,31 @@ export const SettingsPage: React.FC = () => {
               </div>
               
               <div style={{ marginTop: '32px' }}>
-                <h4 style={{ marginBottom: '16px', fontSize: '1rem' }}>{t('settings.billing.paymentMethod')}</h4>
+                <h4 style={{ marginBottom: '16px', fontSize: '1rem', fontWeight: 600 }}>{t('settings.billing.paymentMethod')}</h4>
                 <div style={paymentMethodStyle}>
-                  <CreditCard size={20} color="var(--text-secondary)" />
-                  <div style={{ flex: 1 }}>
-                    <p style={{ fontWeight: 600 }}>{profile?.payment_method ? `${profile.payment_method.brand} ending in ${profile.payment_method.last4}` : t('settings.billing.noPaymentMethod')}</p>
+                  <CreditCard size={20} color="var(--text-secondary)" style={{ flexShrink: 0 }} />
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontWeight: 600, fontSize: isMobile ? '0.875rem' : '1rem' }} className="truncate">{profile?.payment_method ? `${profile.payment_method.brand} ending in ${profile.payment_method.last4}` : t('settings.billing.noPaymentMethod')}</p>
                     <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{profile?.payment_method ? `Expires ${profile.payment_method.expiry}` : t('settings.billing.addPaymentMethod')}</p>
                   </div>
-                  <Button variant="ghost" size="sm">Edit</Button>
+                  <Button 
+                    variant="ghost" 
+                    size="sm"
+                    style={{
+                      width: isMobile ? '100%' : 'auto',
+                      justifyContent: 'center',
+                      marginTop: isMobile ? '8px' : '0'
+                    }}
+                  >
+                    Edit
+                  </Button>
                 </div>
               </div>
 
               <div style={{ marginTop: '32px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' }}>
                   <History size={18} color="var(--text-secondary)" />
-                  <h4 style={{ fontSize: '1rem' }}>{t('settings.billing.billingHistory')}</h4>
+                  <h4 style={{ fontSize: '1rem', fontWeight: 600 }}>{t('settings.billing.billingHistory')}</h4>
                 </div>
                 <div style={tableWrapperStyle}>
                   <table style={tableStyle}>
@@ -452,27 +743,27 @@ export const SettingsPage: React.FC = () => {
           )}
 
           {activeTab === 'privacy' && (
-            <Card title={t('settings.privacy.title')} icon={Shield}>
+            <Card title={t('settings.privacy.title')} icon={Shield} style={{ padding: isMobile ? '16px' : '24px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 <div>
-                  <h4 style={{ fontSize: '1rem', marginBottom: '8px' }}>{t('settings.privacy.dataExport')}</h4>
+                  <h4 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '8px' }}>{t('settings.privacy.dataExport')}</h4>
                   <p style={{ color: 'var(--text-secondary)', marginBottom: '16px', fontSize: '0.875rem' }}>
                     {t('settings.privacy.dataExportDesc')}
                   </p>
-                  <Button variant="outline">{t('settings.privacy.exportZip')}</Button>
+                  <Button variant="outline" style={{ width: isMobile ? '100%' : 'auto', justifyContent: 'center' }}>{t('settings.privacy.exportZip')}</Button>
                 </div>
                 <div style={dividerMenuStyle} />
                 <div>
-                  <h4 style={{ fontSize: '1rem', marginBottom: '8px' }}>{t('settings.privacy.tracking')}</h4>
+                  <h4 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '8px' }}>{t('settings.privacy.tracking')}</h4>
                   <p style={{ color: 'var(--text-secondary)', marginBottom: '16px', fontSize: '0.875rem' }}>
                     {t('settings.privacy.trackingDesc')}
                   </p>
                   <div style={toggleItemStyle}>
-                    <div style={{ flex: 1 }}>
-                      <p style={{ fontWeight: 600 }}>{t('settings.privacy.analytics')}</p>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontWeight: 600, fontSize: isMobile ? '0.875rem' : '1rem' }}>{t('settings.privacy.analytics')}</p>
                       <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('settings.privacy.analyticsDesc')}</p>
                     </div>
-                    <input type="checkbox" defaultChecked />
+                    <input type="checkbox" defaultChecked style={{ flexShrink: 0 }} />
                   </div>
                 </div>
               </div>
@@ -480,7 +771,7 @@ export const SettingsPage: React.FC = () => {
           )}
 
           {activeTab === 'preferences' && (
-            <Card title={t('settings.preferences.title')} icon={CheckSquare}>
+            <Card title={t('settings.preferences.title')} icon={CheckSquare} style={{ padding: isMobile ? '16px' : '24px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
                   {t('settings.preferences.desc')}
@@ -494,7 +785,7 @@ export const SettingsPage: React.FC = () => {
                       style={checkboxStyle} 
                     />
                     <div>
-                      <p style={{ fontWeight: 600 }}>{t('settings.preferences.opportunityAlerts')}</p>
+                      <p style={{ fontWeight: 600, fontSize: isMobile ? '0.875rem' : '1rem' }}>{t('settings.preferences.opportunityAlerts')}</p>
                       <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('settings.preferences.opportunityAlertsDesc')}</p>
                     </div>
                   </label>
@@ -506,13 +797,13 @@ export const SettingsPage: React.FC = () => {
                       style={checkboxStyle} 
                     />
                     <div>
-                      <p style={{ fontWeight: 600 }}>{t('settings.preferences.productUpdates')}</p>
+                      <p style={{ fontWeight: 600, fontSize: isMobile ? '0.875rem' : '1rem' }}>{t('settings.preferences.productUpdates')}</p>
                       <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('settings.preferences.productUpdatesDesc')}</p>
                     </div>
                   </label>
                 </div>
                 <Button 
-                  style={{ alignSelf: 'flex-start', marginTop: '12px' }}
+                  style={{ alignSelf: isMobile ? 'stretch' : 'flex-start', marginTop: '12px', justifyContent: 'center' }}
                   onClick={refreshProfile}
                 >
                   {t('settings.preferences.refreshState')}
@@ -522,7 +813,7 @@ export const SettingsPage: React.FC = () => {
           )}
 
           {activeTab === 'account' && (
-            <Card title={t('settings.account.title')} icon={AlertTriangle} style={{ border: '1px solid #ef4444' }}>
+            <Card title={t('settings.account.title')} icon={AlertTriangle} style={{ border: '1px solid #ef4444', padding: isMobile ? '16px' : '24px' }}>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div style={{ padding: '16px', backgroundColor: 'rgba(239, 68, 68, 0.05)', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
                   <p style={{ color: '#ef4444', fontWeight: 600, marginBottom: '4px' }}>{t('settings.account.warning')}</p>
@@ -541,16 +832,17 @@ export const SettingsPage: React.FC = () => {
                       backgroundColor: 'rgba(239, 68, 68, 0.1)', 
                       color: '#ef4444', 
                       border: '1px solid #ef4444', 
-                      alignSelf: 'flex-start',
-                      minWidth: '180px'
+                      alignSelf: isMobile ? 'stretch' : 'flex-start',
+                      minWidth: '180px',
+                      justifyContent: 'center'
                     }}
                   >
                     {t('settings.account.requestDeletion')}
                   </Button>
                 ) : (
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'flex-start' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: isMobile ? 'stretch' : 'flex-start', width: '100%' }}>
                     <p style={{ color: '#ef4444', fontWeight: 700, fontSize: '0.875rem' }}>{t('settings.account.areYouSure')}</p>
-                    <div style={{ display: 'flex', gap: '12px' }}>
+                    <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '12px', width: '100%' }}>
                       <Button 
                         onClick={handleDeleteAccount}
                         disabled={deleteLoading}
@@ -558,7 +850,9 @@ export const SettingsPage: React.FC = () => {
                           backgroundColor: '#ef4444', 
                           color: '#fff', 
                           border: 'none',
-                          minWidth: '180px'
+                          minWidth: '180px',
+                          width: isMobile ? '100%' : 'auto',
+                          justifyContent: 'center'
                         }}
                       >
                         {deleteLoading ? (
@@ -571,6 +865,10 @@ export const SettingsPage: React.FC = () => {
                         variant="outline"
                         onClick={() => setShowDeleteConfirm(false)}
                         disabled={deleteLoading}
+                        style={{
+                          width: isMobile ? '100%' : 'auto',
+                          justifyContent: 'center'
+                        }}
                       >
                         {t('settings.account.cancel')}
                       </Button>
@@ -584,249 +882,4 @@ export const SettingsPage: React.FC = () => {
       </div>
     </div>
   );
-};
-
-const NotificationToggle = ({ icon: Icon, title, desc, enabled, onToggle }: any) => (
-  <div style={toggleItemStyle} onClick={onToggle} className="cursor-pointer">
-    <div style={iconBoxStyle}>
-      <Icon size={20} color="var(--accent-primary)" />
-    </div>
-    <div style={{ flex: 1 }}>
-      <p style={{ fontWeight: 600 }}>{title}</p>
-      <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{desc}</p>
-    </div>
-    <div style={{
-      width: '44px',
-      height: '24px',
-      backgroundColor: enabled ? 'var(--accent-primary)' : 'var(--bg-tertiary)',
-      borderRadius: '12px',
-      padding: '2px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: enabled ? 'flex-end' : 'flex-start',
-      transition: 'all 0.3s ease',
-      cursor: 'pointer'
-    }}>
-      <div style={{
-        width: '20px',
-        height: '20px',
-        backgroundColor: enabled ? '#000' : 'var(--text-muted)',
-        borderRadius: '50%',
-        boxShadow: '0 2px 4px rgba(0,0,0,0.2)'
-      }} />
-    </div>
-  </div>
-);
-
-// Styles
-const containerStyle: React.CSSProperties = { 
-  maxWidth: '1000px', 
-  margin: '0 auto', 
-  padding: '40px 20px' 
-};
-
-const headerStyle: React.CSSProperties = { 
-  marginBottom: '40px' 
-};
-
-const titleStyle: React.CSSProperties = { 
-  fontSize: '2.75rem', 
-  fontWeight: 800,
-  marginBottom: '8px',
-  letterSpacing: '-0.025em'
-};
-
-const subtitleStyle: React.CSSProperties = { 
-  color: 'var(--text-secondary)',
-  fontSize: '1.125rem'
-};
-
-const layoutStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: '240px 1fr',
-  gap: '40px',
-  alignItems: 'start'
-};
-
-const sidebarStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '8px'
-};
-
-const contentStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '24px'
-};
-
-const tabButtonStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '12px',
-  padding: '12px 16px',
-  borderRadius: 'var(--radius-md)',
-  border: 'none',
-  fontSize: '0.9375rem',
-  fontWeight: 600,
-  cursor: 'pointer',
-  transition: 'all 0.2s ease',
-  textAlign: 'left'
-};
-
-const formGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: '1fr 1fr',
-  gap: '20px'
-};
-
-const formGroupStyle: React.CSSProperties = { 
-  marginBottom: '20px' 
-};
-
-const labelStyle: React.CSSProperties = { 
-  display: 'block', 
-  marginBottom: '8px', 
-  fontWeight: 600,
-  fontSize: '0.875rem',
-  color: 'var(--text-secondary)'
-};
-
-const inputStyle: React.CSSProperties = { 
-  width: '100%', 
-  padding: '12px 16px', 
-  backgroundColor: 'var(--bg-primary)', 
-  border: '1px solid var(--border-color)', 
-  borderRadius: 'var(--radius-md)', 
-  color: 'var(--text-primary)',
-  fontSize: '0.875rem',
-  outline: 'none'
-};
-
-const selectStyle: React.CSSProperties = {
-  ...inputStyle,
-  appearance: 'none',
-  cursor: 'pointer'
-};
-
-const toggleItemStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '16px',
-  padding: '16px',
-  backgroundColor: 'var(--bg-secondary)',
-  borderRadius: 'var(--radius-lg)',
-  border: '1px solid var(--border-color)',
-  marginBottom: '12px'
-};
-
-const iconBoxStyle: React.CSSProperties = {
-  width: '40px',
-  height: '40px',
-  backgroundColor: 'rgba(245, 158, 11, 0.1)',
-  borderRadius: '10px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center'
-};
-
-const dividerMenuStyle: React.CSSProperties = {
-  height: '1px',
-  backgroundColor: 'var(--border-color)',
-  margin: '16px 0'
-};
-
-const notificationListStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '12px'
-};
-
-const securityBannerStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '16px',
-  padding: '20px',
-  backgroundColor: 'rgba(245, 158, 11, 0.05)',
-  border: '1px solid rgba(245, 158, 11, 0.2)',
-  borderRadius: 'var(--radius-lg)',
-  marginTop: '24px'
-};
-
-const planCardStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  padding: '24px',
-  backgroundColor: 'var(--bg-tertiary)',
-  borderRadius: 'var(--radius-xl)',
-  border: '1px solid var(--border-color)'
-};
-
-const paymentMethodStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '16px',
-  padding: '16px',
-  backgroundColor: 'var(--bg-primary)',
-  borderRadius: 'var(--radius-lg)',
-  border: '1px solid var(--border-color)'
-};
-
-const tableWrapperStyle: React.CSSProperties = {
-  width: '100%',
-  overflowX: 'auto',
-  backgroundColor: 'var(--bg-primary)',
-  borderRadius: 'var(--radius-lg)',
-  border: '1px solid var(--border-color)',
-};
-
-const tableStyle: React.CSSProperties = {
-  width: '100%',
-  borderCollapse: 'collapse',
-  fontSize: '0.875rem',
-};
-
-const thStyle: React.CSSProperties = {
-  textAlign: 'left',
-  padding: '12px 16px',
-  borderBottom: '1px solid var(--border-color)',
-  color: 'var(--text-muted)',
-  fontWeight: 600,
-  textTransform: 'uppercase',
-  fontSize: '0.75rem',
-  letterSpacing: '0.05em',
-};
-
-const tdStyle: React.CSSProperties = {
-  padding: '12px 16px',
-  borderBottom: '1px solid var(--border-color)',
-  color: 'var(--text-primary)',
-};
-
-const statusBadgeStyle: React.CSSProperties = {
-  padding: '4px 8px',
-  backgroundColor: 'rgba(34, 197, 94, 0.1)',
-  color: '#22c55e',
-  borderRadius: '4px',
-  fontSize: '0.75rem',
-  fontWeight: 600,
-};
-
-const checkboxLabelStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'flex-start',
-  gap: '12px',
-  padding: '16px',
-  backgroundColor: 'var(--bg-secondary)',
-  borderRadius: 'var(--radius-lg)',
-  border: '1px solid var(--border-color)',
-  cursor: 'pointer',
-};
-
-const checkboxStyle: React.CSSProperties = {
-  width: '20px',
-  height: '20px',
-  marginTop: '2px',
-  accentColor: 'var(--accent-primary)',
 };

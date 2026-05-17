@@ -13,6 +13,14 @@ export const WalletPage: React.FC = () => {
   const [transactions, setTransactions] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
 
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
+
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   React.useEffect(() => {
     const fetchWalletData = async () => {
       if (!user) return;
@@ -34,6 +42,141 @@ export const WalletPage: React.FC = () => {
     };
     fetchWalletData();
   }, [user]);
+
+  // Dynamic Responsive Styles
+  const containerStyle: React.CSSProperties = {
+    maxWidth: '1000px',
+    margin: '0 auto',
+    padding: isMobile ? '16px' : '0',
+  };
+
+  const headerStyle: React.CSSProperties = {
+    marginBottom: isMobile ? '20px' : '32px',
+  };
+
+  const titleStyle: React.CSSProperties = {
+    fontSize: isMobile ? '1.75rem' : '2.5rem',
+    fontWeight: 700,
+    marginBottom: '8px',
+  };
+
+  const subtitleStyle: React.CSSProperties = {
+    color: 'var(--text-secondary)',
+    fontSize: isMobile ? '0.9375rem' : '1.125rem',
+  };
+
+  const gridStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    gap: isMobile ? '20px' : '32px',
+    alignItems: 'stretch',
+  };
+
+  const balanceCardStyle: React.CSSProperties = {
+    flex: 1,
+    background: 'linear-gradient(145deg, var(--bg-secondary) 0%, rgba(30,30,30,0.8) 100%)',
+    border: '1px solid var(--border-color)',
+    padding: isMobile ? '20px' : '24px',
+    width: '100%'
+  };
+
+  const balanceHeaderStyle: React.CSSProperties = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '24px',
+  };
+
+  const iconBoxStyle: React.CSSProperties = {
+    width: '48px',
+    height: '48px',
+    borderRadius: '12px',
+    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    border: '1px solid var(--accent-glow)',
+  };
+
+  const planBadgeStyle: React.CSSProperties = {
+    fontSize: '0.75rem',
+    fontWeight: 700,
+    textTransform: 'uppercase',
+    backgroundColor: 'var(--accent-primary)',
+    color: '#000',
+    padding: '4px 12px',
+    borderRadius: 'var(--radius-full)',
+  };
+
+  const balanceContentStyle: React.CSSProperties = {
+    marginBottom: '24px',
+  };
+
+  const balanceLabelStyle: React.CSSProperties = {
+    color: 'var(--text-secondary)',
+    fontSize: '0.875rem',
+    marginBottom: '8px',
+  };
+
+  const balanceValueStyle: React.CSSProperties = {
+    fontSize: isMobile ? '2.5rem' : '3.5rem',
+    fontWeight: 800,
+    lineHeight: 1,
+    color: 'var(--text-primary)',
+    marginBottom: '8px',
+  };
+
+  const balanceSubtextStyle: React.CSSProperties = {
+    fontSize: '0.875rem',
+    color: 'var(--text-muted)',
+  };
+
+  const balanceFooterStyle: React.CSSProperties = {
+    display: 'flex',
+    gap: '12px',
+    width: '100%'
+  };
+
+  const txListStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '12px',
+  };
+
+  const txItemStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: isMobile ? '12px' : '16px',
+    padding: isMobile ? '12px' : '16px',
+    backgroundColor: 'var(--bg-secondary)',
+    borderRadius: 'var(--radius-lg)',
+  };
+
+  const txIconStyle: React.CSSProperties = {
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0
+  };
+
+  const txTitleStyle: React.CSSProperties = {
+    fontWeight: 600,
+    fontSize: isMobile ? '0.875rem' : '1rem',
+    marginBottom: '2px',
+  };
+
+  const txDateStyle: React.CSSProperties = {
+    fontSize: '0.75rem',
+    color: 'var(--text-muted)',
+  };
+
+  const txAmountStyle: React.CSSProperties = {
+    fontWeight: 700,
+    fontSize: isMobile ? '1rem' : '1.125rem',
+  };
 
   return (
     <div style={containerStyle}>
@@ -66,7 +209,7 @@ export const WalletPage: React.FC = () => {
         </Card>
 
         {/* Transaction History */}
-        <Card title={t('wallet.recentTransactions')} icon={Clock} style={{ flex: 2 }}>
+        <Card title={t('wallet.recentTransactions')} icon={Clock} style={{ flex: 2, width: '100%' }}>
           <div style={txListStyle}>
             {loading ? (
               <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px' }}>{t('common.loading')}</p>
@@ -78,8 +221,8 @@ export const WalletPage: React.FC = () => {
                   <div style={{ ...txIconStyle, backgroundColor: tx.type === 'credit' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(245, 158, 11, 0.1)' }}>
                     {tx.type === 'credit' ? <ArrowDownRight size={18} color="#22c55e" /> : <ArrowUpRight size={18} color="var(--accent-primary)" />}
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <p style={txTitleStyle}>{tx.description}</p>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={txTitleStyle} className="truncate">{tx.description}</p>
                     <p style={txDateStyle}>{new Date(tx.created_at).toLocaleDateString()}</p>
                   </div>
                   <div style={{ ...txAmountStyle, color: tx.type === 'credit' ? '#22c55e' : 'var(--text-primary)' }}>
@@ -93,131 +236,4 @@ export const WalletPage: React.FC = () => {
       </div>
     </div>
   );
-};
-
-const containerStyle: React.CSSProperties = {
-  maxWidth: '1000px',
-  margin: '0 auto',
-};
-
-const headerStyle: React.CSSProperties = {
-  marginBottom: '32px',
-};
-
-const titleStyle: React.CSSProperties = {
-  fontSize: '2.5rem',
-  marginBottom: '8px',
-};
-
-const subtitleStyle: React.CSSProperties = {
-  color: 'var(--text-secondary)',
-  fontSize: '1.125rem',
-};
-
-const gridStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: '32px',
-  alignItems: 'flex-start',
-};
-
-const balanceCardStyle: React.CSSProperties = {
-  flex: 1,
-  background: 'linear-gradient(145deg, var(--bg-secondary) 0%, rgba(30,30,30,0.8) 100%)',
-  border: '1px solid var(--border-color)',
-  padding: '24px',
-};
-
-const balanceHeaderStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'flex-start',
-  marginBottom: '24px',
-};
-
-const iconBoxStyle: React.CSSProperties = {
-  width: '48px',
-  height: '48px',
-  borderRadius: '12px',
-  backgroundColor: 'rgba(245, 158, 11, 0.1)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  border: '1px solid var(--accent-glow)',
-};
-
-const planBadgeStyle: React.CSSProperties = {
-  fontSize: '0.75rem',
-  fontWeight: 700,
-  textTransform: 'uppercase',
-  backgroundColor: 'var(--accent-primary)',
-  color: '#000',
-  padding: '4px 12px',
-  borderRadius: 'var(--radius-full)',
-};
-
-const balanceContentStyle: React.CSSProperties = {
-  marginBottom: '32px',
-};
-
-const balanceLabelStyle: React.CSSProperties = {
-  color: 'var(--text-secondary)',
-  fontSize: '0.875rem',
-  marginBottom: '8px',
-};
-
-const balanceValueStyle: React.CSSProperties = {
-  fontSize: '3.5rem',
-  fontWeight: 800,
-  lineHeight: 1,
-  color: 'var(--text-primary)',
-  marginBottom: '8px',
-};
-
-const balanceSubtextStyle: React.CSSProperties = {
-  fontSize: '0.875rem',
-  color: 'var(--text-muted)',
-};
-
-const balanceFooterStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: '12px',
-};
-
-const txListStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '16px',
-};
-
-const txItemStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '16px',
-  padding: '16px',
-  backgroundColor: 'var(--bg-secondary)',
-  borderRadius: 'var(--radius-lg)',
-};
-
-const txIconStyle: React.CSSProperties = {
-  width: '40px',
-  height: '40px',
-  borderRadius: '50%',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
-const txTitleStyle: React.CSSProperties = {
-  fontWeight: 600,
-  marginBottom: '4px',
-};
-
-const txDateStyle: React.CSSProperties = {
-  fontSize: '0.75rem',
-  color: 'var(--text-muted)',
-};
-
-const txAmountStyle: React.CSSProperties = {
-  fontWeight: 700,
-  fontSize: '1.125rem',
 };

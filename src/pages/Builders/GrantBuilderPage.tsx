@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Download, Eye, Save, Settings2, X, Sparkles } from 'lucide-react';
@@ -13,6 +13,14 @@ export const GrantBuilderPage: React.FC = () => {
   const [content, setContent] = useState(t('grantBuilder.placeholder'));
   const [questions, setQuestions] = useState([{ id: 1, text: t('grantBuilder.abstract'), limit: 250 }]);
   const { openAssistant } = useAssistant();
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const addQuestion = () => {
     setQuestions([...questions, { id: Date.now(), text: '', limit: 500 }]);
@@ -33,6 +41,200 @@ export const GrantBuilderPage: React.FC = () => {
     });
   };
 
+  // Dynamic Responsive Styles
+  const containerStyle: React.CSSProperties = {
+    maxWidth: '1200px',
+    margin: '0 auto',
+    height: isMobile ? 'auto' : 'calc(100vh - 120px)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: isMobile ? '16px' : '0'
+  };
+
+  const headerStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    justifyContent: 'space-between',
+    alignItems: isMobile ? 'stretch' : 'flex-start',
+    marginBottom: isMobile ? '16px' : '24px',
+    gap: isMobile ? '16px' : '0'
+  };
+
+  const titleStyle: React.CSSProperties = {
+    fontSize: isMobile ? '1.5rem' : '2rem',
+    marginBottom: '4px',
+  };
+
+  const subtitleStyle: React.CSSProperties = {
+    color: 'var(--text-secondary)',
+    fontSize: '0.875rem'
+  };
+
+  const headerActionsStyle: React.CSSProperties = {
+    display: 'flex',
+    gap: '12px',
+    width: isMobile ? '100%' : 'auto',
+  };
+
+  const layoutGridStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    gap: isMobile ? '24px' : '32px',
+    flex: 1,
+    minHeight: 0,
+  };
+
+  const settingsSidebarStyle: React.CSSProperties = {
+    width: isMobile ? '100%' : '320px',
+    display: 'flex',
+    flexDirection: 'column',
+    overflowY: isMobile ? 'visible' : 'auto',
+    paddingRight: isMobile ? '0' : '4px',
+    gap: '20px'
+  };
+
+  const editorAreaStyle: React.CSSProperties = {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    backgroundColor: 'var(--bg-secondary)',
+    borderRadius: 'var(--radius-xl)',
+    border: '1px solid var(--border-color)',
+    overflow: 'hidden',
+    height: isMobile ? '450px' : 'auto',
+    minHeight: isMobile ? '350px' : '0',
+  };
+
+  const formGroupStyle: React.CSSProperties = {
+    marginBottom: '16px',
+  };
+
+  const labelStyle: React.CSSProperties = {
+    display: 'block',
+    fontSize: '0.875rem',
+    fontWeight: 600,
+    marginBottom: '8px',
+    color: 'var(--text-secondary)',
+  };
+
+  const selectStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '10px 12px',
+    backgroundColor: 'var(--bg-primary)',
+    border: '1px solid var(--border-color)',
+    borderRadius: 'var(--radius-md)',
+    color: 'var(--text-primary)',
+    fontSize: '0.875rem',
+  };
+
+  const questionsListStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+  };
+
+  const questionItemStyle: React.CSSProperties = {
+    backgroundColor: 'var(--bg-primary)',
+    padding: '12px',
+    borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--border-color)',
+  };
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '8px',
+    backgroundColor: 'var(--bg-secondary)',
+    border: '1px solid var(--border-color)',
+    borderRadius: 'var(--radius-md)',
+    color: 'var(--text-primary)',
+    fontSize: '0.875rem',
+  };
+
+  const smallInputStyle: React.CSSProperties = {
+    width: '80px',
+    padding: '4px 8px',
+    backgroundColor: 'var(--bg-secondary)',
+    border: '1px solid var(--border-color)',
+    borderRadius: 'var(--radius-sm)',
+    color: 'var(--text-primary)',
+    fontSize: '0.75rem',
+  };
+
+  const iconBtnStyle: React.CSSProperties = {
+    background: 'none',
+    border: 'none',
+    color: 'var(--text-muted)',
+    cursor: 'pointer',
+    padding: '2px',
+  };
+
+  const editorToolbarStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    justifyContent: 'space-between',
+    alignItems: isMobile ? 'stretch' : 'center',
+    padding: isMobile ? '12px' : '16px 24px',
+    borderBottom: '1px solid var(--border-color)',
+    backgroundColor: 'var(--bg-primary)',
+    gap: isMobile ? '12px' : '0',
+  };
+
+  const toolbarDividerStyle: React.CSSProperties = {
+    display: isMobile ? 'none' : 'block',
+    width: '1px',
+    height: '20px',
+    backgroundColor: 'var(--border-color)',
+    margin: '0 4px',
+  };
+
+  const AssistantGrantHelpButtonStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '6px',
+    padding: '6px 12px',
+    borderRadius: '20px',
+    backgroundColor: 'rgba(245, 158, 11, 0.05)',
+    border: '1px solid rgba(245, 158, 11, 0.1)',
+    color: 'var(--accent-primary)',
+    fontSize: '0.75rem',
+    fontWeight: 600,
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    width: isMobile ? '100%' : 'auto',
+  };
+
+  const editorContainerStyle: React.CSSProperties = {
+    flex: 1,
+    padding: isMobile ? '16px' : '24px',
+    overflowY: 'auto',
+    backgroundColor: '#1a1a1a',
+  };
+
+  const textareaStyle: React.CSSProperties = {
+    width: '100%',
+    height: '100%',
+    minHeight: '300px',
+    backgroundColor: 'transparent',
+    border: 'none',
+    color: 'var(--text-primary)',
+    fontSize: '0.9375rem',
+    lineHeight: 1.6,
+    resize: 'none',
+    outline: 'none',
+  };
+
+  const previewBoxStyle: React.CSSProperties = {
+    maxWidth: '800px',
+    margin: '0 auto',
+    backgroundColor: '#fff',
+    color: '#000',
+    padding: isMobile ? '24px 16px' : '64px',
+    minHeight: '100%',
+    borderRadius: '4px',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+  };
+
   return (
     <div style={containerStyle}>
       <header style={headerStyle}>
@@ -41,12 +243,18 @@ export const GrantBuilderPage: React.FC = () => {
           <p style={subtitleStyle}>{t('grantBuilder.subtitle')}</p>
         </div>
         <div style={headerActionsStyle}>
-          <Button variant="outline" onClick={() => setPreviewMode(!previewMode)}>
-            <Eye size={16} style={{ marginRight: '8px' }} />
+          <Button 
+            variant="outline" 
+            onClick={() => setPreviewMode(!previewMode)}
+            style={{ flex: isMobile ? 1 : 'none', justifyContent: 'center', gap: '6px' }}
+          >
+            <Eye size={16} />
             {previewMode ? t('grantBuilder.editMode') : t('grantBuilder.preview')}
           </Button>
-          <Button style={{ backgroundColor: '#22c55e', color: '#000' }}>
-            <Save size={16} style={{ marginRight: '8px' }} />
+          <Button 
+            style={{ backgroundColor: '#22c55e', color: '#000', flex: isMobile ? 1 : 'none', justifyContent: 'center', gap: '6px' }}
+          >
+            <Save size={16} />
             {t('grantBuilder.saveDraft')}
           </Button>
         </div>
@@ -92,7 +300,7 @@ export const GrantBuilderPage: React.FC = () => {
           </Card>
 
           {docType.includes(t('grantBuilder.docTypes.onePage').split(' ')[1]) && (
-            <Card title={t('grantBuilder.customQuestions')} style={{ marginTop: '24px' }}>
+            <Card title={t('grantBuilder.customQuestions')}>
               <div style={questionsListStyle}>
                 {questions.map((q, idx) => (
                   <div key={q.id} style={questionItemStyle}>
@@ -123,9 +331,9 @@ export const GrantBuilderPage: React.FC = () => {
         {/* Editor Area */}
         <div style={editorAreaStyle}>
           <div style={editorToolbarStyle}>
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-              <span style={{ fontWeight: 600 }}>{docType}</span>
-              <span style={{ color: 'var(--text-muted)' }}>• {content.split(' ').length} {t('grantBuilder.words')}</span>
+            <div style={{ display: 'flex', gap: isMobile ? '8px' : '12px', alignItems: 'center', flexWrap: 'wrap', width: isMobile ? '100%' : 'auto' }}>
+              <span style={{ fontWeight: 600, fontSize: isMobile ? '0.8125rem' : '1rem' }}>{docType}</span>
+              <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>• {content.split(' ').length} {t('grantBuilder.words')}</span>
               <div style={toolbarDividerStyle}></div>
               <button 
                 style={AssistantGrantHelpButtonStyle}
@@ -135,12 +343,12 @@ export const GrantBuilderPage: React.FC = () => {
                 <span>{t('assistant.title', 'Assistant')}</span>
               </button>
             </div>
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <Button variant="outline" size="sm">
+            <div style={{ display: 'flex', gap: '12px', width: isMobile ? '100%' : 'auto' }}>
+              <Button variant="outline" size="sm" style={{ flex: isMobile ? 1 : 'none', justifyContent: 'center' }}>
                 <Download size={14} style={{ marginRight: '6px' }} />
                 PDF
               </Button>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" style={{ flex: isMobile ? 1 : 'none', justifyContent: 'center' }}>
                 <Download size={14} style={{ marginRight: '6px' }} />
                 DOCX
               </Button>
@@ -150,8 +358,8 @@ export const GrantBuilderPage: React.FC = () => {
           <div style={editorContainerStyle}>
             {previewMode ? (
               <div style={previewBoxStyle}>
-                <h2>{docType}</h2>
-                <div style={{ whiteSpace: 'pre-wrap', marginTop: '24px', color: 'var(--text-secondary)' }}>
+                <h2 style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', color: '#1e293b' }}>{docType}</h2>
+                <div style={{ whiteSpace: 'pre-wrap', marginTop: isMobile ? '16px' : '24px', color: '#334155', fontSize: isMobile ? '0.8125rem' : '0.9375rem' }}>
                   {content}
                 </div>
               </div>
@@ -168,183 +376,4 @@ export const GrantBuilderPage: React.FC = () => {
       </div>
     </div>
   );
-};
-
-const containerStyle: React.CSSProperties = {
-  maxWidth: '1200px',
-  margin: '0 auto',
-  height: 'calc(100vh - 120px)',
-  display: 'flex',
-  flexDirection: 'column',
-};
-
-const headerStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'flex-start',
-  marginBottom: '24px',
-};
-
-const titleStyle: React.CSSProperties = {
-  fontSize: '2rem',
-  marginBottom: '8px',
-};
-
-const subtitleStyle: React.CSSProperties = {
-  color: 'var(--text-secondary)',
-};
-
-const headerActionsStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: '12px',
-};
-
-const layoutGridStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: '32px',
-  flex: 1,
-  minHeight: 0,
-};
-
-const settingsSidebarStyle: React.CSSProperties = {
-  width: '320px',
-  display: 'flex',
-  flexDirection: 'column',
-  overflowY: 'auto',
-  paddingRight: '4px',
-};
-
-const editorAreaStyle: React.CSSProperties = {
-  flex: 1,
-  display: 'flex',
-  flexDirection: 'column',
-  backgroundColor: 'var(--bg-secondary)',
-  borderRadius: 'var(--radius-xl)',
-  border: '1px solid var(--border-color)',
-  overflow: 'hidden',
-};
-
-const formGroupStyle: React.CSSProperties = {
-  marginBottom: '16px',
-};
-
-const labelStyle: React.CSSProperties = {
-  display: 'block',
-  fontSize: '0.875rem',
-  fontWeight: 600,
-  marginBottom: '8px',
-  color: 'var(--text-secondary)',
-};
-
-const selectStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '10px 12px',
-  backgroundColor: 'var(--bg-primary)',
-  border: '1px solid var(--border-color)',
-  borderRadius: 'var(--radius-md)',
-  color: 'var(--text-primary)',
-  fontSize: '0.875rem',
-};
-
-const questionsListStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '16px',
-};
-
-const questionItemStyle: React.CSSProperties = {
-  backgroundColor: 'var(--bg-primary)',
-  padding: '12px',
-  borderRadius: 'var(--radius-md)',
-  border: '1px solid var(--border-color)',
-};
-
-const inputStyle: React.CSSProperties = {
-  width: '100%',
-  padding: '8px',
-  backgroundColor: 'var(--bg-secondary)',
-  border: '1px solid var(--border-color)',
-  borderRadius: 'var(--radius-md)',
-  color: 'var(--text-primary)',
-  fontSize: '0.875rem',
-};
-
-const smallInputStyle: React.CSSProperties = {
-  width: '80px',
-  padding: '4px 8px',
-  backgroundColor: 'var(--bg-secondary)',
-  border: '1px solid var(--border-color)',
-  borderRadius: 'var(--radius-sm)',
-  color: 'var(--text-primary)',
-  fontSize: '0.75rem',
-};
-
-const iconBtnStyle: React.CSSProperties = {
-  background: 'none',
-  border: 'none',
-  color: 'var(--text-muted)',
-  cursor: 'pointer',
-  padding: '2px',
-};
-
-const editorToolbarStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  padding: '16px 24px',
-  borderBottom: '1px solid var(--border-color)',
-  backgroundColor: 'var(--bg-primary)',
-};
-
-const toolbarDividerStyle: React.CSSProperties = {
-  width: '1px',
-  height: '20px',
-  backgroundColor: 'var(--border-color)',
-  margin: '0 4px',
-};
-
-const AssistantGrantHelpButtonStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '6px',
-  padding: '6px 12px',
-  borderRadius: '20px',
-  backgroundColor: 'rgba(245, 158, 11, 0.05)',
-  border: '1px solid rgba(245, 158, 11, 0.1)',
-  color: 'var(--accent-primary)',
-  fontSize: '0.75rem',
-  fontWeight: 600,
-  cursor: 'pointer',
-  transition: 'all 0.2s ease',
-};
-
-const editorContainerStyle: React.CSSProperties = {
-  flex: 1,
-  padding: '24px',
-  overflowY: 'auto',
-  backgroundColor: '#1a1a1a',
-};
-
-const textareaStyle: React.CSSProperties = {
-  width: '100%',
-  height: '100%',
-  minHeight: '400px',
-  backgroundColor: 'transparent',
-  border: 'none',
-  color: 'var(--text-primary)',
-  fontSize: '1rem',
-  lineHeight: 1.6,
-  resize: 'none',
-  outline: 'none',
-};
-
-const previewBoxStyle: React.CSSProperties = {
-  maxWidth: '800px',
-  margin: '0 auto',
-  backgroundColor: '#fff',
-  color: '#000',
-  padding: '64px',
-  minHeight: '100%',
-  borderRadius: '4px',
-  boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
 };

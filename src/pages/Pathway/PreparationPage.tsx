@@ -44,6 +44,14 @@ export const PreparationPage: React.FC = () => {
   const [allRoadmaps, setAllRoadmaps] = useState<any[]>([]);
   const [viewingSpecific, setViewingSpecific] = useState(false);
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   useEffect(() => {
     const init = async () => {
       if (oppId) {
@@ -65,7 +73,6 @@ export const PreparationPage: React.FC = () => {
     if (!user) return;
     setLoading(true);
     try {
-      // 1. Fetch all roadmap documents for this user
       const { data: docs } = await supabase
         .from('documents')
         .select('*')
@@ -82,12 +89,10 @@ export const PreparationPage: React.FC = () => {
       
       setAllRoadmaps(parsedRoadmaps);
 
-      // 2. Extract unique opportunity IDs from roadmaps
       const roadmapOppIds = parsedRoadmaps
         .map(r => r.opportunity_id)
         .filter((id): id is string => id !== null && id !== undefined && id !== 'general');
 
-      // 3. Fetch opportunities using two separate reliable queries, then merge
       const { data: userOpps } = await supabase
         .from('opportunities')
         .select('*')
@@ -103,7 +108,6 @@ export const PreparationPage: React.FC = () => {
         roadmapOpps = data || [];
       }
 
-      // Merge and deduplicate by id
       const allOpps = [...(userOpps || [])];
       for (const opp of roadmapOpps) {
         if (!allOpps.find(o => o.id === opp.id)) {
@@ -236,7 +240,6 @@ export const PreparationPage: React.FC = () => {
         setPlan(parsedPlan);
         setCompletedWeeks(parsedPlan.completedWeeks || []);
         
-        // If the plan is empty/broken (from previous bug), automatically open assistant
         if (!parsedPlan.weeks || parsedPlan.weeks.length === 0) {
           openAssistant('Pathew Assistant', [
             `Generate a ${planType} plan`,
@@ -280,11 +283,8 @@ export const PreparationPage: React.FC = () => {
   };
 
   const parsePlanToJSON = (text: string) => {
-    // First, try to see if we can split the text into chunks by "Week X"
     const weekRegex = /Week\s*(\d+)/gi;
     const weeks: any[] = [];
-    
-    // Split text by "Week X" occurrences
     const parts = text.split(/Week\s*\d+[:\s-]*/i);
     const matches = text.match(weekRegex);
     
@@ -293,15 +293,12 @@ export const PreparationPage: React.FC = () => {
       return [];
     }
 
-    // The first part is usually the intro/header, skip it
     for (let i = 0; i < matches.length; i++) {
       const weekMatch = matches[i].match(/Week\s*(\d+)/i);
       if (!weekMatch) continue;
       
       const weekNum = parseInt(weekMatch[1]);
       const content = parts[i + 1] || '';
-      
-      // Split content into lines or by bullet points
       const subParts = content.split(/\n|(?=\s*[\-*•])|(?=\s*\d+\.\s+)/);
       
       let title = t('preparation.focusArea');
@@ -314,7 +311,6 @@ export const PreparationPage: React.FC = () => {
         if (idx === 0 && !part.startsWith('-') && !part.startsWith('*') && !part.includes('•')) {
           title = trimmed.split('\n')[0].substring(0, 50);
         } else {
-          // If it's a long string with internal bullets like "Task 1 - Task 2", split it
           if (trimmed.includes(' - ')) {
             const multiTasks = trimmed.split(' - ');
             multiTasks.forEach(t => {
@@ -331,7 +327,7 @@ export const PreparationPage: React.FC = () => {
         weeks.push({
           number: weekNum,
           title: title,
-          tasks: tasks.slice(0, 10) // Limit to 10 tasks per week
+          tasks: tasks.slice(0, 10)
         });
       }
     }
@@ -380,13 +376,240 @@ export const PreparationPage: React.FC = () => {
 
   const progress = plan?.weeks && plan.weeks.length > 0 ? Math.round((completedWeeks.length / plan.weeks.length) * 100) : 0;
 
+  // Responsive Styles
+  const containerStyle: React.CSSProperties = {
+    maxWidth: '1200px',
+    margin: '0 auto',
+    padding: isMobile ? '16px' : '0',
+  };
+
+  const headerStyle: React.CSSProperties = {
+    marginBottom: isMobile ? '24px' : '40px',
+  };
+
+  const titleStyle: React.CSSProperties = {
+    fontSize: isMobile ? '1.75rem' : '2.5rem',
+    fontWeight: 800,
+    marginBottom: '8px',
+    lineHeight: 1.2
+  };
+
+  const subtitleStyle: React.CSSProperties = {
+    color: 'var(--text-secondary)',
+    fontSize: isMobile ? '0.9375rem' : '1.125rem',
+  };
+
+  const projectGridStyle: React.CSSProperties = {
+    display: 'grid',
+    gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fill, minmax(450px, 1fr))',
+    gap: '24px',
+  };
+
+  const projectCardStyle: React.CSSProperties = {
+    cursor: 'pointer',
+    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+    padding: isMobile ? '16px' : '24px',
+    position: 'relative',
+    overflow: 'hidden',
+  };
+
+  const projectCardContentStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: isMobile ? '12px' : '20px',
+  };
+
+  const projectIconWrapperStyle: React.CSSProperties = {
+    width: '56px',
+    height: '56px',
+    backgroundColor: 'var(--bg-tertiary)',
+    borderRadius: '16px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0
+  };
+
+  const projectTitleStyle: React.CSSProperties = {
+    fontSize: isMobile ? '1.125rem' : '1.25rem',
+    fontWeight: 700,
+    marginBottom: '4px',
+  };
+
+  const projectCompanyStyle: React.CSSProperties = {
+    fontSize: '0.875rem',
+    color: 'var(--text-secondary)',
+    marginBottom: '12px',
+  };
+
+  const projectMetaStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+  };
+
+  const weekCountStyle: React.CSSProperties = {
+    fontSize: '0.75rem',
+    color: 'var(--text-muted)',
+  };
+
+  const deleteButtonStyle: React.CSSProperties = {
+    background: 'none',
+    border: 'none',
+    color: 'var(--text-muted)',
+    cursor: 'pointer',
+    padding: '8px',
+    borderRadius: '50%',
+    transition: 'all 0.2s ease',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 10,
+  };
+
+  const miniProgressBarStyle: React.CSSProperties = {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    width: '100%',
+    height: '4px',
+    backgroundColor: 'var(--bg-tertiary)',
+  };
+
+  const miniProgressBarFillStyle: React.CSSProperties = {
+    height: '100%',
+    backgroundColor: 'var(--accent-primary)',
+  };
+
+  const progressBarContainerStyle: React.CSSProperties = {
+    width: '100%',
+    height: '8px',
+    backgroundColor: 'var(--bg-tertiary)',
+    borderRadius: '4px',
+    marginTop: '24px',
+    overflow: 'hidden',
+  };
+
+  const progressBarFillStyle: React.CSSProperties = {
+    height: '100%',
+    backgroundColor: 'var(--accent-primary)',
+    transition: 'width 0.5s ease-out',
+    boxShadow: '0 0 10px var(--accent-glow)',
+  };
+
+  const mainGridStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    gap: '32px',
+    alignItems: 'flex-start',
+  };
+
+  const sectionHeaderStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    justifyContent: 'space-between',
+    alignItems: isMobile ? 'stretch' : 'center',
+    marginBottom: '24px',
+    gap: isMobile ? '12px' : '0'
+  };
+
+  const sectionTitleStyle: React.CSSProperties = {
+    fontSize: '1.5rem',
+    fontWeight: 700,
+  };
+
+  const weeksListStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+    width: '100%'
+  };
+
+  const weekCardStyle: React.CSSProperties = {
+    padding: isMobile ? '16px' : '20px',
+    transition: 'all 0.3s ease',
+  };
+
+  const weekHeaderStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    justifyContent: 'space-between',
+    alignItems: isMobile ? 'flex-start' : 'center',
+    gap: isMobile ? '12px' : '0',
+  };
+
+  const weekTitleStyle: React.CSSProperties = {
+    fontSize: isMobile ? '1rem' : '1.125rem',
+    fontWeight: 700,
+    marginBottom: '4px',
+    lineHeight: 1.3
+  };
+
+  const weekDescStyle: React.CSSProperties = {
+    fontSize: '0.875rem',
+    color: 'var(--text-muted)',
+  };
+
+  const calendarHeaderStyle: React.CSSProperties = {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '20px',
+  };
+
+  const calNavButtonStyle: React.CSSProperties = {
+    background: 'none',
+    border: 'none',
+    color: 'var(--text-primary)',
+    cursor: 'pointer',
+    padding: '4px',
+  };
+
+  const calendarGridStyle: React.CSSProperties = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(7, 1fr)',
+    gap: '8px',
+    textAlign: 'center',
+  };
+
+  const calDayHeaderStyle: React.CSSProperties = {
+    fontSize: '0.75rem',
+    fontWeight: 700,
+    color: 'var(--text-muted)',
+    paddingBottom: '8px',
+  };
+
+  const calDayStyle: React.CSSProperties = {
+    aspectRatio: '1',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '0.875rem',
+    borderRadius: '8px',
+    transition: 'all 0.2s ease',
+  };
+
+  const statsListStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+  };
+
+  const statItemStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    padding: '12px',
+    backgroundColor: 'var(--bg-secondary)',
+    borderRadius: 'var(--radius-md)',
+  };
+
   if (!viewingSpecific) {
     const activeProjects = allOpportunities.filter(opp => 
       allRoadmaps.some(r => r.opportunity_id === opp.id)
     );
     const generalRoadmap = allRoadmaps.find(r => r.opportunity_id === null);
     
-    // Catch roadmaps whose opportunity couldn't be fetched (RLS, deleted, etc.)
     const orphanedRoadmaps = allRoadmaps.filter(r => 
       r.opportunity_id !== null && 
       r.opportunity_id !== undefined &&
@@ -415,15 +638,15 @@ export const PreparationPage: React.FC = () => {
                   <div style={projectIconWrapperStyle}>
                     <Briefcase size={24} color="var(--accent-primary)" />
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <h3 style={projectTitleStyle}>{opp.title}</h3>
-                    <p style={projectCompanyStyle}>{opp.organization_name || opp.funder_name || opp.company || ''}</p>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <h3 style={projectTitleStyle} className="truncate">{opp.title}</h3>
+                    <p style={projectCompanyStyle} className="truncate">{opp.organization_name || opp.funder_name || opp.company || ''}</p>
                     <div style={projectMetaStyle}>
                       <Badge variant="success">{roadmapProgress}% {t('preparation.complete')}</Badge>
                       <span style={weekCountStyle}>{roadmap?.weeks?.length} {t('preparation.weeks')}</span>
                     </div>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
                     <ChevronRight size={20} color="var(--text-muted)" />
                     <button 
                       onClick={(e) => handleDeletePlan(e, roadmap!.dbId)}
@@ -441,7 +664,6 @@ export const PreparationPage: React.FC = () => {
             );
           })}
 
-          {/* Show roadmaps whose opportunity couldn't be fetched */}
           {orphanedRoadmaps.map(roadmap => {
             const roadmapProgress = Math.round(((roadmap.completedWeeks?.length || 0) / (roadmap.weeks?.length || 1)) * 100);
             const displayTitle = roadmap.title?.replace('Roadmap: ', '').replace(/^\d+-day\s*/i, '').trim() || t('preparation.title');
@@ -456,15 +678,15 @@ export const PreparationPage: React.FC = () => {
                   <div style={projectIconWrapperStyle}>
                     <Briefcase size={24} color="var(--accent-primary)" />
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <h3 style={projectTitleStyle}>{displayTitle}</h3>
-                    <p style={projectCompanyStyle}>{roadmap.planType?.toUpperCase() || '90-Day'} {t('preparation.title')}</p>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <h3 style={projectTitleStyle} className="truncate">{displayTitle}</h3>
+                    <p style={projectCompanyStyle} className="truncate">{roadmap.planType?.toUpperCase() || '90-Day'} {t('preparation.title')}</p>
                     <div style={projectMetaStyle}>
                       <Badge variant="success">{roadmapProgress}% {t('preparation.complete')}</Badge>
                       <span style={weekCountStyle}>{roadmap.weeks?.length} {t('preparation.weeks')}</span>
                     </div>
                   </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
                     <ChevronRight size={20} color="var(--text-muted)" />
                     <button 
                       onClick={(e) => handleDeletePlan(e, roadmap.dbId)}
@@ -491,15 +713,15 @@ export const PreparationPage: React.FC = () => {
                 <div style={projectIconWrapperStyle}>
                   <Target size={24} color="var(--accent-primary)" />
                 </div>
-                <div style={{ flex: 1 }}>
-                  <h3 style={projectTitleStyle}>{t('preparation.generalGrowth')}</h3>
-                  <p style={projectCompanyStyle}>{t('preparation.overallReadiness')}</p>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <h3 style={projectTitleStyle} className="truncate">{t('preparation.generalGrowth')}</h3>
+                  <p style={projectCompanyStyle} className="truncate">{t('preparation.overallReadiness')}</p>
                   <div style={projectMetaStyle}>
                     <Badge variant="outline">{t('preparation.personalRoadmap')}</Badge>
                     <span style={weekCountStyle}>{generalRoadmap.weeks?.length} {t('preparation.weeks')}</span>
                   </div>
                 </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
                   <ChevronRight size={20} color="var(--text-muted)" />
                   <button 
                     onClick={(e) => handleDeletePlan(e, generalRoadmap.dbId)}
@@ -515,11 +737,11 @@ export const PreparationPage: React.FC = () => {
         </div>
 
         {!loading && activeProjects.length === 0 && orphanedRoadmaps.length === 0 && !generalRoadmap && (
-          <div style={{ textAlign: 'center', padding: '60px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-xl)' }}>
+          <div style={{ textAlign: 'center', padding: isMobile ? '40px 16px' : '60px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-xl)' }}>
             <Zap size={48} color="var(--text-muted)" style={{ marginBottom: '16px' }} />
             <h3>{t('preparation.noRoadmaps')}</h3>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>{t('preparation.noRoadmapsSubtitle')}</p>
-            <Button onClick={() => navigate('/opportunities')}>{t('preparation.browseOpportunities')}</Button>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', fontSize: '0.875rem' }}>{t('preparation.noRoadmapsSubtitle')}</p>
+            <Button onClick={() => navigate('/opportunities')} style={{ width: isMobile ? '100%' : 'auto', justifyContent: 'center' }}>{t('preparation.browseOpportunities')}</Button>
           </div>
         )}
       </div>
@@ -532,7 +754,7 @@ export const PreparationPage: React.FC = () => {
         <Button variant="ghost" size="sm" onClick={() => navigate('/preparation')} style={{ marginBottom: '16px', padding: 0 }}>
           <ArrowLeft size={16} /> {t('preparation.backToProjects')}
         </Button>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'flex-end', gap: isMobile ? '16px' : '0' }}>
           <div>
             <h1 style={titleStyle}>
               {opportunity ? t('preparation.roadmapTitle', { title: opportunity.title }) : t('preparation.generalGrowthRoadmap')}
@@ -543,9 +765,9 @@ export const PreparationPage: React.FC = () => {
                 : t('preparation.trackWeekly')}
             </p>
           </div>
-          <div style={{ textAlign: 'right' }}>
+          <div style={{ textAlign: isMobile ? 'left' : 'right' }}>
              <Badge variant="primary" style={{ marginBottom: '8px' }}>{t('preparation.roadmapBadge', { type: planType.toUpperCase() })}</Badge>
-             <h3 style={{ fontSize: '1.5rem', fontWeight: 800 }}>{progress}% {t('preparation.complete')}</h3>
+             <h3 style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: 800 }}>{progress}% {t('preparation.complete')}</h3>
           </div>
         </div>
         
@@ -555,13 +777,13 @@ export const PreparationPage: React.FC = () => {
       </header>
 
       <div style={mainGridStyle}>
-        <section style={{ flex: 2 }}>
+        <section style={{ flex: 2, width: '100%' }}>
           <div style={sectionHeaderStyle}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <Layout size={20} color="var(--accent-primary)" />
+              <Layout size={20} color="var(--accent-primary)" style={{ flexShrink: 0 }} />
               <h2 style={sectionTitleStyle}>{t('preparation.weeklyRoadmap')}</h2>
             </div>
-            <Button variant="outline" size="sm" onClick={generateNewPlan} disabled={loading}>
+            <Button variant="outline" size="sm" onClick={generateNewPlan} disabled={loading} style={{ justifyContent: 'center' }}>
               {loading ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />} 
               {t('preparation.regeneratePlan')}
             </Button>
@@ -575,7 +797,7 @@ export const PreparationPage: React.FC = () => {
                   <Sparkles size={30} color="var(--accent-primary)" style={{ position: 'absolute', top: '15px', left: '15px' }} />
                 </div>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>{t('preparation.assistantWorking')}</h3>
-                <p style={{ color: 'var(--text-secondary)' }}>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
                   {t('preparation.tailoringRoadmap')}
                 </p>
               </div>
@@ -589,10 +811,10 @@ export const PreparationPage: React.FC = () => {
                 }}
               >
                 <div style={weekHeaderStyle}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', flex: 1, minWidth: 0 }}>
                     <div 
                       onClick={() => toggleWeek(week.number)}
-                      style={{ cursor: 'pointer' }}
+                      style={{ cursor: 'pointer', marginTop: '2px', flexShrink: 0 }}
                     >
                       {completedWeeks.includes(week.number) ? (
                         <CheckCircle2 size={24} color="#22c55e" />
@@ -600,9 +822,9 @@ export const PreparationPage: React.FC = () => {
                         <Circle size={24} color="var(--text-muted)" />
                       )}
                     </div>
-                    <div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
                       <h4 style={weekTitleStyle}>{t('preparation.week')} {week.number}: {week.title}</h4>
-                      <p style={{ ...weekDescStyle, color: 'var(--accent-primary)', marginBottom: '4px', fontWeight: 600 }}>
+                      <p style={{ ...weekDescStyle, color: 'var(--accent-primary)', marginBottom: '6px', fontWeight: 600 }}>
                         {(() => {
                           const startDateStr = plan.startDate || plan.created_at || new Date().toISOString();
                           const start = new Date(startDateStr);
@@ -612,10 +834,10 @@ export const PreparationPage: React.FC = () => {
                           return `${start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`;
                         })()}
                       </p>
-                      <p style={weekDescStyle}>{week.tasks[0]}</p>
+                      <p style={{ ...weekDescStyle, lineHeight: 1.4 }}>{week.tasks[0]}</p>
                     </div>
                   </div>
-                  <Badge variant={completedWeeks.includes(week.number) ? "success" : "outline"}>
+                  <Badge variant={completedWeeks.includes(week.number) ? "success" : "outline"} style={{ flexShrink: 0, marginTop: isMobile ? '4px' : '0', marginLeft: isMobile ? '40px' : '0' }}>
                     {completedWeeks.includes(week.number) ? t('preparation.completed') : t('preparation.pending')}
                   </Badge>
                 </div>
@@ -630,8 +852,8 @@ export const PreparationPage: React.FC = () => {
           </div>
         </section>
 
-        <section style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          <Card title={t('preparation.planCalendar')} icon={CalendarIcon}>
+        <section style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '24px', width: '100%' }}>
+          <Card title={t('preparation.planCalendar')} icon={CalendarIcon} style={{ padding: isMobile ? '16px' : '24px' }}>
             <div style={calendarHeaderStyle}>
               <button style={calNavButtonStyle} onClick={() => setCurrentMonth(new Date(currentMonth.setMonth(currentMonth.getMonth() - 1)))}>
                 <ChevronLeft size={16} />
@@ -684,17 +906,17 @@ export const PreparationPage: React.FC = () => {
             </div>
           </Card>
 
-          <Card title={t('preparation.preparationStats')} icon={Trophy}>
+          <Card title={t('preparation.preparationStats')} icon={Trophy} style={{ padding: isMobile ? '16px' : '24px' }}>
             <div style={statsListStyle}>
                <div style={statItemStyle}>
-                  <Target size={18} color="var(--accent-primary)" />
+                  <Target size={18} color="var(--accent-primary)" style={{ flexShrink: 0 }} />
                   <div style={{ flex: 1 }}>
                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('preparation.currentStreak')}</p>
                      <p style={{ fontWeight: 700 }}>{completedWeeks.length} {t('preparation.weeks')}</p>
                   </div>
                </div>
                <div style={statItemStyle}>
-                  <Clock size={18} color="var(--accent-primary)" />
+                  <Clock size={18} color="var(--accent-primary)" style={{ flexShrink: 0 }} />
                   <div style={{ flex: 1 }}>
                      <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Est. Completion</p>
                      <p style={{ fontWeight: 700 }}>{plan?.weeks ? new Date(Date.now() + (plan.weeks.length - completedWeeks.length) * 7 * 24 * 60 * 60 * 1000).toLocaleDateString() : 'N/A'}</p>
@@ -706,221 +928,4 @@ export const PreparationPage: React.FC = () => {
       </div>
     </div>
   );
-};
-
-const containerStyle: React.CSSProperties = {
-  maxWidth: '1200px',
-  margin: '0 auto',
-};
-
-const headerStyle: React.CSSProperties = {
-  marginBottom: '40px',
-};
-
-const titleStyle: React.CSSProperties = {
-  fontSize: '2.5rem',
-  fontWeight: 800,
-  marginBottom: '8px',
-};
-
-const subtitleStyle: React.CSSProperties = {
-  color: 'var(--text-secondary)',
-  fontSize: '1.125rem',
-};
-
-const projectGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(450px, 1fr))',
-  gap: '24px',
-};
-
-const projectCardStyle: React.CSSProperties = {
-  cursor: 'pointer',
-  transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-  padding: '24px',
-  position: 'relative',
-  overflow: 'hidden',
-};
-
-const projectCardContentStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '20px',
-};
-
-const projectIconWrapperStyle: React.CSSProperties = {
-  width: '56px',
-  height: '56px',
-  backgroundColor: 'var(--bg-tertiary)',
-  borderRadius: '16px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
-const projectTitleStyle: React.CSSProperties = {
-  fontSize: '1.25rem',
-  fontWeight: 700,
-  marginBottom: '4px',
-};
-
-const projectCompanyStyle: React.CSSProperties = {
-  fontSize: '0.875rem',
-  color: 'var(--text-secondary)',
-  marginBottom: '12px',
-};
-
-const projectMetaStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '12px',
-};
-
-const weekCountStyle: React.CSSProperties = {
-  fontSize: '0.75rem',
-  color: 'var(--text-muted)',
-};
-
-const deleteButtonStyle: React.CSSProperties = {
-  background: 'none',
-  border: 'none',
-  color: 'var(--text-muted)',
-  cursor: 'pointer',
-  padding: '8px',
-  borderRadius: '50%',
-  transition: 'all 0.2s ease',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  zIndex: 10,
-};
-
-const miniProgressBarStyle: React.CSSProperties = {
-  position: 'absolute',
-  bottom: 0,
-  left: 0,
-  width: '100%',
-  height: '4px',
-  backgroundColor: 'var(--bg-tertiary)',
-};
-
-const miniProgressBarFillStyle: React.CSSProperties = {
-  height: '100%',
-  backgroundColor: 'var(--accent-primary)',
-};
-
-const progressBarContainerStyle: React.CSSProperties = {
-  width: '100%',
-  height: '8px',
-  backgroundColor: 'var(--bg-tertiary)',
-  borderRadius: '4px',
-  marginTop: '24px',
-  overflow: 'hidden',
-};
-
-const progressBarFillStyle: React.CSSProperties = {
-  height: '100%',
-  backgroundColor: 'var(--accent-primary)',
-  transition: 'width 0.5s ease-out',
-  boxShadow: '0 0 10px var(--accent-glow)',
-};
-
-const mainGridStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: '32px',
-  alignItems: 'flex-start',
-};
-
-const sectionHeaderStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: '24px',
-};
-
-const sectionTitleStyle: React.CSSProperties = {
-  fontSize: '1.5rem',
-  fontWeight: 700,
-};
-
-const weeksListStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '16px',
-};
-
-const weekCardStyle: React.CSSProperties = {
-  padding: '20px',
-  transition: 'all 0.3s ease',
-};
-
-const weekHeaderStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'flex-start',
-};
-
-const weekTitleStyle: React.CSSProperties = {
-  fontSize: '1.125rem',
-  fontWeight: 700,
-  marginBottom: '4px',
-};
-
-const weekDescStyle: React.CSSProperties = {
-  fontSize: '0.875rem',
-  color: 'var(--text-muted)',
-};
-
-const calendarHeaderStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  marginBottom: '20px',
-};
-
-const calNavButtonStyle: React.CSSProperties = {
-  background: 'none',
-  border: 'none',
-  color: 'var(--text-primary)',
-  cursor: 'pointer',
-  padding: '4px',
-};
-
-const calendarGridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(7, 1fr)',
-  gap: '8px',
-  textAlign: 'center',
-};
-
-const calDayHeaderStyle: React.CSSProperties = {
-  fontSize: '0.75rem',
-  fontWeight: 700,
-  color: 'var(--text-muted)',
-  paddingBottom: '8px',
-};
-
-const calDayStyle: React.CSSProperties = {
-  aspectRatio: '1',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  fontSize: '0.875rem',
-  borderRadius: '8px',
-  transition: 'all 0.2s ease',
-};
-
-const statsListStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '16px',
-};
-
-const statItemStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '12px',
-  padding: '12px',
-  backgroundColor: 'var(--bg-secondary)',
-  borderRadius: 'var(--radius-md)',
 };

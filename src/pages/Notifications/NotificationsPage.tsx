@@ -32,6 +32,14 @@ export const NotificationsPage: React.FC = () => {
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [searchQuery, setSearchQuery] = useState('');
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const fetchNotifications = async () => {
     if (!user) return;
     setLoading(true);
@@ -128,15 +136,152 @@ export const NotificationsPage: React.FC = () => {
     return date.toLocaleDateString();
   };
 
+  // Dynamic Responsive Styles
+  const containerStyle: React.CSSProperties = {
+    maxWidth: '900px',
+    margin: '0 auto',
+    padding: isMobile ? '16px' : '0',
+  };
+
+  const headerStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    justifyContent: 'space-between',
+    alignItems: isMobile ? 'stretch' : 'flex-end',
+    marginBottom: isMobile ? '20px' : '32px',
+    gap: isMobile ? '16px' : '0',
+  };
+
+  const filterBarStyle: React.CSSProperties = {
+    padding: isMobile ? '12px 16px' : '0 24px',
+    borderBottom: '1px solid var(--border-color)',
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    justifyContent: 'space-between',
+    alignItems: isMobile ? 'stretch' : 'center',
+    backgroundColor: 'var(--bg-secondary)',
+    gap: isMobile ? '12px' : '0',
+  };
+
+  const filterButtonStyle: React.CSSProperties = {
+    padding: isMobile ? '10px 0' : '16px 0',
+    background: 'none',
+    border: 'none',
+    borderBottom: '2px solid transparent',
+    fontSize: '0.875rem',
+    fontWeight: 600,
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    transition: 'all 0.2s',
+  };
+
+  const countBadgeStyle: React.CSSProperties = {
+    padding: '2px 6px',
+    backgroundColor: 'var(--accent-primary)',
+    color: '#000',
+    borderRadius: '4px',
+    fontSize: '0.75rem',
+    fontWeight: 700,
+  };
+
+  const searchContainerStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    backgroundColor: 'var(--bg-primary)',
+    padding: '6px 12px',
+    borderRadius: '8px',
+    border: '1px solid var(--border-color)',
+    marginBottom: isMobile ? '8px' : '0',
+  };
+
+  const searchInputStyle: React.CSSProperties = {
+    background: 'none',
+    border: 'none',
+    outline: 'none',
+    color: 'var(--text-primary)',
+    fontSize: '0.875rem',
+    width: '100%',
+  };
+
+  const listStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+  };
+
+  const notificationItemStyle: React.CSSProperties = {
+    padding: isMobile ? '16px 16px' : '20px 24px',
+    display: 'flex',
+    gap: isMobile ? '12px' : '20px',
+    borderBottom: '1px solid var(--border-color)',
+    transition: 'background 0.2s',
+    cursor: 'pointer',
+    position: 'relative',
+  };
+
+  const iconBoxStyle: React.CSSProperties = {
+    width: '40px',
+    height: '40px',
+    borderRadius: '10px',
+    backgroundColor: 'var(--bg-tertiary)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  };
+
+  const timeStyle: React.CSSProperties = {
+    fontSize: '0.75rem',
+    color: 'var(--text-muted)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
+    whiteSpace: 'nowrap',
+  };
+
+  const actionsContainerStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    marginLeft: 'auto',
+    alignSelf: 'center',
+  };
+
+  const unreadDotStyle: React.CSSProperties = {
+    width: '8px',
+    height: '8px',
+    backgroundColor: 'var(--accent-primary)',
+    borderRadius: '50%',
+  };
+
+  const moreButtonStyle: React.CSSProperties = {
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    padding: '4px',
+    borderRadius: '4px',
+    transition: 'background 0.2s',
+  };
+
+  const emptyStateStyle: React.CSSProperties = {
+    padding: isMobile ? '40px 16px' : '80px 20px',
+    textAlign: 'center',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  };
+
   return (
     <div style={containerStyle}>
       <header style={headerStyle}>
         <div>
-          <h1 style={{ fontSize: '2rem', marginBottom: '8px' }}>{t('notifications.title')}</h1>
-          <p style={{ color: 'var(--text-secondary)' }}>{t('notifications.subtitle')}</p>
+          <h1 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 700, marginBottom: '8px' }}>{t('notifications.title')}</h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>{t('notifications.subtitle')}</p>
         </div>
         <div style={{ display: 'flex', gap: '12px' }}>
-          <Button variant="outline" size="sm" onClick={markAllAsRead} disabled={notifications.every(n => n.is_read)}>
+          <Button variant="outline" size="sm" onClick={markAllAsRead} disabled={notifications.every(n => n.is_read)} style={{ width: isMobile ? '100%' : 'auto', justifyContent: 'center' }}>
             <CheckCheck size={16} style={{ marginRight: '8px' }} /> {t('notifications.markAllRead')}
           </Button>
         </div>
@@ -144,7 +289,7 @@ export const NotificationsPage: React.FC = () => {
 
       <Card style={{ padding: 0, overflow: 'hidden' }}>
         <div style={filterBarStyle}>
-          <div style={{ display: 'flex', gap: '24px' }}>
+          <div style={{ display: 'flex', gap: '24px', justifyContent: isMobile ? 'center' : 'flex-start' }}>
             <button 
               style={{ ...filterButtonStyle, borderBottomColor: filter === 'all' ? 'var(--accent-primary)' : 'transparent', color: filter === 'all' ? 'var(--text-primary)' : 'var(--text-muted)' }}
               onClick={() => setFilter('all')}
@@ -161,7 +306,7 @@ export const NotificationsPage: React.FC = () => {
               )}
             </button>
           </div>
-          <div style={searchContainerStyle}>
+          <div style={{ ...searchContainerStyle, width: isMobile ? '100%' : 'auto' }}>
             <Search size={18} color="var(--text-muted)" />
             <input 
               type="text" 
@@ -189,12 +334,12 @@ export const NotificationsPage: React.FC = () => {
                 <div style={iconBoxStyle}>
                   {getTypeIcon(noti.type)}
                 </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
-                    <h3 style={{ fontSize: '1rem', fontWeight: noti.is_read ? 500 : 700 }}>{noti.title}</h3>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', marginBottom: '6px', gap: isMobile ? '4px' : '0' }}>
+                    <h3 style={{ fontSize: isMobile ? '0.9375rem' : '1rem', fontWeight: noti.is_read ? 500 : 700, paddingRight: isMobile ? '0' : '16px', lineHeight: 1.3 }}>{noti.title}</h3>
                     <span style={timeStyle}><Clock size={12} /> {formatRelativeTime(noti.created_at)}</span>
                   </div>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.5' }}>{noti.description}</p>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.8125rem', lineHeight: '1.5' }}>{noti.description}</p>
                 </div>
                 <div style={actionsContainerStyle}>
                   {!noti.is_read && <div style={unreadDotStyle} />}
@@ -213,140 +358,12 @@ export const NotificationsPage: React.FC = () => {
           ) : (
             <div style={emptyStateStyle}>
               <Bell size={48} color="var(--bg-tertiary)" style={{ marginBottom: '16px' }} />
-              <h3>{t('notifications.noNotifications')}</h3>
-              <p style={{ color: 'var(--text-muted)' }}>{t('notifications.noNotificationsDesc')}</p>
+              <h3 style={{ fontSize: isMobile ? '1.125rem' : '1.25rem', fontWeight: 700, marginBottom: '8px' }}>{t('notifications.noNotifications')}</h3>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{t('notifications.noNotificationsDesc')}</p>
             </div>
           )}
         </div>
       </Card>
     </div>
   );
-};
-
-// Styles
-const containerStyle: React.CSSProperties = {
-  maxWidth: '900px',
-  margin: '0 auto',
-};
-
-const headerStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'flex-end',
-  marginBottom: '32px',
-};
-
-const filterBarStyle: React.CSSProperties = {
-  padding: '0 24px',
-  borderBottom: '1px solid var(--border-color)',
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  backgroundColor: 'var(--bg-secondary)',
-};
-
-const filterButtonStyle: React.CSSProperties = {
-  padding: '16px 0',
-  background: 'none',
-  border: 'none',
-  borderBottom: '2px solid transparent',
-  fontSize: '0.875rem',
-  fontWeight: 600,
-  cursor: 'pointer',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '8px',
-  transition: 'all 0.2s',
-};
-
-const countBadgeStyle: React.CSSProperties = {
-  padding: '2px 6px',
-  backgroundColor: 'var(--accent-primary)',
-  color: '#000',
-  borderRadius: '4px',
-  fontSize: '0.75rem',
-  fontWeight: 700,
-};
-
-const searchContainerStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '8px',
-  backgroundColor: 'var(--bg-primary)',
-  padding: '6px 12px',
-  borderRadius: '8px',
-  border: '1px solid var(--border-color)',
-};
-
-const searchInputStyle: React.CSSProperties = {
-  background: 'none',
-  border: 'none',
-  outline: 'none',
-  color: 'var(--text-primary)',
-  fontSize: '0.875rem',
-  width: '150px',
-};
-
-const listStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-};
-
-const notificationItemStyle: React.CSSProperties = {
-  padding: '20px 24px',
-  display: 'flex',
-  gap: '20px',
-  borderBottom: '1px solid var(--border-color)',
-  transition: 'background 0.2s',
-  cursor: 'pointer',
-  position: 'relative',
-};
-
-const iconBoxStyle: React.CSSProperties = {
-  width: '40px',
-  height: '40px',
-  borderRadius: '10px',
-  backgroundColor: 'var(--bg-tertiary)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  flexShrink: 0,
-};
-
-const timeStyle: React.CSSProperties = {
-  fontSize: '0.75rem',
-  color: 'var(--text-muted)',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '4px',
-};
-
-const actionsContainerStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '12px',
-};
-
-const unreadDotStyle: React.CSSProperties = {
-  width: '8px',
-  height: '8px',
-  backgroundColor: 'var(--accent-primary)',
-  borderRadius: '50%',
-};
-
-const moreButtonStyle: React.CSSProperties = {
-  background: 'none',
-  border: 'none',
-  cursor: 'pointer',
-  padding: '4px',
-  borderRadius: '4px',
-  transition: 'background 0.2s',
-};
-
-const emptyStateStyle: React.CSSProperties = {
-  padding: '80px 20px',
-  textAlign: 'center',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
 };

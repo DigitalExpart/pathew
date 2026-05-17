@@ -26,6 +26,15 @@ export const EditProfile: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const [formData, setFormData] = useState<any>({
     full_name: '',
     story: '',
@@ -107,24 +116,27 @@ export const EditProfile: React.FC = () => {
   };
 
   return (
-    <div style={containerStyle}>
+    <div style={{ ...containerStyle, padding: isMobile ? '20px 16px' : '40px 20px' }}>
       <header style={headerStyle}>
         <button onClick={() => navigate('/career-profile')} style={backBtnStyle}>
           <ArrowLeft size={18} /> {t('editProfile.backToProfile')}
         </button>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '16px' }}>
+        <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', justifyContent: 'space-between', alignItems: isMobile ? 'stretch' : 'center', marginTop: '16px', gap: isMobile ? '16px' : '0' }}>
           <h1 style={titleStyle}>{t('editProfile.title')}</h1>
-          <Button onClick={handleSave} disabled={loading} style={{ gap: '8px' }}>
+          <Button onClick={handleSave} disabled={loading} style={{ gap: '8px', justifyContent: 'center' }}>
             <Save size={18} /> {loading ? t('common.saving') : t('editProfile.saveChanges')}
           </Button>
         </div>
       </header>
 
-      <div style={gridStyle}>
+      <div style={{
+        ...gridStyle,
+        gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr',
+      }}>
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           {/* Basic Information */}
           <Card title={t('editProfile.basicInfo')} icon={User}>
-            <div style={formGridStyle}>
+            <div style={{ ...formGridStyle, gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr' }}>
               <div style={inputGroupStyle}>
                 <label style={labelStyle}>{t('editProfile.fullName')}</label>
                 <input 
@@ -146,7 +158,7 @@ export const EditProfile: React.FC = () => {
 
           {/* Personal Details */}
           <Card title={t('editProfile.personalDetails')} icon={Heart}>
-            <div style={formGridStyle}>
+            <div style={{ ...formGridStyle, gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr' }}>
               <div style={inputGroupStyle}>
                 <label style={labelStyle}>{t('editProfile.dob')}</label>
                 <input 
@@ -183,7 +195,7 @@ export const EditProfile: React.FC = () => {
                   <option value="Prefer not to say">{t('editProfile.preferNotToSay')}</option>
                 </select>
               </div>
-              <div style={{ ...inputGroupStyle, gridColumn: 'span 2' }}>
+              <div style={{ ...inputGroupStyle, gridColumn: isMobile ? 'auto' : 'span 2' }}>
                 <label style={labelStyle}>{t('editProfile.languagesSpoken')}</label>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '12px' }}>
                   {formData.languages.map((lang: string) => (
@@ -247,7 +259,7 @@ export const EditProfile: React.FC = () => {
           {/* Address Details */}
           <Card title={t('editProfile.homeAddress')} icon={MapPin}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div style={inputGroupStyle}>
+               <div style={inputGroupStyle}>
                 <label style={labelStyle}>{t('editProfile.streetAddress')}</label>
                 <input 
                   placeholder="123 Career Avenue"
@@ -256,7 +268,7 @@ export const EditProfile: React.FC = () => {
                   onChange={(e) => updateField('street_address', e.target.value)}
                 />
               </div>
-              <div style={formGridStyle}>
+              <div style={{ ...formGridStyle, gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(180px, 1fr))' }}>
                 <div style={inputGroupStyle}>
                   <label style={labelStyle}>{t('editProfile.country')}</label>
                   <select 
@@ -304,7 +316,7 @@ export const EditProfile: React.FC = () => {
                   >
                     <Trash2 size={16} />
                   </button>
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
                     <div style={inputGroupStyle}>
                       <label style={labelStyle}>{t('editProfile.certTitle')}</label>
                       <input 

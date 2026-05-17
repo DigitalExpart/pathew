@@ -5,7 +5,7 @@ import { CheckCircle, Zap } from 'lucide-react';
 import { StripeCheckoutModal } from '../../components/payment/StripeCheckoutModal';
 import { useTranslation } from 'react-i18next';
 
-const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedFeatures, badge, badgeColor = 'var(--accent-primary)' }: any) => {
+const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedFeatures, badge, badgeColor = 'var(--accent-primary)', isMobile }: any) => {
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
 
@@ -14,18 +14,75 @@ const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedF
     setIsModalOpen(true);
   };
 
+  // Dynamic Responsive Styles
+  const cardStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    padding: isMobile ? '24px 20px' : '40px 32px',
+    position: 'relative',
+    height: '100%',
+    transition: 'transform 0.3s ease',
+    border: '1px solid var(--border-color)',
+    borderRadius: 'var(--radius-xl)',
+    backgroundColor: 'var(--bg-secondary)',
+    borderColor: badge ? badgeColor : 'var(--border-color)',
+    boxShadow: badge ? `0 20px 40px -15px ${badgeColor}22` : 'none',
+    zIndex: badge ? 1 : 0,
+    transform: (badge && !isMobile) ? 'scale(1.05)' : 'scale(1)',
+  };
+
+  const popularBadgeStyle: React.CSSProperties = {
+    position: 'absolute',
+    top: '-14px',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    backgroundColor: badgeColor,
+    color: '#000',
+    padding: '6px 16px',
+    borderRadius: 'var(--radius-full)',
+    fontSize: '0.75rem',
+    fontWeight: 700,
+    textTransform: 'uppercase',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '6px',
+  };
+
+  const tierNameStyle: React.CSSProperties = {
+    fontSize: '1.5rem',
+    marginBottom: '16px',
+    fontWeight: 600,
+  };
+
+  const priceContainerStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'baseline',
+    marginBottom: '8px',
+  };
+
+  const priceStyle: React.CSSProperties = {
+    fontSize: isMobile ? '2.75rem' : '3.5rem',
+    fontWeight: 800,
+    lineHeight: 1,
+  };
+
+  const periodStyle: React.CSSProperties = {
+    color: 'var(--text-muted)',
+    marginLeft: '8px',
+  };
+
+  const creditsLabelStyle: React.CSSProperties = {
+    color: 'var(--accent-primary)',
+    fontWeight: 600,
+    marginBottom: isMobile ? '20px' : '32px',
+    paddingBottom: isMobile ? '20px' : '32px',
+    borderBottom: '1px solid var(--border-color)',
+  };
+
   return (
   <>
-  <Card 
-    style={{
-      ...cardStyle,
-      borderColor: badge ? badgeColor : 'var(--border-color)',
-      boxShadow: badge ? `0 30px 60px -15px ${badgeColor}33` : 'none',
-      zIndex: badge ? 1 : 0,
-      transform: badge ? 'scale(1.05)' : 'scale(1)',
-    }}
-  >
-    {badge && <div style={{...popularBadgeStyle, backgroundColor: badgeColor, color: '#000'}}>{badge}</div>}
+  <div style={cardStyle}>
+    {badge && <div style={popularBadgeStyle}>{badge}</div>}
     <h3 style={tierNameStyle}>{title}</h3>
     <div style={priceContainerStyle}>
       <span style={priceStyle}>{price}</span>
@@ -34,7 +91,7 @@ const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedF
     <div style={creditsLabelStyle}>
       {credits}
     </div>
-    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '24px', lineHeight: 1.5, minHeight: '42px' }}>
+    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '24px', lineHeight: 1.5, minHeight: isMobile ? 'auto' : '42px' }}>
       {subtitle}
     </p>
 
@@ -71,7 +128,7 @@ const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedF
         {t('pricing.choose')} {title}
       </Button>
     </div>
-  </Card>
+  </div>
 
   <StripeCheckoutModal 
     isOpen={isModalOpen} 
@@ -86,6 +143,45 @@ const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedF
 
 export const PricingPage: React.FC = () => {
   const { t } = useTranslation();
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
+
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Dynamic Responsive Styles
+  const containerStyle: React.CSSProperties = {
+    maxWidth: '1000px',
+    margin: '0 auto',
+    padding: isMobile ? '16px' : '24px 0',
+  };
+
+  const headerStyle: React.CSSProperties = {
+    textAlign: 'center',
+    marginBottom: isMobile ? '32px' : '64px',
+  };
+
+  const titleStyle: React.CSSProperties = {
+    fontSize: isMobile ? '2rem' : '3rem',
+    fontWeight: 800,
+    marginBottom: '16px',
+  };
+
+  const subtitleStyle: React.CSSProperties = {
+    color: 'var(--text-secondary)',
+    fontSize: isMobile ? '1rem' : '1.25rem',
+    maxWidth: '600px',
+    margin: '0 auto',
+  };
+
+  const gridStyle: React.CSSProperties = {
+    display: 'grid',
+    gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+    gap: isMobile ? '24px' : '32px',
+    alignItems: 'stretch',
+  };
 
   return (
     <div style={containerStyle}>
@@ -100,6 +196,7 @@ export const PricingPage: React.FC = () => {
           price="£11.99" 
           credits={t('pricing.plans.starter.credits')}
           subtitle={t('pricing.plans.starter.subtitle')}
+          isMobile={isMobile}
           generatesUpTo={[
             { label: t('pricing.services.coverLetter'), count: '25×' },
             { label: t('pricing.services.cv'), count: '25×' },
@@ -119,6 +216,7 @@ export const PricingPage: React.FC = () => {
           credits={t('pricing.plans.growth.credits')}
           subtitle={t('pricing.plans.growth.subtitle')}
           badge={t('pricing.plans.growth.badge', '★ MOST POPULAR ★')}
+          isMobile={isMobile}
           generatesUpTo={[
             { label: t('pricing.services.coverLetter'), count: '60×' },
             { label: t('pricing.services.cv'), count: '60×' },
@@ -139,6 +237,7 @@ export const PricingPage: React.FC = () => {
           subtitle={t('pricing.plans.power.subtitle')}
           badge={t('pricing.plans.power.badge', '★ BEST VALUE ★')}
           badgeColor="#3b82f6"
+          isMobile={isMobile}
           generatesUpTo={[
             { label: t('pricing.services.coverLetter'), count: '120×' },
             { label: t('pricing.services.cv'), count: '120×' },
@@ -154,17 +253,17 @@ export const PricingPage: React.FC = () => {
         />
       </div>
 
-      <div style={{ maxWidth: '800px', margin: '80px auto 0' }}>
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <h3 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '16px' }}>{t('pricing.creditCost')}</h3>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '1.125rem' }}>
+      <div style={{ maxWidth: '800px', margin: isMobile ? '40px auto 0' : '800px auto 0', marginTop: isMobile ? '40px' : '80px' }}>
+        <div style={{ textAlign: 'center', marginBottom: isMobile ? '20px' : '32px' }}>
+          <h3 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 800, marginBottom: '16px' }}>{t('pricing.creditCost')}</h3>
+          <p style={{ color: 'var(--text-secondary)', fontSize: isMobile ? '0.9375rem' : '1.125rem' }}>
             {t('pricing.creditCostSubtitle')}
           </p>
         </div>
 
-        <Card style={{ padding: 0, overflow: 'hidden', border: '1px solid var(--border-color)' }}>
+        <Card style={{ padding: 0, overflow: 'hidden', border: '1px solid var(--border-color)', width: '100%' }}>
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '500px' }}>
               <thead>
                 <tr style={{ backgroundColor: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)' }}>
                   <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>{t('pricing.service')}</th>
@@ -193,7 +292,7 @@ export const PricingPage: React.FC = () => {
         </Card>
         
         <div style={{ textAlign: 'center', marginTop: '32px' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', backgroundColor: 'rgba(245, 158, 11, 0.1)', padding: '12px 24px', borderRadius: 'var(--radius-full)', color: 'var(--accent-primary)', fontWeight: 600 }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', backgroundColor: 'rgba(245, 158, 11, 0.1)', padding: '12px 24px', borderRadius: 'var(--radius-full)', color: 'var(--accent-primary)', fontWeight: 600, fontSize: isMobile ? '0.8125rem' : '1rem' }}>
             <Zap size={18} />
             {t('pricing.needMore')}
           </div>
@@ -201,93 +300,6 @@ export const PricingPage: React.FC = () => {
       </div>
     </div>
   );
-};
-
-const containerStyle: React.CSSProperties = {
-  maxWidth: '1000px',
-  margin: '0 auto',
-  padding: '24px 0',
-};
-
-const headerStyle: React.CSSProperties = {
-  textAlign: 'center',
-  marginBottom: '64px',
-};
-
-const titleStyle: React.CSSProperties = {
-  fontSize: '3rem',
-  marginBottom: '16px',
-};
-
-const subtitleStyle: React.CSSProperties = {
-  color: 'var(--text-secondary)',
-  fontSize: '1.25rem',
-  maxWidth: '600px',
-  margin: '0 auto',
-};
-
-const gridStyle: React.CSSProperties = {
-  display: 'grid',
-  gridTemplateColumns: 'repeat(3, 1fr)',
-  gap: '32px',
-  alignItems: 'center',
-};
-
-const cardStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  padding: '40px 32px',
-  position: 'relative',
-  height: '100%',
-  transition: 'transform 0.3s ease',
-};
-
-const popularBadgeStyle: React.CSSProperties = {
-  position: 'absolute',
-  top: '-14px',
-  left: '50%',
-  transform: 'translateX(-50%)',
-  backgroundColor: 'var(--accent-primary)',
-  color: '#000',
-  padding: '6px 16px',
-  borderRadius: 'var(--radius-full)',
-  fontSize: '0.75rem',
-  fontWeight: 700,
-  textTransform: 'uppercase',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '6px',
-};
-
-const tierNameStyle: React.CSSProperties = {
-  fontSize: '1.5rem',
-  marginBottom: '16px',
-  fontWeight: 600,
-};
-
-const priceContainerStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'baseline',
-  marginBottom: '8px',
-};
-
-const priceStyle: React.CSSProperties = {
-  fontSize: '3.5rem',
-  fontWeight: 800,
-  lineHeight: 1,
-};
-
-const periodStyle: React.CSSProperties = {
-  color: 'var(--text-muted)',
-  marginLeft: '8px',
-};
-
-const creditsLabelStyle: React.CSSProperties = {
-  color: 'var(--accent-primary)',
-  fontWeight: 600,
-  marginBottom: '32px',
-  paddingBottom: '32px',
-  borderBottom: '1px solid var(--border-color)',
 };
 
 

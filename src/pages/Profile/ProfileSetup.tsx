@@ -60,7 +60,13 @@ export const ProfileSetup: React.FC = () => {
   const navigate = useNavigate();
   const [uploading, setUploading] = useState(false);
 
-  const isMobile = window.innerWidth <= 768;
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Centralized State
   const [profileData, setProfileData] = useState({
@@ -294,33 +300,39 @@ export const ProfileSetup: React.FC = () => {
           </div>
 
           <Card style={{ padding: isMobile ? '20px' : '32px' }}>
-            {currentStep === 0 && <StoryStep data={profileData} update={updateData} />}
-            {currentStep === 1 && <EducationStep data={profileData} update={updateData} />}
-            {currentStep === 2 && <ExperienceStep data={profileData} update={updateData} />}
-            {currentStep === 3 && <CertificationsStep data={profileData} update={updateData} />}
-            {currentStep === 4 && <GoalsStep data={profileData} update={updateData} />}
-            {currentStep === 5 && <AchievementStep data={profileData} update={updateData} />}
-            {currentStep === 6 && <ProjectsStep data={profileData} update={updateData} />}
-            {currentStep === 7 && <OrganisationStep data={profileData} update={updateData} />}
+            {currentStep === 0 && <StoryStep data={profileData} update={updateData} isMobile={isMobile} />}
+            {currentStep === 1 && <EducationStep data={profileData} update={updateData} isMobile={isMobile} />}
+            {currentStep === 2 && <ExperienceStep data={profileData} update={updateData} isMobile={isMobile} />}
+            {currentStep === 3 && <CertificationsStep data={profileData} update={updateData} isMobile={isMobile} />}
+            {currentStep === 4 && <GoalsStep data={profileData} update={updateData} isMobile={isMobile} />}
+            {currentStep === 5 && <AchievementStep data={profileData} update={updateData} isMobile={isMobile} />}
+            {currentStep === 6 && <ProjectsStep data={profileData} update={updateData} isMobile={isMobile} />}
+            {currentStep === 7 && <OrganisationStep data={profileData} update={updateData} isMobile={isMobile} />}
             {currentStep === 8 && (
               <PortfolioStep 
                 data={profileData} 
                 update={updateData} 
                 onUpload={handleFileUpload}
                 uploading={uploading}
+                isMobile={isMobile}
               />
             )}
 
-            <div style={actionsStyle}>
+            <div style={{
+              ...actionsStyle,
+              flexDirection: isMobile ? 'column-reverse' : 'row',
+              gap: isMobile ? '12px' : '0',
+              alignItems: isMobile ? 'stretch' : 'center',
+            }}>
               <Button 
                 variant="outline" 
                 onClick={handleBack}
                 disabled={loading}
-                style={{ visibility: currentStep === 0 ? 'hidden' : 'visible', gap: '8px' }}
+                style={{ visibility: currentStep === 0 ? 'hidden' : 'visible', gap: '8px', justifyContent: 'center' }}
               >
                 <ChevronLeft size={18} /> {t('common.back')}
               </Button>
-              <Button onClick={handleNext} disabled={loading} style={{ gap: '8px' }}>
+              <Button onClick={handleNext} disabled={loading} style={{ gap: '8px', justifyContent: 'center' }}>
                 {loading ? t('common.save') : currentStep === steps.length - 1 ? t('setup.saveAndComplete') : t('setup.saveAndContinue')} 
                 {!loading && <ChevronRight size={18} />}
               </Button>
@@ -333,7 +345,7 @@ export const ProfileSetup: React.FC = () => {
 };
 
 // Step Components
-const StoryStep = ({ data, update }: any) => {
+const StoryStep = ({ data, update, isMobile }: any) => {
   const { t } = useTranslation();
   const { openAssistant } = useAssistant();
 
@@ -341,7 +353,7 @@ const StoryStep = ({ data, update }: any) => {
     <div style={formGridStyle}>
 
       <div style={inputGroupStyle}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', marginBottom: '8px', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '8px' : '0' }}>
           <label style={labelStyle}>{t('setup.bioLabel')}</label>
           <button 
             style={AssistantLinkButtonStyle}
@@ -358,7 +370,7 @@ const StoryStep = ({ data, update }: any) => {
         />
       </div>
       <div style={inputGroupStyle}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', marginBottom: '8px', flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '8px' : '0' }}>
           <label style={labelStyle}>{t('setup.skillsLabel')}</label>
           <button 
             style={AssistantLinkButtonStyle}
@@ -381,7 +393,7 @@ const StoryStep = ({ data, update }: any) => {
   );
 };
 
-const EducationStep = ({ data, update }: any) => {
+const EducationStep = ({ data, update, isMobile }: any) => {
   const { t } = useTranslation();
   const educations = data.education.length > 0 ? data.education : [{ school: '', degree: '', field: '', year: '' }];
 
@@ -404,7 +416,7 @@ const EducationStep = ({ data, update }: any) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {educations.map((edu: any, index: number) => (
-        <div key={index} style={{ ...inputGroupStyle, padding: '24px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', position: 'relative' }}>
+        <div key={index} style={{ ...inputGroupStyle, padding: isMobile ? '16px' : '24px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', position: 'relative' }}>
           {educations.length > 1 && (
             <button 
               onClick={() => removeEducation(index)}
@@ -425,7 +437,7 @@ const EducationStep = ({ data, update }: any) => {
                 onChange={(e) => handleChange(index, 'school', e.target.value)}
               />
             </div>
-            <div className="stack-on-mobile" style={{ display: 'flex', gap: '16px' }}>
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '16px' }}>
               <div style={{ ...inputGroupStyle, flex: 1 }}>
                 <label style={labelStyle}>{t('setup.degree')}</label>
                 <input 
@@ -464,7 +476,7 @@ const EducationStep = ({ data, update }: any) => {
       <Button 
         variant="outline" 
         onClick={addEducation}
-        style={{ width: '100%', borderStyle: 'dashed' }}
+        style={{ width: '100%', borderStyle: 'dashed', justifyContent: 'center' }}
       >
         <Plus size={18} style={{ marginRight: '8px' }} /> {t('setup.addAnotherEducation')}
       </Button>
@@ -472,7 +484,7 @@ const EducationStep = ({ data, update }: any) => {
   );
 };
 
-const ExperienceStep = ({ data, update }: any) => {
+const ExperienceStep = ({ data, update, isMobile }: any) => {
   const { t } = useTranslation();
   const { openAssistant } = useAssistant();
   const experiences = data.experience.length > 0 ? data.experience : [{ company: '', title: '', description: '', duration: '' }];
@@ -496,7 +508,7 @@ const ExperienceStep = ({ data, update }: any) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {experiences.map((exp: any, index: number) => (
-        <div key={index} style={{ ...inputGroupStyle, padding: '24px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', position: 'relative' }}>
+        <div key={index} style={{ ...inputGroupStyle, padding: isMobile ? '16px' : '24px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', position: 'relative' }}>
           {experiences.length > 1 && (
             <button 
               onClick={() => removeExperience(index)}
@@ -507,7 +519,7 @@ const ExperienceStep = ({ data, update }: any) => {
           )}
 
           <div style={formGridStyle}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
               <div style={inputGroupStyle}>
                 <label style={labelStyle}>{t('setup.company')}</label>
                 <input 
@@ -540,7 +552,7 @@ const ExperienceStep = ({ data, update }: any) => {
               />
             </div>
             <div style={inputGroupStyle}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px', flexDirection: isMobile ? 'column' : 'row' }}>
                 <label style={labelStyle}>{t('setup.description')}</label>
                 <button 
                   style={AssistantLinkButtonStyle}
@@ -563,7 +575,7 @@ const ExperienceStep = ({ data, update }: any) => {
       <Button 
         variant="outline" 
         onClick={addExperience}
-        style={{ width: '100%', borderStyle: 'dashed' }}
+        style={{ width: '100%', borderStyle: 'dashed', justifyContent: 'center' }}
       >
         <Plus size={18} style={{ marginRight: '8px' }} /> {t('setup.addAnotherExperience')}
       </Button>
@@ -571,7 +583,7 @@ const ExperienceStep = ({ data, update }: any) => {
   );
 };
 
-const CertificationsStep = ({ data, update }: any) => {
+const CertificationsStep = ({ data, update, isMobile }: any) => {
   const { t } = useTranslation();
   const certifications = data.certifications.length > 0 ? data.certifications : [{ title: '', organization: '', level: '', tutor: '', year: '' }];
 
@@ -594,7 +606,7 @@ const CertificationsStep = ({ data, update }: any) => {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
       {certifications.map((cert: any, index: number) => (
-        <div key={index} style={{ ...inputGroupStyle, padding: '24px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', position: 'relative' }}>
+        <div key={index} style={{ ...inputGroupStyle, padding: isMobile ? '16px' : '24px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)', position: 'relative' }}>
           {certifications.length > 1 && (
             <button 
               onClick={() => removeCert(index)}
@@ -625,7 +637,7 @@ const CertificationsStep = ({ data, update }: any) => {
                 onChange={(e) => handleChange(index, 'organization', e.target.value)}
               />
             </div>
-            <div className="stack-on-mobile" style={{ display: 'flex', gap: '16px' }}>
+            <div style={{ display: 'flex', flexDirection: isMobile ? 'column' : 'row', gap: '16px' }}>
               <div style={{ ...inputGroupStyle, flex: 1 }}>
                 <label style={labelStyle}>{t('setup.expLevel')}</label>
                 <select 
@@ -667,7 +679,7 @@ const CertificationsStep = ({ data, update }: any) => {
       <Button 
         variant="outline" 
         onClick={addCert}
-        style={{ width: '100%', borderStyle: 'dashed' }}
+        style={{ width: '100%', borderStyle: 'dashed', justifyContent: 'center' }}
       >
         <Plus size={18} style={{ marginRight: '8px' }} /> {t('setup.addAnotherCert')}
       </Button>
@@ -675,10 +687,9 @@ const CertificationsStep = ({ data, update }: any) => {
   );
 };
 
-const GoalsStep = ({ data, update }: any) => {
+const GoalsStep = ({ data, update, isMobile }: any) => {
   const { t } = useTranslation();
   const [showManual, setShowManual] = useState(false);
-  const isMobile = window.innerWidth <= 768;
   
   const toggleGoal = (label: string) => {
     const newGoals = data.goals.includes(label)
@@ -741,7 +752,7 @@ const GoalsStep = ({ data, update }: any) => {
   );
 };
 
-const AchievementStep = ({ data, update }: any) => {
+const AchievementStep = ({ data, update, isMobile }: any) => {
   const { t } = useTranslation();
   const { openAssistant } = useAssistant();
   const achievements = data.achievements.length > 0 ? data.achievements : [''];
@@ -762,7 +773,7 @@ const AchievementStep = ({ data, update }: any) => {
     <div style={formGridStyle}>
       {achievements.map((ach: string, index: number) => (
         <div key={index} style={{ ...inputGroupStyle, padding: '16px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: isMobile ? 'flex-start' : 'center', marginBottom: '8px', flexWrap: 'wrap', gap: '8px', flexDirection: isMobile ? 'column' : 'row' }}>
             <label style={labelStyle}>{t('setup.achievementLabel', { index: index + 1 })}</label>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               <button 
@@ -793,7 +804,7 @@ const AchievementStep = ({ data, update }: any) => {
       <Button 
         variant="outline" 
         onClick={addAchievement}
-        style={{ width: '100%', borderStyle: 'dashed', marginTop: '8px' }}
+        style={{ width: '100%', borderStyle: 'dashed', marginTop: '8px', justifyContent: 'center' }}
       >
         + {t('setup.addAnotherAchievement')}
       </Button>
@@ -801,7 +812,7 @@ const AchievementStep = ({ data, update }: any) => {
   );
 };
 
-const ProjectsStep = ({ data, update }: any) => {
+const ProjectsStep = ({ data, update, isMobile }: any) => {
   const { t } = useTranslation();
   const projects = data.projects.length > 0 ? data.projects : [
     { id: 1, title: '', description: '', isSaved: false },
@@ -819,8 +830,6 @@ const ProjectsStep = ({ data, update }: any) => {
   const updateProject = (id: number, field: string, value: any) => {
     update('projects', projects.map((p: any) => p.id === id ? { ...p, [field]: value } : p));
   };
-
-  const isMobile = window.innerWidth <= 768;
 
   return (
     <div className="grid-responsive" style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', width: '100%' }}>
@@ -912,10 +921,9 @@ const OrganisationStep = ({ data, update }: any) => {
   );
 };
 
-const PortfolioStep = ({ data, update, onUpload, uploading }: any) => {
+const PortfolioStep = ({ data, update, onUpload, uploading, isMobile }: any) => {
   const { t } = useTranslation();
   const [newProject, setNewProject] = useState({ title: '', description: '', url: '' });
-  const isMobile = window.innerWidth <= 768;
 
   const handleAddProject = async () => {
     if (!newProject.url) {

@@ -197,6 +197,8 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
     overflowY: 'auto',
     display: 'flex',
     justifyContent: 'center',
+    height: isMobile ? '400px' : 'auto',
+    minHeight: isMobile ? '300px' : '0',
   };
 
   const documentPageStyle: React.CSSProperties = {
