@@ -45,6 +45,7 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
   onRefreshSources,
   userId,
 }) => {
+  const PROFILE_ID = 'pathew-profile';
   const [activeTab, setActiveTab] = useState<'upload' | 'linkedin' | 'notes'>('upload');
   const [uploading, setUploading] = useState(false);
   
@@ -53,6 +54,23 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
   const [noteTitle, setNoteTitle] = useState('');
   const [noteContent, setNoteContent] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
+
+  // Auto-select the Pathew Profile on mount
+  useState(() => {
+    if (!selectedSourceIds.includes(PROFILE_ID)) {
+      onChangeSelected([...selectedSourceIds, PROFILE_ID]);
+    }
+  });
+
+  const isProfileSelected = selectedSourceIds.includes(PROFILE_ID);
+
+  const toggleProfileSelect = () => {
+    if (isProfileSelected) {
+      onChangeSelected(selectedSourceIds.filter(sid => sid !== PROFILE_ID));
+    } else {
+      onChangeSelected([...selectedSourceIds, PROFILE_ID]);
+    }
+  };
 
   const toggleSelect = (id: string) => {
     if (selectedSourceIds.includes(id)) {
@@ -174,20 +192,23 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
       <div style={sourcesGridStyle}>
         {/* Core Pathew Profile (Simulated default option) */}
         <Card 
-          onClick={() => {}} 
+          onClick={toggleProfileSelect} 
           style={{ 
             ...sourceCardStyle, 
-            borderColor: 'var(--accent-primary)',
-            background: 'rgba(99,102,241,0.05)'
+            borderColor: isProfileSelected ? 'var(--accent-primary)' : 'var(--border-color)',
+            background: isProfileSelected ? 'rgba(245, 158, 11, 0.05)' : 'transparent',
+            cursor: 'pointer'
           }}
         >
           <div style={sourceCardHeaderStyle}>
             <div style={iconBoxStyle}>
-              <Briefcase size={20} color="var(--accent-primary)" />
+              <Briefcase size={20} color={isProfileSelected ? 'var(--accent-primary)' : 'var(--text-secondary)'} />
             </div>
-            <Badge variant="primary" style={{ backgroundColor: 'rgba(99,102,241,0.1)', color: 'var(--accent-primary)' }}>
-              Active
-            </Badge>
+            {isProfileSelected && (
+              <Badge variant="primary" style={{ backgroundColor: 'rgba(245, 158, 11, 0.1)', color: 'var(--accent-primary)' }}>
+                Active
+              </Badge>
+            )}
           </div>
           <h4 style={cardTitleStyle}>Your Pathew Profile</h4>
           <p style={cardDescStyle}>Includes Story, Skills, Experience, and Goals from settings.</p>
