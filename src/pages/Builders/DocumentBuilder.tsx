@@ -242,312 +242,318 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
             />
 
             {/* Generation settings configurations */}
-            <Card style={settingsCardStyle}>
-              <h3 style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', fontWeight: 700, marginBottom: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <Settings size={18} color="var(--accent-primary)" />
-                3. Pathew Assistant Settings & Style Prefs
-              </h3>
+            <Card style={{ ...settingsCardStyle, padding: isMobile ? '20px' : '32px' }}>
+              <div style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '16px', marginBottom: '24px' }}>
+                <h3 style={{ fontSize: isMobile ? '1.1rem' : '1.25rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', gap: '10px', alignItems: 'center', margin: 0 }}>
+                  <Settings size={22} color="var(--accent-primary)" />
+                  3. Pathew Assistant Setup & Style
+                </h3>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '6px', marginLeft: isMobile ? '0' : '32px' }}>
+                  Fine-tune the assistant's output to match your professional brand and target requirements.
+                </p>
+              </div>
 
               <div style={settingsGridStyle}>
-                <div>
-                  <label style={labelStyle}>Tone of Voice</label>
-                  <select 
-                    value={builder.tone}
-                    onChange={(e) => builder.setTone(e.target.value)}
-                    style={selectInputStyle}
-                  >
-                    <option value="Professional & Academic">Professional & Academic (Formal & polished)</option>
-                    <option value="Creative & Narrative">Creative & Narrative (Story-driven & expressive)</option>
-                    <option value="Concise & Impactful">Concise & Impactful (Short, high-signal bullets)</option>
-                    <option value="Casual & Friendly">Casual & Friendly (Warm & approachable)</option>
-                  </select>
-                </div>
+                {/* General Settings Box */}
+                <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', backgroundColor: 'var(--bg-tertiary)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+                  <div>
+                    <label style={labelStyle}>Tone of Voice</label>
+                    <select 
+                      value={builder.tone}
+                      onChange={(e) => builder.setTone(e.target.value)}
+                      style={{ ...selectInputStyle, backgroundColor: 'var(--bg-secondary)', border: 'none' }}
+                    >
+                      <option value="Professional & Academic">Professional & Academic (Formal & polished)</option>
+                      <option value="Creative & Narrative">Creative & Narrative (Story-driven & expressive)</option>
+                      <option value="Concise & Impactful">Concise & Impactful (Short, high-signal bullets)</option>
+                      <option value="Casual & Friendly">Casual & Friendly (Warm & approachable)</option>
+                    </select>
+                  </div>
 
-                <div>
-                  <label style={labelStyle}>Target Spelling / Language</label>
-                  <select 
-                    value={builder.language}
-                    onChange={(e) => builder.setLanguage(e.target.value)}
-                    style={selectInputStyle}
-                  >
-                    <option value="English (UK)">UK English (-programme, -ise)</option>
-                    <option value="English (US)">US English (-program, -ize)</option>
-                    <option value="French">French (Français)</option>
-                    <option value="German">German (Deutsch)</option>
-                    <option value="Spanish">Spanish (Español)</option>
-                  </select>
+                  <div>
+                    <label style={labelStyle}>Target Spelling / Language</label>
+                    <select 
+                      value={builder.language}
+                      onChange={(e) => builder.setLanguage(e.target.value)}
+                      style={{ ...selectInputStyle, backgroundColor: 'var(--bg-secondary)', border: 'none' }}
+                    >
+                      <option value="English (UK)">UK English (-programme, -ise)</option>
+                      <option value="English (US)">US English (-program, -ize)</option>
+                      <option value="French">French (Français)</option>
+                      <option value="German">German (Deutsch)</option>
+                      <option value="Spanish">Spanish (Español)</option>
+                    </select>
+                  </div>
                 </div>
 
                 {/* CV BUILDER CONDITIONAL INPUTS */}
                 {type === 'CV' && (
-                  <>
-                    <div>
-                      <label style={labelStyle}>CV Type</label>
-                      <select 
-                        value={builder.cvType}
-                        onChange={(e) => builder.setCvType(e.target.value)}
-                        style={selectInputStyle}
-                      >
-                        <option value="Work CV">Work CV (Standard corporate layout)</option>
-                        <option value="Teaching / Academic CV">Teaching / Academic CV (Rigid academic sections)</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label style={labelStyle}>Experience Level</label>
-                      <select 
-                        value={builder.experienceLevel}
-                        onChange={(e) => builder.setExperienceLevel(e.target.value)}
-                        style={selectInputStyle}
-                      >
-                        <option value="Graduate">Graduate (Academic highlights & entry roles)</option>
-                        <option value="Early Career">Early Career (1-3 years experience)</option>
-                        <option value="Mid Career">Mid Career (3-8 years experience)</option>
-                        <option value="Senior">Senior (8+ years experience & leadership)</option>
-                        <option value="Executive">Executive (Director/C-level corporate governance)</option>
-                      </select>
-                    </div>
-
-                    <div>
-                      <label style={labelStyle}>Target Page Count</label>
-                      <select
-                        value={builder.pageCount}
-                        onChange={(e) => builder.setPageCount(Number(e.target.value))}
-                        style={selectInputStyle}
-                      >
-                        <option value={1}>1 Page (Concise, high-impact resume)</option>
-                        <option value={2}>2 Pages (Ideal, professional CV default)</option>
-                        <option value={3}>3 Pages (Detailed, academic/executive CV)</option>
-                      </select>
-                    </div>
-
-                    <div style={{ gridColumn: 'span 2' }}>
-                      <label style={labelStyle}>Do you have a Career Gap to explain?</label>
-                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '8px' }}>
-                        <button 
-                          type="button"
-                          onClick={() => builder.setCareerGap(true)}
-                          style={{
-                            padding: '8px 16px',
-                            borderRadius: '8px',
-                            border: builder.careerGap ? '1px solid var(--accent-primary)' : '1px solid var(--border-color)',
-                            backgroundColor: builder.careerGap ? 'rgba(245,158,11,0.1)' : 'transparent',
-                            color: builder.careerGap ? 'var(--accent-primary)' : 'var(--text-secondary)',
-                            cursor: 'pointer',
-                            fontWeight: 650,
-                          }}
+                  <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '8px' }}>
+                    
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px' }}>
+                      <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+                        <label style={{ ...labelStyle, color: 'var(--accent-primary)' }}>CV Type</label>
+                        <select 
+                          value={builder.cvType}
+                          onChange={(e) => builder.setCvType(e.target.value)}
+                          style={{ ...selectInputStyle, border: 'none', backgroundColor: 'var(--bg-tertiary)', marginTop: '8px' }}
                         >
-                          Yes
-                        </button>
-                        <button 
-                          type="button"
-                          onClick={() => { builder.setCareerGap(false); builder.setCareerGapExplanation(''); }}
-                          style={{
-                            padding: '8px 16px',
-                            borderRadius: '8px',
-                            border: !builder.careerGap ? '1px solid var(--accent-primary)' : '1px solid var(--border-color)',
-                            backgroundColor: !builder.careerGap ? 'rgba(245,158,11,0.1)' : 'transparent',
-                            color: !builder.careerGap ? 'var(--accent-primary)' : 'var(--text-secondary)',
-                            cursor: 'pointer',
-                            fontWeight: 650,
-                          }}
+                          <option value="Work CV">Work CV (Standard corporate layout)</option>
+                          <option value="Teaching / Academic CV">Teaching / Academic CV (Rigid academic sections)</option>
+                        </select>
+                      </div>
+
+                      <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+                        <label style={{ ...labelStyle, color: 'var(--accent-primary)' }}>Experience Level</label>
+                        <select 
+                          value={builder.experienceLevel}
+                          onChange={(e) => builder.setExperienceLevel(e.target.value)}
+                          style={{ ...selectInputStyle, border: 'none', backgroundColor: 'var(--bg-tertiary)', marginTop: '8px' }}
                         >
-                          No
-                        </button>
+                          <option value="Graduate">Graduate (Academic highlights & entry roles)</option>
+                          <option value="Early Career">Early Career (1-3 years experience)</option>
+                          <option value="Mid Career">Mid Career (3-8 years experience)</option>
+                          <option value="Senior">Senior (8+ years experience & leadership)</option>
+                          <option value="Executive">Executive (Director/C-level corporate governance)</option>
+                        </select>
+                      </div>
+
+                      <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+                        <label style={{ ...labelStyle, color: 'var(--accent-primary)' }}>Target Page Count</label>
+                        <select
+                          value={builder.pageCount}
+                          onChange={(e) => builder.setPageCount(Number(e.target.value))}
+                          style={{ ...selectInputStyle, border: 'none', backgroundColor: 'var(--bg-tertiary)', marginTop: '8px' }}
+                        >
+                          <option value={1}>1 Page (Concise, high-impact resume)</option>
+                          <option value={2}>2 Pages (Ideal, professional CV default)</option>
+                          <option value={3}>3 Pages (Detailed, academic/executive CV)</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div style={{ backgroundColor: builder.careerGap ? 'rgba(245,158,11,0.03)' : 'var(--bg-secondary)', padding: '20px', borderRadius: '12px', border: builder.careerGap ? '1px solid rgba(245,158,11,0.3)' : '1px solid var(--border-color)', transition: 'all 0.3s ease' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+                        <div>
+                          <label style={{ ...labelStyle, fontSize: '0.9rem', color: builder.careerGap ? '#f59e0b' : 'var(--text-primary)' }}>Explain a Career Gap?</label>
+                          <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: 0 }}>Claude will frame any break positively in your profile.</p>
+                        </div>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button 
+                            type="button"
+                            onClick={() => builder.setCareerGap(true)}
+                            style={{
+                              padding: '8px 20px',
+                              borderRadius: '20px',
+                              border: builder.careerGap ? '1px solid #f59e0b' : '1px solid var(--border-color)',
+                              backgroundColor: builder.careerGap ? 'rgba(245,158,11,0.1)' : 'transparent',
+                              color: builder.careerGap ? '#f59e0b' : 'var(--text-secondary)',
+                              cursor: 'pointer',
+                              fontWeight: 700,
+                              transition: 'all 0.2s'
+                            }}
+                          >
+                            Yes
+                          </button>
+                          <button 
+                            type="button"
+                            onClick={() => { builder.setCareerGap(false); builder.setCareerGapExplanation(''); }}
+                            style={{
+                              padding: '8px 20px',
+                              borderRadius: '20px',
+                              border: !builder.careerGap ? '1px solid var(--border-color)' : '1px solid transparent',
+                              backgroundColor: !builder.careerGap ? 'var(--bg-tertiary)' : 'transparent',
+                              color: !builder.careerGap ? 'var(--text-primary)' : 'var(--text-secondary)',
+                              cursor: 'pointer',
+                              fontWeight: 700,
+                              transition: 'all 0.2s'
+                            }}
+                          >
+                            No
+                          </button>
+                        </div>
                       </div>
                       
                       {builder.careerGap && (
-                        <textarea
-                          placeholder="Briefly explain the gap (e.g. Parental leave, career break to self-study React, family care). Claude will frame this positively."
-                          value={builder.careerGapExplanation}
-                          onChange={(e) => builder.setCareerGapExplanation(e.target.value)}
-                          style={{ ...textareaStyle, height: '80px', minHeight: '80px' }}
-                          required
-                        />
+                        <div style={{ marginTop: '16px', animation: 'fadeIn 0.3s ease' }}>
+                          <textarea
+                            placeholder="Briefly explain the gap (e.g. Parental leave, career break to self-study React, family care). Claude will frame this positively."
+                            value={builder.careerGapExplanation}
+                            onChange={(e) => builder.setCareerGapExplanation(e.target.value)}
+                            style={{ ...textareaStyle, height: '80px', minHeight: '80px', borderColor: 'rgba(245,158,11,0.2)', backgroundColor: 'var(--bg-primary)' }}
+                            required
+                          />
+                        </div>
                       )}
                     </div>
-                  </>
+                  </div>
                 )}
 
                 {/* COVER LETTER BUILDER CONDITIONAL INPUTS */}
                 {type === 'Cover Letter' && (
-                  <>
-                    <div>
-                      <label style={labelStyle}>Target Word Count</label>
-                      <select 
-                        value={builder.wordLimit}
-                        onChange={(e) => builder.setWordLimit(Number(e.target.value))}
-                        style={selectInputStyle}
-                      >
-                        <option value={250}>250 Words (Concise & direct)</option>
-                        <option value={350}>350 Words (Ideal, default cover letter)</option>
-                        <option value={500}>500 Words (Detailed fellowship or proposal letter)</option>
-                      </select>
+                  <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '8px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px' }}>
+                      <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+                        <label style={{ ...labelStyle, color: 'var(--accent-primary)' }}>Target Word Count</label>
+                        <select 
+                          value={builder.wordLimit}
+                          onChange={(e) => builder.setWordLimit(Number(e.target.value))}
+                          style={{ ...selectInputStyle, border: 'none', backgroundColor: 'var(--bg-tertiary)', marginTop: '8px' }}
+                        >
+                          <option value={250}>250 Words (Concise & direct)</option>
+                          <option value={350}>350 Words (Ideal, default cover letter)</option>
+                          <option value={500}>500 Words (Detailed fellowship or proposal letter)</option>
+                        </select>
+                      </div>
+
+                      <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+                        <label style={{ ...labelStyle, color: 'var(--accent-primary)' }}>Application Stage</label>
+                        <select 
+                          value={builder.applicationStage}
+                          onChange={(e) => builder.setApplicationStage(e.target.value)}
+                          style={{ ...selectInputStyle, border: 'none', backgroundColor: 'var(--bg-tertiary)', marginTop: '8px' }}
+                        >
+                          <option value="Applying for an advertised role">Advertised role (Standard match)</option>
+                          <option value="Speculative application">Speculative (Cold outreach)</option>
+                          <option value="Following a referral">Following a referral (Warm lead)</option>
+                          <option value="Responding to a recruiter">Responding to a recruiter</option>
+                        </select>
+                      </div>
                     </div>
 
-                    <div>
-                      <label style={labelStyle}>Application Stage</label>
-                      <select 
-                        value={builder.applicationStage}
-                        onChange={(e) => builder.setApplicationStage(e.target.value)}
-                        style={selectInputStyle}
-                      >
-                        <option value="Applying for an advertised role">Applying for an advertised role (Standard match-fit opening)</option>
-                        <option value="Speculative application">Speculative application (Cold outreach seeking opening)</option>
-                        <option value="Following a referral">Following a referral (Leveraging shared connection / reference)</option>
-                        <option value="Responding to a recruiter">Responding to a recruiter (Direct follow-up to outbound ping)</option>
-                      </select>
-                    </div>
-
-                    <div style={{ gridColumn: 'span 2' }}>
-                      <label style={labelStyle}>Core Project or Achievement to Highlight *</label>
-                      <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>
-                        This will be the central anchor of your cover letter. Claude will build the narrative around this priority.
+                    <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '24px 20px 20px', borderRadius: '12px', border: '1px solid var(--accent-primary)', position: 'relative' }}>
+                      <div style={{ position: 'absolute', top: '-12px', left: '20px', backgroundColor: 'var(--bg-primary)', padding: '2px 12px', borderRadius: '12px', border: '1px solid var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <Sparkles size={12} color="var(--accent-primary)" />
+                        <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '0.5px' }}>CRITICAL ANCHOR</span>
+                      </div>
+                      <label style={{ ...labelStyle, fontSize: '0.95rem', color: 'var(--text-primary)', marginTop: '4px' }}>Core Project or Achievement to Highlight *</label>
+                      <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '16px', lineHeight: 1.5 }}>
+                        This will be the central anchor of your cover letter. Claude will build the entire narrative around this priority to ensure it connects deeply with the reader.
                       </p>
                       <textarea
                         placeholder="e.g. Led a 5-person engineering team to rebuild the core checkout flow using Next.js and Tailwind, increasing conversion by 28% and performance by 40%."
                         value={builder.projectAnchor}
                         onChange={(e) => builder.setProjectAnchor(e.target.value)}
-                        style={{ ...textareaStyle, height: '80px', minHeight: '80px' }}
+                        style={{ ...textareaStyle, height: '90px', minHeight: '90px', border: '1px solid var(--accent-primary)', backgroundColor: 'var(--bg-primary)', boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}
                         required
                       />
                     </div>
-                  </>
+                  </div>
                 )}
 
                 {/* GRANT BUILDER CONDITIONAL INPUTS */}
                 {type === 'Proposal' && (
-                  <>
-                    <div>
-                      <label style={labelStyle}>Target Page Count (1 - 20 pages)</label>
-                      <select
-                        value={builder.pageCount}
-                        onChange={(e) => builder.setPageCount(Number(e.target.value))}
-                        style={selectInputStyle}
-                      >
-                        {Array.from({ length: 20 }, (_, i) => i + 1).map(num => (
-                          <option key={num} value={num}>{num} Page{num > 1 ? 's' : ''}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div>
-                      <label style={labelStyle}>Funder's Stated Values & Mission Alignment</label>
-                      <textarea
-                        placeholder="e.g. Empowering underrepresented youth through technical education, scalable community projects, and employment pathways."
-                        value={builder.funderValues}
-                        onChange={(e) => builder.setFunderValues(e.target.value)}
-                        style={{ ...textareaStyle, height: '42px', minHeight: '42px', padding: '10px 12px' }}
-                      />
-                    </div>
-
-                    <div>
-                      <label style={labelStyle}>Have you applied to this funder before?</label>
-                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '8px' }}>
-                        <button 
-                          type="button"
-                          onClick={() => builder.setPreviousAppHistory(true)}
-                          style={{
-                            padding: '8px 16px',
-                            borderRadius: '8px',
-                            border: builder.previousAppHistory ? '1px solid var(--accent-primary)' : '1px solid var(--border-color)',
-                            backgroundColor: builder.previousAppHistory ? 'rgba(245,158,11,0.1)' : 'transparent',
-                            color: builder.previousAppHistory ? 'var(--accent-primary)' : 'var(--text-secondary)',
-                            cursor: 'pointer',
-                            fontWeight: 650,
-                          }}
+                  <div style={{ gridColumn: '1 / -1', display: 'flex', flexDirection: 'column', gap: '24px', marginTop: '8px' }}>
+                    
+                    {/* General Setup */}
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '20px' }}>
+                      <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+                        <label style={{ ...labelStyle, color: 'var(--accent-primary)' }}>Target Page Count</label>
+                        <select
+                          value={builder.pageCount}
+                          onChange={(e) => builder.setPageCount(Number(e.target.value))}
+                          style={{ ...selectInputStyle, border: 'none', backgroundColor: 'var(--bg-tertiary)', marginTop: '8px' }}
                         >
-                          Yes
-                        </button>
-                        <button 
-                          type="button"
-                          onClick={() => { builder.setPreviousAppHistory(false); builder.setPreviousAppFeedback(''); }}
-                          style={{
-                            padding: '8px 16px',
-                            borderRadius: '8px',
-                            border: !builder.previousAppHistory ? '1px solid var(--accent-primary)' : '1px solid var(--border-color)',
-                            backgroundColor: !builder.previousAppHistory ? 'rgba(245,158,11,0.1)' : 'transparent',
-                            color: !builder.previousAppHistory ? 'var(--accent-primary)' : 'var(--text-secondary)',
-                            cursor: 'pointer',
-                            fontWeight: 650,
-                          }}
-                        >
-                          No
-                        </button>
+                          {Array.from({ length: 20 }, (_, i) => i + 1).map(num => (
+                            <option key={num} value={num}>{num} Page{num > 1 ? 's' : ''}</option>
+                          ))}
+                        </select>
                       </div>
-                      
-                      {builder.previousAppHistory && (
+
+                      <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+                        <label style={{ ...labelStyle, color: 'var(--accent-primary)' }}>Funder's Mission & Values Alignment</label>
                         <textarea
-                          placeholder="Feedback received from previous application..."
-                          value={builder.previousAppFeedback}
-                          onChange={(e) => builder.setPreviousAppFeedback(e.target.value)}
-                          style={{ ...textareaStyle, height: '60px', minHeight: '60px', padding: '8px 12px' }}
+                          placeholder="e.g. Empowering underrepresented youth through technical education..."
+                          value={builder.funderValues}
+                          onChange={(e) => builder.setFunderValues(e.target.value)}
+                          style={{ ...textareaStyle, height: '42px', minHeight: '42px', padding: '10px 12px', marginTop: '8px', border: 'none', backgroundColor: 'var(--bg-tertiary)' }}
                         />
-                      )}
-                    </div>
-
-                    <div>
-                      <label style={labelStyle}>Application Setup</label>
-                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '8px' }}>
-                        <button 
-                          type="button"
-                          onClick={() => { builder.setHasPartner(false); builder.setPartnerName(''); builder.setPartnerRole(''); }}
-                          style={{
-                            padding: '8px 16px',
-                            borderRadius: '8px',
-                            border: !builder.hasPartner ? '1px solid var(--accent-primary)' : '1px solid var(--border-color)',
-                            backgroundColor: !builder.hasPartner ? 'rgba(245,158,11,0.1)' : 'transparent',
-                            color: !builder.hasPartner ? 'var(--accent-primary)' : 'var(--text-secondary)',
-                            cursor: 'pointer',
-                            fontWeight: 650,
-                          }}
-                        >
-                          Solo Application
-                        </button>
-                        <button 
-                          type="button"
-                          onClick={() => builder.setHasPartner(true)}
-                          style={{
-                            padding: '8px 16px',
-                            borderRadius: '8px',
-                            border: builder.hasPartner ? '1px solid var(--accent-primary)' : '1px solid var(--border-color)',
-                            backgroundColor: builder.hasPartner ? 'rgba(245,158,11,0.1)' : 'transparent',
-                            color: builder.hasPartner ? 'var(--accent-primary)' : 'var(--text-secondary)',
-                            cursor: 'pointer',
-                            fontWeight: 650,
-                          }}
-                        >
-                          Partnership / Co-applicants
-                        </button>
                       </div>
-                      
-                      {builder.hasPartner && (
-                        <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                          <input
-                            type="text"
-                            placeholder="Partner Name"
-                            value={builder.partnerName}
-                            onChange={(e) => builder.setPartnerName(e.target.value)}
-                            style={{ ...selectInputStyle, padding: '8px 12px' }}
-                          />
-                          <input
-                            type="text"
-                            placeholder="Partner Role"
-                            value={builder.partnerRole}
-                            onChange={(e) => builder.setPartnerRole(e.target.value)}
-                            style={{ ...selectInputStyle, padding: '8px 12px' }}
-                          />
-                        </div>
-                      )}
                     </div>
 
-                    <div style={{ gridColumn: 'span 2' }}>
-                      <label style={labelStyle}>Reporting & Accountability Methods</label>
-                      <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                    {/* Partnership & History */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
+                      <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                          <label style={{ ...labelStyle, margin: 0, color: 'var(--text-primary)' }}>Application Structure</label>
+                          <div style={{ display: 'flex', backgroundColor: 'var(--bg-tertiary)', borderRadius: '8px', padding: '4px' }}>
+                            <button 
+                              type="button"
+                              onClick={() => { builder.setHasPartner(false); builder.setPartnerName(''); builder.setPartnerRole(''); }}
+                              style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, backgroundColor: !builder.hasPartner ? 'var(--bg-primary)' : 'transparent', color: !builder.hasPartner ? 'var(--accent-primary)' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', transition: 'all 0.2s', boxShadow: !builder.hasPartner ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}
+                            >
+                              Solo
+                            </button>
+                            <button 
+                              type="button"
+                              onClick={() => builder.setHasPartner(true)}
+                              style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, backgroundColor: builder.hasPartner ? 'var(--bg-primary)' : 'transparent', color: builder.hasPartner ? 'var(--accent-primary)' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', transition: 'all 0.2s', boxShadow: builder.hasPartner ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}
+                            >
+                              Partnership
+                            </button>
+                          </div>
+                        </div>
+                        {builder.hasPartner && (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', animation: 'fadeIn 0.3s ease' }}>
+                            <input
+                              type="text"
+                              placeholder="Partner Organization Name"
+                              value={builder.partnerName}
+                              onChange={(e) => builder.setPartnerName(e.target.value)}
+                              style={{ ...selectInputStyle, backgroundColor: 'var(--bg-tertiary)', border: 'none' }}
+                            />
+                            <input
+                              type="text"
+                              placeholder="Partner Role / Contribution"
+                              value={builder.partnerRole}
+                              onChange={(e) => builder.setPartnerRole(e.target.value)}
+                              style={{ ...selectInputStyle, backgroundColor: 'var(--bg-tertiary)', border: 'none' }}
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                          <label style={{ ...labelStyle, margin: 0, color: 'var(--text-primary)' }}>Applied Before?</label>
+                          <div style={{ display: 'flex', backgroundColor: 'var(--bg-tertiary)', borderRadius: '8px', padding: '4px' }}>
+                            <button 
+                              type="button"
+                              onClick={() => builder.setPreviousAppHistory(true)}
+                              style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, backgroundColor: builder.previousAppHistory ? 'var(--bg-primary)' : 'transparent', color: builder.previousAppHistory ? '#f59e0b' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', transition: 'all 0.2s', boxShadow: builder.previousAppHistory ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}
+                            >
+                              Yes
+                            </button>
+                            <button 
+                              type="button"
+                              onClick={() => { builder.setPreviousAppHistory(false); builder.setPreviousAppFeedback(''); }}
+                              style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, backgroundColor: !builder.previousAppHistory ? 'var(--bg-primary)' : 'transparent', color: !builder.previousAppHistory ? 'var(--accent-primary)' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', transition: 'all 0.2s', boxShadow: !builder.previousAppHistory ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}
+                            >
+                              No
+                            </button>
+                          </div>
+                        </div>
+                        {builder.previousAppHistory && (
+                          <div style={{ animation: 'fadeIn 0.3s ease' }}>
+                            <textarea
+                              placeholder="Feedback received from previous application..."
+                              value={builder.previousAppFeedback}
+                              onChange={(e) => builder.setPreviousAppFeedback(e.target.value)}
+                              style={{ ...textareaStyle, height: '82px', minHeight: '82px', backgroundColor: 'var(--bg-tertiary)', border: '1px solid rgba(245,158,11,0.2)' }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Reporting Methods */}
+                    <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+                      <label style={{ ...labelStyle, color: 'var(--text-primary)', fontSize: '0.95rem' }}>Reporting & Accountability Methods</label>
+                      <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>
                         Select or add performance indicators Claude will weave into the Theory of Change & Sustainability narrative.
                       </p>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
-                        {['monthly user data', 'cohort completion rates', 'employment outcomes'].map(m => {
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '16px' }}>
+                        {['Monthly User Data', 'Cohort Completion Rates', 'Employment Outcomes', 'Financial Audits'].map(m => {
                           const isSelected = builder.reportingMethods.includes(m);
                           return (
                             <button
@@ -561,26 +567,31 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                                 }
                               }}
                               style={{
-                                padding: '6px 12px',
-                                borderRadius: '20px',
-                                fontSize: '0.75rem',
+                                padding: '8px 16px',
+                                borderRadius: '24px',
+                                fontSize: '0.8rem',
                                 border: isSelected ? '1px solid var(--accent-primary)' : '1px solid var(--border-color)',
-                                backgroundColor: isSelected ? 'rgba(245,158,11,0.08)' : 'var(--bg-secondary)',
+                                backgroundColor: isSelected ? 'rgba(16, 185, 129, 0.1)' : 'var(--bg-tertiary)',
                                 color: isSelected ? 'var(--accent-primary)' : 'var(--text-secondary)',
                                 cursor: 'pointer',
-                                fontWeight: 650,
+                                fontWeight: 700,
+                                transition: 'all 0.2s',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '6px'
                               }}
                             >
+                              {isSelected && <CheckCircle size={14} />}
                               {m}
                             </button>
                           );
                         })}
                       </div>
-                      <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+                      <div style={{ display: 'flex', gap: '8px' }}>
                         <input 
                           type="text" 
                           placeholder="Type and press Enter to add a custom reporting indicator..."
-                          style={{ ...selectInputStyle, padding: '8px 12px', flex: 1 }}
+                          style={{ ...selectInputStyle, backgroundColor: 'var(--bg-tertiary)', border: '1px dashed var(--border-color)', flex: 1 }}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter') {
                               e.preventDefault();
@@ -595,21 +606,30 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                       </div>
                     </div>
 
-                    <div style={{ gridColumn: 'span 2', marginTop: '12px', borderTop: '1px solid var(--border-color)', paddingTop: '16px' }}>
-                      <label style={labelStyle}>Dynamic Custom Questions ({builder.customQuestions.length})</label>
-                      <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '12px' }}>
-                        Add specific questions from the funder proposal guidelines. Claude will generate responses for each of them.
+                    {/* Custom Questions Manager */}
+                    <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '24px 20px 20px', borderRadius: '12px', border: '1px solid var(--accent-primary)', position: 'relative' }}>
+                      <div style={{ position: 'absolute', top: '-12px', left: '20px', backgroundColor: 'var(--bg-primary)', padding: '2px 12px', borderRadius: '12px', border: '1px solid var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <Sparkles size={12} color="var(--accent-primary)" />
+                        <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '0.5px' }}>DYNAMIC QUESTIONS ({builder.customQuestions.length})</span>
+                      </div>
+                      <label style={{ ...labelStyle, fontSize: '0.95rem', color: 'var(--text-primary)', marginTop: '4px' }}>Funder Specific Questions</label>
+                      <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: 1.5 }}>
+                        Add specific questions from the funder proposal guidelines. Claude will generate compliant, precisely tailored responses for each of them.
                       </p>
 
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '20px' }}>
                         {builder.customQuestions.map((q: any, index: number) => (
-                          <div key={q.id || index} style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                          <div key={q.id || index} style={{ backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--accent-primary)' }}>Question #{index + 1}</span>
+                              <Badge variant="outline" style={{ color: 'var(--accent-primary)', borderColor: 'var(--accent-primary)', backgroundColor: 'transparent', fontWeight: 800 }}>
+                                Question {index + 1}
+                              </Badge>
                               <button
                                 type="button"
                                 onClick={() => builder.setCustomQuestions(builder.customQuestions.filter((_, idx) => idx !== index))}
-                                style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 600 }}
+                                style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '0.8rem', cursor: 'pointer', fontWeight: 700, opacity: 0.8, transition: 'opacity 0.2s' }}
+                                onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
+                                onMouseLeave={(e) => e.currentTarget.style.opacity = '0.8'}
                               >
                                 Remove
                               </button>
@@ -623,11 +643,11 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                                 updated[index].question = e.target.value;
                                 builder.setCustomQuestions(updated);
                               }}
-                              style={selectInputStyle}
+                              style={{ ...selectInputStyle, backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border-color)' }}
                               required
                             />
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Word limit:</span>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', alignSelf: 'flex-start', backgroundColor: 'var(--bg-primary)', padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Word limit:</span>
                               <input
                                 type="number"
                                 min="50"
@@ -638,7 +658,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                                   updated[index].wordLimit = Number(e.target.value);
                                   builder.setCustomQuestions(updated);
                                 }}
-                                style={{ ...selectInputStyle, width: '100px', padding: '6px 12px' }}
+                                style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', outline: 'none', width: '60px', fontWeight: 700, fontSize: '0.9rem' }}
                               />
                             </div>
                           </div>
@@ -653,19 +673,25 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                           border: '1px dashed var(--accent-primary)',
                           color: 'var(--accent-primary)',
                           borderRadius: '8px',
-                          padding: '8px 16px',
-                          fontSize: '0.75rem',
+                          padding: '12px 20px',
+                          fontSize: '0.85rem',
                           cursor: 'pointer',
-                          fontWeight: 650,
+                          fontWeight: 700,
                           display: 'inline-flex',
                           alignItems: 'center',
-                          gap: '6px'
+                          gap: '8px',
+                          width: '100%',
+                          justifyContent: 'center',
+                          transition: 'all 0.2s'
                         }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'rgba(16, 185, 129, 0.05)'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                       >
-                        + Add Custom Funder Question
+                        <Sparkles size={16} />
+                        Add Custom Funder Question
                       </button>
                     </div>
-                  </>
+                  </div>
                 )}
               </div>
             </Card>
