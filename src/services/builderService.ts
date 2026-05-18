@@ -27,6 +27,30 @@ export interface BuilderRequest {
   tone_preference?: string;
   preferred_language?: string;
   status: 'pending' | 'success' | 'failed';
+  manual_notes?: {
+    custom_question_notes?: string;
+    leadership_achievements?: string;
+    project_notes?: string;
+    additional_context?: string;
+  };
+  custom_questions?: any[];
+  career_gap?: boolean;
+  career_gap_explanation?: string;
+  experience_level?: string;
+  cv_type?: string;
+  application_stage?: string;
+  project_anchor?: string;
+  funder_values?: string;
+  previous_app_history?: {
+    applied_before?: boolean;
+    feedback?: string;
+  };
+  partners?: {
+    has_partner?: boolean;
+    partner_name?: string;
+    partner_role?: string;
+  };
+  reporting_methods?: string[];
   created_at?: string;
   updated_at?: string;
 }
@@ -42,9 +66,34 @@ export interface GeneratedDocument {
   version: number;
   is_current: boolean;
   opportunity_id?: string;
+  manual_notes?: {
+    custom_question_notes?: string;
+    leadership_achievements?: string;
+    project_notes?: string;
+    additional_context?: string;
+  };
+  custom_questions?: any[];
+  career_gap?: boolean;
+  career_gap_explanation?: string;
+  experience_level?: string;
+  cv_type?: string;
+  application_stage?: string;
+  project_anchor?: string;
+  funder_values?: string;
+  previous_app_history?: {
+    applied_before?: boolean;
+    feedback?: string;
+  };
+  partners?: {
+    has_partner?: boolean;
+    partner_name?: string;
+    partner_role?: string;
+  };
+  reporting_methods?: string[];
   created_at?: string;
   updated_at?: string;
 }
+
 
 export const BuilderService = {
   // === PROFILE SOURCES ===

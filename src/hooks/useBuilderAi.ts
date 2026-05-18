@@ -24,9 +24,46 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
   const [tone, setTone] = useState<string>(profile?.assistant_settings?.tone || 'Professional & Academic');
   const [language, setLanguage] = useState<string>('English (UK)');
   
-  // Limits
-  const [wordLimit, setWordLimit] = useState<number>(300);
-  const [pageCount, setPageCount] = useState<number>(1);
+  // Limits with intelligent defaults based on document type
+  const [wordLimit, setWordLimit] = useState<number>(
+    builderType === 'cv' ? 800 : builderType === 'cover_letter' ? 350 : 1500
+  );
+  const [pageCount, setPageCount] = useState<number>(
+    builderType === 'cv' ? 2 : builderType === 'cover_letter' ? 1 : 3
+  );
+
+  // CV Builder specific states
+  const [careerGap, setCareerGap] = useState<boolean>(false);
+  const [careerGapExplanation, setCareerGapExplanation] = useState<string>('');
+  const [experienceLevel, setExperienceLevel] = useState<string>('Mid Career');
+  const [cvType, setCvType] = useState<string>('Work CV');
+
+  // Cover Letter specific states
+  const [applicationStage, setApplicationStage] = useState<string>('Applying for an advertised role');
+  const [projectAnchor, setProjectAnchor] = useState<string>('');
+
+  // Grant / Proposal specific states
+  const [funderValues, setFunderValues] = useState<string>('');
+  const [previousAppHistory, setPreviousAppHistory] = useState<boolean>(false);
+  const [previousAppFeedback, setPreviousAppFeedback] = useState<string>('');
+  const [hasPartner, setHasPartner] = useState<boolean>(false);
+  const [partnerName, setPartnerName] = useState<string>('');
+  const [partnerRole, setPartnerRole] = useState<string>('');
+  const [reportingMethods, setReportingMethods] = useState<string[]>([]);
+  const [customQuestions, setCustomQuestions] = useState<any[]>([]);
+
+  // Manual notes states for granular context details
+  const [manualNotes, setManualNotes] = useState<{
+    customQuestionNotes: string;
+    leadershipAchievements: string;
+    projectNotes: string;
+    additionalContext: string;
+  }>({
+    customQuestionNotes: '',
+    leadershipAchievements: '',
+    projectNotes: '',
+    additionalContext: '',
+  });
   
   // Loading & status states
   const [sources, setSources] = useState<ProfileSource[]>([]);
@@ -118,12 +155,36 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
         task: `Gap Analysis for ${documentType}`,
         document_type: documentType,
         opportunity_id: opportunityId || undefined,
-        source_ids: selectedSourceIds,
+        source_ids: selectedSourceIds.filter(id => id !== 'pathew-profile'),
         current_text: opportunityText,
         tone_preference: tone,
         preferred_language: language,
         word_limit: wordLimit,
         page_count: pageCount,
+        manual_notes: {
+          custom_question_notes: manualNotes.customQuestionNotes,
+          leadership_achievements: manualNotes.leadershipAchievements,
+          project_notes: manualNotes.projectNotes,
+          additional_context: manualNotes.additionalContext,
+        },
+        custom_questions: customQuestions,
+        career_gap: careerGap,
+        career_gap_explanation: careerGapExplanation,
+        experience_level: experienceLevel,
+        cv_type: cvType,
+        application_stage: applicationStage,
+        project_anchor: projectAnchor,
+        funder_values: funderValues,
+        previous_app_history: {
+          applied_before: previousAppHistory,
+          feedback: previousAppFeedback
+        },
+        partners: {
+          has_partner: hasPartner,
+          partner_name: partnerName,
+          partner_role: partnerRole
+        },
+        reporting_methods: reportingMethods
       }, user.id);
 
       // 2. Call Edge Function with action = "extract_context"
@@ -132,10 +193,33 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
         sessionId,
         documentType,
         opportunityId: opportunityId || undefined,
-        sourceIds: selectedSourceIds,
+        sourceIds: selectedSourceIds.filter(id => id !== 'pathew-profile'),
         tone,
         language,
-        currentDraft: opportunityText // pipe manually pasted opportunity text
+        currentDraft: opportunityText, // pipe manually pasted opportunity text
+        contextData: {
+          manualNotes,
+          pageCount,
+          wordLimit,
+          customQuestions,
+          careerGap,
+          careerGapExplanation,
+          experienceLevel,
+          cvType,
+          applicationStage,
+          projectAnchor,
+          funderValues,
+          previousAppHistory: {
+            applied_before: previousAppHistory,
+            feedback: previousAppFeedback
+          },
+          partners: {
+            has_partner: hasPartner,
+            partner_name: partnerName,
+            partner_role: partnerRole
+          },
+          reportingMethods
+        }
       });
 
       if (result.error) {
@@ -182,13 +266,37 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
         task: `Generate Tailored ${documentType}`,
         document_type: documentType,
         opportunity_id: opportunityId || undefined,
-        source_ids: selectedSourceIds,
+        source_ids: selectedSourceIds.filter(id => id !== 'pathew-profile'),
         current_text: opportunityText,
         user_prompt: JSON.stringify(activeAnswers),
         tone_preference: tone,
         preferred_language: language,
         word_limit: wordLimit,
         page_count: pageCount,
+        manual_notes: {
+          custom_question_notes: manualNotes.customQuestionNotes,
+          leadership_achievements: manualNotes.leadershipAchievements,
+          project_notes: manualNotes.projectNotes,
+          additional_context: manualNotes.additionalContext,
+        },
+        custom_questions: customQuestions,
+        career_gap: careerGap,
+        career_gap_explanation: careerGapExplanation,
+        experience_level: experienceLevel,
+        cv_type: cvType,
+        application_stage: applicationStage,
+        project_anchor: projectAnchor,
+        funder_values: funderValues,
+        previous_app_history: {
+          applied_before: previousAppHistory,
+          feedback: previousAppFeedback
+        },
+        partners: {
+          has_partner: hasPartner,
+          partner_name: partnerName,
+          partner_role: partnerRole
+        },
+        reporting_methods: reportingMethods
       }, user.id);
 
       const result = await PathewAssistantService.generateResponse({
@@ -196,11 +304,34 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
         sessionId: activeSessionId,
         documentType,
         opportunityId: opportunityId || undefined,
-        sourceIds: selectedSourceIds,
+        sourceIds: selectedSourceIds.filter(id => id !== 'pathew-profile'),
         missingFieldsAnswers: activeAnswers,
         tone,
         language,
-        currentDraft: draftContent || opportunityText
+        currentDraft: draftContent || opportunityText,
+        contextData: {
+          manualNotes,
+          pageCount,
+          wordLimit,
+          customQuestions,
+          careerGap,
+          careerGapExplanation,
+          experienceLevel,
+          cvType,
+          applicationStage,
+          projectAnchor,
+          funderValues,
+          previousAppHistory: {
+            applied_before: previousAppHistory,
+            feedback: previousAppFeedback
+          },
+          partners: {
+            has_partner: hasPartner,
+            partner_name: partnerName,
+            partner_role: partnerRole
+          },
+          reportingMethods
+        }
       });
 
       if (result.error) {
@@ -242,11 +373,34 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
         sessionId,
         documentType,
         opportunityId: opportunityId || undefined,
-        sourceIds: selectedSourceIds,
+        sourceIds: selectedSourceIds.filter(id => id !== 'pathew-profile'),
         missingFieldsAnswers: missingAnswers,
         tone,
         language,
-        currentDraft: draftContent
+        currentDraft: draftContent,
+        contextData: {
+          manualNotes,
+          pageCount,
+          wordLimit,
+          customQuestions,
+          careerGap,
+          careerGapExplanation,
+          experienceLevel,
+          cvType,
+          applicationStage,
+          projectAnchor,
+          funderValues,
+          previousAppHistory: {
+            applied_before: previousAppHistory,
+            feedback: previousAppFeedback
+          },
+          partners: {
+            has_partner: hasPartner,
+            partner_name: partnerName,
+            partner_role: partnerRole
+          },
+          reportingMethods
+        }
       });
 
       if (result.error) {
@@ -290,6 +444,30 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
         version: v,
         is_current: true,
         opportunity_id: opportunityId || undefined,
+        manual_notes: {
+          custom_question_notes: manualNotes.customQuestionNotes,
+          leadership_achievements: manualNotes.leadershipAchievements,
+          project_notes: manualNotes.projectNotes,
+          additional_context: manualNotes.additionalContext,
+        },
+        custom_questions: customQuestions,
+        career_gap: careerGap,
+        career_gap_explanation: careerGapExplanation,
+        experience_level: experienceLevel,
+        cv_type: cvType,
+        application_stage: applicationStage,
+        project_anchor: projectAnchor,
+        funder_values: funderValues,
+        previous_app_history: {
+          applied_before: previousAppHistory,
+          feedback: previousAppFeedback
+        },
+        partners: {
+          has_partner: hasPartner,
+          partner_name: partnerName,
+          partner_role: partnerRole
+        },
+        reporting_methods: reportingMethods
       }, user.id);
 
       await loadSavedVersions();
@@ -330,6 +508,42 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
     setWordLimit,
     pageCount,
     setPageCount,
+    manualNotes,
+    setManualNotes,
+
+    // CV Builder states
+    careerGap,
+    setCareerGap,
+    careerGapExplanation,
+    setCareerGapExplanation,
+    experienceLevel,
+    setExperienceLevel,
+    cvType,
+    setCvType,
+
+    // Cover Letter states
+    applicationStage,
+    setApplicationStage,
+    projectAnchor,
+    setProjectAnchor,
+
+    // Grant Builder states
+    funderValues,
+    setFunderValues,
+    previousAppHistory,
+    setPreviousAppHistory,
+    previousAppFeedback,
+    setPreviousAppFeedback,
+    hasPartner,
+    setHasPartner,
+    partnerName,
+    setPartnerName,
+    partnerRole,
+    setPartnerRole,
+    reportingMethods,
+    setReportingMethods,
+    customQuestions,
+    setCustomQuestions,
     
     // Status states
     sources,

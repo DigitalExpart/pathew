@@ -89,6 +89,27 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
     fetchOpp();
   }, [oppIdParam]);
 
+  const isFormInvalid = () => {
+    if (builder.selectedSourceIds.length === 0) return true;
+    if (!builder.opportunityText && !builder.opportunityId) return true;
+    
+    if (type === 'CV' && builder.careerGap && !builder.careerGapExplanation?.trim()) {
+      return true;
+    }
+    if (type === 'Cover Letter' && !builder.projectAnchor?.trim()) {
+      return true;
+    }
+    if (type === 'Proposal') {
+      if (builder.hasPartner && (!builder.partnerName?.trim() || !builder.partnerRole?.trim())) {
+        return true;
+      }
+      if (builder.previousAppHistory && !builder.previousAppFeedback?.trim()) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   // Stepper Header
   const renderStepper = () => {
     const steps = [
@@ -257,20 +278,444 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                   </select>
                 </div>
 
+                {/* CV BUILDER CONDITIONAL INPUTS */}
+                {type === 'CV' && (
+                  <>
+                    <div>
+                      <label style={labelStyle}>CV Type</label>
+                      <select 
+                        value={builder.cvType}
+                        onChange={(e) => builder.setCvType(e.target.value)}
+                        style={selectInputStyle}
+                      >
+                        <option value="Work CV">Work CV (Standard corporate layout)</option>
+                        <option value="Teaching / Academic CV">Teaching / Academic CV (Rigid academic sections)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label style={labelStyle}>Experience Level</label>
+                      <select 
+                        value={builder.experienceLevel}
+                        onChange={(e) => builder.setExperienceLevel(e.target.value)}
+                        style={selectInputStyle}
+                      >
+                        <option value="Graduate">Graduate (Academic highlights & entry roles)</option>
+                        <option value="Early Career">Early Career (1-3 years experience)</option>
+                        <option value="Mid Career">Mid Career (3-8 years experience)</option>
+                        <option value="Senior">Senior (8+ years experience & leadership)</option>
+                        <option value="Executive">Executive (Director/C-level corporate governance)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label style={labelStyle}>Target Page Count</label>
+                      <select
+                        value={builder.pageCount}
+                        onChange={(e) => builder.setPageCount(Number(e.target.value))}
+                        style={selectInputStyle}
+                      >
+                        <option value={1}>1 Page (Concise, high-impact resume)</option>
+                        <option value={2}>2 Pages (Ideal, professional CV default)</option>
+                        <option value={3}>3 Pages (Detailed, academic/executive CV)</option>
+                      </select>
+                    </div>
+
+                    <div style={{ gridColumn: 'span 2' }}>
+                      <label style={labelStyle}>Do you have a Career Gap to explain?</label>
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '8px' }}>
+                        <button 
+                          type="button"
+                          onClick={() => builder.setCareerGap(true)}
+                          style={{
+                            padding: '8px 16px',
+                            borderRadius: '8px',
+                            border: builder.careerGap ? '1px solid var(--accent-primary)' : '1px solid var(--border-color)',
+                            backgroundColor: builder.careerGap ? 'rgba(245,158,11,0.1)' : 'transparent',
+                            color: builder.careerGap ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                            cursor: 'pointer',
+                            fontWeight: 650,
+                          }}
+                        >
+                          Yes
+                        </button>
+                        <button 
+                          type="button"
+                          onClick={() => { builder.setCareerGap(false); builder.setCareerGapExplanation(''); }}
+                          style={{
+                            padding: '8px 16px',
+                            borderRadius: '8px',
+                            border: !builder.careerGap ? '1px solid var(--accent-primary)' : '1px solid var(--border-color)',
+                            backgroundColor: !builder.careerGap ? 'rgba(245,158,11,0.1)' : 'transparent',
+                            color: !builder.careerGap ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                            cursor: 'pointer',
+                            fontWeight: 650,
+                          }}
+                        >
+                          No
+                        </button>
+                      </div>
+                      
+                      {builder.careerGap && (
+                        <textarea
+                          placeholder="Briefly explain the gap (e.g. Parental leave, career break to self-study React, family care). Claude will frame this positively."
+                          value={builder.careerGapExplanation}
+                          onChange={(e) => builder.setCareerGapExplanation(e.target.value)}
+                          style={{ ...textareaStyle, height: '80px', minHeight: '80px' }}
+                          required
+                        />
+                      )}
+                    </div>
+                  </>
+                )}
+
+                {/* COVER LETTER BUILDER CONDITIONAL INPUTS */}
+                {type === 'Cover Letter' && (
+                  <>
+                    <div>
+                      <label style={labelStyle}>Target Word Count</label>
+                      <select 
+                        value={builder.wordLimit}
+                        onChange={(e) => builder.setWordLimit(Number(e.target.value))}
+                        style={selectInputStyle}
+                      >
+                        <option value={250}>250 Words (Concise & direct)</option>
+                        <option value={350}>350 Words (Ideal, default cover letter)</option>
+                        <option value={500}>500 Words (Detailed fellowship or proposal letter)</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label style={labelStyle}>Application Stage</label>
+                      <select 
+                        value={builder.applicationStage}
+                        onChange={(e) => builder.setApplicationStage(e.target.value)}
+                        style={selectInputStyle}
+                      >
+                        <option value="Applying for an advertised role">Applying for an advertised role (Standard match-fit opening)</option>
+                        <option value="Speculative application">Speculative application (Cold outreach seeking opening)</option>
+                        <option value="Following a referral">Following a referral (Leveraging shared connection / reference)</option>
+                        <option value="Responding to a recruiter">Responding to a recruiter (Direct follow-up to outbound ping)</option>
+                      </select>
+                    </div>
+
+                    <div style={{ gridColumn: 'span 2' }}>
+                      <label style={labelStyle}>Core Project or Achievement to Highlight *</label>
+                      <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                        This will be the central anchor of your cover letter. Claude will build the narrative around this priority.
+                      </p>
+                      <textarea
+                        placeholder="e.g. Led a 5-person engineering team to rebuild the core checkout flow using Next.js and Tailwind, increasing conversion by 28% and performance by 40%."
+                        value={builder.projectAnchor}
+                        onChange={(e) => builder.setProjectAnchor(e.target.value)}
+                        style={{ ...textareaStyle, height: '80px', minHeight: '80px' }}
+                        required
+                      />
+                    </div>
+                  </>
+                )}
+
+                {/* GRANT BUILDER CONDITIONAL INPUTS */}
+                {type === 'Proposal' && (
+                  <>
+                    <div>
+                      <label style={labelStyle}>Target Page Count (1 - 20 pages)</label>
+                      <select
+                        value={builder.pageCount}
+                        onChange={(e) => builder.setPageCount(Number(e.target.value))}
+                        style={selectInputStyle}
+                      >
+                        {Array.from({ length: 20 }, (_, i) => i + 1).map(num => (
+                          <option key={num} value={num}>{num} Page{num > 1 ? 's' : ''}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label style={labelStyle}>Funder's Stated Values & Mission Alignment</label>
+                      <textarea
+                        placeholder="e.g. Empowering underrepresented youth through technical education, scalable community projects, and employment pathways."
+                        value={builder.funderValues}
+                        onChange={(e) => builder.setFunderValues(e.target.value)}
+                        style={{ ...textareaStyle, height: '42px', minHeight: '42px', padding: '10px 12px' }}
+                      />
+                    </div>
+
+                    <div>
+                      <label style={labelStyle}>Have you applied to this funder before?</label>
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '8px' }}>
+                        <button 
+                          type="button"
+                          onClick={() => builder.setPreviousAppHistory(true)}
+                          style={{
+                            padding: '8px 16px',
+                            borderRadius: '8px',
+                            border: builder.previousAppHistory ? '1px solid var(--accent-primary)' : '1px solid var(--border-color)',
+                            backgroundColor: builder.previousAppHistory ? 'rgba(245,158,11,0.1)' : 'transparent',
+                            color: builder.previousAppHistory ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                            cursor: 'pointer',
+                            fontWeight: 650,
+                          }}
+                        >
+                          Yes
+                        </button>
+                        <button 
+                          type="button"
+                          onClick={() => { builder.setPreviousAppHistory(false); builder.setPreviousAppFeedback(''); }}
+                          style={{
+                            padding: '8px 16px',
+                            borderRadius: '8px',
+                            border: !builder.previousAppHistory ? '1px solid var(--accent-primary)' : '1px solid var(--border-color)',
+                            backgroundColor: !builder.previousAppHistory ? 'rgba(245,158,11,0.1)' : 'transparent',
+                            color: !builder.previousAppHistory ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                            cursor: 'pointer',
+                            fontWeight: 650,
+                          }}
+                        >
+                          No
+                        </button>
+                      </div>
+                      
+                      {builder.previousAppHistory && (
+                        <textarea
+                          placeholder="Feedback received from previous application..."
+                          value={builder.previousAppFeedback}
+                          onChange={(e) => builder.setPreviousAppFeedback(e.target.value)}
+                          style={{ ...textareaStyle, height: '60px', minHeight: '60px', padding: '8px 12px' }}
+                        />
+                      )}
+                    </div>
+
+                    <div>
+                      <label style={labelStyle}>Application Setup</label>
+                      <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '8px' }}>
+                        <button 
+                          type="button"
+                          onClick={() => { builder.setHasPartner(false); builder.setPartnerName(''); builder.setPartnerRole(''); }}
+                          style={{
+                            padding: '8px 16px',
+                            borderRadius: '8px',
+                            border: !builder.hasPartner ? '1px solid var(--accent-primary)' : '1px solid var(--border-color)',
+                            backgroundColor: !builder.hasPartner ? 'rgba(245,158,11,0.1)' : 'transparent',
+                            color: !builder.hasPartner ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                            cursor: 'pointer',
+                            fontWeight: 650,
+                          }}
+                        >
+                          Solo Application
+                        </button>
+                        <button 
+                          type="button"
+                          onClick={() => builder.setHasPartner(true)}
+                          style={{
+                            padding: '8px 16px',
+                            borderRadius: '8px',
+                            border: builder.hasPartner ? '1px solid var(--accent-primary)' : '1px solid var(--border-color)',
+                            backgroundColor: builder.hasPartner ? 'rgba(245,158,11,0.1)' : 'transparent',
+                            color: builder.hasPartner ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                            cursor: 'pointer',
+                            fontWeight: 650,
+                          }}
+                        >
+                          Partnership / Co-applicants
+                        </button>
+                      </div>
+                      
+                      {builder.hasPartner && (
+                        <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
+                          <input
+                            type="text"
+                            placeholder="Partner Name"
+                            value={builder.partnerName}
+                            onChange={(e) => builder.setPartnerName(e.target.value)}
+                            style={{ ...selectInputStyle, padding: '8px 12px' }}
+                          />
+                          <input
+                            type="text"
+                            placeholder="Partner Role"
+                            value={builder.partnerRole}
+                            onChange={(e) => builder.setPartnerRole(e.target.value)}
+                            style={{ ...selectInputStyle, padding: '8px 12px' }}
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    <div style={{ gridColumn: 'span 2' }}>
+                      <label style={labelStyle}>Reporting & Accountability Methods</label>
+                      <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>
+                        Select or add performance indicators Claude will weave into the Theory of Change & Sustainability narrative.
+                      </p>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '8px' }}>
+                        {['monthly user data', 'cohort completion rates', 'employment outcomes'].map(m => {
+                          const isSelected = builder.reportingMethods.includes(m);
+                          return (
+                            <button
+                              key={m}
+                              type="button"
+                              onClick={() => {
+                                if (isSelected) {
+                                  builder.setReportingMethods(builder.reportingMethods.filter(x => x !== m));
+                                } else {
+                                  builder.setReportingMethods([...builder.reportingMethods, m]);
+                                }
+                              }}
+                              style={{
+                                padding: '6px 12px',
+                                borderRadius: '20px',
+                                fontSize: '0.75rem',
+                                border: isSelected ? '1px solid var(--accent-primary)' : '1px solid var(--border-color)',
+                                backgroundColor: isSelected ? 'rgba(245,158,11,0.08)' : 'var(--bg-secondary)',
+                                color: isSelected ? 'var(--accent-primary)' : 'var(--text-secondary)',
+                                cursor: 'pointer',
+                                fontWeight: 650,
+                              }}
+                            >
+                              {m}
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+                        <input 
+                          type="text" 
+                          placeholder="Type and press Enter to add a custom reporting indicator..."
+                          style={{ ...selectInputStyle, padding: '8px 12px', flex: 1 }}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter') {
+                              e.preventDefault();
+                              const val = (e.target as HTMLInputElement).value.trim();
+                              if (val && !builder.reportingMethods.includes(val)) {
+                                builder.setReportingMethods([...builder.reportingMethods, val]);
+                                (e.target as HTMLInputElement).value = '';
+                              }
+                            }
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    <div style={{ gridColumn: 'span 2', marginTop: '12px', borderTop: '1px solid var(--border-color)', paddingTop: '16px' }}>
+                      <label style={labelStyle}>Dynamic Custom Questions ({builder.customQuestions.length})</label>
+                      <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '12px' }}>
+                        Add specific questions from the funder proposal guidelines. Claude will generate responses for each of them.
+                      </p>
+
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '16px' }}>
+                        {builder.customQuestions.map((q: any, index: number) => (
+                          <div key={q.id || index} style={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', padding: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--accent-primary)' }}>Question #{index + 1}</span>
+                              <button
+                                type="button"
+                                onClick={() => builder.setCustomQuestions(builder.customQuestions.filter((_, idx) => idx !== index))}
+                                style={{ background: 'none', border: 'none', color: '#ef4444', fontSize: '0.75rem', cursor: 'pointer', fontWeight: 600 }}
+                              >
+                                Remove
+                              </button>
+                            </div>
+                            <input
+                              type="text"
+                              placeholder="e.g. Describe your organization's capacity to deliver this program."
+                              value={q.question}
+                              onChange={(e) => {
+                                const updated = [...builder.customQuestions];
+                                updated[index].question = e.target.value;
+                                builder.setCustomQuestions(updated);
+                              }}
+                              style={selectInputStyle}
+                              required
+                            />
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                              <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Word limit:</span>
+                              <input
+                                type="number"
+                                min="50"
+                                max="2000"
+                                value={q.wordLimit || 300}
+                                onChange={(e) => {
+                                  const updated = [...builder.customQuestions];
+                                  updated[index].wordLimit = Number(e.target.value);
+                                  builder.setCustomQuestions(updated);
+                                }}
+                                style={{ ...selectInputStyle, width: '100px', padding: '6px 12px' }}
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+
+                      <button
+                        type="button"
+                        onClick={() => builder.setCustomQuestions([...builder.customQuestions, { id: Math.random().toString(), question: '', wordLimit: 300 }])}
+                        style={{
+                          backgroundColor: 'transparent',
+                          border: '1px dashed var(--accent-primary)',
+                          color: 'var(--accent-primary)',
+                          borderRadius: '8px',
+                          padding: '8px 16px',
+                          fontSize: '0.75rem',
+                          cursor: 'pointer',
+                          fontWeight: 650,
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '6px'
+                        }}
+                      >
+                        + Add Custom Funder Question
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
+            </Card>
+
+            {/* 4. DYNAMIC MANUAL NOTES & PROPOSAL CONTEXT */}
+            <Card style={settingsCardStyle}>
+              <h3 style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', fontWeight: 700, marginBottom: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                <Sparkles size={18} color="var(--accent-primary)" />
+                4. Dynamic Manual Notes & Proposal Context
+              </h3>
+              <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>
+                Provide specific background details below to enrich Pathew Assistant's context and ensure maximum alignment.
+              </p>
+
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
                 <div>
-                  <label style={labelStyle}>Word Target Limit</label>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <input 
-                      type="range" 
-                      min="100" 
-                      max="3500" 
-                      step="50"
-                      value={builder.wordLimit}
-                      onChange={(e) => builder.setWordLimit(Number(e.target.value))}
-                      style={{ flex: 1, accentColor: 'var(--accent-primary)' }}
-                    />
-                    <span style={{ fontSize: '0.875rem', fontWeight: 700, whiteSpace: 'nowrap' }}>{builder.wordLimit} words</span>
-                  </div>
+                  <label style={labelStyle}>Custom Question Notes</label>
+                  <textarea 
+                    placeholder="Specific prompts, requirements, or funder questions you need answered..."
+                    value={builder.manualNotes.customQuestionNotes}
+                    onChange={(e) => builder.setManualNotes({ ...builder.manualNotes, customQuestionNotes: e.target.value })}
+                    style={{ ...textareaStyle, height: '80px', minHeight: '80px' }}
+                  />
+                </div>
+                <div>
+                  <label style={labelStyle}>Leadership Achievements</label>
+                  <textarea 
+                    placeholder="Describe specific team leadership, public engagements, or core awards..."
+                    value={builder.manualNotes.leadershipAchievements}
+                    onChange={(e) => builder.setManualNotes({ ...builder.manualNotes, leadershipAchievements: e.target.value })}
+                    style={{ ...textareaStyle, height: '80px', minHeight: '80px' }}
+                  />
+                </div>
+                <div>
+                  <label style={labelStyle}>Project Notes & Objectives</label>
+                  <textarea 
+                    placeholder="Outline your project scope, targets, community impact, or research methodology..."
+                    value={builder.manualNotes.projectNotes}
+                    onChange={(e) => builder.setManualNotes({ ...builder.manualNotes, projectNotes: e.target.value })}
+                    style={{ ...textareaStyle, height: '80px', minHeight: '80px' }}
+                  />
+                </div>
+                <div>
+                  <label style={labelStyle}>Additional Context</label>
+                  <textarea 
+                    placeholder="Any other personal credentials, unique skills, or details..."
+                    value={builder.manualNotes.additionalContext}
+                    onChange={(e) => builder.setManualNotes({ ...builder.manualNotes, additionalContext: e.target.value })}
+                    style={{ ...textareaStyle, height: '80px', minHeight: '80px' }}
+                  />
                 </div>
               </div>
             </Card>
@@ -282,7 +727,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
               )}
               <Button 
                 onClick={builder.startExtraction} 
-                disabled={builder.selectedSourceIds.length === 0 || (!builder.opportunityText && !builder.opportunityId)}
+                disabled={isFormInvalid()}
                 style={{ 
                   gap: '8px',
                   boxShadow: '0 4px 15px var(--accent-glow)',

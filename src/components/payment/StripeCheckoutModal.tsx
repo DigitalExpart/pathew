@@ -137,6 +137,18 @@ export const StripeCheckoutModal = ({ isOpen, onClose, planTitle, planPrice, pla
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  const [step, setStep] = useState<'billing' | 'payment'>('billing');
+  
+  const [billingInfo, setBillingInfo] = useState({
+    company_name: '',
+    address_line1: '',
+    address_line2: '',
+    city: '',
+    state_province: '',
+    postal_code: '',
+    country: 'United Kingdom',
+    phone_number: '',
+  });
 
   useEffect(() => {
     if (!isOpen) return;
@@ -144,9 +156,10 @@ export const StripeCheckoutModal = ({ isOpen, onClose, planTitle, planPrice, pla
     setFetchError(null);
     setSuccess(false);
     setClientSecret(null);
+    setStep('billing');
 
-    // Ensure user is logged in
-    const checkUser = async () => {
+    // Ensure user is logged in and fetch pre-existing billing details
+    const checkUserAndPrefill = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
         setFetchError('You must be logged in to make a purchase.');
@@ -154,28 +167,93 @@ export const StripeCheckoutModal = ({ isOpen, onClose, planTitle, planPrice, pla
         return;
       }
 
-      // Fetch payment intent from Supabase Edge Function
-      supabase.functions.invoke('create-payment-intent', {
-        body: { plan: planTitle, price: planPrice }
-      })
-        .then(({ data, error }) => {
-          if (error) throw error;
-          setClientSecret(data.clientSecret);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error('Payment intent error:', err);
-          setFetchError('Unable to connect to payment service. Please try again.');
-          setLoading(false);
-        });
+      try {
+        const { data: profileData } = await supabase
+          .from('profiles')
+          .select('billing_completed, billing_info')
+          .eq('id', session.user.id)
+          .maybeSingle();
+
+        if (profileData && profileData.billing_info && typeof profileData.billing_info === 'object') {
+          const info = profileData.billing_info as any;
+          setBillingInfo({
+            company_name: info.company_name || '',
+            address_line1: info.address_line1 || '',
+            address_line2: info.address_line2 || '',
+            city: info.city || '',
+            state_province: info.state_province || '',
+            postal_code: info.postal_code || '',
+            country: info.country || 'United Kingdom',
+            phone_number: info.phone_number || '',
+          });
+        }
+      } catch (err) {
+        console.error('Error fetching billing details prefill:', err);
+      } finally {
+        setLoading(false);
+      }
     };
 
-    checkUser();
+    checkUserAndPrefill();
   }, [isOpen, planTitle, planPrice]);
+
+  const handleSaveBillingAndProceed = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (
+      !billingInfo.company_name.trim() ||
+      !billingInfo.address_line1.trim() ||
+      !billingInfo.city.trim() ||
+      !billingInfo.state_province.trim() ||
+      !billingInfo.postal_code.trim() ||
+      !billingInfo.phone_number.trim()
+    ) {
+      alert('Please fill in all required billing information fields.');
+      return;
+    }
+
+    setLoading(true);
+    setFetchError(null);
+
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) throw new Error('No active user session found.');
+
+      // 1. Persist validated billing info to database
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({
+          billing_completed: true,
+          billing_info: billingInfo
+        })
+        .eq('id', session.user.id);
+
+      if (updateError) throw updateError;
+
+      // 2. Fetch payment intent from Supabase Edge Function
+      const { data, error: fnError } = await supabase.functions.invoke('create-payment-intent', {
+        body: { 
+          plan: planTitle, 
+          price: planPrice,
+          billingInfo // pass billing details cleanly
+        }
+      });
+
+      if (fnError) throw fnError;
+
+      setClientSecret(data.clientSecret);
+      setStep('payment');
+    } catch (err: any) {
+      console.error('Billing / payment step error:', err);
+      setFetchError(err.message || 'Unable to connect to payment service. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleClose = () => {
     setSuccess(false);
     setClientSecret(null);
+    setStep('billing');
     onClose();
   };
 
@@ -217,6 +295,40 @@ export const StripeCheckoutModal = ({ isOpen, onClose, planTitle, planPrice, pla
       '.TabLabel': { color: appTheme === 'dark' ? '#ffffff' : 'inherit' },
       '.TabIcon': { color: appTheme === 'dark' ? '#ffffff' : 'inherit' },
     },
+  };
+
+  // Custom inline styles for billing form inputs
+  const billingLabelStyle: React.CSSProperties = {
+    fontSize: '0.8125rem',
+    color: '#94a3b8',
+    fontWeight: 600,
+    marginBottom: '6px',
+    display: 'block'
+  };
+
+  const billingInputStyle: React.CSSProperties = {
+    backgroundColor: '#1e293b',
+    border: '1px solid rgba(255,255,255,0.08)',
+    borderRadius: '8px',
+    color: '#fff',
+    padding: '10px 12px',
+    fontSize: '0.875rem',
+    outline: 'none',
+    width: '100%',
+    boxSizing: 'border-box'
+  };
+
+  const billingFormGridStyle: React.CSSProperties = {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '12px'
+  };
+
+  const billingFormContainerStyle: React.CSSProperties = {
+    padding: '24px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '14px'
   };
 
   return (
@@ -273,13 +385,121 @@ export const StripeCheckoutModal = ({ isOpen, onClose, planTitle, planPrice, pla
           ) : loading ? (
             <div style={{ padding: '64px 24px', textAlign: 'center' }}>
               <motion.div animate={{ rotate: 360 }} transition={{ duration: 1.2, repeat: Infinity, ease: 'linear' }} style={{ width: 36, height: 36, border: '3px solid rgba(245,158,11,0.2)', borderTopColor: '#f59e0b', borderRadius: '50%', margin: '0 auto 16px' }} />
-              <p style={{ color: '#94a3b8' }}>Preparing checkout...</p>
+              <p style={{ color: '#94a3b8' }}>Processing...</p>
             </div>
           ) : fetchError ? (
             <div style={{ padding: '48px 24px', textAlign: 'center' }}>
               <p style={{ color: '#f87171', marginBottom: '16px' }}>{fetchError}</p>
-              <Button variant="outline" onClick={handleClose}>Close</Button>
+              <Button variant="outline" onClick={() => { setFetchError(null); setStep('billing'); }}>Try Again</Button>
             </div>
+          ) : step === 'billing' ? (
+            <form onSubmit={handleSaveBillingAndProceed} style={billingFormContainerStyle}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '12px' }}>
+                <CheckCircle2 size={16} color="#f59e0b" />
+                <span style={{ fontSize: '0.8125rem', color: '#94a3b8', fontWeight: 600 }}>Step 1 of 2: Compulsory Billing Details</span>
+              </div>
+
+              <div>
+                <label style={billingLabelStyle}>Full Name / Company Name *</label>
+                <input 
+                  type="text" 
+                  value={billingInfo.company_name} 
+                  onChange={(e) => setBillingInfo({ ...billingInfo, company_name: e.target.value })} 
+                  style={billingInputStyle} 
+                  placeholder="e.g. Amina Johnson or Acme Corp"
+                  required 
+                />
+              </div>
+
+              <div>
+                <label style={billingLabelStyle}>Phone Number *</label>
+                <input 
+                  type="tel" 
+                  value={billingInfo.phone_number} 
+                  onChange={(e) => setBillingInfo({ ...billingInfo, phone_number: e.target.value })} 
+                  style={billingInputStyle} 
+                  placeholder="e.g. +44 7700 900077"
+                  required 
+                />
+              </div>
+
+              <div>
+                <label style={billingLabelStyle}>Address Line 1 *</label>
+                <input 
+                  type="text" 
+                  value={billingInfo.address_line1} 
+                  onChange={(e) => setBillingInfo({ ...billingInfo, address_line1: e.target.value })} 
+                  style={billingInputStyle} 
+                  placeholder="Street name & number"
+                  required 
+                />
+              </div>
+
+              <div style={billingFormGridStyle}>
+                <div>
+                  <label style={billingLabelStyle}>Address Line 2 (Opt)</label>
+                  <input 
+                    type="text" 
+                    value={billingInfo.address_line2} 
+                    onChange={(e) => setBillingInfo({ ...billingInfo, address_line2: e.target.value })} 
+                    style={billingInputStyle} 
+                    placeholder="Apartment or Suite" 
+                  />
+                </div>
+                <div>
+                  <label style={billingLabelStyle}>City *</label>
+                  <input 
+                    type="text" 
+                    value={billingInfo.city} 
+                    onChange={(e) => setBillingInfo({ ...billingInfo, city: e.target.value })} 
+                    style={billingInputStyle} 
+                    placeholder="City"
+                    required 
+                  />
+                </div>
+              </div>
+
+              <div style={billingFormGridStyle}>
+                <div>
+                  <label style={billingLabelStyle}>State / Province *</label>
+                  <input 
+                    type="text" 
+                    value={billingInfo.state_province} 
+                    onChange={(e) => setBillingInfo({ ...billingInfo, state_province: e.target.value })} 
+                    style={billingInputStyle} 
+                    placeholder="County or State"
+                    required 
+                  />
+                </div>
+                <div>
+                  <label style={billingLabelStyle}>Postal Code *</label>
+                  <input 
+                    type="text" 
+                    value={billingInfo.postal_code} 
+                    onChange={(e) => setBillingInfo({ ...billingInfo, postal_code: e.target.value })} 
+                    style={billingInputStyle} 
+                    placeholder="Postcode"
+                    required 
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={billingLabelStyle}>Country *</label>
+                <input 
+                  type="text" 
+                  value={billingInfo.country} 
+                  onChange={(e) => setBillingInfo({ ...billingInfo, country: e.target.value })} 
+                  style={billingInputStyle} 
+                  placeholder="e.g. United Kingdom"
+                  required 
+                />
+              </div>
+
+              <Button type="submit" style={{ width: '100%', marginTop: '8px' }}>
+                Proceed to Payment Step 2
+              </Button>
+            </form>
           ) : clientSecret ? (
             <Elements stripe={stripePromise} options={{ clientSecret, appearance: stripeAppearance }}>
               <CheckoutForm planTitle={planTitle} planPrice={planPrice} planCredits={planCredits} onSuccess={() => setSuccess(true)} onCancel={handleClose} />
@@ -289,6 +509,7 @@ export const StripeCheckoutModal = ({ isOpen, onClose, planTitle, planPrice, pla
       </motion.div>
     </AnimatePresence>
   );
+
 };
 
 /* ── Styles ─────────────────────────────────────────────────── */
