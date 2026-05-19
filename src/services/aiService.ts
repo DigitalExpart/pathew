@@ -76,10 +76,10 @@ Please generate the response now.`;
         creditsDeducted: 1
       };
     } catch (err: any) {
-      console.error('Claude API Error:', err);
+      console.error('Pathew Assistant API Error:', err);
       return {
         success: false,
-        error: `AI Service Error: ${err.message || "Failed to communicate with Claude API."}`
+        error: `AI Service Error: ${err.message || "Failed to communicate with Pathew Assistant API."}`
       };
     }
   }

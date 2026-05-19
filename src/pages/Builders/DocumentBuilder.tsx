@@ -376,7 +376,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                       </div>
                       <label style={{ ...labelStyle, fontSize: '0.95rem', color: 'var(--text-primary)', marginTop: '4px' }}>Core Project or Achievement to Highlight *</label>
                       <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '16px', lineHeight: 1.5 }}>
-                        This will be the central anchor of your cover letter. Claude will build the entire narrative around this priority to ensure it connects deeply with the reader.
+                        This will be the central anchor of your cover letter. Pathew Assistant will build the entire narrative around this priority to ensure it connects deeply with the reader.
                       </p>
                       <textarea
                         placeholder="e.g. Led a 5-person engineering team to rebuild the core checkout flow using Next.js and Tailwind, increasing conversion by 28% and performance by 40%."
@@ -498,7 +498,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                     <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
                       <label style={{ ...labelStyle, color: 'var(--text-primary)', fontSize: '0.95rem' }}>Reporting & Accountability Methods</label>
                       <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>
-                        Select or add performance indicators Claude will weave into the Theory of Change & Sustainability narrative.
+                        Select or add performance indicators Pathew Assistant will weave into the Theory of Change & Sustainability narrative.
                       </p>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '16px' }}>
                         {['Monthly User Data', 'Cohort Completion Rates', 'Employment Outcomes', 'Financial Audits'].map(m => {
@@ -562,7 +562,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                       </div>
                       <label style={{ ...labelStyle, fontSize: '0.95rem', color: 'var(--text-primary)', marginTop: '4px' }}>Funder Specific Questions</label>
                       <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: 1.5 }}>
-                        Add specific questions from the funder proposal guidelines. Claude will generate compliant, precisely tailored responses for each of them.
+                        Add specific questions from the funder proposal guidelines. Pathew Assistant will generate compliant, precisely tailored responses for each of them.
                       </p>
 
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '20px' }}>

@@ -77,7 +77,7 @@ export const AdminSettingsPage: React.FC = () => {
             { label: 'Environment', value: 'Production' },
             { label: 'Database', value: 'Supabase (PostgreSQL)' },
             { label: 'Payments', value: 'Stripe' },
-            { label: 'AI Model', value: 'Claude (Anthropic)' },
+            { label: 'AI Model', value: 'Pathew Assistant Engine' },
           ].map(item => (
             <div key={item.label} style={{ padding: '12px 16px', backgroundColor: 'rgba(255,255,255,0.02)', borderRadius: '8px' }}>
               <p style={{ fontSize: '0.6875rem', color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em', fontWeight: 700, marginBottom: '4px' }}>{item.label}</p>
