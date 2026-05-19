@@ -246,7 +246,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
               <div style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '16px', marginBottom: '24px' }}>
                 <h3 style={{ fontSize: isMobile ? '1.1rem' : '1.25rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', gap: '10px', alignItems: 'center', margin: 0 }}>
                   <Settings size={22} color="var(--accent-primary)" />
-                  3. Pathew Assistant Setup & Style
+                  3. Style Preference
                 </h3>
                 <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '6px', marginLeft: isMobile ? '0' : '32px' }}>
                   Fine-tune the assistant's output to match your professional brand and target requirements.
@@ -263,6 +263,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                       onChange={(e) => builder.setTone(e.target.value)}
                       style={{ ...selectInputStyle, backgroundColor: 'var(--bg-secondary)', border: 'none' }}
                     >
+                      <option value="N/A">N/A</option>
                       <option value="Professional & Academic">Professional & Academic (Formal & polished)</option>
                       <option value="Creative & Narrative">Creative & Narrative (Story-driven & expressive)</option>
                       <option value="Concise & Impactful">Concise & Impactful (Short, high-signal bullets)</option>
@@ -319,72 +320,19 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                       </div>
 
                       <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                        <label style={{ ...labelStyle, color: 'var(--accent-primary)' }}>Target Page Count</label>
+                        <label style={{ ...labelStyle, color: 'var(--accent-primary)' }}>Number of Pages</label>
                         <select
                           value={builder.pageCount}
                           onChange={(e) => builder.setPageCount(Number(e.target.value))}
                           style={{ ...selectInputStyle, border: 'none', backgroundColor: 'var(--bg-tertiary)', marginTop: '8px' }}
                         >
-                          <option value={1}>1 Page (Concise, high-impact resume)</option>
-                          <option value={2}>2 Pages (Ideal, professional CV default)</option>
-                          <option value={3}>3 Pages (Detailed, academic/executive CV)</option>
+                          <option value={1}>1</option>
+                          <option value={2}>2</option>
+                          <option value={3}>3</option>
+                          <option value={4}>4</option>
+                          <option value={5}>5</option>
                         </select>
                       </div>
-                    </div>
-
-                    <div style={{ backgroundColor: builder.careerGap ? 'rgba(245,158,11,0.03)' : 'var(--bg-secondary)', padding: '20px', borderRadius: '12px', border: builder.careerGap ? '1px solid rgba(245,158,11,0.3)' : '1px solid var(--border-color)', transition: 'all 0.3s ease' }}>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
-                        <div>
-                          <label style={{ ...labelStyle, fontSize: '0.9rem', color: builder.careerGap ? '#f59e0b' : 'var(--text-primary)' }}>Explain a Career Gap?</label>
-                          <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', margin: 0 }}>Claude will frame any break positively in your profile.</p>
-                        </div>
-                        <div style={{ display: 'flex', gap: '8px' }}>
-                          <button 
-                            type="button"
-                            onClick={() => builder.setCareerGap(true)}
-                            style={{
-                              padding: '8px 20px',
-                              borderRadius: '20px',
-                              border: builder.careerGap ? '1px solid #f59e0b' : '1px solid var(--border-color)',
-                              backgroundColor: builder.careerGap ? 'rgba(245,158,11,0.1)' : 'transparent',
-                              color: builder.careerGap ? '#f59e0b' : 'var(--text-secondary)',
-                              cursor: 'pointer',
-                              fontWeight: 700,
-                              transition: 'all 0.2s'
-                            }}
-                          >
-                            Yes
-                          </button>
-                          <button 
-                            type="button"
-                            onClick={() => { builder.setCareerGap(false); builder.setCareerGapExplanation(''); }}
-                            style={{
-                              padding: '8px 20px',
-                              borderRadius: '20px',
-                              border: !builder.careerGap ? '1px solid var(--border-color)' : '1px solid transparent',
-                              backgroundColor: !builder.careerGap ? 'var(--bg-tertiary)' : 'transparent',
-                              color: !builder.careerGap ? 'var(--text-primary)' : 'var(--text-secondary)',
-                              cursor: 'pointer',
-                              fontWeight: 700,
-                              transition: 'all 0.2s'
-                            }}
-                          >
-                            No
-                          </button>
-                        </div>
-                      </div>
-                      
-                      {builder.careerGap && (
-                        <div style={{ marginTop: '16px', animation: 'fadeIn 0.3s ease' }}>
-                          <textarea
-                            placeholder="Briefly explain the gap (e.g. Parental leave, career break to self-study React, family care). Claude will frame this positively."
-                            value={builder.careerGapExplanation}
-                            onChange={(e) => builder.setCareerGapExplanation(e.target.value)}
-                            style={{ ...textareaStyle, height: '80px', minHeight: '80px', borderColor: 'rgba(245,158,11,0.2)', backgroundColor: 'var(--bg-primary)' }}
-                            required
-                          />
-                        </div>
-                      )}
                     </div>
                   </div>
                 )}
