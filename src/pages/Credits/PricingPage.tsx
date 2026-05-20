@@ -1,7 +1,6 @@
 import React from 'react';
-import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { CheckCircle, Zap } from 'lucide-react';
+import { CheckCircle } from 'lucide-react';
 import { StripeCheckoutModal } from '../../components/payment/StripeCheckoutModal';
 import { useTranslation } from 'react-i18next';
 
@@ -253,51 +252,7 @@ export const PricingPage: React.FC = () => {
         />
       </div>
 
-      <div style={{ maxWidth: '800px', margin: isMobile ? '40px auto 0' : '800px auto 0', marginTop: isMobile ? '40px' : '80px' }}>
-        <div style={{ textAlign: 'center', marginBottom: isMobile ? '20px' : '32px' }}>
-          <h3 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 800, marginBottom: '16px' }}>{t('pricing.creditCost')}</h3>
-          <p style={{ color: 'var(--text-secondary)', fontSize: isMobile ? '0.9375rem' : '1.125rem' }}>
-            {t('pricing.creditCostSubtitle')}
-          </p>
-        </div>
 
-        <Card style={{ padding: 0, overflow: 'hidden', border: '1px solid var(--border-color)', width: '100%' }}>
-          <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '500px' }}>
-              <thead>
-                <tr style={{ backgroundColor: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)' }}>
-                  <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>{t('pricing.service')}</th>
-                  <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>{t('pricing.credits')}</th>
-                  <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>{t('pricing.notes')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[
-                  { service: t('pricing.services.coverLetter'), credits: '1 credit', notes: 'per letter' },
-                  { service: t('pricing.services.cv'), credits: '1 credit', notes: 'per CV' },
-                  { service: t('pricing.services.proposal'), credits: '1 credit', notes: 'per proposal' },
-                  { service: t('pricing.services.grant'), credits: '3 credits', notes: 'per grant' },
-                  { service: t('pricing.services.prep'), credits: '3 credits', notes: 'per plan' },
-                  { service: t('pricing.services.rewrite'), credits: '0.25 credits', notes: 'per rewrite (¼ of original after 3 rewrites)' },
-                ].map((row, idx) => (
-                  <tr key={idx} style={{ borderBottom: idx !== 5 ? '1px solid var(--border-color)' : 'none' }}>
-                    <td style={{ padding: '16px 24px', fontWeight: 500 }}>{row.service}</td>
-                    <td style={{ padding: '16px 24px', color: 'var(--accent-primary)', fontWeight: 600 }}>{row.credits}</td>
-                    <td style={{ padding: '16px 24px', color: 'var(--text-muted)', fontSize: '0.875rem' }}>{row.notes}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </Card>
-        
-        <div style={{ textAlign: 'center', marginTop: '32px' }}>
-          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', backgroundColor: 'rgba(245, 158, 11, 0.1)', padding: '12px 24px', borderRadius: 'var(--radius-full)', color: 'var(--accent-primary)', fontWeight: 600, fontSize: isMobile ? '0.8125rem' : '1rem' }}>
-            <Zap size={18} />
-            {t('pricing.needMore')}
-          </div>
-        </div>
-      </div>
     </div>
   );
 };
