@@ -645,54 +645,56 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
             </Card>
 
             {/* 4. DYNAMIC MANUAL NOTES & PROPOSAL CONTEXT */}
-            <Card style={settingsCardStyle}>
-              <h3 style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', fontWeight: 700, marginBottom: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
-                <Sparkles size={18} color="var(--accent-primary)" />
-                4. Dynamic Manual Notes & Proposal Context
-              </h3>
-              <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>
-                Provide specific background details below to enrich Pathew Assistant's context and ensure maximum alignment.
-              </p>
+            {type === 'Proposal' && (
+              <Card style={settingsCardStyle}>
+                <h3 style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', fontWeight: 700, marginBottom: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <Sparkles size={18} color="var(--accent-primary)" />
+                  4. Dynamic Manual Notes & Proposal Context
+                </h3>
+                <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>
+                  Provide specific background details below to enrich Pathew Assistant's context and ensure maximum alignment.
+                </p>
 
-              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
-                <div>
-                  <label style={labelStyle}>Custom Question Notes</label>
-                  <textarea 
-                    placeholder="Specific prompts, requirements, or funder questions you need answered..."
-                    value={builder.manualNotes.customQuestionNotes}
-                    onChange={(e) => builder.setManualNotes({ ...builder.manualNotes, customQuestionNotes: e.target.value })}
-                    style={{ ...textareaStyle, height: '80px', minHeight: '80px' }}
-                  />
+                <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
+                  <div>
+                    <label style={labelStyle}>Custom Question Notes</label>
+                    <textarea 
+                      placeholder="Specific prompts, requirements, or funder questions you need answered..."
+                      value={builder.manualNotes.customQuestionNotes}
+                      onChange={(e) => builder.setManualNotes({ ...builder.manualNotes, customQuestionNotes: e.target.value })}
+                      style={{ ...textareaStyle, height: '80px', minHeight: '80px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Leadership Achievements</label>
+                    <textarea 
+                      placeholder="Describe specific team leadership, public engagements, or core awards..."
+                      value={builder.manualNotes.leadershipAchievements}
+                      onChange={(e) => builder.setManualNotes({ ...builder.manualNotes, leadershipAchievements: e.target.value })}
+                      style={{ ...textareaStyle, height: '80px', minHeight: '80px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Project Notes & Objectives</label>
+                    <textarea 
+                      placeholder="Outline your project scope, targets, community impact, or research methodology..."
+                      value={builder.manualNotes.projectNotes}
+                      onChange={(e) => builder.setManualNotes({ ...builder.manualNotes, projectNotes: e.target.value })}
+                      style={{ ...textareaStyle, height: '80px', minHeight: '80px' }}
+                    />
+                  </div>
+                  <div>
+                    <label style={labelStyle}>Additional Context</label>
+                    <textarea 
+                      placeholder="Any other personal credentials, unique skills, or details..."
+                      value={builder.manualNotes.additionalContext}
+                      onChange={(e) => builder.setManualNotes({ ...builder.manualNotes, additionalContext: e.target.value })}
+                      style={{ ...textareaStyle, height: '80px', minHeight: '80px' }}
+                    />
+                  </div>
                 </div>
-                <div>
-                  <label style={labelStyle}>Leadership Achievements</label>
-                  <textarea 
-                    placeholder="Describe specific team leadership, public engagements, or core awards..."
-                    value={builder.manualNotes.leadershipAchievements}
-                    onChange={(e) => builder.setManualNotes({ ...builder.manualNotes, leadershipAchievements: e.target.value })}
-                    style={{ ...textareaStyle, height: '80px', minHeight: '80px' }}
-                  />
-                </div>
-                <div>
-                  <label style={labelStyle}>Project Notes & Objectives</label>
-                  <textarea 
-                    placeholder="Outline your project scope, targets, community impact, or research methodology..."
-                    value={builder.manualNotes.projectNotes}
-                    onChange={(e) => builder.setManualNotes({ ...builder.manualNotes, projectNotes: e.target.value })}
-                    style={{ ...textareaStyle, height: '80px', minHeight: '80px' }}
-                  />
-                </div>
-                <div>
-                  <label style={labelStyle}>Additional Context</label>
-                  <textarea 
-                    placeholder="Any other personal credentials, unique skills, or details..."
-                    value={builder.manualNotes.additionalContext}
-                    onChange={(e) => builder.setManualNotes({ ...builder.manualNotes, additionalContext: e.target.value })}
-                    style={{ ...textareaStyle, height: '80px', minHeight: '80px' }}
-                  />
-                </div>
-              </div>
-            </Card>
+              </Card>
+            )}
 
             {/* Action triggering */}
             <div style={sourcesFooterStyle}>

@@ -33,16 +33,13 @@ export const LandingPage: React.FC = () => {
 
   const isSmallDevice = isMobile || isTablet;
   const [pricingTiers, setPricingTiers] = React.useState<any[]>([]);
-  const [creditCostSettings, setCreditCostSettings] = React.useState<any[]>([]);
 
   React.useEffect(() => {
     const fetchDynamicSettings = async () => {
       const { data } = await supabase.from('app_settings').select('*');
       if (data) {
         const p = data.find(s => s.id === 'pricing_tiers')?.value || [];
-        const c = data.find(s => s.id === 'credit_costs')?.value || [];
         setPricingTiers(p);
-        setCreditCostSettings(c);
       }
     };
     fetchDynamicSettings();
@@ -419,57 +416,7 @@ export const LandingPage: React.FC = () => {
           />
         </div>
 
-        {/* Credit Cost Table */}
-        <motion.div 
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          style={{ maxWidth: '800px', margin: '80px auto 0' }}
-        >
-          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-            <h3 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '16px' }}>{t('landing.creditTitle')}</h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '1.125rem' }}>
-              {t('landing.creditSubtitle')}
-            </p>
-          </div>
 
-          <Card style={{ padding: 0, overflow: 'hidden', border: '1px solid var(--border-color)' }}>
-            <div style={{ overflowX: 'auto' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                <thead>
-                  <tr style={{ backgroundColor: 'var(--bg-tertiary)', borderBottom: '1px solid var(--border-color)' }}>
-                    <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>{t('pricing.headers.service')}</th>
-                    <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>{t('pricing.headers.credits')}</th>
-                    <th style={{ padding: '16px 24px', fontWeight: 600, color: 'var(--text-secondary)' }}>{t('pricing.headers.notes')}</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(creditCostSettings.length > 0 ? creditCostSettings : [
-                    { service: t('pricing.labels.coverLetters'), credits: 1, notes: t('pricing.perLetter') },
-                    { service: t('pricing.labels.cvs'), credits: 1, notes: t('pricing.perCV') },
-                    { service: t('pricing.labels.proposals'), credits: 1, notes: t('pricing.perProposal') },
-                    { service: t('pricing.labels.grants'), credits: 3, notes: t('pricing.perGrant') },
-                    { service: t('preparation.title'), credits: 3, notes: t('pricing.perPlan') },
-                    { service: t('pricing.anyRewrite'), credits: 0.25, notes: t('pricing.perRewrite') },
-                  ]).map((row, idx) => (
-                    <tr key={idx} style={{ borderBottom: idx !== 5 ? '1px solid var(--border-color)' : 'none' }}>
-                      <td style={{ padding: '16px 24px', fontWeight: 500 }}>{row.service}</td>
-                      <td style={{ padding: '16px 24px', color: 'var(--accent-primary)', fontWeight: 600 }}>{row.credits} {row.credits === 1 ? t('common.credit') : t('common.credits')}</td>
-                      <td style={{ padding: '16px 24px', color: 'var(--text-muted)', fontSize: '0.875rem' }}>{row.notes}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
-          
-          <div style={{ textAlign: 'center', marginTop: '32px' }}>
-            <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', backgroundColor: 'rgba(245, 158, 11, 0.1)', padding: '12px 24px', borderRadius: 'var(--radius-full)', color: 'var(--accent-primary)', fontWeight: 600 }}>
-              <Zap size={18} />
-              {t('landing.pricingMore')}
-            </div>
-          </div>
-        </motion.div>
       </section>
 
       {/* Social Proof Section (Trustpilot Reviews) */}
