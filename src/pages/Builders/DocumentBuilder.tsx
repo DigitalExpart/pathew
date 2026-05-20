@@ -193,6 +193,15 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
         {builder.stage === 'sources' && (
           <div style={sourcesStageWrapperStyle}>
             
+            {/* Profile background sources picker */}
+            <SourcePicker 
+              sources={builder.sources}
+              selectedSourceIds={builder.selectedSourceIds}
+              onChangeSelected={builder.setSelectedSourceIds}
+              onRefreshSources={builder.loadSources}
+              userId={user.id}
+            />
+
             {/* Target Job/Opportunity Selector */}
             <Card style={oppTargetCardStyle}>
               <div style={{ display: 'flex', gap: '12px', alignItems: 'center', marginBottom: '16px' }}>
@@ -231,15 +240,6 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                 />
               )}
             </Card>
-
-            {/* Profile background sources picker */}
-            <SourcePicker 
-              sources={builder.sources}
-              selectedSourceIds={builder.selectedSourceIds}
-              onChangeSelected={builder.setSelectedSourceIds}
-              onRefreshSources={builder.loadSources}
-              userId={user.id}
-            />
 
             {/* Generation settings configurations */}
             <Card style={{ ...settingsCardStyle, padding: isMobile ? '20px' : '32px' }}>
