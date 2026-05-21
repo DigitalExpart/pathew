@@ -12,6 +12,16 @@ export const AdminRssSourcesPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [syncing, setSyncing] = useState<string | null>(null);
 
+  const [isAddingSource, setIsAddingSource] = useState(false);
+  const [newSource, setNewSource] = useState({
+    name: '',
+    website_url: '',
+    feed_url: '',
+    enabled: true,
+    sync_interval_hours: 24,
+    classification_rules: '{"categories_to_job": ["Remote Jobs"], "title_to_job": ["Now Hiring", "Hiring:"], "title_to_fellowship": ["Fellowship"], "title_to_scholarship": ["Scholarship"], "title_to_grant": ["Grant", "Funding", "Fund "], "categories_to_opportunity": ["Opportunities for Women"]}'
+  });
+
   const fetchData = async () => {
     setLoading(true);
     try {
@@ -64,6 +74,40 @@ export const AdminRssSourcesPage: React.FC = () => {
     }
   };
 
+  const handleAddSource = async () => {
+    try {
+      let rules = {};
+      try {
+        rules = JSON.parse(newSource.classification_rules);
+      } catch (e) {
+        alert('Invalid JSON in classification rules.');
+        return;
+      }
+      
+      await rssService.addSource({
+        name: newSource.name,
+        website_url: newSource.website_url,
+        feed_url: newSource.feed_url,
+        enabled: newSource.enabled,
+        sync_interval_hours: newSource.sync_interval_hours,
+        classification_rules: rules
+      });
+      setIsAddingSource(false);
+      setNewSource({
+        name: '',
+        website_url: '',
+        feed_url: '',
+        enabled: true,
+        sync_interval_hours: 24,
+        classification_rules: '{"categories_to_job": ["Remote Jobs"], "title_to_job": ["Now Hiring", "Hiring:"], "title_to_fellowship": ["Fellowship"], "title_to_scholarship": ["Scholarship"], "title_to_grant": ["Grant", "Funding", "Fund "], "categories_to_opportunity": ["Opportunities for Women"]}'
+      });
+      fetchData();
+    } catch (error) {
+      console.error('Error adding source:', error);
+      alert('Failed to add source.');
+    }
+  };
+
   const stats = {
     total: sources.length,
     active: sources.filter(s => s.enabled).length,
@@ -77,10 +121,45 @@ export const AdminRssSourcesPage: React.FC = () => {
           <h1 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '4px' }}>RSS Sources</h1>
           <p style={{ color: '#64748b', fontSize: '0.875rem' }}>Manage automated content ingestion feeds</p>
         </div>
-        <Button style={{ gap: '8px' }}>
+        <Button style={{ gap: '8px' }} onClick={() => setIsAddingSource(true)}>
           <Plus size={18} /> Add Source
         </Button>
       </div>
+
+      {isAddingSource && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+          <Card style={{ backgroundColor: '#0f172a', width: '500px', maxWidth: '90%', padding: '24px', border: '1px solid rgba(255,255,255,0.1)' }}>
+            <h2 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '16px' }}>Add RSS Source</h2>
+            
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.875rem' }}>Source Name</label>
+                <input type="text" value={newSource.name} onChange={e => setNewSource({...newSource, name: e.target.value})} style={inputStyle} placeholder="Extraordinary Woman Blog" />
+              </div>
+              
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.875rem' }}>Website URL</label>
+                <input type="text" value={newSource.website_url} onChange={e => setNewSource({...newSource, website_url: e.target.value})} style={inputStyle} placeholder="https://extraordinarywomanblog.com" />
+              </div>
+              
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.875rem' }}>Feed URL</label>
+                <input type="text" value={newSource.feed_url} onChange={e => setNewSource({...newSource, feed_url: e.target.value})} style={inputStyle} placeholder="https://extraordinarywomanblog.com/feed/" />
+              </div>
+
+              <div>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.875rem' }}>Classification Rules (JSON)</label>
+                <textarea value={newSource.classification_rules} onChange={e => setNewSource({...newSource, classification_rules: e.target.value})} style={{...inputStyle, minHeight: '100px', fontFamily: 'monospace', fontSize: '0.75rem'}} />
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '24px' }}>
+              <Button variant="outline" onClick={() => setIsAddingSource(false)}>Cancel</Button>
+              <Button variant="primary" onClick={handleAddSource}>Save Source</Button>
+            </div>
+          </Card>
+        </div>
+      )}
 
       {/* Stats Row */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '32px' }}>
@@ -259,3 +338,4 @@ const StatCard = ({ label, value, icon: Icon, color }: any) => (
 const thStyle: React.CSSProperties = { padding: '14px 20px', textAlign: 'left', fontSize: '0.6875rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' };
 const tdStyle: React.CSSProperties = { padding: '14px 20px', verticalAlign: 'middle' };
 const actionBtnStyle: React.CSSProperties = { display: 'flex', alignItems: 'center', justifyContent: 'center', width: '32px', height: '32px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.06)', background: 'rgba(255,255,255,0.02)', color: '#94a3b8', cursor: 'pointer', transition: 'all 0.2s' };
+const inputStyle: React.CSSProperties = { width: '100%', padding: '10px 12px', borderRadius: '6px', border: '1px solid rgba(255,255,255,0.1)', backgroundColor: 'rgba(0,0,0,0.2)', color: '#e2e8f0', outline: 'none', fontSize: '0.875rem' };
