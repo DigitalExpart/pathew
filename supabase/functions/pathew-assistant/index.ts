@@ -282,6 +282,12 @@ Current Draft: ${currentDraft || '(No current draft)'}
     if (pageCount) documentConstraints.push(`Target Page Count: ${pageCount} pages`)
     if (wordLimit) documentConstraints.push(`Target Word Limit: ${wordLimit} words`)
     
+    // Add 250 character limit for profile setup fields
+    const profileSetupContexts = ['Personal Story', 'Skills Assistant', 'Experience Assistant', 'Achievement Assistant', 'Goals Assistant', 'Education Assistant'];
+    if (profileSetupContexts.includes(documentType)) {
+      documentConstraints.push(`Target Character Limit: MAXIMUM 250 CHARACTERS. Your entire draft response MUST NOT exceed 250 characters under any circumstances.`);
+    }
+
     const constraintsInstruction = documentConstraints.length > 0
       ? `Ensure the generated draft STRICTLY complies with these target constraints: ${documentConstraints.join(' and ')}.`
       : ""
