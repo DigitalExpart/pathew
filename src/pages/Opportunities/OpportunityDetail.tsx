@@ -166,7 +166,7 @@ export const OpportunityDetail: React.FC = () => {
             onClick={handleApply}
             disabled={applying}
           >
-            {applying ? t('common.loading') : t('opportunities.applyNow')} <ExternalLink size={16} />
+            {applying ? t('common.loading') : 'Apply Now'} <ExternalLink size={16} />
           </Button>
         </div>
       </div>
