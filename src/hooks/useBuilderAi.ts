@@ -380,6 +380,14 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
         }
       }
 
+      // Final robust cleanup for escaped newlines and markdown wrappers
+      finalDraft = finalDraft
+        .replace(/^```(markdown|json|text)?\n?/i, '')
+        .replace(/```$/i, '')
+        .replace(/\\n/g, '\n')
+        .replace(/\\"/g, '"')
+        .trim();
+
       setDraftContent(finalDraft);
       setMatchSummary(finalMatchSummary);
       setEditingSuggestions(finalEditingSuggestions);
@@ -483,6 +491,14 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
           console.error("Robust extraction failed", e);
         }
       }
+
+      // Final robust cleanup for escaped newlines and markdown wrappers
+      finalDraft = finalDraft
+        .replace(/^```(markdown|json|text)?\n?/i, '')
+        .replace(/```$/i, '')
+        .replace(/\\n/g, '\n')
+        .replace(/\\"/g, '"')
+        .trim();
 
       setDraftContent(finalDraft);
       if (finalMatchSummary) setMatchSummary(finalMatchSummary);

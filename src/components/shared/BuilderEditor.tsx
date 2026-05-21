@@ -9,6 +9,8 @@ import {
   Copy, 
   History
 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { ExportModal } from '../ui/ExportModal';
 
 interface BuilderEditorProps {
@@ -73,31 +75,6 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
     element.click();
     document.body.removeChild(element);
     setIsExportOpen(false);
-  };
-
-  const formatTextForPreview = (text: string) => {
-    if (!text) return <p style={{ color: 'var(--text-muted)' }}>Drafting document...</p>;
-    
-    // Quick regex to format basic headings and lines for the simulated paper sheet
-    return text.split('\n').map((line, idx) => {
-      const trimmed = line.trim();
-      if (trimmed.startsWith('###')) {
-        return <h4 key={idx} style={previewH3Style}>{trimmed.replace('###', '')}</h4>;
-      }
-      if (trimmed.startsWith('##')) {
-        return <h3 key={idx} style={previewH2Style}>{trimmed.replace('##', '')}</h3>;
-      }
-      if (trimmed.startsWith('#')) {
-        return <h2 key={idx} style={previewH1Style}>{trimmed.replace('#', '')}</h2>;
-      }
-      if (trimmed.startsWith('-') || trimmed.startsWith('*')) {
-        return <li key={idx} style={previewLiStyle}>{trimmed.substring(1).trim()}</li>;
-      }
-      if (trimmed === '') {
-        return <div key={idx} style={{ height: '12px' }}></div>;
-      }
-      return <p key={idx} style={previewParaStyle}>{trimmed}</p>;
-    });
   };
 
   return (
@@ -208,7 +185,10 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
         <div style={previewColumnStyle}>
           <div style={previewLabelStyle}>Simulated A4 Preview</div>
           <div style={a4PaperContainerStyle}>
-            <div style={a4SheetStyle}>
+            <div style={{
+              ...a4SheetStyle,
+              minHeight: `${Math.max(1, estimatedPages) * 1123}px` // Scale physical height to simulate multiple pages
+            }}>
               {/* Cover Letter Header elements */}
               <div style={letterheadStyle}>
                 <div style={letterheadLogoStyle}>P</div>
@@ -219,7 +199,22 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
               </div>
               
               <div style={paperBodyStyle}>
-                {formatTextForPreview(draftContent)}
+                {!draftContent ? (
+                  <p style={{ color: 'var(--text-muted)' }}>Drafting document...</p>
+                ) : (
+                  <ReactMarkdown 
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      h1: ({node, ...props}) => <h2 style={previewH1Style} {...props} />,
+                      h2: ({node, ...props}) => <h3 style={previewH2Style} {...props} />,
+                      h3: ({node, ...props}) => <h4 style={previewH3Style} {...props} />,
+                      li: ({node, ...props}) => <li style={previewLiStyle} {...props} />,
+                      p: ({node, ...props}) => <p style={previewPStyle} {...props} />
+                    }}
+                  >
+                    {draftContent}
+                  </ReactMarkdown>
+                )}
               </div>
 
               {/* Watermark/Footer */}
