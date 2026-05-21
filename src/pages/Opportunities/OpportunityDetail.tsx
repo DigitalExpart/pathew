@@ -250,19 +250,19 @@ export const OpportunityDetail: React.FC = () => {
                 icon={FileText} 
                 title={t('builders.cv.title')}
                 desc={t('builders.cv.desc')}
-                path="/cv-builder"
+                path={`/cv-builder?oppId=${opp.id}`}
               />
               <DocGenCard 
                 icon={FileEdit} 
                 title={t('builders.coverLetter.title')}
                 desc={t('builders.coverLetter.desc')}
-                path="/cover-letter"
+                path={`/cover-letter?oppId=${opp.id}`}
               />
               <DocGenCard 
                 icon={Send} 
                 title={t('builders.proposal.title')}
                 desc={t('builders.proposal.desc')}
-                path="/proposal"
+                path={`/proposal?oppId=${opp.id}`}
               />
             </div>
           </Card>
