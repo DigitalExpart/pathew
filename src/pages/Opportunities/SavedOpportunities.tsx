@@ -7,9 +7,10 @@ import { MapPin, Calendar, ChevronRight, Activity, Bookmark, Trash2 } from 'luci
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { useTranslation } from 'react-i18next';
+import { calculateMatchScore } from '../../utils/matchScorer';
 
 export const SavedOpportunities: React.FC = () => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { t } = useTranslation();
   const [savedOpps, setSavedOpps] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -211,7 +212,7 @@ export const SavedOpportunities: React.FC = () => {
             <Card key={opp.id} style={{ display: 'flex', flexDirection: 'column', padding: isMobile ? '16px' : '24px' }}>
               <div style={cardHeaderStyle}>
                 <div style={matchBadgeStyle}>
-                  <span style={matchScoreStyle}>{opp.match_score || 0}%</span>
+                  <span style={matchScoreStyle}>{opp.match_score || calculateMatchScore(profile, opp)}%</span>
                   <span style={matchTextStyle}>{t('savedItems.match')}</span>
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>

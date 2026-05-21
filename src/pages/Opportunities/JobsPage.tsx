@@ -7,7 +7,11 @@ import { Briefcase, MapPin, ExternalLink } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useTranslation } from 'react-i18next';
 
+import { useAuth } from '../../context/AuthContext';
+import { calculateMatchScore } from '../../utils/matchScorer';
+
 export const JobsPage: React.FC = () => {
+  const { user, profile } = useAuth();
   const { t } = useTranslation();
   const [jobs, setJobs] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
@@ -68,7 +72,7 @@ export const JobsPage: React.FC = () => {
             <Card key={job.id} style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={cardHeaderStyle}>
                 <div style={matchBadgeStyle}>
-                  <span style={matchScoreStyle}>{job.match_score || 85}%</span>
+                  <span style={matchScoreStyle}>{job.match_score || calculateMatchScore(profile, job)}%</span>
                   <span style={matchTextStyle}>{t('savedItems.match')}</span>
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>

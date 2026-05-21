@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { useTranslation } from 'react-i18next';
+import { calculateMatchScore } from '../../utils/matchScorer';
 
 export const Dashboard: React.FC = () => {
   const { user, profile } = useAuth();
@@ -235,7 +236,7 @@ export const Dashboard: React.FC = () => {
                   </div>
                   <div className="desktop-only" style={oppMatchStyle}>
                     <div style={matchCircleStyle}>
-                      <span style={matchValueStyle}>{opp.match_score}%</span>
+                      <span style={matchValueStyle}>{opp.match_score || calculateMatchScore(profile, opp)}%</span>
                     </div>
                     <span style={matchLabelStyle}>{t('dashboard.match')}</span>
                   </div>
