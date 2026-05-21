@@ -11,7 +11,7 @@ import { useAuth } from '../../context/AuthContext';
 import { calculateMatchScore } from '../../utils/matchScorer';
 
 export const JobsPage: React.FC = () => {
-  const { user, profile } = useAuth();
+  const { profile } = useAuth();
   const { t } = useTranslation();
   const [jobs, setJobs] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
