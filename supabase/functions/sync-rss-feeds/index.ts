@@ -111,8 +111,8 @@ serve(async (req) => {
              content = item.content['#text'] || item.content || ''
           }
 
-          // Fallback to content if description is empty or too short
-          if (!description || description.length < 50) {
+          // Prioritize full content over description if it is longer (to avoid truncated excerpts)
+          if (content && content.length > description.length) {
             description = content;
           }
           
