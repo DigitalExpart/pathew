@@ -173,7 +173,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
       <header style={headerBlockStyle}>
         <div>
           <h1 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 800, marginBottom: '4px' }}>
-            {initialTitle || `Tailored ${type} Workspace`}
+            {oppDetails ? `Tailored ${type} - ${oppDetails.title}` : (initialTitle || `Tailored ${type} Workspace`)}
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
             {type === 'CV' && 'Create a highly tailored master resume focusing heavily on opportunity matches.'}
