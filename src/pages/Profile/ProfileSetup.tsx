@@ -81,9 +81,8 @@ export const ProfileSetup: React.FC = () => {
     portfolio_url: '',
     portfolios: [] as any[],
     languages: [] as string[],
-    marital_status: '',
     location: '',
-    date_of_birth: '',
+    year_of_birth: '',
     certifications: [] as any[],
   });
 
@@ -105,9 +104,8 @@ export const ProfileSetup: React.FC = () => {
         portfolio_url: profile.portfolio_url || '',
         portfolios: profile.portfolios || [],
         languages: profile.languages || [],
-        marital_status: profile.marital_status || '',
         location: profile.location || '',
-        date_of_birth: profile.date_of_birth || '',
+        year_of_birth: profile.year_of_birth || profile.date_of_birth || '',
         certifications: profile.certifications || [],
       });
     }
@@ -132,9 +130,8 @@ export const ProfileSetup: React.FC = () => {
           skills: profileData.skills,
           portfolios: profileData.portfolios,
           languages: profileData.languages,
-          marital_status: profileData.marital_status,
           location: profileData.location,
-          date_of_birth: profileData.date_of_birth,
+          year_of_birth: profileData.year_of_birth,
           certifications: profileData.certifications,
           updated_at: new Date().toISOString(),
         })

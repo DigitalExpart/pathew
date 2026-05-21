@@ -111,6 +111,17 @@ serve(async (req) => {
              content = item.content['#text'] || item.content || ''
           }
 
+          // Fallback to content if description is empty or too short
+          if (!description || description.length < 50) {
+            description = content;
+          }
+          
+          // Basic HTML strip for description to avoid messy text
+          description = description.replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
+          if (description.length > 500) {
+            description = description.substring(0, 497) + '...';
+          }
+
           if (!title || !guid) {
             logUpdates.items_skipped++
             continue
@@ -160,9 +171,16 @@ serve(async (req) => {
 
           // Try to find deadline
           let deadline = null
-          const deadlineMatch = content.match(/Application Deadline:\s*([^<]+)/i)
+          const deadlineMatch = content.match(/(?:application deadline|due date|deadline|closes|closing date):\s*([^<.,\n]+)/i)
           if (deadlineMatch && deadlineMatch[1]) {
              deadline = deadlineMatch[1].trim()
+          }
+
+          // Try to find location from title or content
+          let location = null
+          const locationMatch = title.match(/\bin\s+([A-Z][a-zA-Z\s,]+?)(?:\(|-|$)/)
+          if (locationMatch && locationMatch[1]) {
+             location = locationMatch[1].trim()
           }
 
           // Prepare payload
@@ -181,6 +199,7 @@ serve(async (req) => {
             rss_imported_at: new Date().toISOString(),
             thumbnail_url: thumbnailUrl,
             deadline: deadline,
+            location: location,
             created_at: new Date(pubDate).toISOString(),
             updated_at: new Date().toISOString()
           }

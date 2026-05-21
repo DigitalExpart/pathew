@@ -39,8 +39,7 @@ export const EditProfile: React.FC = () => {
     full_name: '',
     story: '',
     location: '',
-    marital_status: '',
-    date_of_birth: '',
+    year_of_birth: '',
     languages: [] as string[],
     gender: '',
     country: '',
@@ -60,8 +59,7 @@ export const EditProfile: React.FC = () => {
         full_name: profile.full_name || '',
         story: profile.story || '',
         location: profile.location || '',
-        marital_status: profile.marital_status || '',
-        date_of_birth: profile.date_of_birth || '',
+        year_of_birth: profile.year_of_birth || profile.date_of_birth || '',
         languages: profile.languages || [],
         gender: profile.gender || '',
         country: profile.country || '',
@@ -86,8 +84,7 @@ export const EditProfile: React.FC = () => {
         full_name: formData.full_name,
         story: formData.story,
         location: formData.location, // This is the 'City' field
-        marital_status: formData.marital_status,
-        date_of_birth: formData.date_of_birth,
+        year_of_birth: formData.year_of_birth,
         languages: formData.languages,
         gender: formData.gender,
         country: formData.country,
@@ -162,24 +159,14 @@ export const EditProfile: React.FC = () => {
               <div style={inputGroupStyle}>
                 <label style={labelStyle}>{t('editProfile.dob')}</label>
                 <input 
-                  type="date"
+                  type="number"
+                  placeholder="YYYY"
+                  min="1900"
+                  max={new Date().getFullYear()}
                   style={inputStyle} 
-                  value={formData.date_of_birth}
-                  onChange={(e) => updateField('date_of_birth', e.target.value)}
+                  value={formData.year_of_birth}
+                  onChange={(e) => updateField('year_of_birth', e.target.value)}
                 />
-              </div>
-              <div style={inputGroupStyle}>
-                <label style={labelStyle}>{t('editProfile.maritalStatus')}</label>
-                <select 
-                  style={inputStyle} 
-                  value={formData.marital_status}
-                  onChange={(e) => updateField('marital_status', e.target.value)}
-                >
-                  <option value="">{t('editProfile.selectStatus')}</option>
-                  <option value="Single">{t('editProfile.single')}</option>
-                  <option value="Married">{t('editProfile.married')}</option>
-                  <option value="Divorced">{t('editProfile.divorced')}</option>
-                </select>
               </div>
               <div style={inputGroupStyle}>
                 <label style={labelStyle}>{t('editProfile.gender')}</label>
