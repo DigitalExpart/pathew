@@ -346,20 +346,29 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
       let finalMatchSummary = result.matchSummary || { strongMatches: [], gaps: [], priorityPoints: [] };
       let finalEditingSuggestions = result.editingSuggestions || [];
 
-      // Fallback: If edge function failed to parse the JSON due to unescaped newlines
-      // it dumps the raw JSON string into result.draft.
-      if (finalDraft && finalDraft.trim().startsWith('{"draft":')) {
-        console.warn("Detected raw JSON in draft, attempting regex extraction...");
+      // Fallback: If edge function failed to parse the JSON due to unescaped newlines or markdown wraps
+      if (finalDraft && finalDraft.includes('"draft":') && (finalDraft.includes('"matchSummary"') || finalDraft.includes('matchSummary'))) {
+        console.warn("Detected raw JSON in draft, attempting robust extraction...");
         try {
-          // Attempt to extract the draft text safely
-          const draftMatch = finalDraft.match(/"draft"\s*:\s*"([\s\S]*?)",\s*"matchSummary"/);
-          if (draftMatch && draftMatch[1]) {
-            finalDraft = draftMatch[1];
-            // Unescape any escaped newlines just in case
-            finalDraft = finalDraft.replace(/\\n/g, '\n').replace(/\\"/g, '"');
+          let cleanStr = finalDraft.replace(/```json/gi, '').replace(/```/g, '').trim();
+          try {
+            const parsed = JSON.parse(cleanStr);
+            if (parsed.draft) {
+              finalDraft = parsed.draft;
+              if (parsed.matchSummary) finalMatchSummary = parsed.matchSummary;
+              if (parsed.editingSuggestions) finalEditingSuggestions = parsed.editingSuggestions;
+            }
+          } catch (err) {
+            // Attempt to extract the draft text safely via regex if JSON parse still fails
+            const draftMatch = cleanStr.match(/"draft"\s*:\s*"([\s\S]*?)",\s*"matchSummary"/);
+            if (draftMatch && draftMatch[1]) {
+              finalDraft = draftMatch[1];
+              // Unescape any escaped newlines just in case
+              finalDraft = finalDraft.replace(/\\n/g, '\n').replace(/\\"/g, '"');
+            }
           }
         } catch (e) {
-          console.error("Regex extraction failed", e);
+          console.error("Robust extraction failed", e);
         }
       }
 
@@ -437,15 +446,26 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
       let finalEditingSuggestions = result.editingSuggestions || editingSuggestions;
 
       // Fallback: If edge function failed to parse the JSON
-      if (finalDraft && finalDraft.trim().startsWith('{"draft":')) {
+      if (finalDraft && finalDraft.includes('"draft":') && (finalDraft.includes('"matchSummary"') || finalDraft.includes('matchSummary'))) {
+        console.warn("Detected raw JSON in draft, attempting robust extraction...");
         try {
-          const draftMatch = finalDraft.match(/"draft"\s*:\s*"([\s\S]*?)",\s*"matchSummary"/);
-          if (draftMatch && draftMatch[1]) {
-            finalDraft = draftMatch[1];
-            finalDraft = finalDraft.replace(/\\n/g, '\n').replace(/\\"/g, '"');
+          let cleanStr = finalDraft.replace(/```json/gi, '').replace(/```/g, '').trim();
+          try {
+            const parsed = JSON.parse(cleanStr);
+            if (parsed.draft) {
+              finalDraft = parsed.draft;
+              if (parsed.matchSummary) finalMatchSummary = parsed.matchSummary;
+              if (parsed.editingSuggestions) finalEditingSuggestions = parsed.editingSuggestions;
+            }
+          } catch (err) {
+            const draftMatch = cleanStr.match(/"draft"\s*:\s*"([\s\S]*?)",\s*"matchSummary"/);
+            if (draftMatch && draftMatch[1]) {
+              finalDraft = draftMatch[1];
+              finalDraft = finalDraft.replace(/\\n/g, '\n').replace(/\\"/g, '"');
+            }
           }
         } catch (e) {
-          console.error("Regex extraction failed", e);
+          console.error("Robust extraction failed", e);
         }
       }
 
