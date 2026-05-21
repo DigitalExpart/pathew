@@ -169,18 +169,35 @@ serve(async (req) => {
             applyLink = applyMatch[1]
           }
 
+          // Combine text for regex searching before stripping too much
+          const rawDescription = item.description?.['#text'] || item.description || '';
+          const textForRegex = (title + '\n' + rawDescription + '\n' + content).replace(/<[^>]*>?/gm, '\n');
+
           // Try to find deadline
           let deadline = null
-          const deadlineMatch = content.match(/(?:application deadline|due date|deadline|closes|closing date):\s*([^<.,\n]+)/i)
+          const deadlineMatch = textForRegex.match(/(?:application deadline|due date|deadline|closes|closing date)\s*[:-]\s*([^\n.\-(]+)/i)
           if (deadlineMatch && deadlineMatch[1]) {
              deadline = deadlineMatch[1].trim()
+             if (deadline.length > 40) deadline = deadline.substring(0, 40).trim();
           }
 
-          // Try to find location from title or content
+          // Try to find location from title
           let location = null
-          const locationMatch = title.match(/\bin\s+([A-Z][a-zA-Z\s,]+?)(?:\(|-|$)/)
+          const locationMatch = title.match(/\b(?:in|at|for)\s+([A-Z][a-zA-Z\s]+?)(?:\(|-|:|$)/)
           if (locationMatch && locationMatch[1]) {
-             location = locationMatch[1].trim()
+             const loc = locationMatch[1].trim()
+             if (loc.length > 2 && loc.length < 30) {
+               location = loc;
+             }
+          }
+          if (!location) {
+             const commonLocations = ['Nigeria', 'Kenya', 'South Africa', 'Ghana', 'Rwanda', 'Uganda', 'Africa', 'United States', 'UK', 'Canada', 'Europe', 'Asia', 'Global', 'Caribbean'];
+             for (const loc of commonLocations) {
+                if (title.includes(loc)) {
+                   location = loc;
+                   break;
+                }
+             }
           }
 
           // Prepare payload
