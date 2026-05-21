@@ -91,7 +91,7 @@ serve(async (req) => {
         for (const item of itemsArray) {
           // Extract basic fields
           const title = (item.title?.['#text'] || item.title || '').trim()
-          const description = (item.description?.['#text'] || item.description || '').trim()
+          let description = (item.description?.['#text'] || item.description || '').trim()
           const link = (item.link?.['#text'] || item.link || '').trim()
           const guid = (item.guid?.['#text'] || item.guid || link || '').trim()
           const pubDate = item.pubDate?.['#text'] || item.pubDate || new Date().toISOString()
