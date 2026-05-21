@@ -254,38 +254,6 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
               </div>
 
               <div style={settingsGridStyle}>
-                {/* General Settings Box */}
-                <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', backgroundColor: 'var(--bg-tertiary)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                  <div>
-                    <label style={labelStyle}>Tone of Voice</label>
-                    <select 
-                      value={builder.tone}
-                      onChange={(e) => builder.setTone(e.target.value)}
-                      style={{ ...selectInputStyle, backgroundColor: 'var(--bg-secondary)', border: 'none' }}
-                    >
-                      <option value="N/A">N/A</option>
-                      <option value="Professional & Academic">Professional & Academic (Formal & polished)</option>
-                      <option value="Creative & Narrative">Creative & Narrative (Story-driven & expressive)</option>
-                      <option value="Concise & Impactful">Concise & Impactful (Short, high-signal bullets)</option>
-                      <option value="Casual & Friendly">Casual & Friendly (Warm & approachable)</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label style={labelStyle}>Target Spelling / Language</label>
-                    <select 
-                      value={builder.language}
-                      onChange={(e) => builder.setLanguage(e.target.value)}
-                      style={{ ...selectInputStyle, backgroundColor: 'var(--bg-secondary)', border: 'none' }}
-                    >
-                      <option value="English (UK)">UK English (-programme, -ise)</option>
-                      <option value="English (US)">US English (-program, -ize)</option>
-                      <option value="French">French (Français)</option>
-                      <option value="German">German (Deutsch)</option>
-                      <option value="Spanish">Spanish (Español)</option>
-                    </select>
-                  </div>
-                </div>
 
                 {/* CV BUILDER CONDITIONAL INPUTS */}
                 {type === 'CV' && (
@@ -641,6 +609,39 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                     </div>
                   </div>
                 )}
+
+                {/* General Settings Box */}
+                <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', backgroundColor: 'var(--bg-tertiary)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+                  <div>
+                    <label style={labelStyle}>Tone of Voice</label>
+                    <select 
+                      value={builder.tone}
+                      onChange={(e) => builder.setTone(e.target.value)}
+                      style={{ ...selectInputStyle, backgroundColor: 'var(--bg-secondary)', border: 'none' }}
+                    >
+                      <option value="N/A">N/A</option>
+                      <option value="Professional & Academic">Professional & Academic (Formal & polished)</option>
+                      <option value="Creative & Narrative">Creative & Narrative (Story-driven & expressive)</option>
+                      <option value="Concise & Impactful">Concise & Impactful (Short, high-signal bullets)</option>
+                      <option value="Casual & Friendly">Casual & Friendly (Warm & approachable)</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label style={labelStyle}>Target Spelling / Language</label>
+                    <select 
+                      value={builder.language}
+                      onChange={(e) => builder.setLanguage(e.target.value)}
+                      style={{ ...selectInputStyle, backgroundColor: 'var(--bg-secondary)', border: 'none' }}
+                    >
+                      <option value="English (UK)">UK English (-programme, -ise)</option>
+                      <option value="English (US)">US English (-program, -ize)</option>
+                      <option value="French">French (Français)</option>
+                      <option value="German">German (Deutsch)</option>
+                      <option value="Spanish">Spanish (Español)</option>
+                    </select>
+                  </div>
+                </div>
               </div>
             </Card>
 
