@@ -161,8 +161,9 @@ export const OpportunityList: React.FC = () => {
           filteredOpps.map(opp => (
             <Card key={opp.id} style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={cardHeaderStyle}>
-              <div style={companyShortLogoStyle}>
-                {(opp.organization_name || opp.funder_name || 'O').charAt(0)}
+              <div style={matchBadgeStyle}>
+                <span style={matchScoreStyle}>{opp.match_score || 85}%</span>
+                <span style={matchTextStyle}>{t('savedItems.match')}</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
                 <div style={{ display: 'flex', gap: '8px' }}>
@@ -309,17 +310,27 @@ const cardHeaderStyle: React.CSSProperties = {
   alignItems: 'flex-start',
 };
 
-const companyShortLogoStyle: React.CSSProperties = {
-  width: '40px',
-  height: '40px',
-  backgroundColor: 'var(--bg-tertiary)',
-  borderRadius: '10px',
+const matchBadgeStyle: React.CSSProperties = {
   display: 'flex',
+  flexDirection: 'column',
   alignItems: 'center',
-  justifyContent: 'center',
+  backgroundColor: 'rgba(245, 158, 11, 0.1)',
+  padding: '8px 12px',
+  borderRadius: '12px',
+  border: '1px solid var(--accent-glow)',
+};
+
+const matchScoreStyle: React.CSSProperties = {
   fontSize: '1.25rem',
   fontWeight: 800,
   color: 'var(--accent-primary)',
+};
+
+const matchTextStyle: React.CSSProperties = {
+  fontSize: '0.625rem',
+  textTransform: 'uppercase',
+  fontWeight: 700,
+  color: 'var(--accent-secondary)',
 };
 
 const oppTitleStyle: React.CSSProperties = {
