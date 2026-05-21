@@ -37,6 +37,7 @@ export const OpportunityDetail: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
   const [applying, setApplying] = React.useState(false);
+  const [descExpanded, setDescExpanded] = React.useState(false);
 
   React.useEffect(() => {
     const fetchOpp = async () => {
@@ -165,7 +166,7 @@ export const OpportunityDetail: React.FC = () => {
             onClick={handleApply}
             disabled={applying}
           >
-            {applying ? t('common.loading') : `${t('opportunities.apply')} ${t('common.on')} ${opp?.source_name || t('opportunities.originalSite')}`} <ExternalLink size={16} />
+            {applying ? t('common.loading') : t('opportunities.applyNow')} <ExternalLink size={16} />
           </Button>
         </div>
       </div>
@@ -174,7 +175,33 @@ export const OpportunityDetail: React.FC = () => {
         <div style={contentColStyle}>
           <Card style={{ marginBottom: '24px' }}>
             <h2 style={sectionTitleStyle}>{t('opportunities.description')}</h2>
-            <p style={descriptionStyle}>{opp.description}</p>
+            <div style={{ position: 'relative' }}>
+              <p style={{
+                ...descriptionStyle,
+                display: '-webkit-box',
+                WebkitLineClamp: descExpanded ? 'unset' : 5,
+                WebkitBoxOrient: 'vertical',
+                overflow: 'hidden'
+              }}>
+                {opp.description}
+              </p>
+              {opp.description && (opp.description.length > 400 || opp.description.split('\n').length > 5) && (
+                <button
+                  onClick={() => setDescExpanded(!descExpanded)}
+                  style={{
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--accent-primary)',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    padding: '8px 0',
+                    fontSize: '0.875rem'
+                  }}
+                >
+                  {descExpanded ? 'Read Less' : 'Read More'}
+                </button>
+              )}
+            </div>
             
             <h2 style={{ ...sectionTitleStyle, marginTop: '32px' }}>{t('opportunities.requirementComparison')}</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>

@@ -116,11 +116,13 @@ serve(async (req) => {
             description = content;
           }
           
-          // Basic HTML strip for description to avoid messy text
-          description = description.replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
-          if (description.length > 500) {
-            description = description.substring(0, 497) + '...';
-          }
+          // Basic HTML strip for description to avoid messy text while preserving paragraphs
+          description = description
+            .replace(/<br\s*\/?>/gi, '\n')
+            .replace(/<\/p>/gi, '\n\n')
+            .replace(/<[^>]*>?/gm, '')
+            .replace(/\n\s*\n/g, '\n\n')
+            .trim();
 
           if (!title || !guid) {
             logUpdates.items_skipped++
