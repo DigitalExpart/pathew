@@ -105,7 +105,7 @@ export const ProfileSetup: React.FC = () => {
         portfolios: profile.portfolios || [],
         languages: profile.languages || [],
         location: profile.location || '',
-        year_of_birth: profile.year_of_birth || profile.date_of_birth || '',
+        year_of_birth: profile.year_of_birth || (profile as any).date_of_birth || '',
         certifications: profile.certifications || [],
       });
     }

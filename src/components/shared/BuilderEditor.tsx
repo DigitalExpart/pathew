@@ -209,7 +209,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
                       h2: ({node, ...props}) => <h3 style={previewH2Style} {...props} />,
                       h3: ({node, ...props}) => <h4 style={previewH3Style} {...props} />,
                       li: ({node, ...props}) => <li style={previewLiStyle} {...props} />,
-                      p: ({node, ...props}) => <p style={previewPStyle} {...props} />
+                      p: ({node, ...props}) => <p style={previewParaStyle} {...props} />
                     }}
                   >
                     {draftContent}

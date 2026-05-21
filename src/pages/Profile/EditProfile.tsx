@@ -59,7 +59,7 @@ export const EditProfile: React.FC = () => {
         full_name: profile.full_name || '',
         story: profile.story || '',
         location: profile.location || '',
-        year_of_birth: profile.year_of_birth || profile.date_of_birth || '',
+        year_of_birth: profile.year_of_birth || (profile as any).date_of_birth || '',
         languages: profile.languages || [],
         gender: profile.gender || '',
         country: profile.country || '',
