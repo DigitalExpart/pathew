@@ -84,6 +84,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
   const [draftContent, setDraftContent] = useState<string>('');
   const [editingSuggestions, setEditingSuggestions] = useState<string[]>([]);
   const [confidence, setConfidence] = useState<'high' | 'medium' | 'low'>('medium');
+  const [estimatedPages, setEstimatedPages] = useState<number>(1);
   const [sessionId, setSessionId] = useState<string | undefined>(undefined);
   
   // Document history states
@@ -345,6 +346,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
       let finalDraft = result.draft;
       let finalMatchSummary = result.matchSummary || { strongMatches: [], gaps: [], priorityPoints: [] };
       let finalEditingSuggestions = result.editingSuggestions || [];
+      let finalEstimatedPages = result.estimatedPages || 1;
 
       // Fallback: If edge function failed to parse the JSON due to unescaped newlines or markdown wraps
       if (finalDraft && finalDraft.includes('"draft":') && (finalDraft.includes('"matchSummary"') || finalDraft.includes('matchSummary'))) {
@@ -357,6 +359,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
               finalDraft = parsed.draft;
               if (parsed.matchSummary) finalMatchSummary = parsed.matchSummary;
               if (parsed.editingSuggestions) finalEditingSuggestions = parsed.editingSuggestions;
+              if (parsed.estimatedPages) finalEstimatedPages = parsed.estimatedPages;
             }
           } catch (err) {
             // Attempt to extract the draft text safely via regex if JSON parse still fails
@@ -365,6 +368,11 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
               finalDraft = draftMatch[1];
               // Unescape any escaped newlines just in case
               finalDraft = finalDraft.replace(/\\n/g, '\n').replace(/\\"/g, '"');
+            }
+            
+            const pagesMatch = cleanStr.match(/"estimatedPages"\s*:\s*(\d+)/);
+            if (pagesMatch && pagesMatch[1]) {
+              finalEstimatedPages = parseInt(pagesMatch[1], 10);
             }
           }
         } catch (e) {
@@ -375,6 +383,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
       setDraftContent(finalDraft);
       setMatchSummary(finalMatchSummary);
       setEditingSuggestions(finalEditingSuggestions);
+      setEstimatedPages(finalEstimatedPages);
       setConfidence(result.confidence || 'medium');
       setSessionId(result.sessionId);
 
@@ -444,6 +453,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
       let finalDraft = result.draft;
       let finalMatchSummary = result.matchSummary || matchSummary;
       let finalEditingSuggestions = result.editingSuggestions || editingSuggestions;
+      let finalEstimatedPages = result.estimatedPages || estimatedPages;
 
       // Fallback: If edge function failed to parse the JSON
       if (finalDraft && finalDraft.includes('"draft":') && (finalDraft.includes('"matchSummary"') || finalDraft.includes('matchSummary'))) {
@@ -456,12 +466,17 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
               finalDraft = parsed.draft;
               if (parsed.matchSummary) finalMatchSummary = parsed.matchSummary;
               if (parsed.editingSuggestions) finalEditingSuggestions = parsed.editingSuggestions;
+              if (parsed.estimatedPages) finalEstimatedPages = parsed.estimatedPages;
             }
           } catch (err) {
             const draftMatch = cleanStr.match(/"draft"\s*:\s*"([\s\S]*?)",\s*"matchSummary"/);
             if (draftMatch && draftMatch[1]) {
               finalDraft = draftMatch[1];
               finalDraft = finalDraft.replace(/\\n/g, '\n').replace(/\\"/g, '"');
+            }
+            const pagesMatch = cleanStr.match(/"estimatedPages"\s*:\s*(\d+)/);
+            if (pagesMatch && pagesMatch[1]) {
+              finalEstimatedPages = parseInt(pagesMatch[1], 10);
             }
           }
         } catch (e) {
@@ -472,6 +487,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
       setDraftContent(finalDraft);
       if (finalMatchSummary) setMatchSummary(finalMatchSummary);
       if (finalEditingSuggestions) setEditingSuggestions(finalEditingSuggestions);
+      setEstimatedPages(finalEstimatedPages);
       
       // Save next version number
       const nextVersion = savedVersions.length > 0 ? Math.max(...savedVersions.map(v => v.version)) + 1 : 1;
@@ -623,6 +639,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
     draftContent,
     setDraftContent,
     editingSuggestions,
+    estimatedPages,
     confidence,
     sessionId,
     

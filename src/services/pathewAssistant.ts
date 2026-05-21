@@ -22,6 +22,7 @@ export interface AssistantResponseData {
   };
   editingSuggestions: string[];
   wordCountEstimate: number;
+  estimatedPages?: number;
   confidence: 'high' | 'medium' | 'low';
   sessionId: string;
   error?: string;

@@ -787,6 +787,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                 }}
                 isLoading={builder.isGenerating}
                 documentType={type}
+                estimatedPages={builder.estimatedPages}
               />
             )}
           </div>

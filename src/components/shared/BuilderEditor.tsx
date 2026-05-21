@@ -21,6 +21,7 @@ interface BuilderEditorProps {
   onSelectVersion: (ver: any) => void;
   isLoading: boolean;
   documentType: string;
+  estimatedPages?: number;
 }
 
 export const BuilderEditor: React.FC<BuilderEditorProps> = ({
@@ -33,6 +34,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
   onSelectVersion,
   isLoading,
   documentType,
+  estimatedPages = 1,
 }) => {
   const [instruction, setInstruction] = useState('');
   const [copied, setCopied] = useState(false);
@@ -223,7 +225,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
               {/* Watermark/Footer */}
               <div style={paperFooterStyle}>
                 <span>Powered by Pathew Assistant</span>
-                <span>Page 1 of 1</span>
+                <span>Page 1 to {Math.max(1, estimatedPages)}</span>
               </div>
             </div>
           </div>
