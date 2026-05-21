@@ -123,12 +123,16 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
       if (docs.length > 0) {
         // Default to the current current draft if present
         const currentDoc = docs.find(d => d.is_current) || docs[0];
-        setDraftContent(currentDoc.content);
-        if (currentDoc.structured_json) {
-          setMatchSummary(currentDoc.structured_json.matchSummary || { strongMatches: [], gaps: [], priorityPoints: [] });
-          setEditingSuggestions(currentDoc.structured_json.editingSuggestions || []);
+        if (currentDoc.content && currentDoc.content.trim().startsWith('{"draft":')) {
+          console.warn("Ignoring corrupted JSON draft in history");
+        } else {
+          setDraftContent(currentDoc.content);
+          if (currentDoc.structured_json) {
+            setMatchSummary(currentDoc.structured_json.matchSummary || { strongMatches: [], gaps: [], priorityPoints: [] });
+            setEditingSuggestions(currentDoc.structured_json.editingSuggestions || []);
+          }
+          setCurrentVersionNumber(currentDoc.version);
         }
-        setCurrentVersionNumber(currentDoc.version);
       }
     } catch (err: any) {
       console.error('Error loading versions:', err);
@@ -338,9 +342,30 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
         throw new Error(result.error);
       }
 
-      setDraftContent(result.draft);
-      setMatchSummary(result.matchSummary || { strongMatches: [], gaps: [], priorityPoints: [] });
-      setEditingSuggestions(result.editingSuggestions || []);
+      let finalDraft = result.draft;
+      let finalMatchSummary = result.matchSummary || { strongMatches: [], gaps: [], priorityPoints: [] };
+      let finalEditingSuggestions = result.editingSuggestions || [];
+
+      // Fallback: If edge function failed to parse the JSON due to unescaped newlines
+      // it dumps the raw JSON string into result.draft.
+      if (finalDraft && finalDraft.trim().startsWith('{"draft":')) {
+        console.warn("Detected raw JSON in draft, attempting regex extraction...");
+        try {
+          // Attempt to extract the draft text safely
+          const draftMatch = finalDraft.match(/"draft"\s*:\s*"([\s\S]*?)",\s*"matchSummary"/);
+          if (draftMatch && draftMatch[1]) {
+            finalDraft = draftMatch[1];
+            // Unescape any escaped newlines just in case
+            finalDraft = finalDraft.replace(/\\n/g, '\n').replace(/\\"/g, '"');
+          }
+        } catch (e) {
+          console.error("Regex extraction failed", e);
+        }
+      }
+
+      setDraftContent(finalDraft);
+      setMatchSummary(finalMatchSummary);
+      setEditingSuggestions(finalEditingSuggestions);
       setConfidence(result.confidence || 'medium');
       setSessionId(result.sessionId);
 
@@ -407,9 +432,26 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
         throw new Error(result.error);
       }
 
-      setDraftContent(result.draft);
-      if (result.matchSummary) setMatchSummary(result.matchSummary);
-      if (result.editingSuggestions) setEditingSuggestions(result.editingSuggestions);
+      let finalDraft = result.draft;
+      let finalMatchSummary = result.matchSummary || matchSummary;
+      let finalEditingSuggestions = result.editingSuggestions || editingSuggestions;
+
+      // Fallback: If edge function failed to parse the JSON
+      if (finalDraft && finalDraft.trim().startsWith('{"draft":')) {
+        try {
+          const draftMatch = finalDraft.match(/"draft"\s*:\s*"([\s\S]*?)",\s*"matchSummary"/);
+          if (draftMatch && draftMatch[1]) {
+            finalDraft = draftMatch[1];
+            finalDraft = finalDraft.replace(/\\n/g, '\n').replace(/\\"/g, '"');
+          }
+        } catch (e) {
+          console.error("Regex extraction failed", e);
+        }
+      }
+
+      setDraftContent(finalDraft);
+      if (finalMatchSummary) setMatchSummary(finalMatchSummary);
+      if (finalEditingSuggestions) setEditingSuggestions(finalEditingSuggestions);
       
       // Save next version number
       const nextVersion = savedVersions.length > 0 ? Math.max(...savedVersions.map(v => v.version)) + 1 : 1;

@@ -189,6 +189,7 @@ BUILDER-SPECIFIC SYSTEM RULES:
 - Dynamic Custom Questions: you MUST systematically answer every question listed in: ${JSON.stringify(customQuestions || [])}. Format each response clearly under a corresponding heading matching the question, adhering to its specific question word limit.
 
 CRITICAL: Your ENTIRE response must be a valid JSON object with this exact structure. Do not put markdown wraps or "json" prefix blocks; output only the raw JSON.
+Ensure you properly escape all newlines as \\n inside strings to make it valid JSON. NEVER use raw unescaped newlines inside the JSON string values.
 {
   "draft": "Your detailed drafted document or summary here",
   "matchSummary": {
