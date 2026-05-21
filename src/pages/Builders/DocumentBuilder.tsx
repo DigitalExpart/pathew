@@ -216,8 +216,8 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                 </div>
               </div>
 
-              {oppDetails ? (
-                <div style={oppDetailSummaryBoxStyle}>
+              {oppDetails && (
+                <div style={{ ...oppDetailSummaryBoxStyle, marginBottom: '16px' }}>
                   <Briefcase size={16} color="var(--accent-primary)" />
                   <div style={{ flex: 1 }}>
                     <h4 style={{ fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-primary)' }}>
@@ -231,14 +231,14 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                     {oppDetails.type}
                   </Badge>
                 </div>
-              ) : (
-                <textarea 
-                  placeholder="Paste target job listing, scholarship requirements, or funding proposal description here..."
-                  value={builder.opportunityText}
-                  onChange={(e) => builder.setOpportunityText(e.target.value)}
-                  style={textareaStyle}
-                />
               )}
+              
+              <textarea 
+                placeholder="Paste target job listing, scholarship requirements, or funding proposal description here..."
+                value={builder.opportunityText}
+                onChange={(e) => builder.setOpportunityText(e.target.value)}
+                style={textareaStyle}
+              />
             </Card>
 
             {/* Generation settings configurations */}
