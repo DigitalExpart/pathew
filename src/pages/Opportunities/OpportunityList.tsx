@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
-import { Search, Filter, Calendar, MapPin, ChevronRight, Star } from 'lucide-react';
+import { Search, Filter, Calendar, MapPin, ChevronRight, Star, ExternalLink } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { useTranslation } from 'react-i18next';
@@ -179,6 +179,11 @@ export const OpportunityList: React.FC = () => {
             <div style={{ flex: 1, marginTop: '20px' }}>
               <h3 style={oppTitleStyle}>{opp.title}</h3>
               <p style={companyStyle}>{opp.organization_name || opp.funder_name || t('opportunities.variousSources')}</p>
+              {opp.source_name && (
+                  <a href={opp.original_url || opp.source_url} target="_blank" rel="noopener noreferrer" style={{ ...companyStyle, display: 'inline-flex', alignItems: 'center', gap: '4px', color: 'var(--text-muted)', textDecoration: 'none', marginBottom: '16px', fontWeight: 400 }}>
+                    Source: {opp.source_name} <ExternalLink size={12} />
+                  </a>
+              )}
               
               <div style={metaGridStyle}>
                 <div style={metaItemStyle}>

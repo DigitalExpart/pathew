@@ -83,6 +83,11 @@ export const JobsPage: React.FC = () => {
               <div style={{ flex: 1, marginTop: '20px' }}>
                 <h3 style={jobTitleStyle}>{job.title}</h3>
                 <p style={companyNameStyle}>{job.organization_name}</p>
+                {job.source_name && (
+                  <a href={job.original_url || job.source_url} target="_blank" rel="noopener noreferrer" style={{ ...companyNameStyle, display: 'inline-flex', alignItems: 'center', gap: '4px', color: 'var(--text-muted)', textDecoration: 'none', marginBottom: '16px', fontWeight: 400 }}>
+                    Source: {job.source_name} <ExternalLink size={12} />
+                  </a>
+                )}
                 
                 <div style={metaItemStyle}>
                   <MapPin size={14} color="var(--text-muted)" />

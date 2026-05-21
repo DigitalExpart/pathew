@@ -40,6 +40,7 @@ import { AdminSettingsPage } from './pages/Admin/AdminSettingsPage';
 import { AdminOpportunitiesPage } from './pages/Admin/AdminOpportunitiesPage';
 import { AdminOpportunityForm } from './pages/Admin/AdminOpportunityForm';
 import { AdminReviewsPage } from './pages/Admin/AdminReviewsPage';
+import { AdminRssSourcesPage } from './pages/Admin/AdminRssSourcesPage';
 
 // Sub Admin Pages
 import { SubAdminDashboard } from './pages/SubAdmin/SubAdminDashboard';
@@ -99,6 +100,7 @@ function App() {
             <Route path="/admin/opportunities" element={<RequireAdmin><AdminShell><AdminOpportunitiesPage /></AdminShell></RequireAdmin>} />
             <Route path="/admin/opportunities/new" element={<RequireAdmin><AdminShell><AdminOpportunityForm /></AdminShell></RequireAdmin>} />
             <Route path="/admin/opportunities/:id/edit" element={<RequireAdmin><AdminShell><AdminOpportunityForm /></AdminShell></RequireAdmin>} />
+            <Route path="/admin/rss-sources" element={<RequireAdmin><AdminShell><AdminRssSourcesPage /></AdminShell></RequireAdmin>} />
             <Route path="/admin/documents" element={<RequireAdmin><AdminShell><AdminDocumentsPage /></AdminShell></RequireAdmin>} />
             <Route path="/admin/reviews" element={<RequireAdmin><AdminShell><AdminReviewsPage /></AdminShell></RequireAdmin>} />
             <Route path="/admin/ai-usage" element={<RequireAdmin><AdminShell><AdminAIUsagePage /></AdminShell></RequireAdmin>} />
