@@ -209,7 +209,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                   <Compass size={20} color="var(--accent-primary)" />
                 </div>
                 <div>
-                  <h3 style={{ fontSize: '1.05rem', fontWeight: 700 }}>2. Target Opportunity Link or Description</h3>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 700 }}>2. Target Opportunity Description</h3>
                   <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
                     Paste the job description, funder requirements, or opportunity details to align your document.
                   </p>
