@@ -21,8 +21,8 @@ import {
 
 interface DocumentBuilderProps {
   type: 'CV' | 'Cover Letter' | 'Proposal';
-  initialTitle: string;
-  initialContent: string;
+  initialTitle?: string;
+  initialContent?: string;
 }
 
 export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({ 
