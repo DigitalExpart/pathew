@@ -364,7 +364,16 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
           } catch (err) {
             // Attempt to extract the draft text safely via regex if JSON parse still fails
             // This matches the draft string even if matchSummary is missing
-            const draftMatch = cleanStr.match(/"draft"\s*:\s*"([\s\S]*?)"(?:\s*,\s*"|\s*\})/);
+            let draftMatch = cleanStr.match(/"draft"\s*:\s*"([\s\S]*?)"(?:\s*,\s*"|\s*\})/);
+            
+            if (!draftMatch) {
+              // If it's completely truncated at the end of the string
+              draftMatch = cleanStr.match(/"draft"\s*:\s*"([\s\S]*)/);
+              if (draftMatch && draftMatch[1]) {
+                draftMatch[1] = draftMatch[1].replace(/"\s*\}?\s*$/, ''); // strip trailing quote if it exists
+              }
+            }
+
             if (draftMatch && draftMatch[1]) {
               finalDraft = draftMatch[1];
               // Unescape any escaped newlines just in case
