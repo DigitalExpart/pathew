@@ -349,7 +349,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
       let finalEstimatedPages = result.estimatedPages || 1;
 
       // Fallback: If edge function failed to parse the JSON due to unescaped newlines or markdown wraps
-      if (finalDraft && finalDraft.includes('"draft":') && (finalDraft.includes('"matchSummary"') || finalDraft.includes('matchSummary'))) {
+      if (finalDraft && finalDraft.includes('"draft"')) {
         console.warn("Detected raw JSON in draft, attempting robust extraction...");
         try {
           let cleanStr = finalDraft.replace(/```json/gi, '').replace(/```/g, '').trim();
@@ -363,7 +363,8 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
             }
           } catch (err) {
             // Attempt to extract the draft text safely via regex if JSON parse still fails
-            const draftMatch = cleanStr.match(/"draft"\s*:\s*"([\s\S]*?)",\s*"matchSummary"/);
+            // This matches the draft string even if matchSummary is missing
+            const draftMatch = cleanStr.match(/"draft"\s*:\s*"([\s\S]*?)"(?:\s*,\s*"|\s*\})/);
             if (draftMatch && draftMatch[1]) {
               finalDraft = draftMatch[1];
               // Unescape any escaped newlines just in case
