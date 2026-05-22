@@ -220,7 +220,7 @@ export const OpportunityList: React.FC = () => {
                 style={{ flex: 1, gap: '4px' }}
                 onClick={() => navigate(`/opportunities/${opp.id}`)}
               >
-                {t('opportunities.prepare')} <ChevronRight size={16} />
+                {opp.type === 'grant' ? 'Build Grant' : t('opportunities.prepare')} <ChevronRight size={16} />
               </Button>
             </div>
           </Card>

@@ -273,24 +273,35 @@ export const OpportunityDetail: React.FC = () => {
               {t('opportunities.prepareApplicationDesc')}
             </p>
             <div style={docGenGridStyle}>
-              <DocGenCard 
-                icon={FileText} 
-                title={t('builders.cv.title')}
-                desc={t('builders.cv.desc')}
-                path={`/cv-builder?oppId=${opp.id}`}
-              />
+              {opp.type !== 'grant' && (
+                <DocGenCard 
+                  icon={FileText} 
+                  title={t('builders.cv.title')}
+                  desc={t('builders.cv.desc')}
+                  path={`/cv-builder?oppId=${opp.id}`}
+                />
+              )}
               <DocGenCard 
                 icon={FileEdit} 
                 title={t('builders.coverLetter.title')}
                 desc={t('builders.coverLetter.desc')}
                 path={`/cover-letter?oppId=${opp.id}`}
               />
-              <DocGenCard 
-                icon={Send} 
-                title={t('builders.proposal.title')}
-                desc={t('builders.proposal.desc')}
-                path={`/proposal?oppId=${opp.id}`}
-              />
+              {opp.type === 'grant' ? (
+                <DocGenCard 
+                  icon={Target} 
+                  title="Grant Builder"
+                  desc="Build your grant application proposal."
+                  path={`/grant-builder?oppId=${opp.id}`}
+                />
+              ) : (
+                <DocGenCard 
+                  icon={Send} 
+                  title={t('builders.proposal.title')}
+                  desc={t('builders.proposal.desc')}
+                  path={`/proposal?oppId=${opp.id}`}
+                />
+              )}
             </div>
           </Card>
         </div>

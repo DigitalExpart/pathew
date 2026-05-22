@@ -260,7 +260,7 @@ export const SavedOpportunities: React.FC = () => {
                   style={{ flex: 1, gap: '4px', fontSize: isMobile ? '0.8125rem' : '0.875rem' }}
                   onClick={() => navigate(`/opportunities/${opp.id}`)}
                 >
-                  {t('opportunities.prepare')} <ChevronRight size={16} />
+                  {opp.type === 'grant' ? 'Build Grant' : t('opportunities.prepare')} <ChevronRight size={16} />
                 </Button>
               </div>
             </Card>
