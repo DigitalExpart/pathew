@@ -476,6 +476,7 @@ const sectionTitleStyle: React.CSSProperties = {
 const descriptionStyle: React.CSSProperties = {
   color: 'var(--text-secondary)',
   lineHeight: 1.8,
+  whiteSpace: 'pre-wrap',
 };
 
 
