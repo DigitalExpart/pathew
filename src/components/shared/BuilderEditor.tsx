@@ -12,6 +12,7 @@ import {
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ExportModal } from '../ui/ExportModal';
+import { generateDocxBlob } from '../../utils/docxExport';
 
 interface BuilderEditorProps {
   draftContent: string;
@@ -65,16 +66,32 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
     }
   };
 
-  const handleDownload = (format: string) => {
-    // Generate simulated download
-    const element = document.createElement('a');
-    const file = new Blob([draftContent], { type: 'text/plain' });
-    element.href = URL.createObjectURL(file);
-    element.download = `${documentType.replace(/\s+/g, '_')}_Version_${currentVersionNumber}.${format === 'pdf' ? 'txt' : 'docx'}`;
-    document.body.appendChild(element);
-    element.click();
-    document.body.removeChild(element);
-    setIsExportOpen(false);
+  const handleDownload = async (format: string) => {
+    try {
+      if (format === 'docx') {
+        const blob = await generateDocxBlob(draftContent);
+        const element = document.createElement('a');
+        element.href = URL.createObjectURL(blob);
+        element.download = `${documentType.replace(/\s+/g, '_')}_Version_${currentVersionNumber}.docx`;
+        document.body.appendChild(element);
+        element.click();
+        document.body.removeChild(element);
+        setIsExportOpen(false);
+        return;
+      }
+      // Generate simulated download for pdf/txt fallback
+      const element = document.createElement('a');
+      const file = new Blob([draftContent], { type: 'text/plain' });
+      element.href = URL.createObjectURL(file);
+      element.download = `${documentType.replace(/\s+/g, '_')}_Version_${currentVersionNumber}.${format === 'pdf' ? 'txt' : 'docx'}`;
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+      setIsExportOpen(false);
+    } catch (err) {
+      console.error('Error generating document:', err);
+      alert('Failed to generate the document. Please try again.');
+    }
   };
 
   return (
@@ -185,44 +202,52 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
         <div style={previewColumnStyle}>
           <div style={previewLabelStyle}>Simulated A4 Preview</div>
           <div style={a4PaperContainerStyle}>
-            <div style={{
-              ...a4SheetStyle,
-              minHeight: `${Math.max(1, estimatedPages) * 1123}px` // Scale physical height to simulate multiple pages
-            }}>
-              {/* Cover Letter Header elements */}
-              <div style={letterheadStyle}>
-                <div style={letterheadLogoStyle}>P</div>
-                <div style={{ textAlign: 'right' }}>
-                  <p style={letterheadMetaStyle}>PATHEW ASSISTED APPLICATION</p>
-                  <p style={{ ...letterheadMetaStyle, color: 'var(--text-secondary)' }}>Generated in real-time</p>
-                </div>
-              </div>
-              
-              <div style={paperBodyStyle}>
-                {!draftContent ? (
-                  <p style={{ color: 'var(--text-muted)' }}>Drafting document...</p>
-                ) : (
-                  <ReactMarkdown 
-                    remarkPlugins={[remarkGfm]}
-                    components={{
-                      h1: ({node, ...props}) => <h2 style={previewH1Style} {...props} />,
-                      h2: ({node, ...props}) => <h3 style={previewH2Style} {...props} />,
-                      h3: ({node, ...props}) => <h4 style={previewH3Style} {...props} />,
-                      li: ({node, ...props}) => <li style={previewLiStyle} {...props} />,
-                      p: ({node, ...props}) => <p style={previewParaStyle} {...props} />
-                    }}
-                  >
-                    {draftContent}
-                  </ReactMarkdown>
-                )}
-              </div>
+            {(() => {
+              const pages = paginateMarkdown(draftContent, Math.max(1, estimatedPages));
+              return pages.map((pageContent, index) => (
+                <div key={index} style={{
+                  ...a4SheetStyle,
+                  minHeight: '1123px',
+                  marginBottom: index < pages.length - 1 ? '24px' : '0'
+                }}>
+                  {/* Cover Letter Header elements - Only on first page */}
+                  {index === 0 && (
+                    <div style={letterheadStyle}>
+                      <div style={letterheadLogoStyle}>P</div>
+                      <div style={{ textAlign: 'right' }}>
+                        <p style={letterheadMetaStyle}>PATHEW ASSISTED APPLICATION</p>
+                        <p style={{ ...letterheadMetaStyle, color: 'var(--text-secondary)' }}>Generated in real-time</p>
+                      </div>
+                    </div>
+                  )}
+                  
+                  <div style={paperBodyStyle}>
+                    {!pageContent ? (
+                      <p style={{ color: 'var(--text-muted)' }}>Drafting document...</p>
+                    ) : (
+                      <ReactMarkdown 
+                        remarkPlugins={[remarkGfm]}
+                        components={{
+                          h1: ({node, ...props}) => <h2 style={previewH1Style} {...props} />,
+                          h2: ({node, ...props}) => <h3 style={previewH2Style} {...props} />,
+                          h3: ({node, ...props}) => <h4 style={previewH3Style} {...props} />,
+                          li: ({node, ...props}) => <li style={previewLiStyle} {...props} />,
+                          p: ({node, ...props}) => <p style={previewParaStyle} {...props} />
+                        }}
+                      >
+                        {pageContent}
+                      </ReactMarkdown>
+                    )}
+                  </div>
 
-              {/* Watermark/Footer */}
-              <div style={paperFooterStyle}>
-                <span>Powered by Pathew Assistant</span>
-                <span>Page 1 to {Math.max(1, estimatedPages)}</span>
-              </div>
-            </div>
+                  {/* Watermark/Footer */}
+                  <div style={paperFooterStyle}>
+                    <span>Powered by Pathew Assistant</span>
+                    <span>Page {index + 1} of {pages.length}</span>
+                  </div>
+                </div>
+              ));
+            })()}
           </div>
         </div>
 
@@ -235,6 +260,36 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
       />
     </div>
   );
+};
+
+const paginateMarkdown = (content: string, maxPages: number): string[] => {
+  if (!content) return [''];
+  if (maxPages <= 1) return [content];
+  
+  const blocks = content.split(/\\n\\n+/);
+  const totalLength = content.length;
+  const targetCharsPerPage = Math.ceil(totalLength / maxPages);
+  
+  const pages: string[] = [];
+  let currentPage: string[] = [];
+  let currentChars = 0;
+  
+  for (const block of blocks) {
+    if (currentChars + block.length > targetCharsPerPage * 1.2 && pages.length < maxPages - 1) {
+      pages.push(currentPage.join('\\n\\n'));
+      currentPage = [block];
+      currentChars = block.length;
+    } else {
+      currentPage.push(block);
+      currentChars += block.length;
+    }
+  }
+  
+  if (currentPage.length > 0) {
+    pages.push(currentPage.join('\\n\\n'));
+  }
+  
+  return pages.slice(0, maxPages);
 };
 
 const containerStyle: React.CSSProperties = {
