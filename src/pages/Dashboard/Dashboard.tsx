@@ -236,7 +236,7 @@ export const Dashboard: React.FC = () => {
                   </div>
                   <div className="desktop-only" style={oppMatchStyle}>
                     <div style={matchCircleStyle}>
-                      <span style={matchValueStyle}>{opp.match_score || calculateMatchScore(profile, opp)}%</span>
+                      <span style={matchValueStyle}>{calculateMatchScore(profile, opp)}%</span>
                     </div>
                     <span style={matchLabelStyle}>{t('dashboard.match')}</span>
                   </div>

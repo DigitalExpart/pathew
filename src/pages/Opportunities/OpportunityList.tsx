@@ -164,7 +164,7 @@ export const OpportunityList: React.FC = () => {
             <Card key={opp.id} style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={cardHeaderStyle}>
               <div style={matchBadgeStyle}>
-                <span style={matchScoreStyle}>{opp.match_score || calculateMatchScore(profile, opp)}%</span>
+                <span style={matchScoreStyle}>{calculateMatchScore(profile, opp)}%</span>
                 <span style={matchTextStyle}>{t('savedItems.match')}</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>

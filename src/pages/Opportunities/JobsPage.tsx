@@ -72,7 +72,7 @@ export const JobsPage: React.FC = () => {
             <Card key={job.id} style={{ display: 'flex', flexDirection: 'column' }}>
               <div style={cardHeaderStyle}>
                 <div style={matchBadgeStyle}>
-                  <span style={matchScoreStyle}>{job.match_score || calculateMatchScore(profile, job)}%</span>
+                  <span style={matchScoreStyle}>{calculateMatchScore(profile, job)}%</span>
                   <span style={matchTextStyle}>{t('savedItems.match')}</span>
                 </div>
                 <div style={{ display: 'flex', gap: '8px' }}>
