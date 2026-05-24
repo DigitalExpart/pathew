@@ -20,7 +20,7 @@ function parseInlineFormatting(text: string): TextRun[] {
     const italicMatch1 = remaining.match(/\*(.*?)\*/);
     const italicMatch2 = remaining.match(/_(.*?)_/);
     
-    let bestMatch = null;
+    let bestMatch: any = null;
     let type = '';
     
     if (boldMatch && (!bestMatch || boldMatch.index! < bestMatch.index!)) {
@@ -100,7 +100,7 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
             bottom: {
               color: "D69E2E",
               space: 4,
-              value: BorderStyle.SINGLE,
+              style: BorderStyle.SINGLE,
               size: 12, // 1.5 pt
             }
           }
