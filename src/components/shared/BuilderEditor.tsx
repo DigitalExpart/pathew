@@ -221,7 +221,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
                     </div>
                   )}
                   
-                  <div style={paperBodyStyle}>
+                  <div className="a4-preview-content" style={paperBodyStyle}>
                     {!pageContent ? (
                       <p style={{ color: 'var(--text-muted)' }}>Drafting document...</p>
                     ) : (
