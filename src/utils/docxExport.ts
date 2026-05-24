@@ -60,10 +60,26 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
   const children: any[] = [];
   
   let isHeaderArea = true;
+  let emptyLineCount = 0;
   
   for (let i = 0; i < lines.length; i++) {
-    const line = lines[i].trim();
-    if (!line) continue;
+    const originalLine = lines[i];
+    const line = originalLine.trim();
+    
+    // Ignore simple decorative lines completely
+    if (line.match(/^[-=_*]{3,}$/)) {
+      isHeaderArea = false; // A decorative line definitively ends the header area
+      continue;
+    }
+    
+    if (!line) {
+      emptyLineCount++;
+      if (emptyLineCount >= 2 && isHeaderArea) {
+        isHeaderArea = false; // Two blank lines end the header area
+      }
+      continue;
+    }
+    emptyLineCount = 0;
     
     // Header 1 (Usually Name)
     if (line.startsWith('# ')) {
@@ -83,18 +99,23 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
       continue;
     }
     
-    // Header 2 (Section Title)
-    if (line.startsWith('## ')) {
+    // Header 2 (Section Title) - Starts with ## OR is completely UPPERCASE and short
+    const cleanHeader = line.replace(/^[#]+ /, '').replace(/\*/g, '').trim();
+    // Allow uppercase detection if it's relatively short and doesn't contain a pipe
+    const isUppercaseHeader = cleanHeader.length > 0 && cleanHeader.length < 60 && cleanHeader === cleanHeader.toUpperCase() && !cleanHeader.includes('|');
+    
+    if (line.startsWith('## ') || (!isHeaderArea && isUppercaseHeader)) {
       isHeaderArea = false;
       children.push(
         new Paragraph({
           children: [
             new TextRun({
-              text: line.replace('## ', '').toUpperCase(),
+              text: cleanHeader,
               bold: true,
               size: 26,
             })
           ],
+          alignment: AlignmentType.LEFT,
           spacing: { before: 240, after: 120 },
           border: {
             bottom: {
@@ -109,13 +130,32 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
       continue;
     }
     
+    // Header 3
+    if (line.startsWith('### ')) {
+      isHeaderArea = false;
+      children.push(
+        new Paragraph({
+          children: [
+            new TextRun({
+              text: line.replace(/^###\s+/, ''),
+              bold: true,
+              size: 24,
+            })
+          ],
+          alignment: AlignmentType.LEFT,
+          spacing: { before: 120, after: 60 },
+        })
+      );
+      continue;
+    }
+    
     const isList = line.startsWith('- ') || line.startsWith('* ') || line.startsWith('+ ');
     const hasPipe = line.includes('|');
     const dateRegex = /((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{4})\s*[-–—]\s*((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{4}|Present|Current)/i;
     
     // Check if it's an entry row with dates
-    if (!isList && !isHeaderArea && (line.startsWith('### ') || (hasPipe && dateRegex.test(line)))) {
-      let cleanLine = line.replace(/^###\s+/, '');
+    if (!isList && !isHeaderArea && hasPipe && dateRegex.test(line)) {
+      let cleanLine = line.replace(/^\*\*/, '').replace(/\*\*$/, '');
       const parts = cleanLine.split('|').map(p => p.trim());
       
       if (parts.length >= 2) {
@@ -140,6 +180,7 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
                   borders: { top: { style: BorderStyle.NONE, size: 0 }, bottom: { style: BorderStyle.NONE, size: 0 }, left: { style: BorderStyle.NONE, size: 0 }, right: { style: BorderStyle.NONE, size: 0 } },
                   children: [
                     new Paragraph({
+                      alignment: AlignmentType.LEFT,
                       children: parseInlineFormatting(leftPart),
                     })
                   ]
@@ -176,6 +217,7 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
         new Paragraph({
           children: parseInlineFormatting(line.substring(2).trim()),
           bullet: { level: 0 },
+          alignment: AlignmentType.LEFT,
           spacing: { after: 60 }
         })
       );
@@ -191,6 +233,7 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
       children.push(
         new Paragraph({
           children: parseInlineFormatting(line),
+          alignment: AlignmentType.LEFT,
           spacing: { after: 120 }
         })
       );

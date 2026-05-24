@@ -232,7 +232,8 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
                           h2: ({node, ...props}) => <h3 style={previewH2Style} {...props} />,
                           h3: ({node, ...props}) => <h4 style={previewH3Style} {...props} />,
                           li: ({node, ...props}) => <li style={previewLiStyle} {...props} />,
-                          p: ({node, ...props}) => <p style={previewParaStyle} {...props} />
+                          p: ({node, ...props}) => <p style={previewParaStyle} {...props} />,
+                          hr: () => null
                         }}
                       >
                         {pageContent}
@@ -516,8 +517,8 @@ const previewH1Style: React.CSSProperties = {
   color: '#0f172a',
   marginTop: '16px',
   marginBottom: '8px',
-  borderBottom: '1px solid #f1f5f9',
   paddingBottom: '4px',
+  textAlign: 'center',
 };
 
 const previewH2Style: React.CSSProperties = {
@@ -526,6 +527,8 @@ const previewH2Style: React.CSSProperties = {
   color: '#1e293b',
   marginTop: '14px',
   marginBottom: '6px',
+  borderBottom: '2px solid #D69E2E',
+  paddingBottom: '2px',
 };
 
 const previewH3Style: React.CSSProperties = {
@@ -538,7 +541,7 @@ const previewH3Style: React.CSSProperties = {
 
 const previewParaStyle: React.CSSProperties = {
   marginBottom: '10px',
-  textAlign: 'justify',
+  textAlign: 'left',
 };
 
 const previewLiStyle: React.CSSProperties = {
