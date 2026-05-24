@@ -162,7 +162,7 @@ export const OpportunityDetail: React.FC = () => {
             {saving ? t('common.saving') : t('common.save')}
           </Button>
           <Button 
-            style={{ gap: '8px' }}
+            style={{ gap: '8px', whiteSpace: 'nowrap' }}
             onClick={handleApply}
             disabled={applying}
           >
