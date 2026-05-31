@@ -452,7 +452,10 @@
     "common": {
       "signInRequired": "Veuillez vous connecter pour accéder aux créateurs.",
       "tailoredOppTitle": "CV sur mesure - {{title}}",
-      "tailoredTitle": "Espace de travail pour {{type}} sur mesure"
+      "tailoredTitle": "Espace de travail pour {{type}} sur mesure",
+      "stepSources": "1. Sources & Cible",
+      "stepGaps": "2. Lacunes Progressives",
+      "stepExport": "3. Perfectionner & Exporter"
     },
     "sources": {
       "step1Title": "1. Sélectionnez les matériaux de base",

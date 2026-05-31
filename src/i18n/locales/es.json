@@ -436,15 +436,46 @@
     "livePreview": "Vista previa en vivo",
     "cv": {
       "title": "CV a medida",
-      "desc": "Optimiza tu experiencia para este rol."
+      "desc": "Optimiza tu experiencia para este rol.",
+      "subtitle": "Cree un currículum maestro altamente personalizado, centrado en las coincidencias de oportunidades."
     },
     "coverLetter": {
       "title": "Carta de presentación",
-      "desc": "Escribe una narrativa convincente."
+      "desc": "Escribe una narrativa convincente.",
+      "subtitle": "Redacte una carta personal de alta conversión adaptada específicamente a los requisitos."
     },
     "proposal": {
       "title": "Propuesta",
-      "desc": "Estructura tu propuesta perfectamente."
+      "desc": "Estructura tu propuesta perfectamente.",
+      "subtitle": "Organice, estructure y responda a los requisitos de financiación en secciones de propuesta persuasivas."
+    },
+    "common": {
+      "signInRequired": "Inicie sesión para acceder a los creadores.",
+      "tailoredOppTitle": "{{type}} a medida - {{title}}",
+      "tailoredTitle": "Espacio de trabajo para {{type}} a medida",
+      "stepSources": "1. Fuentes y Objetivo",
+      "stepGaps": "2. Brechas Progresivas",
+      "stepExport": "3. Perfeccionar y Exportar"
+    },
+    "sources": {
+      "step1Title": "1. Seleccionar materiales de base",
+      "step1Desc": "Seleccione una o más fuentes. El asistente de Pathew las utilizará para redactar y adaptar su documento automáticamente.",
+      "step2Title": "2. Descripción de la oportunidad objetivo",
+      "step2Desc": "Pegue la descripción del trabajo, los requisitos del patrocinador o los detalles de la oportunidad para alinear su documento.",
+      "textareaPlaceholder": "Pegue aquí la oferta de trabajo objetivo, los requisitos de la beca o la descripción de la propuesta de financiación...",
+      "active": "Activo",
+      "pathewProfile": "Su perfil Pathew",
+      "pathewProfileDesc": "Incluye la historia, habilidades, experiencia y objetivos de la configuración.",
+      "tabUpload": "Cargar currículum (DOCX/TXT)",
+      "tabLinkedin": "Importar LinkedIn",
+      "tabNotes": "Añadir notas manuales"
+    },
+    "editor": {
+      "versionHistory": "Historial de versiones",
+      "liveEditor": "Editor en vivo",
+      "textMode": "Modo texto",
+      "tailorAssistant": "Adapte esta sección con el Asistente Pathew",
+      "simulatedPreview": "Vista previa A4 simulada"
     }
   },
   "settings": {

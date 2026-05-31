@@ -437,15 +437,46 @@
     "livePreview": "Live voorbeeld",
     "cv": {
       "title": "CV op maat",
-      "desc": "Optimaliseer je ervaring voor deze rol."
+      "desc": "Optimaliseer je ervaring voor deze rol.",
+      "subtitle": "Creëer een zeer op maat gemaakt master-cv met een sterke focus op overeenkomende kansen."
     },
     "coverLetter": {
       "title": "Sollicitatiebrief",
-      "desc": "Schrijf een overtuigend verhaal."
+      "desc": "Schrijf een overtuigend verhaal.",
+      "subtitle": "Stel een persoonlijke, hoog-converterende brief op, specifiek afgestemd op de vereisten."
     },
     "proposal": {
       "title": "Voorstel",
-      "desc": "Structureer je pitch perfect."
+      "desc": "Structureer je pitch perfect.",
+      "subtitle": "Organiseer, structureer en beantwoord financieringsvereisten in overtuigende voorstelsecties."
+    },
+    "common": {
+      "signInRequired": "Log in om toegang te krijgen tot de builders.",
+      "tailoredOppTitle": "Op maat gemaakte {{type}} - {{title}}",
+      "tailoredTitle": "Werkruimte voor op maat gemaakte {{type}}",
+      "stepSources": "1. Bronnen & Doel",
+      "stepGaps": "2. Progressieve Gaten",
+      "stepExport": "3. Perfectioneren & Exporteren"
+    },
+    "sources": {
+      "step1Title": "1. Selecteer achtergrondmateriaal",
+      "step1Desc": "Selecteer een of meer bronnen. De Pathew-assistent gebruikt deze om uw document automatisch op te stellen en aan te passen.",
+      "step2Title": "2. Beschrijving doelgerichte kans",
+      "step2Desc": "Plak de vacature, financieringsvereisten of details van de kans om uw document af te stemmen.",
+      "textareaPlaceholder": "Plak hier de doelvacature, beursvereisten of beschrijving van het financieringsvoorstel...",
+      "active": "Actief",
+      "pathewProfile": "Uw Pathew-profiel",
+      "pathewProfileDesc": "Bevat Verhaal, Vaardigheden, Ervaring en Doelen uit de instellingen.",
+      "tabUpload": "CV uploaden (DOCX/TXT)",
+      "tabLinkedin": "LinkedIn importeren",
+      "tabNotes": "Handmatige notities toevoegen"
+    },
+    "editor": {
+      "versionHistory": "Versiegeschiedenis",
+      "liveEditor": "Live-editor",
+      "textMode": "Tekstmodus",
+      "tailorAssistant": "Pas deze sectie aan met Pathew Assistant",
+      "simulatedPreview": "Gesimuleerde A4-voorbeeldweergave"
     }
   },
   "settings": {

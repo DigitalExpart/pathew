@@ -457,7 +457,10 @@
     "common": {
       "signInRequired": "Please sign in to access the builders.",
       "tailoredOppTitle": "Tailored {{type}} - {{title}}",
-      "tailoredTitle": "Tailored {{type}} Workspace"
+      "tailoredTitle": "Tailored {{type}} Workspace",
+      "stepSources": "1. Sources & Target",
+      "stepGaps": "2. Progressive Gaps",
+      "stepExport": "3. Perfect & Export"
     },
     "sources": {
       "step1Title": "1. Select Background Materials",

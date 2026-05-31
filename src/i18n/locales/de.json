@@ -436,15 +436,46 @@
     "livePreview": "Live-Vorschau",
     "cv": {
       "title": "Maßgeschneiderter Lebenslauf",
-      "desc": "Optimieren Sie Ihre Erfahrung für diese Rolle."
+      "desc": "Optimieren Sie Ihre Erfahrung für diese Rolle.",
+      "subtitle": "Erstellen Sie einen hochgradig maßgeschneiderten Master-Lebenslauf mit starkem Fokus auf übereinstimmende Möglichkeiten."
     },
     "coverLetter": {
       "title": "Anschreiben",
-      "desc": "Schreiben Sie eine überzeugende Erzählung."
+      "desc": "Schreiben Sie eine überzeugende Erzählung.",
+      "subtitle": "Verfassen Sie ein persönliches, hochkonvertierendes Anschreiben, das speziell auf die Anforderungen zugeschnitten ist."
     },
     "proposal": {
       "title": "Vorschlag",
-      "desc": "Strukturieren Sie Ihren Pitch perfekt."
+      "desc": "Strukturieren Sie Ihren Pitch perfekt.",
+      "subtitle": "Organisieren, strukturieren und beantworten Sie Finanzierungsanforderungen in überzeugenden Angebotsabschnitten."
+    },
+    "common": {
+      "signInRequired": "Bitte melden Sie sich an, um auf die Builder zuzugreifen.",
+      "tailoredOppTitle": "Maßgeschneidert {{type}} - {{title}}",
+      "tailoredTitle": "Maßgeschneiderter {{type}} Arbeitsbereich",
+      "stepSources": "1. Quellen & Ziel",
+      "stepGaps": "2. Progressive Lücken",
+      "stepExport": "3. Perfektionieren & Exportieren"
+    },
+    "sources": {
+      "step1Title": "1. Hintergrundmaterialien auswählen",
+      "step1Desc": "Wählen Sie eine oder mehrere Quellen aus. Der Pathew-Assistent wird diese verwenden, um Ihr Dokument automatisch zu entwerfen und anzupassen.",
+      "step2Title": "2. Beschreibung der Zielmöglichkeit",
+      "step2Desc": "Fügen Sie die Stellenbeschreibung, Förderanforderungen oder Opportunity-Details ein, um Ihr Dokument abzustimmen.",
+      "textareaPlaceholder": "Fügen Sie hier die Ziel-Stellenanzeige, Stipendienanforderungen oder Förderprojektbeschreibung ein...",
+      "active": "Aktiv",
+      "pathewProfile": "Ihr Pathew-Profil",
+      "pathewProfileDesc": "Enthält Geschichte, Fähigkeiten, Erfahrungen und Ziele aus den Einstellungen.",
+      "tabUpload": "Lebenslauf hochladen (DOCX/TXT)",
+      "tabLinkedin": "LinkedIn importieren",
+      "tabNotes": "Manuelle Notizen hinzufügen"
+    },
+    "editor": {
+      "versionHistory": "Versionsverlauf",
+      "liveEditor": "Live-Editor",
+      "textMode": "Textmodus",
+      "tailorAssistant": "Diesen Abschnitt mit dem Pathew-Assistenten anpassen",
+      "simulatedPreview": "Simulierte A4-Vorschau"
     }
   },
   "settings": {
