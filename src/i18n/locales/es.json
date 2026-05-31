@@ -476,6 +476,57 @@
       "textMode": "Modo texto",
       "tailorAssistant": "Adapte esta sección con el Asistente Pathew",
       "simulatedPreview": "Vista previa A4 simulada"
+    },
+    "style": {
+      "step3Title": "3. Preferencia de Estilo",
+      "step3Desc": "Ajuste el resultado del asistente para que coincida con su marca profesional y requisitos.",
+      "cvType": "Tipo de CV",
+      "cvWork": "CV Profesional (Diseño corporativo estándar)",
+      "cvAcademic": "CV Académico / Docencia (Secciones académicas rígidas)",
+      "expLevel": "Nivel de Experiencia",
+      "expGrad": "Graduado (Destacados académicos y roles de entrada)",
+      "expEarly": "Inicio de Carrera (1-3 años de experiencia)",
+      "expMid": "Mitad de Carrera (3-8 años de experiencia)",
+      "expSenior": "Senior (8+ años de experiencia y liderazgo)",
+      "expExec": "Ejecutivo (Director/Nivel C de gobierno corporativo)",
+      "numPages": "Número de Páginas",
+      "tone": "Tono de Voz",
+      "toneProf": "Profesional y Académico (Formal y pulido)",
+      "toneCreative": "Creativo y Narrativo (Basado en historias y expresivo)",
+      "toneConcise": "Conciso e Impactante (Viñetas cortas de alta señal)",
+      "toneCasual": "Casual y Amigable (Cálido y accesible)",
+      "language": "Ortografía Objetivo / Idioma",
+      "analyseBtn": "Analizar Idoneidad y Brechas"
+    },
+    "loading": {
+      "analyzing": "Analizando idoneidad...",
+      "parsing": "El Asistente Pathew está analizando sus documentos, comparando palabras clave con los requisitos de la oportunidad y preparando preguntas de perfil progresivas..."
+    },
+    "gaps": {
+      "matchTitle": "Puntaje de Coincidencia ATS:",
+      "confidence": "Coincidencia de Confianza:",
+      "missingDataTitle": "Información faltante (se necesitan {{count}} campos)",
+      "missingDataDesc": "Hemos analizado sus fuentes seleccionadas frente a la oportunidad objetivo. El Asistente Pathew necesita estos detalles para maximizar la efectividad de su documento.",
+      "generateBtn": "Generar Documento"
+    },
+    "context": {
+      "atsFit": "AJUSTE ATS",
+      "confidenceScore": "Puntaje de Confianza",
+      "accuracy": "Precisión: {{level}}",
+      "aiAlignment": "Alineación Estratégica de IA",
+      "aiAlignmentDesc": "Comparamos sus documentos de antecedentes con los requisitos de la oportunidad. Así es como optimizaremos su borrador:",
+      "keyStrengths": "Fortalezas Clave",
+      "contextGaps": "Brechas Identificadas",
+      "fallbackStrength": "Coincidencia en habilidades técnicas básicas.",
+      "fallbackGap": "No se encontraron estadísticas de liderazgo de equipo o escalamiento."
+    },
+    "panel": {
+      "targetedTailoring": "Adaptación Dirigida Activada",
+      "targetedTailoringDesc": "El Asistente Pathew analizó su perfil y la oportunidad objetivo. Para redactar la copia de mayor conversión, responda estos últimos {{count}} detalles. ¡No se necesitan otros formularios largos!",
+      "provideDetails": "Proporcionar detalles para {{label}}...",
+      "egPlaceholder": "p.ej. 2024, o $15,000",
+      "generating": "Generando Copia...",
+      "tailorDraft": "Adaptar y Redactar Documento"
     }
   },
   "settings": {

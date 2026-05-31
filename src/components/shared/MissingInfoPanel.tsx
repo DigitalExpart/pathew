@@ -2,6 +2,7 @@ import React from 'react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Sparkles, HelpCircle, ArrowRight } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface MissingField {
   key: string;
@@ -25,6 +26,8 @@ export const MissingInfoPanel: React.FC<MissingInfoPanelProps> = ({
   onSubmit,
   isLoading,
 }) => {
+  const { t } = useTranslation();
+  
   const handleFieldChange = (key: string, value: string) => {
     onChangeAnswers({
       ...answers,
@@ -40,10 +43,9 @@ export const MissingInfoPanel: React.FC<MissingInfoPanelProps> = ({
         <div style={alertBoxStyle}>
           <Sparkles size={20} color="var(--accent-primary)" style={{ flexShrink: 0 }} />
           <div>
-            <h4 style={alertTitleStyle}>Targeted Tailoring Enabled</h4>
+            <h4 style={alertTitleStyle}>{t('builders.panel.targetedTailoring', 'Targeted Tailoring Enabled')}</h4>
             <p style={alertDescStyle}>
-              Pathew Assistant analyzed your profile and the target opportunity. To write the highest converting copy, please answer these final {missingFields.length} details. 
-              No other long forms needed!
+              {t('builders.panel.targetedTailoringDesc', 'Pathew Assistant analyzed your profile and the target opportunity. To write the highest converting copy, please answer these final {{count}} details. No other long forms needed!', { count: missingFields.length })}
             </p>
           </div>
         </div>
@@ -69,7 +71,7 @@ export const MissingInfoPanel: React.FC<MissingInfoPanelProps> = ({
                 <textarea 
                   value={answers[field.key] || ''}
                   onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                  placeholder={`Provide details for ${field.label}...`}
+                  placeholder={t('builders.panel.provideDetails', 'Provide details for {{label}}...', { label: field.label })}
                   style={textareaStyle}
                   disabled={isLoading}
                 />
@@ -78,7 +80,7 @@ export const MissingInfoPanel: React.FC<MissingInfoPanelProps> = ({
                   type="text"
                   value={answers[field.key] || ''}
                   onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                  placeholder={`e.g. 2024, or $15,000`}
+                  placeholder={t('builders.panel.egPlaceholder', 'e.g. 2024, or $15,000')}
                   style={inputStyle}
                   disabled={isLoading}
                 />
@@ -99,7 +101,7 @@ export const MissingInfoPanel: React.FC<MissingInfoPanelProps> = ({
               boxShadow: '0 4px 15px var(--accent-glow)' 
             }}
           >
-            {isLoading ? 'Generating High-Converting Copy...' : 'Tailor & Draft Document'}
+            {isLoading ? t('builders.panel.generating', 'Generating High-Converting Copy...') : t('builders.panel.tailorDraft', 'Tailor & Draft Document')}
             <ArrowRight size={16} />
           </Button>
         </div>

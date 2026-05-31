@@ -481,6 +481,57 @@
       "textMode": "Text Mode",
       "tailorAssistant": "Tailor this section with Pathew Assistant",
       "simulatedPreview": "Simulated A4 Preview"
+    },
+    "style": {
+      "step3Title": "3. Style Preference",
+      "step3Desc": "Fine-tune the assistant's output to match your professional brand and target requirements.",
+      "cvType": "CV Type",
+      "cvWork": "Work CV (Standard corporate layout)",
+      "cvAcademic": "Teaching / Academic CV (Rigid academic sections)",
+      "expLevel": "Experience Level",
+      "expGrad": "Graduate (Academic highlights & entry roles)",
+      "expEarly": "Early Career (1-3 years experience)",
+      "expMid": "Mid Career (3-8 years experience)",
+      "expSenior": "Senior (8+ years experience & leadership)",
+      "expExec": "Executive (Director/C-level corporate governance)",
+      "numPages": "Number of Pages",
+      "tone": "Tone of Voice",
+      "toneProf": "Professional & Academic (Formal & polished)",
+      "toneCreative": "Creative & Narrative (Story-driven & expressive)",
+      "toneConcise": "Concise & Impactful (Short, high-signal bullets)",
+      "toneCasual": "Casual & Friendly (Warm & approachable)",
+      "language": "Target Spelling / Language",
+      "analyseBtn": "Analyse Suitability & Gaps"
+    },
+    "loading": {
+      "analyzing": "Analyzing suitability fit...",
+      "parsing": "Pathew Assistant is parsing your documents, matching keywords against opportunity requirements, and preparing progressive profile questions..."
+    },
+    "gaps": {
+      "matchTitle": "ATS Match Fit Score:",
+      "confidence": "Confidence Match:",
+      "missingDataTitle": "Missing Information ({{count}} fields needed)",
+      "missingDataDesc": "We analyzed your selected sources against the target opportunity. Pathew Assistant needs these details to maximize your document's effectiveness.",
+      "generateBtn": "Generate Document"
+    },
+    "context": {
+      "atsFit": "ATS FIT",
+      "confidenceScore": "Confidence Score",
+      "accuracy": "{{level}} Accuracy",
+      "aiAlignment": "AI Strategic Alignment",
+      "aiAlignmentDesc": "We compared your background documents against the opportunity requirements. Here is how we will optimize your draft:",
+      "keyStrengths": "Key Strengths",
+      "contextGaps": "Context Gaps Identified",
+      "fallbackStrength": "Background matching in core technical skills.",
+      "fallbackGap": "No matching team leadership or scaling statistics found."
+    },
+    "panel": {
+      "targetedTailoring": "Targeted Tailoring Enabled",
+      "targetedTailoringDesc": "Pathew Assistant analyzed your profile and the target opportunity. To write the highest converting copy, please answer these final {{count}} details. No other long forms needed!",
+      "provideDetails": "Provide details for {{label}}...",
+      "egPlaceholder": "e.g. 2024, or $15,000",
+      "generating": "Generating High-Converting Copy...",
+      "tailorDraft": "Tailor & Draft Document"
     }
   },
   "settings": {

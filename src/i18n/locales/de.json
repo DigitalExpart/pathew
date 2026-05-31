@@ -476,6 +476,57 @@
       "textMode": "Textmodus",
       "tailorAssistant": "Diesen Abschnitt mit dem Pathew-Assistenten anpassen",
       "simulatedPreview": "Simulierte A4-Vorschau"
+    },
+    "style": {
+      "step3Title": "3. Stilpräferenz",
+      "step3Desc": "Passen Sie die Ausgabe des Assistenten an Ihre berufliche Marke und Zielanforderungen an.",
+      "cvType": "Lebenslauf-Typ",
+      "cvWork": "Beruflicher Lebenslauf (Standard-Unternehmenslayout)",
+      "cvAcademic": "Akademischer Lebenslauf (Strikte akademische Abschnitte)",
+      "expLevel": "Erfahrungsniveau",
+      "expGrad": "Absolvent (Akademische Highlights & Einstiegspositionen)",
+      "expEarly": "Berufseinsteiger (1-3 Jahre Erfahrung)",
+      "expMid": "Berufserfahren (3-8 Jahre Erfahrung)",
+      "expSenior": "Senior (8+ Jahre Erfahrung & Führung)",
+      "expExec": "Executive (Direktor/C-Level Unternehmensführung)",
+      "numPages": "Anzahl der Seiten",
+      "tone": "Tonfall",
+      "toneProf": "Professionell & Akademisch (Formell & poliert)",
+      "toneCreative": "Kreativ & Narrativ (Geschichtengesteuert & ausdrucksstark)",
+      "toneConcise": "Prägnant & Wirkungsvoll (Kurze, starke Aufzählungspunkte)",
+      "toneCasual": "Locker & Freundlich (Warm & zugänglich)",
+      "language": "Zielsprache / Rechtschreibung",
+      "analyseBtn": "Eignung & Lücken analysieren"
+    },
+    "loading": {
+      "analyzing": "Eignung wird analysiert...",
+      "parsing": "Der Pathew-Assistent analysiert Ihre Dokumente, vergleicht Schlüsselwörter mit den Anforderungen und bereitet progressive Profilfragen vor..."
+    },
+    "gaps": {
+      "matchTitle": "ATS-Übereinstimmungsbewertung:",
+      "confidence": "Vertrauensübereinstimmung:",
+      "missingDataTitle": "Fehlende Informationen ({{count}} Felder benötigt)",
+      "missingDataDesc": "Wir haben Ihre ausgewählten Quellen im Vergleich zur Zielmöglichkeit analysiert. Der Pathew-Assistent benötigt diese Details, um die Wirksamkeit Ihres Dokuments zu maximieren.",
+      "generateBtn": "Dokument generieren"
+    },
+    "context": {
+      "atsFit": "ATS-PASSUNG",
+      "confidenceScore": "Vertrauenswert",
+      "accuracy": "{{level}} Genauigkeit",
+      "aiAlignment": "Strategische KI-Ausrichtung",
+      "aiAlignmentDesc": "Wir haben Ihre Dokumente mit den Anforderungen verglichen. So optimieren wir Ihren Entwurf:",
+      "keyStrengths": "Hauptstärken",
+      "contextGaps": "Identifizierte Lücken",
+      "fallbackStrength": "Übereinstimmung bei grundlegenden technischen Fähigkeiten.",
+      "fallbackGap": "Keine Teamführungs- oder Skalierungsstatistiken gefunden."
+    },
+    "panel": {
+      "targetedTailoring": "Gezielte Anpassung aktiviert",
+      "targetedTailoringDesc": "Der Pathew-Assistent hat Ihr Profil und die Zielmöglichkeit analysiert. Bitte beantworten Sie diese letzten {{count}} Details, um den Entwurf zu perfektionieren. Keine weiteren Formulare nötig!",
+      "provideDetails": "Details für {{label}} angeben...",
+      "egPlaceholder": "z.B. 2024, oder 15.000 €",
+      "generating": "Dokument wird generiert...",
+      "tailorDraft": "Dokument anpassen & entwerfen"
     }
   },
   "settings": {

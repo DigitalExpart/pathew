@@ -476,6 +476,57 @@
       "textMode": "Mode Texte",
       "tailorAssistant": "Personnalisez cette section avec l'Assistant Pathew",
       "simulatedPreview": "Aperçu simulé A4"
+    },
+    "style": {
+      "step3Title": "3. Préférences de Style",
+      "step3Desc": "Ajustez le rendu de l'assistant pour qu'il corresponde à votre marque professionnelle et aux exigences cibles.",
+      "cvType": "Type de CV",
+      "cvWork": "CV Professionnel (Format d'entreprise standard)",
+      "cvAcademic": "CV Académique / Enseignement (Sections académiques strictes)",
+      "expLevel": "Niveau d'Expérience",
+      "expGrad": "Jeune Diplômé (Points forts académiques & postes d'entrée)",
+      "expEarly": "Début de Carrière (1-3 ans d'expérience)",
+      "expMid": "Milieu de Carrière (3-8 ans d'expérience)",
+      "expSenior": "Senior (+8 ans d'expérience & leadership)",
+      "expExec": "Exécutif (Directeur/Gouvernance d'entreprise)",
+      "numPages": "Nombre de Pages",
+      "tone": "Ton de la Voix",
+      "toneProf": "Professionnel & Académique (Formel et soigné)",
+      "toneCreative": "Créatif & Narratif (Basé sur l'histoire et expressif)",
+      "toneConcise": "Concis & Percutant (Puces courtes à fort impact)",
+      "toneCasual": "Décontracté & Amical (Chaleureux et accessible)",
+      "language": "Orthographe Cible / Langue",
+      "analyseBtn": "Analyser l'adéquation et les lacunes"
+    },
+    "loading": {
+      "analyzing": "Analyse de l'adéquation...",
+      "parsing": "L'Assistant Pathew analyse vos documents, compare les mots-clés aux exigences de l'opportunité et prépare des questions de profilage progressif..."
+    },
+    "gaps": {
+      "matchTitle": "Score de Correspondance ATS :",
+      "confidence": "Correspondance de Confiance :",
+      "missingDataTitle": "Informations manquantes ({{count}} champs requis)",
+      "missingDataDesc": "Nous avons analysé vos sources par rapport à l'opportunité cible. L'Assistant Pathew a besoin de ces détails pour maximiser l'efficacité de votre document.",
+      "generateBtn": "Générer le Document"
+    },
+    "context": {
+      "atsFit": "SCORE ATS",
+      "confidenceScore": "Indice de Confiance",
+      "accuracy": "Précision : {{level}}",
+      "aiAlignment": "Alignement Stratégique de l'IA",
+      "aiAlignmentDesc": "Nous avons comparé vos documents aux exigences de l'opportunité. Voici comment nous allons optimiser votre brouillon :",
+      "keyStrengths": "Points Forts Clés",
+      "contextGaps": "Lacunes Identifiées",
+      "fallbackStrength": "Correspondance dans les compétences techniques de base.",
+      "fallbackGap": "Aucune statistique de leadership ou de mise à l'échelle trouvée."
+    },
+    "panel": {
+      "targetedTailoring": "Adaptation Ciblée Activée",
+      "targetedTailoringDesc": "L'Assistant Pathew a analysé votre profil et l'opportunité cible. Pour rédiger la copie la plus convertissante, veuillez fournir ces {{count}} derniers détails. Aucun autre long formulaire n'est nécessaire !",
+      "provideDetails": "Fournir des détails pour {{label}}...",
+      "egPlaceholder": "ex: 2024, ou 15 000 $",
+      "generating": "Génération de la Copie...",
+      "tailorDraft": "Adapter et Rédiger le Document"
     }
   },
   "settings": {

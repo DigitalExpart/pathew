@@ -2,6 +2,7 @@ import React from 'react';
 import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 import { CheckCircle2, AlertTriangle, Lightbulb, Sparkles, TrendingUp } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 interface ContextSummaryProps {
   matchSummary: {
@@ -16,6 +17,7 @@ export const ContextSummary: React.FC<ContextSummaryProps> = ({
   matchSummary,
   confidence = 'medium',
 }) => {
+  const { t } = useTranslation();
   const { strongMatches = [], gaps = [], priorityPoints = [] } = matchSummary;
 
   // Calculate a mock fitness score based on counts
@@ -53,14 +55,14 @@ export const ContextSummary: React.FC<ContextSummaryProps> = ({
             </svg>
             <div style={scoreOverlayStyle}>
               <span style={scoreNumberStyle}>{matchScore}%</span>
-              <span style={scoreLabelStyle}>ATS FIT</span>
+              <span style={scoreLabelStyle}>{t('builders.context.atsFit', 'ATS FIT')}</span>
             </div>
           </div>
 
           <div style={gaugeMetaStyle}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '8px' }}>
               <TrendingUp size={16} color="var(--accent-primary)" />
-              <span style={{ fontSize: '0.825rem', fontWeight: 600 }}>Confidence Score</span>
+              <span style={{ fontSize: '0.825rem', fontWeight: 600 }}>{t('builders.context.confidenceScore', 'Confidence Score')}</span>
             </div>
             <Badge 
               variant="primary" 
@@ -70,7 +72,7 @@ export const ContextSummary: React.FC<ContextSummaryProps> = ({
                 textTransform: 'capitalize' 
               }}
             >
-              {confidence} Accuracy
+              {t('builders.context.accuracy', '{{level}} Accuracy', { level: confidence })}
             </Badge>
           </div>
         </Card>
@@ -79,10 +81,10 @@ export const ContextSummary: React.FC<ContextSummaryProps> = ({
         <Card style={insightsCardStyle}>
           <div style={insightsHeaderStyle}>
             <Sparkles size={18} color="var(--accent-primary)" />
-            <h4 style={{ fontSize: '0.975rem', fontWeight: 700 }}>AI Strategic Alignment</h4>
+            <h4 style={{ fontSize: '0.975rem', fontWeight: 700 }}>{t('builders.context.aiAlignment', 'AI Strategic Alignment')}</h4>
           </div>
           <p style={{ fontSize: '0.775rem', color: 'var(--text-secondary)', marginBottom: '14px' }}>
-            We compared your background documents against the opportunity requirements. Here is how we will optimize your draft:
+            {t('builders.context.aiAlignmentDesc', 'We compared your background documents against the opportunity requirements. Here is how we will optimize your draft:')}
           </p>
 
           <div style={priorityListStyle}>
@@ -110,7 +112,7 @@ export const ContextSummary: React.FC<ContextSummaryProps> = ({
         {/* Matches */}
         <Card style={colCardStyle}>
           <h4 style={{ ...colTitleStyle, color: '#10b981' }}>
-            <CheckCircle2 size={16} /> Key Strengths
+            <CheckCircle2 size={16} /> {t('builders.context.keyStrengths', 'Key Strengths')}
           </h4>
           <div style={listStyle}>
             {strongMatches.length > 0 ? (
@@ -123,7 +125,7 @@ export const ContextSummary: React.FC<ContextSummaryProps> = ({
             ) : (
               <div style={listItemStyle}>
                 <span style={greenBulletStyle}></span>
-                <p style={itemTextStyle}>Background matching in core technical skills (React, TypeScript, SQL databases).</p>
+                <p style={itemTextStyle}>{t('builders.context.fallbackStrength', 'Background matching in core technical skills.')}</p>
               </div>
             )}
           </div>
@@ -132,7 +134,7 @@ export const ContextSummary: React.FC<ContextSummaryProps> = ({
         {/* Gaps */}
         <Card style={colCardStyle}>
           <h4 style={{ ...colTitleStyle, color: '#f97316' }}>
-            <AlertTriangle size={16} /> Context Gaps Identified
+            <AlertTriangle size={16} /> {t('builders.context.contextGaps', 'Context Gaps Identified')}
           </h4>
           <div style={listStyle}>
             {gaps.length > 0 ? (
@@ -145,7 +147,7 @@ export const ContextSummary: React.FC<ContextSummaryProps> = ({
             ) : (
               <div style={listItemStyle}>
                 <span style={orangeBulletStyle}></span>
-                <p style={itemTextStyle}>No matching team leadership or scaling statistics found in past documents.</p>
+                <p style={itemTextStyle}>{t('builders.context.fallbackGap', 'No matching team leadership or scaling statistics found.')}</p>
               </div>
             )}
           </div>

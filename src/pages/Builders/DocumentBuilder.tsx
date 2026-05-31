@@ -260,10 +260,10 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
               <div style={{ borderBottom: '1px solid var(--border-color)', paddingBottom: '16px', marginBottom: '24px' }}>
                 <h3 style={{ fontSize: isMobile ? '1.1rem' : '1.25rem', fontWeight: 800, color: 'var(--text-primary)', display: 'flex', gap: '10px', alignItems: 'center', margin: 0 }}>
                   <Settings size={22} color="var(--accent-primary)" />
-                  3. Style Preference
+                  {t('builders.style.step3Title', '3. Style Preference')}
                 </h3>
                 <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '6px', marginLeft: isMobile ? '0' : '32px' }}>
-                  Fine-tune the assistant's output to match your professional brand and target requirements.
+                  {t('builders.style.step3Desc', "Fine-tune the assistant's output to match your professional brand and target requirements.")}
                 </p>
               </div>
 
@@ -275,34 +275,34 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                     
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px' }}>
                       <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                        <label style={{ ...labelStyle, color: 'var(--accent-primary)' }}>CV Type</label>
+                        <label style={{ ...labelStyle, color: 'var(--accent-primary)' }}>{t('builders.style.cvType', 'CV Type')}</label>
                         <select 
                           value={builder.cvType}
                           onChange={(e) => builder.setCvType(e.target.value)}
                           style={{ ...selectInputStyle, border: 'none', backgroundColor: 'var(--bg-tertiary)', marginTop: '8px' }}
                         >
-                          <option value="Work CV">Work CV (Standard corporate layout)</option>
-                          <option value="Teaching / Academic CV">Teaching / Academic CV (Rigid academic sections)</option>
+                          <option value="Work CV">{t('builders.style.cvWork', 'Work CV (Standard corporate layout)')}</option>
+                          <option value="Teaching / Academic CV">{t('builders.style.cvAcademic', 'Teaching / Academic CV (Rigid academic sections)')}</option>
                         </select>
                       </div>
 
                       <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                        <label style={{ ...labelStyle, color: 'var(--accent-primary)' }}>Experience Level</label>
+                        <label style={{ ...labelStyle, color: 'var(--accent-primary)' }}>{t('builders.style.expLevel', 'Experience Level')}</label>
                         <select 
                           value={builder.experienceLevel}
                           onChange={(e) => builder.setExperienceLevel(e.target.value)}
                           style={{ ...selectInputStyle, border: 'none', backgroundColor: 'var(--bg-tertiary)', marginTop: '8px' }}
                         >
-                          <option value="Graduate">Graduate (Academic highlights & entry roles)</option>
-                          <option value="Early Career">Early Career (1-3 years experience)</option>
-                          <option value="Mid Career">Mid Career (3-8 years experience)</option>
-                          <option value="Senior">Senior (8+ years experience & leadership)</option>
-                          <option value="Executive">Executive (Director/C-level corporate governance)</option>
+                          <option value="Graduate">{t('builders.style.expGrad', 'Graduate (Academic highlights & entry roles)')}</option>
+                          <option value="Early Career">{t('builders.style.expEarly', 'Early Career (1-3 years experience)')}</option>
+                          <option value="Mid Career">{t('builders.style.expMid', 'Mid Career (3-8 years experience)')}</option>
+                          <option value="Senior">{t('builders.style.expSenior', 'Senior (8+ years experience & leadership)')}</option>
+                          <option value="Executive">{t('builders.style.expExec', 'Executive (Director/C-level corporate governance)')}</option>
                         </select>
                       </div>
 
                       <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                        <label style={{ ...labelStyle, color: 'var(--accent-primary)' }}>Number of Pages</label>
+                        <label style={{ ...labelStyle, color: 'var(--accent-primary)' }}>{t('builders.style.numPages', 'Number of Pages')}</label>
                         <select
                           value={builder.pageCount}
                           onChange={(e) => builder.setPageCount(Number(e.target.value))}
@@ -627,22 +627,22 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                 {/* General Settings Box */}
                 <div style={{ gridColumn: '1 / -1', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', backgroundColor: 'var(--bg-tertiary)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
                   <div>
-                    <label style={labelStyle}>Tone of Voice</label>
+                    <label style={labelStyle}>{t('builders.style.tone', 'Tone of Voice')}</label>
                     <select 
                       value={builder.tone}
                       onChange={(e) => builder.setTone(e.target.value)}
                       style={{ ...selectInputStyle, backgroundColor: 'var(--bg-secondary)', border: 'none' }}
                     >
                       <option value="N/A">N/A</option>
-                      <option value="Professional & Academic">Professional & Academic (Formal & polished)</option>
-                      <option value="Creative & Narrative">Creative & Narrative (Story-driven & expressive)</option>
-                      <option value="Concise & Impactful">Concise & Impactful (Short, high-signal bullets)</option>
-                      <option value="Casual & Friendly">Casual & Friendly (Warm & approachable)</option>
+                      <option value="Professional & Academic">{t('builders.style.toneProf', 'Professional & Academic (Formal & polished)')}</option>
+                      <option value="Creative & Narrative">{t('builders.style.toneCreative', 'Creative & Narrative (Story-driven & expressive)')}</option>
+                      <option value="Concise & Impactful">{t('builders.style.toneConcise', 'Concise & Impactful (Short, high-signal bullets)')}</option>
+                      <option value="Casual & Friendly">{t('builders.style.toneCasual', 'Casual & Friendly (Warm & approachable)')}</option>
                     </select>
                   </div>
 
                   <div>
-                    <label style={labelStyle}>Target Spelling / Language</label>
+                    <label style={labelStyle}>{t('builders.style.language', 'Target Spelling / Language')}</label>
                     <select 
                       value={builder.language}
                       onChange={(e) => builder.setLanguage(e.target.value)}
@@ -728,7 +728,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                   justifyContent: 'center'
                 }}
               >
-                Analyse Suitability & Gaps
+                {t('builders.style.analyseBtn', 'Analyse Suitability & Gaps')}
                 <ArrowRight size={16} />
               </Button>
             </div>
@@ -741,10 +741,10 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
             <div className="animate-pulse" style={loadingShimmerStyle}>
               <Sparkles size={48} color="var(--accent-primary)" style={{ marginBottom: '20px' }} />
               <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>
-                Analyzing suitability fit...
+                {t('builders.loading.analyzing', 'Analyzing suitability fit...')}
               </h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', maxWidth: '380px' }}>
-                Pathew Assistant is parsing your documents, matching keywords against opportunity requirements, and preparing progressive profile questions...
+                {t('builders.loading.parsing', 'Pathew Assistant is parsing your documents, matching keywords against opportunity requirements, and preparing progressive profile questions...')}
               </p>
               <div style={progressBarContainerStyle}>
                 <div style={progressBarShimmerStyle} />

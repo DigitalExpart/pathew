@@ -477,6 +477,57 @@
       "textMode": "Tekstmodus",
       "tailorAssistant": "Pas deze sectie aan met Pathew Assistant",
       "simulatedPreview": "Gesimuleerde A4-voorbeeldweergave"
+    },
+    "style": {
+      "step3Title": "3. Stijlvoorkeur",
+      "step3Desc": "Verfijn de uitvoer van de assistent om aan te sluiten bij uw professionele merk en doelvereisten.",
+      "cvType": "CV Type",
+      "cvWork": "Werk CV (Standaard zakelijke lay-out)",
+      "cvAcademic": "Academisch CV (Strikte academische secties)",
+      "expLevel": "Ervaringsniveau",
+      "expGrad": "Afgestudeerd (Academische hoogtepunten & instapfuncties)",
+      "expEarly": "Vroege Carrière (1-3 jaar ervaring)",
+      "expMid": "Mid-Carrière (3-8 jaar ervaring)",
+      "expSenior": "Senior (8+ jaar ervaring & leiderschap)",
+      "expExec": "Uitvoerend (Directeur/C-level corporate governance)",
+      "numPages": "Aantal Pagina's",
+      "tone": "Toon",
+      "toneProf": "Professioneel & Academisch (Formeel & gepolijst)",
+      "toneCreative": "Creatief & Verhalend (Verhaalgedreven & expressief)",
+      "toneConcise": "Beknopt & Impactvol (Korte, krachtige opsommingstekens)",
+      "toneCasual": "Informeel & Vriendelijk (Warm & toegankelijk)",
+      "language": "Doelspelling / Taal",
+      "analyseBtn": "Analyseer Geschiktheid & Gaten"
+    },
+    "loading": {
+      "analyzing": "Geschiktheid analyseren...",
+      "parsing": "Pathew Assistent analyseert uw documenten, vergelijkt trefwoorden met kansvereisten en stelt progressieve profielvragen op..."
+    },
+    "gaps": {
+      "matchTitle": "ATS Overeenkomstscore:",
+      "confidence": "Vertrouwensmatch:",
+      "missingDataTitle": "Ontbrekende Informatie ({{count}} velden nodig)",
+      "missingDataDesc": "We hebben uw geselecteerde bronnen geanalyseerd ten opzichte van de doelkans. Pathew Assistent heeft deze gegevens nodig om de effectiviteit van uw document te maximaliseren.",
+      "generateBtn": "Document Genereren"
+    },
+    "context": {
+      "atsFit": "ATS FIT",
+      "confidenceScore": "Vertrouwensscore",
+      "accuracy": "{{level}} Nauwkeurigheid",
+      "aiAlignment": "Strategische AI-afstemming",
+      "aiAlignmentDesc": "We hebben uw achtergronddocumenten vergeleken met de vereisten. Hier is hoe we uw concept zullen optimaliseren:",
+      "keyStrengths": "Belangrijkste Sterke Punten",
+      "contextGaps": "Geïdentificeerde Hiaten",
+      "fallbackStrength": "Overeenkomst in technische basisvaardigheden.",
+      "fallbackGap": "Geen statistieken over teamleiderschap of schaalvergroting gevonden."
+    },
+    "panel": {
+      "targetedTailoring": "Gerichte Aanpassing Ingeschakeld",
+      "targetedTailoringDesc": "Pathew Assistent heeft uw profiel en de doelkans geanalyseerd. Beantwoord deze laatste {{count}} details om de beste tekst te schrijven. Geen andere lange formulieren nodig!",
+      "provideDetails": "Geef details op voor {{label}}...",
+      "egPlaceholder": "bijv. 2024, of €15.000",
+      "generating": "Document Genereren...",
+      "tailorDraft": "Document Aanpassen & Opstellen"
     }
   },
   "settings": {
