@@ -133,9 +133,9 @@ export const Dashboard: React.FC = () => {
         </Button>
       </header>      {/* Stats Grid */}
       <div className="grid-responsive" style={{ marginBottom: '32px' }}>
-        <StatCard icon={Users} label={t('nav.opportunities')} value={stats.opps.toString()} trend="+0" />
-        <StatCard icon={Briefcase} label={t('nav.jobs')} value={stats.jobs.toString()} trend="+0" />
-        <StatCard icon={FileCheck} label={t('dashboard.docsGenerated')} value={stats.docs.toString()} trend="+0" />
+        <StatCard icon={Users} label={t('nav.opportunities')} value={stats.opps.toString()} trend="+0" onClick={() => navigate('/opportunities')} />
+        <StatCard icon={Briefcase} label={t('nav.jobs')} value={stats.jobs.toString()} trend="+0" onClick={() => navigate('/jobs')} />
+        <StatCard icon={FileCheck} label={t('dashboard.docsGenerated')} value={stats.docs.toString()} trend="+0" onClick={() => navigate('/documents')} />
         <StatCard icon={Clock} label={t('dashboard.pendingReviews')} value={stats.reviews.toString()} />
       </div>
 
@@ -286,8 +286,16 @@ export const Dashboard: React.FC = () => {
 };
 
 // Sub-components
-const StatCard = ({ icon: Icon, label, value, trend }: any) => (
-  <Card style={{ flex: 1, padding: '20px' }}>
+const StatCard = ({ icon: Icon, label, value, trend, onClick }: any) => (
+  <Card 
+    style={{ 
+      flex: 1, 
+      padding: '20px', 
+      cursor: onClick ? 'pointer' : 'default',
+      transition: 'transform 0.2s',
+    }}
+    onClick={onClick}
+  >
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
       <div style={statIconBoxStyle}>
         <Icon size={20} color="var(--accent-primary)" />

@@ -40,6 +40,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         { icon: Briefcase, label: t('nav.opportunities'), path: '/opportunities' },
         { icon: Briefcase, label: t('nav.jobs'), path: '/jobs' },
         { icon: Bookmark, label: t('nav.savedItems'), path: '/saved' },
+        { icon: FileText, label: t('nav.myDocuments', 'My Documents'), path: '/documents' },
       ]
     },
     {

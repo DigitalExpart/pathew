@@ -20,6 +20,7 @@ import { PricingPage } from './pages/Credits/PricingPage';
 import { SavedOpportunities } from './pages/Opportunities/SavedOpportunities';
 import { JobsPage } from './pages/Opportunities/JobsPage';
 import { GrantBuilderPage } from './pages/Builders/GrantBuilderPage';
+import { DocumentsPage } from './pages/Documents/DocumentsPage';
 import { SettingsPage } from './pages/Settings/SettingsPage';
 import { TermsPage as PublicTermsPage } from './pages/Legal/TermsPage';
 import { PrivacyPage as PublicPrivacyPage } from './pages/Legal/PrivacyPage';
@@ -82,6 +83,7 @@ function App() {
             <Route path="/pricing" element={<RequireAuth><Shell><PricingPage /></Shell></RequireAuth>} />
             <Route path="/saved" element={<RequireAuth><Shell><SavedOpportunities /></Shell></RequireAuth>} />
             <Route path="/grant-builder" element={<RequireAuth><Shell><GrantBuilderPage /></Shell></RequireAuth>} />
+            <Route path="/documents" element={<RequireAuth><Shell><DocumentsPage /></Shell></RequireAuth>} />
             <Route path="/settings" element={<RequireAuth><Shell><SettingsPage /></Shell></RequireAuth>} />
             <Route path="/notifications" element={<RequireAuth><Shell><NotificationsPage /></Shell></RequireAuth>} />
             <Route path="/preparation" element={<RequireAuth><Shell><PreparationPage /></Shell></RequireAuth>} />
