@@ -475,7 +475,15 @@
       "liveEditor": "Editor en vivo",
       "textMode": "Modo texto",
       "tailorAssistant": "Adapte esta sección con el Asistente Pathew",
-      "simulatedPreview": "Vista previa A4 simulada"
+      "simulatedPreview": "Vista previa A4 simulada",
+      "saving": "Guardando...",
+      "saveNewVersion": "Guardar Nueva Versión",
+      "tailoring": "Adaptando Borrador...",
+      "rewriteSection": "Reescribir Sección",
+      "rewritePlaceholder": "p.ej. Métricas agregadas, o en inglés británico",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "pageOf": "Página {{current}} de {{total}}"
     },
     "style": {
       "step3Title": "3. Preferencia de Estilo",
@@ -500,7 +508,10 @@
     },
     "loading": {
       "analyzing": "Analizando idoneidad...",
-      "parsing": "El Asistente Pathew está analizando sus documentos, comparando palabras clave con los requisitos de la oportunidad y preparando preguntas de perfil progresivas..."
+      "parsing": "El Asistente Pathew está analizando sus documentos, comparando palabras clave con los requisitos de la oportunidad y preparando preguntas de perfil progresivas...",
+      "atsMatchHigh": "Puntuación de Ajuste ATS: Alta • Brechas abordadas completamente en la generación",
+      "validated": "Validado",
+      "generatingDraft": "El Asistente Pathew está generando su borrador a medida..."
     },
     "gaps": {
       "matchTitle": "Puntaje de Coincidencia ATS:",

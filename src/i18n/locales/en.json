@@ -480,7 +480,15 @@
       "liveEditor": "Live Editor",
       "textMode": "Text Mode",
       "tailorAssistant": "Tailor this section with Pathew Assistant",
-      "simulatedPreview": "Simulated A4 Preview"
+      "simulatedPreview": "Simulated A4 Preview",
+      "saving": "Saving...",
+      "saveNewVersion": "Save New Version",
+      "tailoring": "Tailoring Draft...",
+      "rewriteSection": "Rewrite Section",
+      "rewritePlaceholder": "e.g. Added metrics, or In UK English",
+      "previous": "Previous",
+      "next": "Next",
+      "pageOf": "Page {{current}} of {{total}}"
     },
     "style": {
       "step3Title": "3. Style Preference",
@@ -505,7 +513,10 @@
     },
     "loading": {
       "analyzing": "Analyzing suitability fit...",
-      "parsing": "Pathew Assistant is parsing your documents, matching keywords against opportunity requirements, and preparing progressive profile questions..."
+      "parsing": "Pathew Assistant is parsing your documents, matching keywords against opportunity requirements, and preparing progressive profile questions...",
+      "atsMatchHigh": "ATS Match Fit Score: High • Gaps fully addressed in generation",
+      "validated": "Validated",
+      "generatingDraft": "Pathew Assistant is generating your tailored draft..."
     },
     "gaps": {
       "matchTitle": "ATS Match Fit Score:",

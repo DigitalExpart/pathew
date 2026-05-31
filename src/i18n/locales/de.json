@@ -475,7 +475,15 @@
       "liveEditor": "Live-Editor",
       "textMode": "Textmodus",
       "tailorAssistant": "Diesen Abschnitt mit dem Pathew-Assistenten anpassen",
-      "simulatedPreview": "Simulierte A4-Vorschau"
+      "simulatedPreview": "Simulierte A4-Vorschau",
+      "saving": "Speichern...",
+      "saveNewVersion": "Neue Version speichern",
+      "tailoring": "Entwurf anpassen...",
+      "rewriteSection": "Abschnitt umschreiben",
+      "rewritePlaceholder": "z.B. Metriken hinzugefügt, oder in UK-Englisch",
+      "previous": "Zurück",
+      "next": "Weiter",
+      "pageOf": "Seite {{current}} von {{total}}"
     },
     "style": {
       "step3Title": "3. Stilpräferenz",
@@ -500,7 +508,10 @@
     },
     "loading": {
       "analyzing": "Eignung wird analysiert...",
-      "parsing": "Der Pathew-Assistent analysiert Ihre Dokumente, vergleicht Schlüsselwörter mit den Anforderungen und bereitet progressive Profilfragen vor..."
+      "parsing": "Der Pathew-Assistent analysiert Ihre Dokumente, vergleicht Schlüsselwörter mit den Anforderungen und bereitet progressive Profilfragen vor...",
+      "atsMatchHigh": "ATS-Match-Score: Hoch • Lücken in der Generierung vollständig behoben",
+      "validated": "Validiert",
+      "generatingDraft": "Der Pathew-Assistent generiert Ihren maßgeschneiderten Entwurf..."
     },
     "gaps": {
       "matchTitle": "ATS-Übereinstimmungsbewertung:",

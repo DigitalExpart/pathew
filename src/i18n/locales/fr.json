@@ -475,7 +475,15 @@
       "liveEditor": "Éditeur en direct",
       "textMode": "Mode Texte",
       "tailorAssistant": "Personnalisez cette section avec l'Assistant Pathew",
-      "simulatedPreview": "Aperçu simulé A4"
+      "simulatedPreview": "Aperçu simulé A4",
+      "saving": "Enregistrement...",
+      "saveNewVersion": "Enregistrer la nouvelle version",
+      "tailoring": "Adaptation du brouillon...",
+      "rewriteSection": "Réécrire la section",
+      "rewritePlaceholder": "ex: Métriques ajoutées, ou en anglais britannique",
+      "previous": "Précédent",
+      "next": "Suivant",
+      "pageOf": "Page {{current}} sur {{total}}"
     },
     "style": {
       "step3Title": "3. Préférences de Style",
@@ -500,7 +508,10 @@
     },
     "loading": {
       "analyzing": "Analyse de l'adéquation...",
-      "parsing": "L'Assistant Pathew analyse vos documents, compare les mots-clés aux exigences de l'opportunité et prépare des questions de profilage progressif..."
+      "parsing": "L'Assistant Pathew analyse vos documents, compare les mots-clés aux exigences de l'opportunité et prépare des questions de profilage progressif...",
+      "atsMatchHigh": "Score de Correspondance ATS : Élevé • Lacunes entièrement traitées lors de la génération",
+      "validated": "Validé",
+      "generatingDraft": "L'Assistant Pathew génère votre brouillon sur mesure..."
     },
     "gaps": {
       "matchTitle": "Score de Correspondance ATS :",

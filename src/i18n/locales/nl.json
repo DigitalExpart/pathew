@@ -476,7 +476,15 @@
       "liveEditor": "Live-editor",
       "textMode": "Tekstmodus",
       "tailorAssistant": "Pas deze sectie aan met Pathew Assistant",
-      "simulatedPreview": "Gesimuleerde A4-voorbeeldweergave"
+      "simulatedPreview": "Gesimuleerde A4-voorbeeldweergave",
+      "saving": "Opslaan...",
+      "saveNewVersion": "Nieuwe Versie Opslaan",
+      "tailoring": "Concept Aanpassen...",
+      "rewriteSection": "Sectie Herschrijven",
+      "rewritePlaceholder": "bijv. Statistieken toegevoegd, of in UK-Engels",
+      "previous": "Vorige",
+      "next": "Volgende",
+      "pageOf": "Pagina {{current}} van {{total}}"
     },
     "style": {
       "step3Title": "3. Stijlvoorkeur",
@@ -501,7 +509,10 @@
     },
     "loading": {
       "analyzing": "Geschiktheid analyseren...",
-      "parsing": "Pathew Assistent analyseert uw documenten, vergelijkt trefwoorden met kansvereisten en stelt progressieve profielvragen op..."
+      "parsing": "Pathew Assistent analyseert uw documenten, vergelijkt trefwoorden met kansvereisten en stelt progressieve profielvragen op...",
+      "atsMatchHigh": "ATS Match Fit Score: Hoog • Hiaten volledig aangepakt bij het genereren",
+      "validated": "Gevalideerd",
+      "generatingDraft": "Pathew Assistent genereert uw op maat gemaakte concept..."
     },
     "gaps": {
       "matchTitle": "ATS Overeenkomstscore:",

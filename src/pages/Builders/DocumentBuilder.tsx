@@ -789,19 +789,19 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
             {/* Context Gaps expandable reference */}
             <Card style={referenceExpandableCardStyle}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)' }}>
-                  ATS Match Fit Score: High • Gaps fully addressed in generation
+                <span style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                  {t('builders.loading.atsMatchHigh', 'ATS Match Fit Score: High • Gaps fully addressed in generation')}
                 </span>
                 <Badge variant="primary" style={{ backgroundColor: 'rgba(16,185,129,0.1)', color: '#10b981' }}>
-                  Validated
+                  {t('builders.loading.validated', 'Validated')}
                 </Badge>
               </div>
             </Card>
 
             {builder.isGenerating ? (
               <Card style={{ padding: '60px', textAlign: 'center' }}>
-                <Sparkles size={36} color="var(--accent-primary)" className="animate-spin" style={{ margin: '0 auto 16px' }} />
-                <p>Pathew Assistant is generating your tailored draft...</p>
+                <Sparkles size={32} color="var(--accent-primary)" style={{ animation: 'pulse 2s infinite' }} />
+                <p>{t('builders.loading.generatingDraft', 'Pathew Assistant is generating your tailored draft...')}</p>
               </Card>
             ) : (
               <BuilderEditor 

@@ -166,7 +166,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
                 required
               />
               <Button type="submit" variant="secondary" size="sm" disabled={savingVersion || !draftContent}>
-                {savingVersion ? 'Saving...' : 'Save New Version'}
+                {savingVersion ? t('builders.editor.saving', 'Saving...') : t('builders.editor.saveNewVersion', 'Save New Version')}
               </Button>
             </form>
           </Card>
@@ -180,7 +180,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
             <textarea 
               value={instruction}
               onChange={(e) => setInstruction(e.target.value)}
-              placeholder="e.g. Shorten the summary paragraph, or Write in the first person, or Highlight Next.js metrics..."
+              placeholder={t('builders.editor.rewritePlaceholder', 'e.g. Shorten the summary paragraph, or Write in the first person, or Highlight Next.js metrics...')}
               style={aiInputStyle}
               disabled={isLoading}
             />
@@ -196,7 +196,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
                 style={{ gap: '8px' }}
               >
                 <Sparkles size={14} fill="currentColor" />
-                {isLoading ? 'Tailoring Draft...' : 'Rewrite Section'}
+                {isLoading ? t('builders.editor.tailoring', 'Tailoring Draft...') : t('builders.editor.rewriteSection', 'Rewrite Section')}
               </Button>
             </div>
           </Card>
@@ -271,10 +271,10 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
                   onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
                   disabled={validCurrentPage === 0}
                 >
-                  Previous
+                  {t('builders.editor.previous', 'Previous')}
                 </Button>
                 <span style={{ display: 'flex', alignItems: 'center', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-                  Page {validCurrentPage + 1} of {pages.length}
+                  {t('builders.editor.pageOf', 'Page {{current}} of {{total}}', { current: validCurrentPage + 1, total: pages.length })}
                 </span>
                 <Button 
                   variant="secondary" 
@@ -282,7 +282,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
                   onClick={() => setCurrentPage(prev => Math.min(pages.length - 1, prev + 1))}
                   disabled={validCurrentPage >= pages.length - 1}
                 >
-                  Next
+                  {t('builders.editor.next', 'Next')}
                 </Button>
               </div>
             );
