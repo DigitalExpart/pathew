@@ -369,7 +369,7 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
                 style={inputStyle}
               />
               <textarea 
-                placeholder="Paste your LinkedIn profile content here...&#10;&#10;Example:&#10;About: Experienced software engineer with 5+ years...&#10;Experience: Senior Developer at TechCorp (2020-2024)...&#10;Skills: React, TypeScript, Node.js, Python...&#10;Education: BSc Computer Science, University of..."
+                placeholder="Paste your LinkedIn profile content here...&#10;&#10;Example:&#10;About: Experienced software engineer...&#10;Experience: Senior Developer at [Company Name]...&#10;Skills: React, TypeScript...&#10;Education: BSc Computer Science, [University Name]"
                 value={linkedinContent}
                 onChange={(e) => setLinkedinContent(e.target.value)}
                 style={textareaStyle}

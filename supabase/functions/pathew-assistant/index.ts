@@ -224,7 +224,9 @@ If the user asks for a Roadmap or Preparation Plan, format the draft with clear 
 
     // Layer 2: Context Prompt (compiles user profile, sources, target opportunity, and filled answers)
     let backgroundContextText = ""
-    if (profile) {
+    const useProfile = contextData?.useProfile ?? (!sourceIds || sourceIds.length === 0 || sourceIds.includes('pathew-profile'))
+    
+    if (profile && useProfile) {
       backgroundContextText += `--- USER PROFILE DATA ---
 Full Name: ${profile.full_name || 'N/A'}
 Professional Story: ${profile.story || 'N/A'}

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useTranslation } from 'react-i18next';
 import { useBuilderAi } from '../../hooks/useBuilderAi';
 import { SourcePicker } from '../../components/shared/SourcePicker';
 import { ContextSummary } from '../../components/shared/ContextSummary';
@@ -16,7 +17,8 @@ import {
   Settings, 
   Compass, 
   CheckCircle,
-  Briefcase
+  Briefcase,
+  AlertCircle
 } from 'lucide-react';
 
 interface DocumentBuilderProps {
@@ -31,6 +33,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
   initialContent 
 }) => {
   const { user } = useAuth();
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const oppIdParam = searchParams.get('oppId');
@@ -172,8 +175,8 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
   if (!user) {
     return (
       <div style={{ textAlign: 'center', padding: '60px' }}>
-        <p>Please sign in to access the builders.</p>
-        <Button onClick={() => navigate('/login')} style={{ marginTop: '16px' }}>Sign In</Button>
+        <p>{t('builders.common.signInRequired', 'Please sign in to access the builders.')}</p>
+        <Button onClick={() => navigate('/login')} style={{ marginTop: '16px' }}>{t('common.signIn', 'Sign In')}</Button>
       </div>
     );
   }
@@ -184,12 +187,12 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
       <header style={headerBlockStyle}>
         <div>
           <h1 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 800, marginBottom: '4px' }}>
-            {oppDetails ? `Tailored ${type} - ${oppDetails.title}` : (initialTitle || `Tailored ${type} Workspace`)}
+            {oppDetails ? t('builders.common.tailoredOppTitle', 'Tailored {{type}} - {{title}}', { type, title: oppDetails.title }) : (initialTitle || t('builders.common.tailoredTitle', 'Tailored {{type}} Workspace', { type }))}
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-            {type === 'CV' && 'Create a highly tailored master resume focusing heavily on opportunity matches.'}
-            {type === 'Cover Letter' && 'Draft a personal, high-converting letter tailored specifically to requirements.'}
-            {type === 'Proposal' && 'Organize, structure, and answer funding requirements in persuasive proposal sections.'}
+            {type === 'CV' && t('builders.cv.subtitle', 'Create a highly tailored master resume focusing heavily on opportunity matches.')}
+            {type === 'Cover Letter' && t('builders.coverLetter.subtitle', 'Draft a personal, high-converting letter tailored specifically to requirements.')}
+            {type === 'Proposal' && t('builders.proposal.subtitle', 'Organize, structure, and answer funding requirements in persuasive proposal sections.')}
           </p>
         </div>
 
@@ -220,9 +223,9 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                   <Compass size={20} color="var(--accent-primary)" />
                 </div>
                 <div>
-                  <h3 style={{ fontSize: '1.05rem', fontWeight: 700 }}>2. Target Opportunity Description</h3>
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 700 }}>{t('builders.sources.step2Title', '2. Target Opportunity Description')}</h3>
                   <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)' }}>
-                    Paste the job description, funder requirements, or opportunity details to align your document.
+                    {t('builders.sources.step2Desc', 'Paste the job description, funder requirements, or opportunity details to align your document.')}
                   </p>
                 </div>
               </div>
@@ -245,7 +248,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
               )}
               
               <textarea 
-                placeholder="Paste target job listing, scholarship requirements, or funding proposal description here..."
+                placeholder={t('builders.sources.textareaPlaceholder', 'Paste target job listing, scholarship requirements, or funding proposal description here...')}
                 value={builder.opportunityText}
                 onChange={(e) => builder.setOpportunityText(e.target.value)}
                 style={textareaStyle}
@@ -767,6 +770,15 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
         {/* STAGE 4: MAIN WORKSPACE (EDITOR, PREVIEW & TAILOR DRAWER) */}
         {builder.stage === 'editor' && (
           <div>
+            {builder.error && (
+              <Card style={{ marginBottom: '16px', borderColor: 'rgba(239, 68, 68, 0.2)', backgroundColor: 'rgba(239, 68, 68, 0.05)' }}>
+                <div style={{ display: 'flex', gap: '8px', color: '#ef4444', alignItems: 'center' }}>
+                  <AlertCircle size={20} />
+                  <span style={{ fontWeight: 600 }}>Error:</span>
+                  <span>{builder.error}</span>
+                </div>
+              </Card>
+            )}
             {/* Context Gaps expandable reference */}
             <Card style={referenceExpandableCardStyle}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

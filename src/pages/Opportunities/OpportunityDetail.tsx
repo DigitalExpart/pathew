@@ -38,6 +38,13 @@ export const OpportunityDetail: React.FC = () => {
   const [saving, setSaving] = React.useState(false);
   const [applying, setApplying] = React.useState(false);
   const [descExpanded, setDescExpanded] = React.useState(false);
+  const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
+
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   React.useEffect(() => {
     const fetchOpp = async () => {
@@ -166,12 +173,12 @@ export const OpportunityDetail: React.FC = () => {
             onClick={handleApply}
             disabled={applying}
           >
-            {applying ? t('common.loading') : 'Apply Now'} <ExternalLink size={16} />
+            {applying ? t('common.loading') : t('opportunities.applyNow', 'Apply Now')} <ExternalLink size={16} />
           </Button>
         </div>
       </div>
 
-      <div style={layoutGridStyle}>
+      <div style={{ ...layoutGridStyle, gridTemplateColumns: isMobile ? '1fr' : '2fr 1fr' }}>
         <div style={contentColStyle}>
           <Card style={{ marginBottom: '24px' }}>
             <h2 style={sectionTitleStyle}>{t('opportunities.description')}</h2>
@@ -198,7 +205,7 @@ export const OpportunityDetail: React.FC = () => {
                     fontSize: '0.875rem'
                   }}
                 >
-                  {descExpanded ? 'Read Less' : 'Read More'}
+                  {descExpanded ? t('opportunities.readLess', 'Read Less') : t('opportunities.readMore', 'Read More')}
                 </button>
               )}
             </div>
@@ -290,8 +297,8 @@ export const OpportunityDetail: React.FC = () => {
               {opp.type === 'grant' ? (
                 <DocGenCard 
                   icon={Target} 
-                  title="Grant Builder"
-                  desc="Build your grant application proposal."
+                  title={t('builders.proposal.grantBuilderTitle', 'Grant Builder')}
+                  desc={t('builders.proposal.grantBuilderDesc', 'Build your grant application proposal.')}
                   path={`/grant-builder?oppId=${opp.id}`}
                 />
               ) : (

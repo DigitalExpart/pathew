@@ -116,6 +116,16 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
     }
   }, [user]);
 
+  const [prevInitialOppId, setPrevInitialOppId] = useState<string | null>(initialOpportunityId || null);
+
+  useEffect(() => {
+    if (initialOpportunityId !== prevInitialOppId) {
+      resetPipeline();
+      setOpportunityId(initialOpportunityId || null);
+      setPrevInitialOppId(initialOpportunityId || null);
+    }
+  }, [initialOpportunityId, prevInitialOppId]);
+
   const loadSavedVersions = async () => {
     if (!user) return;
     try {
@@ -203,6 +213,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
         language,
         currentDraft: opportunityText, // pipe manually pasted opportunity text
         contextData: {
+          useProfile: selectedSourceIds.includes('pathew-profile'),
           manualNotes,
           pageCount,
           wordLimit,
@@ -315,6 +326,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
         language,
         currentDraft: draftContent || opportunityText,
         contextData: {
+          useProfile: selectedSourceIds.includes('pathew-profile'),
           manualNotes: {
             ...manualNotes,
             additionalContext: (manualNotes.additionalContext || '') + 
@@ -444,6 +456,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
         language,
         currentDraft: draftContent,
         contextData: {
+          useProfile: selectedSourceIds.includes('pathew-profile'),
           manualNotes: {
             ...manualNotes,
             additionalContext: manualNotes.additionalContext || ''
@@ -494,11 +507,20 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
               if (parsed.estimatedPages) finalEstimatedPages = parsed.estimatedPages;
             }
           } catch (err) {
-            const draftMatch = cleanStr.match(/"draft"\s*:\s*"([\s\S]*?)",\s*"matchSummary"/);
+            let draftMatch = cleanStr.match(/"draft"\s*:\s*"([\s\S]*?)"(?:\s*,\s*"|\s*\})/);
+            
+            if (!draftMatch) {
+              draftMatch = cleanStr.match(/"draft"\s*:\s*"([\s\S]*)/);
+              if (draftMatch && draftMatch[1]) {
+                draftMatch[1] = draftMatch[1].replace(/"\s*\}?\s*$/, '');
+              }
+            }
+
             if (draftMatch && draftMatch[1]) {
               finalDraft = draftMatch[1];
               finalDraft = finalDraft.replace(/\\n/g, '\n').replace(/\\"/g, '"');
             }
+            
             const pagesMatch = cleanStr.match(/"estimatedPages"\s*:\s*(\d+)/);
             if (pagesMatch && pagesMatch[1]) {
               finalEstimatedPages = parseInt(pagesMatch[1], 10);

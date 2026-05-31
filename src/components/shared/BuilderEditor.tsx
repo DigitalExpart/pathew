@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
+import { useTranslation } from 'react-i18next';
 import { ExportModal } from '../ui/ExportModal';
 import { generateDocxBlob } from '../../utils/docxExport';
 
@@ -39,6 +41,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
   documentType,
   estimatedPages = 1,
 }) => {
+  const { t } = useTranslation();
   const [instruction, setInstruction] = useState('');
   const [copied, setCopied] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
@@ -101,7 +104,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
       <div style={headerStyle}>
         <div style={versionBadgeRowStyle}>
           <History size={16} color="var(--text-secondary)" />
-          <span style={{ fontSize: '0.875rem', fontWeight: 650 }}>Version History</span>
+          <span style={{ fontSize: '0.875rem', fontWeight: 650 }}>{t('builders.editor.versionHistory', 'Version History')}</span>
           <select 
             value={currentVersionNumber}
             onChange={(e) => {
@@ -140,8 +143,8 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
         <div style={editorColumnStyle}>
           <Card style={editorCardStyle}>
             <div style={columnHeaderStyle}>
-              <span style={colTitleLabelStyle}>Live Editor</span>
-              <Badge variant="outline">Text Mode</Badge>
+              <span style={colTitleLabelStyle}>{t('builders.editor.liveEditor', 'Live Editor')}</span>
+              <Badge variant="outline">{t('builders.editor.textMode', 'Text Mode')}</Badge>
             </div>
             
             <textarea 
@@ -172,7 +175,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
           <Card style={aiBoxStyle}>
             <div style={aiBoxHeaderStyle}>
               <Sparkles size={16} color="var(--accent-primary)" />
-              <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>Tailor this section with Pathew Assistant</span>
+              <span style={{ fontSize: '0.85rem', fontWeight: 700 }}>{t('builders.editor.tailorAssistant', 'Tailor this section with Pathew Assistant')}</span>
             </div>
             <textarea 
               value={instruction}
@@ -201,7 +204,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
 
         {/* Right Side: simulated A4 Print Preview Sheet */}
         <div style={previewColumnStyle}>
-          <div style={previewLabelStyle}>Simulated A4 Preview</div>
+          <div style={previewLabelStyle}>{t('builders.editor.simulatedPreview', 'Simulated A4 Preview')}</div>
           <div style={a4PaperContainerStyle}>
             {(() => {
               const pages = paginateMarkdown(draftContent, Math.max(1, estimatedPages));
@@ -226,7 +229,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
                       <p style={{ color: 'var(--text-muted)' }}>Drafting document...</p>
                     ) : (
                       <ReactMarkdown 
-                        remarkPlugins={[remarkGfm]}
+                        remarkPlugins={[remarkGfm, remarkBreaks]}
                         components={{
                           h1: ({node, ...props}) => <h2 style={previewH1Style} {...props} />,
                           h2: ({node, ...props}) => <h3 style={previewH2Style} {...props} />,
