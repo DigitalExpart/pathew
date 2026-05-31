@@ -441,15 +441,43 @@
     "livePreview": "Live Preview",
     "cv": {
       "title": "Tailored CV",
-      "desc": "Optimize your experience for this role."
+      "desc": "Optimize your experience for this role.",
+      "subtitle": "Create a highly tailored master resume focusing heavily on opportunity matches."
     },
     "coverLetter": {
       "title": "Cover Letter",
-      "desc": "Write a compelling narrative."
+      "desc": "Write a compelling narrative.",
+      "subtitle": "Draft a personal, high-converting letter tailored specifically to requirements."
     },
     "proposal": {
       "title": "Proposal",
-      "desc": "Structure your pitch perfectly."
+      "desc": "Structure your pitch perfectly.",
+      "subtitle": "Organize, structure, and answer funding requirements in persuasive proposal sections."
+    },
+    "common": {
+      "signInRequired": "Please sign in to access the builders.",
+      "tailoredOppTitle": "Tailored {{type}} - {{title}}",
+      "tailoredTitle": "Tailored {{type}} Workspace"
+    },
+    "sources": {
+      "step1Title": "1. Select Background Materials",
+      "step1Desc": "Select one or more sources. Pathew Assistant will use these to draft and tailor your document automatically.",
+      "step2Title": "2. Target Opportunity Description",
+      "step2Desc": "Paste the job description, funder requirements, or opportunity details to align your document.",
+      "textareaPlaceholder": "Paste target job listing, scholarship requirements, or funding proposal description here...",
+      "active": "Active",
+      "pathewProfile": "Your Pathew Profile",
+      "pathewProfileDesc": "Includes Story, Skills, Experience, and Goals from settings.",
+      "tabUpload": "Upload Resume (DOCX/TXT)",
+      "tabLinkedin": "Import LinkedIn",
+      "tabNotes": "Add Manual Notes"
+    },
+    "editor": {
+      "versionHistory": "Version History",
+      "liveEditor": "Live Editor",
+      "textMode": "Text Mode",
+      "tailorAssistant": "Tailor this section with Pathew Assistant",
+      "simulatedPreview": "Simulated A4 Preview"
     }
   },
   "settings": {

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import mammoth from 'mammoth';
+import { useTranslation } from 'react-i18next';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
@@ -46,6 +47,7 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
   onRefreshSources,
   userId,
 }) => {
+  const { t } = useTranslation();
   const PROFILE_ID = 'pathew-profile';
   const [activeTab, setActiveTab] = useState<'upload' | 'linkedin' | 'notes'>('upload');
   const [uploading, setUploading] = useState(false);
@@ -235,8 +237,8 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
 
   return (
     <div style={containerStyle}>
-      <h3 style={titleStyle}>1. Select Background Materials</h3>
-      <p style={subtitleStyle}>Select one or more sources. Pathew Assistant will use these to draft and tailor your document automatically.</p>
+      <h3 style={titleStyle}>{t('builders.sources.step1Title', '1. Select Background Materials')}</h3>
+      <p style={subtitleStyle}>{t('builders.sources.step1Desc', 'Select one or more sources. Pathew Assistant will use these to draft and tailor your document automatically.')}</p>
 
       {/* Selectable Sources Grid */}
       <div style={sourcesGridStyle}>
@@ -256,12 +258,12 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
             </div>
             {isProfileSelected && (
               <Badge variant="primary" style={{ backgroundColor: 'rgba(245, 158, 11, 0.1)', color: 'var(--accent-primary)' }}>
-                Active
+                {t('builders.sources.active', 'Active')}
               </Badge>
             )}
           </div>
-          <h4 style={cardTitleStyle}>Your Pathew Profile</h4>
-          <p style={cardDescStyle}>Includes Story, Skills, Experience, and Goals from settings.</p>
+          <h4 style={cardTitleStyle}>{t('builders.sources.pathewProfile', 'Your Pathew Profile')}</h4>
+          <p style={cardDescStyle}>{t('builders.sources.pathewProfileDesc', 'Includes Story, Skills, Experience, and Goals from settings.')}</p>
         </Card>
 
         {sources.map(src => {
@@ -321,19 +323,19 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
             onClick={() => setActiveTab('upload')} 
             style={{ ...tabBtnStyle, borderBottomColor: activeTab === 'upload' ? 'var(--accent-primary)' : 'transparent', color: activeTab === 'upload' ? 'var(--text-primary)' : 'var(--text-secondary)' }}
           >
-            Upload Resume (DOCX/TXT)
+            {t('builders.sources.tabUpload', 'Upload Resume (DOCX/TXT)')}
           </button>
           <button 
             onClick={() => setActiveTab('linkedin')} 
             style={{ ...tabBtnStyle, borderBottomColor: activeTab === 'linkedin' ? 'var(--accent-primary)' : 'transparent', color: activeTab === 'linkedin' ? 'var(--text-primary)' : 'var(--text-secondary)' }}
           >
-            Import LinkedIn
+            {t('builders.sources.tabLinkedin', 'Import LinkedIn')}
           </button>
           <button 
             onClick={() => setActiveTab('notes')} 
             style={{ ...tabBtnStyle, borderBottomColor: activeTab === 'notes' ? 'var(--accent-primary)' : 'transparent', color: activeTab === 'notes' ? 'var(--text-primary)' : 'var(--text-secondary)' }}
           >
-            Add Manual Notes
+            {t('builders.sources.tabNotes', 'Add Manual Notes')}
           </button>
         </div>
 

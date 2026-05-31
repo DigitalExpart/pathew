@@ -436,15 +436,43 @@
     "livePreview": "Aperçu en direct",
     "cv": {
       "title": "CV sur mesure",
-      "desc": "Optimisez votre expérience pour ce rôle."
+      "desc": "Optimisez votre expérience pour ce rôle.",
+      "subtitle": "Créez un CV principal hautement personnalisé en mettant l'accent sur les correspondances d'opportunités."
     },
     "coverLetter": {
       "title": "Lettre de motivation",
-      "desc": "Rédigez un récit convaincant."
+      "desc": "Rédigez un récit convaincant.",
+      "subtitle": "Rédigez une lettre personnelle à fort taux de conversion spécifiquement adaptée aux exigences."
     },
     "proposal": {
       "title": "Proposition",
-      "desc": "Structurez parfaitement votre argumentaire."
+      "desc": "Structurez parfaitement votre argumentaire.",
+      "subtitle": "Organisez, structurez et répondez aux exigences de financement dans des sections de proposition convaincantes."
+    },
+    "common": {
+      "signInRequired": "Veuillez vous connecter pour accéder aux créateurs.",
+      "tailoredOppTitle": "CV sur mesure - {{title}}",
+      "tailoredTitle": "Espace de travail pour {{type}} sur mesure"
+    },
+    "sources": {
+      "step1Title": "1. Sélectionnez les matériaux de base",
+      "step1Desc": "Sélectionnez une ou plusieurs sources. L'Assistant Pathew les utilisera pour rédiger et personnaliser automatiquement votre document.",
+      "step2Title": "2. Description de l'opportunité cible",
+      "step2Desc": "Collez l'offre d'emploi, les exigences du financeur ou les détails de l'opportunité pour aligner votre document.",
+      "textareaPlaceholder": "Collez ici l'offre d'emploi cible, les exigences de la bourse ou la description de la proposition de financement...",
+      "active": "Actif",
+      "pathewProfile": "Votre Profil Pathew",
+      "pathewProfileDesc": "Comprend l'histoire, les compétences, l'expérience et les objectifs des paramètres.",
+      "tabUpload": "Télécharger un CV (DOCX/TXT)",
+      "tabLinkedin": "Importer LinkedIn",
+      "tabNotes": "Ajouter des notes manuelles"
+    },
+    "editor": {
+      "versionHistory": "Historique des versions",
+      "liveEditor": "Éditeur en direct",
+      "textMode": "Mode Texte",
+      "tailorAssistant": "Personnalisez cette section avec l'Assistant Pathew",
+      "simulatedPreview": "Aperçu simulé A4"
     }
   },
   "settings": {

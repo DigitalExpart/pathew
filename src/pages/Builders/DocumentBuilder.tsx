@@ -115,10 +115,10 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
 
   // Stepper Header
   const renderStepper = () => {
-    const steps = [
-      { key: 'sources', label: '1. Sources & Target' },
-      { key: 'missing', label: '2. Progressive Gaps' },
-      { key: 'editor', label: '3. Perfect & Export' },
+  const steps = [
+      { key: 'sources', label: t('builders.common.stepSources', '1. Sources & Target') },
+      { key: 'missing', label: t('builders.common.stepGaps', '2. Progressive Gaps') },
+      { key: 'editor', label: t('builders.common.stepExport', '3. Perfect & Export') }
     ];
 
     return (
