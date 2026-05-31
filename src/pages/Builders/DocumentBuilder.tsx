@@ -128,7 +128,18 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
 
           return (
             <React.Fragment key={s.key}>
-              <div style={stepWrapperStyle}>
+              <div 
+                style={{ 
+                  ...stepWrapperStyle, 
+                  cursor: isDone ? 'pointer' : 'default',
+                  opacity: isDone || isActive ? 1 : 0.6
+                }}
+                onClick={() => {
+                  if (isDone) {
+                    builder.setStage(s.key as any);
+                  }
+                }}
+              >
                 <span style={{ 
                   ...stepIconStyle,
                   backgroundColor: isActive ? 'var(--accent-primary)' : isDone ? 'rgba(16,185,129,0.1)' : 'var(--bg-tertiary)',
