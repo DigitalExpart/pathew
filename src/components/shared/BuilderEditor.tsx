@@ -44,6 +44,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
   const [isExportOpen, setIsExportOpen] = useState(false);
   const [saveTitle, setSaveTitle] = useState('');
   const [savingVersion, setSavingVersion] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(draftContent);
@@ -204,14 +205,17 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
           <div style={a4PaperContainerStyle}>
             {(() => {
               const pages = paginateMarkdown(draftContent, Math.max(1, estimatedPages));
-              return pages.map((pageContent, index) => (
-                <div key={index} style={{
+              const validCurrentPage = Math.min(currentPage, pages.length - 1);
+              const pageContent = pages[validCurrentPage];
+              
+              return (
+                <div style={{
                   ...a4SheetStyle,
                   minHeight: '1123px',
-                  marginBottom: index < pages.length - 1 ? '24px' : '0'
+                  marginBottom: '0'
                 }}>
                   {/* Cover Letter Header elements - Only on first page */}
-                  {index === 0 && (
+                  {validCurrentPage === 0 && (
                     <div style={letterheadStyle}>
                       <div style={letterheadLogoStyle}>P</div>
                     </div>
@@ -244,12 +248,42 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
                   {/* Watermark/Footer */}
                   <div style={paperFooterStyle}>
                     <span>Powered by Pathew Assistant</span>
-                    <span>Page {index + 1} of {pages.length}</span>
+                    <span>Page {validCurrentPage + 1} of {pages.length}</span>
                   </div>
                 </div>
-              ));
+              );
             })()}
           </div>
+          
+          {/* Pagination Controls */}
+          {(() => {
+            const pages = paginateMarkdown(draftContent, Math.max(1, estimatedPages));
+            if (pages.length <= 1) return null;
+            const validCurrentPage = Math.min(currentPage, pages.length - 1);
+            return (
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '16px' }}>
+                <Button 
+                  variant="secondary" 
+                  size="sm" 
+                  onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
+                  disabled={validCurrentPage === 0}
+                >
+                  Previous
+                </Button>
+                <span style={{ display: 'flex', alignItems: 'center', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                  Page {validCurrentPage + 1} of {pages.length}
+                </span>
+                <Button 
+                  variant="secondary" 
+                  size="sm" 
+                  onClick={() => setCurrentPage(prev => Math.min(pages.length - 1, prev + 1))}
+                  disabled={validCurrentPage >= pages.length - 1}
+                >
+                  Next
+                </Button>
+              </div>
+            );
+          })()}
         </div>
 
       </div>

@@ -446,8 +446,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
         contextData: {
           manualNotes: {
             ...manualNotes,
-            additionalContext: (manualNotes.additionalContext || '') + 
-              "\n\nCRITICAL FORMATTING INSTRUCTION: The very first lines of your generated draft MUST be the header in EXACTLY this markdown format:\n# [User's Full Name]\n## [Professional Title]\n### [Email] • [Phone] • [Location] • [LinkedIn]\nDo not put anything before the # [User's Name]. Do not include any other markdown before it. Use exactly one # for the name, two ## for the title, and three ### for the contact info."
+            additionalContext: manualNotes.additionalContext || ''
           },
           pageCount,
           wordLimit,
