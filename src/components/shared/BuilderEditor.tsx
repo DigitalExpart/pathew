@@ -494,10 +494,12 @@ const letterheadMetaStyle: React.CSSProperties = {
 };
 
 const paperBodyStyle: React.CSSProperties = {
-  flex: 1,
+  flex: '1 0 auto',
   fontSize: '0.825rem',
   lineHeight: '1.6',
   color: '#334155',
+  overflowWrap: 'break-word',
+  wordBreak: 'break-word',
 };
 
 const paperFooterStyle: React.CSSProperties = {
