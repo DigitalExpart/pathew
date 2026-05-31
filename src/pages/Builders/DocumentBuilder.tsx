@@ -797,8 +797,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                   builder.setCurrentVersionNumber(v.version);
                 }}
                 isLoading={builder.isGenerating}
-                documentType={type}
-                estimatedPages={builder.estimatedPages}
+                documentType={builder.documentType}
               />
             )}
           </div>

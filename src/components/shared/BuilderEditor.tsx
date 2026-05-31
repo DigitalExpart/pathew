@@ -24,7 +24,6 @@ interface BuilderEditorProps {
   onSelectVersion: (ver: any) => void;
   isLoading: boolean;
   documentType: string;
-  estimatedPages?: number;
 }
 
 export const BuilderEditor: React.FC<BuilderEditorProps> = ({
@@ -37,7 +36,6 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
   onSelectVersion,
   isLoading,
   documentType,
-  estimatedPages = 1,
 }) => {
   const [instruction, setInstruction] = useState('');
   const [copied, setCopied] = useState(false);
@@ -202,53 +200,50 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
         <div style={previewColumnStyle}>
           <div style={previewLabelStyle}>Simulated A4 Preview</div>
           <div style={a4PaperContainerStyle}>
-            {(() => {
-              const pages = paginateMarkdown(draftContent, Math.max(1, estimatedPages));
-              return pages.map((pageContent, index) => (
-                <div key={index} style={{
-                  ...a4SheetStyle,
-                  minHeight: '1123px',
-                  marginBottom: index < pages.length - 1 ? '24px' : '0'
-                }}>
-                  {/* Cover Letter Header elements - Only on first page */}
-                  {index === 0 && (
-                    <div style={letterheadStyle}>
-                      <div style={letterheadLogoStyle}>P</div>
-                      <div style={{ textAlign: 'right' }}>
-                        <p style={letterheadMetaStyle}>PATHEW ASSISTED APPLICATION</p>
-                        <p style={{ ...letterheadMetaStyle, color: 'var(--text-secondary)' }}>Generated in real-time</p>
-                      </div>
-                    </div>
-                  )}
-                  
-                  <div className="a4-preview-content" style={paperBodyStyle}>
-                    {!pageContent ? (
-                      <p style={{ color: 'var(--text-muted)' }}>Drafting document...</p>
-                    ) : (
-                      <ReactMarkdown 
-                        remarkPlugins={[remarkGfm]}
-                        components={{
-                          h1: ({node, ...props}) => <h2 style={previewH1Style} {...props} />,
-                          h2: ({node, ...props}) => <h3 style={previewH2Style} {...props} />,
-                          h3: ({node, ...props}) => <h4 style={previewH3Style} {...props} />,
-                          li: ({node, ...props}) => <li style={previewLiStyle} {...props} />,
-                          p: ({node, ...props}) => <p style={previewParaStyle} {...props} />,
-                          hr: () => null
-                        }}
-                      >
-                        {pageContent}
-                      </ReactMarkdown>
-                    )}
-                  </div>
-
-                  {/* Watermark/Footer */}
-                  <div style={paperFooterStyle}>
-                    <span>Powered by Pathew Assistant</span>
-                    <span>Page {index + 1} of {pages.length}</span>
-                  </div>
+            <div style={{
+              ...a4SheetStyle,
+              height: 'auto',
+              minHeight: '1123px',
+            }}>
+              {/* Cover Letter Header elements */}
+              <div style={letterheadStyle}>
+                <div style={letterheadLogoStyle}>P</div>
+                <div style={{ textAlign: 'right' }}>
+                  <p style={letterheadMetaStyle}>PATHEW ASSISTED APPLICATION</p>
+                  <p style={{ ...letterheadMetaStyle, color: 'var(--text-secondary)' }}>Generated in real-time</p>
                 </div>
-              ));
-            })()}
+              </div>
+              
+              <div className="a4-preview-content" style={paperBodyStyle}>
+                {!draftContent ? (
+                  <p style={{ color: 'var(--text-muted)' }}>Drafting document...</p>
+                ) : (
+                  <ReactMarkdown 
+                    remarkPlugins={[remarkGfm]}
+                    components={{
+                      h1: ({node, ...props}) => <h2 style={previewH1Style} {...props} />,
+                      h2: ({node, ...props}) => <h3 style={previewH2Style} {...props} />,
+                      h3: ({node, ...props}) => <h4 style={previewH3Style} {...props} />,
+                      li: ({node, ...props}) => <li style={previewLiStyle} {...props} />,
+                      p: ({node, ...props}) => <p style={previewParaStyle} {...props} />,
+                      hr: () => null,
+                      table: ({node, ...props}) => <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed', marginBottom: '16px' }} {...props} />,
+                      th: ({node, ...props}) => <th style={{ borderBottom: '2px solid #e2e8f0', padding: '8px 4px', textAlign: 'left', overflowWrap: 'break-word', wordWrap: 'break-word' }} {...props} />,
+                      td: ({node, ...props}) => <td style={{ padding: '8px 4px', verticalAlign: 'top', overflowWrap: 'break-word', wordWrap: 'break-word' }} {...props} />,
+                      img: ({node, ...props}) => <img style={{ maxWidth: '100%', height: 'auto' }} {...props} />
+                    }}
+                  >
+                    {draftContent}
+                  </ReactMarkdown>
+                )}
+              </div>
+
+              {/* Watermark/Footer */}
+              <div style={paperFooterStyle}>
+                <span>Powered by Pathew Assistant</span>
+                <span>Document Preview</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -263,35 +258,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
   );
 };
 
-const paginateMarkdown = (content: string, maxPages: number): string[] => {
-  if (!content) return [''];
-  if (maxPages <= 1) return [content];
-  
-  const blocks = content.split(/\\n\\n+/);
-  const totalLength = content.length;
-  const targetCharsPerPage = Math.ceil(totalLength / maxPages);
-  
-  const pages: string[] = [];
-  let currentPage: string[] = [];
-  let currentChars = 0;
-  
-  for (const block of blocks) {
-    if (currentChars + block.length > targetCharsPerPage * 1.2 && pages.length < maxPages - 1) {
-      pages.push(currentPage.join('\\n\\n'));
-      currentPage = [block];
-      currentChars = block.length;
-    } else {
-      currentPage.push(block);
-      currentChars += block.length;
-    }
-  }
-  
-  if (currentPage.length > 0) {
-    pages.push(currentPage.join('\\n\\n'));
-  }
-  
-  return pages.slice(0, maxPages);
-};
+// Pagination logic removed in favor of a continuous scrolling page for better Markdown rendering.
 
 const containerStyle: React.CSSProperties = {
   marginTop: '24px',
