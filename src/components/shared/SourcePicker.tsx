@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import mammoth from 'mammoth';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
@@ -51,6 +52,7 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
   
   // Form states
   const [linkedinUrl, setLinkedinUrl] = useState('');
+  const [linkedinContent, setLinkedinContent] = useState('');
   const [noteTitle, setNoteTitle] = useState('');
   const [noteContent, setNoteContent] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -88,13 +90,39 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
     setFeedback(null);
 
     try {
-      // Simple client-side text extractor fallback for demo/txt files, or standard mock text
-      let rawText = `Extracted Text from ${file.name}:\n`;
+      let rawText = '';
+
       if (file.type === 'text/plain') {
+        // Plain text files — read directly
+        rawText = await file.text();
+      } else if (
+        file.name.toLowerCase().endsWith('.docx') ||
+        file.type === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      ) {
+        // DOCX files — extract text using mammoth
+        const arrayBuffer = await file.arrayBuffer();
+        const result = await mammoth.extractRawText({ arrayBuffer });
+        rawText = result.value;
+        if (!rawText || rawText.trim().length === 0) {
+          throw new Error('Could not extract any text from this DOCX file. The document may be empty or image-based.');
+        }
+      } else if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
+        // PDF files — read as text (basic extraction)
+        // For full PDF parsing, pdfjs-dist would be needed. For now, attempt text read.
         const text = await file.text();
-        rawText += text;
+        // PDF binary starts with %PDF — if we detect it, the text extraction won't work
+        if (text.startsWith('%PDF')) {
+          throw new Error(
+            'PDF text extraction is not yet supported for scanned/binary PDFs. ' +
+            'Please upload your CV as a .docx or .txt file, or use the "Add Manual Notes" tab to paste your CV content.'
+          );
+        }
+        rawText = text;
       } else {
-        rawText += `Skills: Software Engineering, React, TypeScript, Node.js, Next.js, Database Design.\nExperience: Senior Software Engineer at TechCorp (2 years), developing high-performance analytics dashboards.\nEducation: BSc Computer Science.\nAchievements: Optimized frontend bundle size by 40% using code splitting.`;
+        throw new Error(
+          `Unsupported file type: ${file.type || file.name.split('.').pop()}. ` +
+          'Please upload a .docx or .txt file, or paste your content in the "Add Manual Notes" tab.'
+        );
       }
 
       await BuilderService.createProfileSource({
@@ -116,29 +144,44 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
       setFeedback(`Upload failed: ${err.message}`);
     } finally {
       setUploading(false);
+      // Reset the file input so the same file can be re-uploaded if needed
+      e.target.value = '';
     }
   };
 
   const handleSubmitLinkedin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!linkedinUrl.trim()) return;
+    if (!linkedinContent.trim()) {
+      setFeedback('Please paste your LinkedIn profile content below.');
+      return;
+    }
 
     setUploading(true);
     setFeedback(null);
 
     try {
-      const mockParsedLinkedIn = `LinkedIn Profile details for ${linkedinUrl}:\nFull Name: Shilley Johnson\nHeadline: Senior Full Stack Engineer & Team Lead\nIndustry: Cloud Computing & SaaS Development\nSkills: React, Redux, PostgreSQL, GraphQL, Deno, Serverless Architectures.\nExperience: Lead Developer at FinTech Solutions (3 years). Managed a team of 4 engineers to launch commission automation tools.`;
+      const profileText = linkedinUrl.trim()
+        ? `LinkedIn Profile (${linkedinUrl}):\n${linkedinContent}`
+        : linkedinContent;
 
       await BuilderService.createProfileSource({
         source_type: 'linkedin',
-        source_url: linkedinUrl,
-        file_name: 'LinkedIn Profile Link',
-        raw_text: mockParsedLinkedIn,
+        source_url: linkedinUrl || undefined,
+        file_name: linkedinUrl.trim() ? 'LinkedIn Profile' : 'LinkedIn Profile (Pasted)',
+        raw_text: profileText,
       }, userId);
 
       await onRefreshSources();
+
+      // Auto-select the newly created LinkedIn source
+      const freshSources = await BuilderService.fetchProfileSources(userId);
+      if (freshSources.length > 0) {
+        onChangeSelected([...selectedSourceIds, freshSources[0].id]);
+      }
+
       setLinkedinUrl('');
-      setFeedback('LinkedIn URL imported successfully!');
+      setLinkedinContent('');
+      setFeedback('LinkedIn profile imported successfully!');
     } catch (err: any) {
       setFeedback(`Import failed: ${err.message}`);
     } finally {
@@ -161,6 +204,13 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
       }, userId);
 
       await onRefreshSources();
+
+      // Auto-select the newly created notes source
+      const freshSources = await BuilderService.fetchProfileSources(userId);
+      if (freshSources.length > 0) {
+        onChangeSelected([...selectedSourceIds, freshSources[0].id]);
+      }
+
       setNoteTitle('');
       setNoteContent('');
       setFeedback('Notes recorded successfully!');
@@ -271,7 +321,7 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
             onClick={() => setActiveTab('upload')} 
             style={{ ...tabBtnStyle, borderBottomColor: activeTab === 'upload' ? 'var(--accent-primary)' : 'transparent', color: activeTab === 'upload' ? 'var(--text-primary)' : 'var(--text-secondary)' }}
           >
-            Upload Resume (PDF/TXT)
+            Upload Resume (DOCX/TXT)
           </button>
           <button 
             onClick={() => setActiveTab('linkedin')} 
@@ -291,9 +341,10 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
           {activeTab === 'upload' && (
             <div style={uploadZoneStyle}>
               <FilePlus size={32} color="var(--text-muted)" style={{ marginBottom: '12px' }} />
-              <p style={{ marginBottom: '16px', fontSize: '0.875rem' }}>Drag and drop your file here, or click to browse</p>
+              <p style={{ marginBottom: '8px', fontSize: '0.875rem', fontWeight: 600 }}>Upload your CV or Resume</p>
+              <p style={{ marginBottom: '16px', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Supported formats: .docx, .txt — Your document content will be extracted automatically</p>
               <Button variant="outline" size="sm" style={{ position: 'relative' }} disabled={uploading}>
-                {uploading ? 'Processing...' : 'Browse files'}
+                {uploading ? 'Extracting content...' : 'Browse files'}
                 <input 
                   type="file" 
                   accept=".txt,.pdf,.docx" 
@@ -307,16 +358,25 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
 
           {activeTab === 'linkedin' && (
             <form onSubmit={handleSubmitLinkedin} style={formStyle}>
+              <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+                Copy your LinkedIn profile content (About, Experience, Skills, Education) and paste it below. Optionally include your profile URL.
+              </p>
               <input 
                 type="url" 
-                placeholder="https://linkedin.com/in/username" 
+                placeholder="https://linkedin.com/in/username (optional)" 
                 value={linkedinUrl}
                 onChange={(e) => setLinkedinUrl(e.target.value)}
                 style={inputStyle}
+              />
+              <textarea 
+                placeholder="Paste your LinkedIn profile content here...&#10;&#10;Example:&#10;About: Experienced software engineer with 5+ years...&#10;Experience: Senior Developer at TechCorp (2020-2024)...&#10;Skills: React, TypeScript, Node.js, Python...&#10;Education: BSc Computer Science, University of..."
+                value={linkedinContent}
+                onChange={(e) => setLinkedinContent(e.target.value)}
+                style={textareaStyle}
                 required
               />
-              <Button type="submit" size="sm" disabled={uploading} style={{ gap: '8px' }}>
-                <LinkedinIcon size={16} /> {uploading ? 'Syncing...' : 'Sync LinkedIn Profile'}
+              <Button type="submit" size="sm" disabled={uploading || !linkedinContent.trim()} style={{ gap: '8px' }}>
+                <LinkedinIcon size={16} /> {uploading ? 'Importing...' : 'Import LinkedIn Profile'}
               </Button>
             </form>
           )}
