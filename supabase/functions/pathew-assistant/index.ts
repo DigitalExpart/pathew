@@ -312,6 +312,16 @@ Instructions:
 2. Populate "matchSummary" with actual matches ("strongMatches") and key mismatches/gaps ("gaps").
 3. Determine if there is any crucial information missing to make this document high-converting. List these missing fields in the "missingFields" array. Limit to the 3-6 critical items (e.g. specific project metrics, target timelines, missing dates, or funder questions if not answered).
 4. For the "draft" field, write a brief, friendly, professional summary (1-2 paragraphs) outlining what PATHEW has understood, what fits beautifully, and why we are asking for these missing details.`
+    } else if (action && action.startsWith("regenerate:")) {
+      const instructions = action.substring("regenerate:".length).trim();
+      taskPrompt = `Task: Tailored Section Rewrite / Document Regeneration
+Instructions:
+1. Revise and rewrite the [Current Draft] according to the following user rewrite instructions: "${instructions}".
+2. You must strictly apply the requested modification (for example, if asked to remove a contact field like LinkedIn, do not include it anywhere in the header or text of the updated draft).
+3. Do not invent any untruths. Maintain the overall structure of the ${documentType || 'CV'} unless requested otherwise.
+4. Keep the writing in the selected tone: ${tone || 'Professional & Academic'} and the target language: ${language || 'English (UK)'}.
+5. Write the full updated document text directly in the "draft" field.
+6. Provide specific "editingSuggestions" based on the rewrite.`
     } else {
       taskPrompt = `Task: High-Converting Document Generation
 Instructions:

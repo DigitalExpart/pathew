@@ -485,13 +485,6 @@ const letterheadLogoStyle: React.CSSProperties = {
   fontSize: '1.1rem',
 };
 
-const letterheadMetaStyle: React.CSSProperties = {
-  fontSize: '0.625rem',
-  fontWeight: 700,
-  color: '#64748b',
-  margin: 0,
-  letterSpacing: '0.05em',
-};
 
 const paperBodyStyle: React.CSSProperties = {
   flex: '1 0 auto',
