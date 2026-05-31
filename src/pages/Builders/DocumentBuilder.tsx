@@ -378,22 +378,22 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                     {/* General Setup */}
                     <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 2fr', gap: '20px' }}>
                       <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                        <label style={{ ...labelStyle, color: 'var(--accent-primary)' }}>Target Page Count</label>
+                        <label style={{ ...labelStyle, color: 'var(--accent-primary)' }}>{t('builders.grant.targetPageCount', 'Target Page Count')}</label>
                         <select
                           value={builder.pageCount}
                           onChange={(e) => builder.setPageCount(Number(e.target.value))}
                           style={{ ...selectInputStyle, border: 'none', backgroundColor: 'var(--bg-tertiary)', marginTop: '8px' }}
                         >
                           {Array.from({ length: 20 }, (_, i) => i + 1).map(num => (
-                            <option key={num} value={num}>{num} Page{num > 1 ? 's' : ''}</option>
+                            <option key={num} value={num}>{num} {num > 1 ? t('builders.grant.pages', 'Pages') : t('builders.grant.page', 'Page')}</option>
                           ))}
                         </select>
                       </div>
 
                       <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                        <label style={{ ...labelStyle, color: 'var(--accent-primary)' }}>Funder's Mission & Values Alignment</label>
+                        <label style={{ ...labelStyle, color: 'var(--accent-primary)' }}>{t('builders.grant.funderMission', "Funder's Mission & Values Alignment")}</label>
                         <textarea
-                          placeholder="e.g. Empowering underrepresented youth through technical education..."
+                          placeholder={t('builders.grant.funderMissionPlaceholder', "e.g. Empowering underrepresented youth through technical education...")}
                           value={builder.funderValues}
                           onChange={(e) => builder.setFunderValues(e.target.value)}
                           style={{ ...textareaStyle, height: '42px', minHeight: '42px', padding: '10px 12px', marginTop: '8px', border: 'none', backgroundColor: 'var(--bg-tertiary)' }}
@@ -405,21 +405,21 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                     <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
                       <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
-                          <label style={{ ...labelStyle, margin: 0, color: 'var(--text-primary)' }}>Application Structure</label>
+                          <label style={{ ...labelStyle, margin: 0, color: 'var(--text-primary)' }}>{t('builders.grant.appStructure', 'Application Structure')}</label>
                           <div style={{ display: 'flex', backgroundColor: 'var(--bg-tertiary)', borderRadius: '8px', padding: '4px' }}>
                             <button 
                               type="button"
                               onClick={() => { builder.setHasPartner(false); builder.setPartnerName(''); builder.setPartnerRole(''); }}
                               style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, backgroundColor: !builder.hasPartner ? 'var(--bg-primary)' : 'transparent', color: !builder.hasPartner ? 'var(--accent-primary)' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', transition: 'all 0.2s', boxShadow: !builder.hasPartner ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}
                             >
-                              Solo
+                              {t('builders.grant.solo', 'Solo')}
                             </button>
                             <button 
                               type="button"
                               onClick={() => builder.setHasPartner(true)}
                               style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, backgroundColor: builder.hasPartner ? 'var(--bg-primary)' : 'transparent', color: builder.hasPartner ? 'var(--accent-primary)' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', transition: 'all 0.2s', boxShadow: builder.hasPartner ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}
                             >
-                              Partnership
+                              {t('builders.grant.partnership', 'Partnership')}
                             </button>
                           </div>
                         </div>
@@ -427,14 +427,14 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', animation: 'fadeIn 0.3s ease' }}>
                             <input
                               type="text"
-                              placeholder="Partner Organization Name"
+                              placeholder={t('builders.grant.partnerNamePlaceholder', 'Partner Organization Name')}
                               value={builder.partnerName}
                               onChange={(e) => builder.setPartnerName(e.target.value)}
                               style={{ ...selectInputStyle, backgroundColor: 'var(--bg-tertiary)', border: 'none' }}
                             />
                             <input
                               type="text"
-                              placeholder="Partner Role / Contribution"
+                              placeholder={t('builders.grant.partnerRolePlaceholder', 'Partner Role / Contribution')}
                               value={builder.partnerRole}
                               onChange={(e) => builder.setPartnerRole(e.target.value)}
                               style={{ ...selectInputStyle, backgroundColor: 'var(--bg-tertiary)', border: 'none' }}
@@ -445,28 +445,28 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
 
                       <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
                         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
-                          <label style={{ ...labelStyle, margin: 0, color: 'var(--text-primary)' }}>Applied Before?</label>
+                          <label style={{ ...labelStyle, margin: 0, color: 'var(--text-primary)' }}>{t('builders.grant.appliedBefore', 'Applied Before?')}</label>
                           <div style={{ display: 'flex', backgroundColor: 'var(--bg-tertiary)', borderRadius: '8px', padding: '4px' }}>
                             <button 
                               type="button"
                               onClick={() => builder.setPreviousAppHistory(true)}
                               style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, backgroundColor: builder.previousAppHistory ? 'var(--bg-primary)' : 'transparent', color: builder.previousAppHistory ? '#f59e0b' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', transition: 'all 0.2s', boxShadow: builder.previousAppHistory ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}
                             >
-                              Yes
+                              {t('builders.grant.yes', 'Yes')}
                             </button>
                             <button 
                               type="button"
                               onClick={() => { builder.setPreviousAppHistory(false); builder.setPreviousAppFeedback(''); }}
                               style={{ padding: '6px 12px', borderRadius: '6px', fontSize: '0.75rem', fontWeight: 700, backgroundColor: !builder.previousAppHistory ? 'var(--bg-primary)' : 'transparent', color: !builder.previousAppHistory ? 'var(--accent-primary)' : 'var(--text-secondary)', border: 'none', cursor: 'pointer', transition: 'all 0.2s', boxShadow: !builder.previousAppHistory ? '0 2px 4px rgba(0,0,0,0.1)' : 'none' }}
                             >
-                              No
+                              {t('builders.grant.no', 'No')}
                             </button>
                           </div>
                         </div>
                         {builder.previousAppHistory && (
                           <div style={{ animation: 'fadeIn 0.3s ease' }}>
                             <textarea
-                              placeholder="Feedback received from previous application..."
+                              placeholder={t('builders.grant.feedbackPlaceholder', 'Feedback received from previous application...')}
                               value={builder.previousAppFeedback}
                               onChange={(e) => builder.setPreviousAppFeedback(e.target.value)}
                               style={{ ...textareaStyle, height: '82px', minHeight: '82px', backgroundColor: 'var(--bg-tertiary)', border: '1px solid rgba(245,158,11,0.2)' }}
@@ -478,12 +478,17 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
 
                     {/* Reporting Methods */}
                     <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '20px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
-                      <label style={{ ...labelStyle, color: 'var(--text-primary)', fontSize: '0.95rem' }}>Reporting & Accountability Methods</label>
+                      <label style={{ ...labelStyle, color: 'var(--text-primary)', fontSize: '0.95rem' }}>{t('builders.grant.reportingMethods', 'Reporting & Accountability Methods')}</label>
                       <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>
-                        Select or add performance indicators Pathew Assistant will weave into the Theory of Change & Sustainability narrative.
+                        {t('builders.grant.reportingDesc', 'Select or add performance indicators Pathew Assistant will weave into the Theory of Change & Sustainability narrative.')}
                       </p>
                       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '16px' }}>
-                        {['Monthly User Data', 'Cohort Completion Rates', 'Employment Outcomes', 'Financial Audits'].map(m => {
+                        {[
+                          t('builders.grant.monthlyUserData', 'Monthly User Data'), 
+                          t('builders.grant.cohortCompletion', 'Cohort Completion Rates'), 
+                          t('builders.grant.employmentOutcomes', 'Employment Outcomes'), 
+                          t('builders.grant.financialAudits', 'Financial Audits')
+                        ].map(m => {
                           const isSelected = builder.reportingMethods.includes(m);
                           return (
                             <button
@@ -520,7 +525,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                       <div style={{ display: 'flex', gap: '8px' }}>
                         <input 
                           type="text" 
-                          placeholder="Type and press Enter to add a custom reporting indicator..."
+                          placeholder={t('builders.grant.customReportingPlaceholder', 'Type and press Enter to add a custom reporting indicator...')}
                           style={{ ...selectInputStyle, backgroundColor: 'var(--bg-tertiary)', border: '1px dashed var(--border-color)', flex: 1 }}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter') {
@@ -540,11 +545,13 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                     <div style={{ backgroundColor: 'var(--bg-secondary)', padding: '24px 20px 20px', borderRadius: '12px', border: '1px solid var(--accent-primary)', position: 'relative' }}>
                       <div style={{ position: 'absolute', top: '-12px', left: '20px', backgroundColor: 'var(--bg-primary)', padding: '2px 12px', borderRadius: '12px', border: '1px solid var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                         <Sparkles size={12} color="var(--accent-primary)" />
-                        <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '0.5px' }}>DYNAMIC QUESTIONS ({builder.customQuestions.length})</span>
+                        <span style={{ fontSize: '0.7rem', fontWeight: 800, color: 'var(--accent-primary)', letterSpacing: '0.5px' }}>
+                          {t('builders.grant.dynamicQuestions', 'DYNAMIC QUESTIONS ({{count}})', { count: builder.customQuestions.length })}
+                        </span>
                       </div>
-                      <label style={{ ...labelStyle, fontSize: '0.95rem', color: 'var(--text-primary)', marginTop: '4px' }}>Funder Specific Questions</label>
+                      <label style={{ ...labelStyle, fontSize: '0.95rem', color: 'var(--text-primary)', marginTop: '4px' }}>{t('builders.grant.funderSpecificQuestions', 'Funder Specific Questions')}</label>
                       <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '20px', lineHeight: 1.5 }}>
-                        Add specific questions from the funder proposal guidelines. Pathew Assistant will generate compliant, precisely tailored responses for each of them.
+                        {t('builders.grant.funderSpecificDesc', 'Add specific questions from the funder proposal guidelines. Pathew Assistant will generate compliant, precisely tailored responses for each of them.')}
                       </p>
 
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '20px' }}>
@@ -552,7 +559,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                           <div key={q.id || index} style={{ backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', borderRadius: '12px', padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px', position: 'relative', boxShadow: '0 2px 8px rgba(0,0,0,0.02)' }}>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                               <Badge variant="outline" style={{ color: 'var(--accent-primary)', borderColor: 'var(--accent-primary)', backgroundColor: 'transparent', fontWeight: 800 }}>
-                                Question {index + 1}
+                                {t('builders.grant.questionLabel', 'Question {{num}}', { num: index + 1 })}
                               </Badge>
                               <button
                                 type="button"
@@ -561,12 +568,12 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                                 onMouseEnter={(e) => e.currentTarget.style.opacity = '1'}
                                 onMouseLeave={(e) => e.currentTarget.style.opacity = '0.8'}
                               >
-                                Remove
+                                {t('builders.grant.removeBtn', 'Remove')}
                               </button>
                             </div>
                             <input
                               type="text"
-                              placeholder="e.g. Describe your organization's capacity to deliver this program."
+                              placeholder={t('builders.grant.questionPlaceholder', "e.g. Describe your organization's capacity to deliver this program.")}
                               value={q.question}
                               onChange={(e) => {
                                 const updated = [...builder.customQuestions];
@@ -577,7 +584,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                               required
                             />
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', alignSelf: 'flex-start', backgroundColor: 'var(--bg-primary)', padding: '6px 12px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
-                              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>Word limit:</span>
+                              <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>{t('builders.grant.wordLimit', 'Word limit:')}</span>
                               <input
                                 type="number"
                                 min="50"
@@ -618,7 +625,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                         onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
                       >
                         <Sparkles size={16} />
-                        Add Custom Funder Question
+                        {t('builders.grant.addQuestionBtn', 'Add Custom Funder Question')}
                       </button>
                     </div>
                   </div>
@@ -664,44 +671,44 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
               <Card style={settingsCardStyle}>
                 <h3 style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', fontWeight: 700, marginBottom: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
                   <Sparkles size={18} color="var(--accent-primary)" />
-                  4. Dynamic Manual Notes & Proposal Context
+                  {t('builders.grant.step4Title', '4. Dynamic Manual Notes & Proposal Context')}
                 </h3>
                 <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>
-                  Provide specific background details below to enrich Pathew Assistant's context and ensure maximum alignment.
+                  {t('builders.grant.step4Desc', "Provide specific background details below to enrich Pathew Assistant's context and ensure maximum alignment.")}
                 </p>
 
                 <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '16px' }}>
                   <div>
-                    <label style={labelStyle}>Custom Question Notes</label>
+                    <label style={labelStyle}>{t('builders.grant.customQuestionNotes', 'Custom Question Notes')}</label>
                     <textarea 
-                      placeholder="Specific prompts, requirements, or funder questions you need answered..."
+                      placeholder={t('builders.grant.customQuestionNotesPlaceholder', "Specific prompts, requirements, or funder questions you need answered...")}
                       value={builder.manualNotes.customQuestionNotes}
                       onChange={(e) => builder.setManualNotes({ ...builder.manualNotes, customQuestionNotes: e.target.value })}
                       style={{ ...textareaStyle, height: '80px', minHeight: '80px' }}
                     />
                   </div>
                   <div>
-                    <label style={labelStyle}>Leadership Achievements</label>
+                    <label style={labelStyle}>{t('builders.grant.leadership', 'Leadership Achievements')}</label>
                     <textarea 
-                      placeholder="Describe specific team leadership, public engagements, or core awards..."
+                      placeholder={t('builders.grant.leadershipPlaceholder', "Describe specific team leadership, public engagements, or core awards...")}
                       value={builder.manualNotes.leadershipAchievements}
                       onChange={(e) => builder.setManualNotes({ ...builder.manualNotes, leadershipAchievements: e.target.value })}
                       style={{ ...textareaStyle, height: '80px', minHeight: '80px' }}
                     />
                   </div>
                   <div>
-                    <label style={labelStyle}>Project Notes & Objectives</label>
+                    <label style={labelStyle}>{t('builders.grant.projectNotes', 'Project Notes & Objectives')}</label>
                     <textarea 
-                      placeholder="Outline your project scope, targets, community impact, or research methodology..."
+                      placeholder={t('builders.grant.projectNotesPlaceholder', "Outline your project scope, targets, community impact, or research methodology...")}
                       value={builder.manualNotes.projectNotes}
                       onChange={(e) => builder.setManualNotes({ ...builder.manualNotes, projectNotes: e.target.value })}
                       style={{ ...textareaStyle, height: '80px', minHeight: '80px' }}
                     />
                   </div>
                   <div>
-                    <label style={labelStyle}>Additional Context</label>
+                    <label style={labelStyle}>{t('builders.grant.additionalContext', 'Additional Context')}</label>
                     <textarea 
-                      placeholder="Any other personal credentials, unique skills, or details..."
+                      placeholder={t('builders.grant.additionalContextPlaceholder', "Any other personal credentials, unique skills, or details...")}
                       value={builder.manualNotes.additionalContext}
                       onChange={(e) => builder.setManualNotes({ ...builder.manualNotes, additionalContext: e.target.value })}
                       style={{ ...textareaStyle, height: '80px', minHeight: '80px' }}
