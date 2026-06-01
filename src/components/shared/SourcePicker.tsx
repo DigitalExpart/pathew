@@ -127,7 +127,8 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
         if (!fullText || fullText.trim().length === 0) {
           throw new Error('Could not extract any text from this PDF file. The document may be image-based or scanned.');
         }
-        rawText = fullText;
+        // Remove null characters (\u0000) which cause PostgreSQL "unsupported Unicode escape sequence" errors
+        rawText = fullText.replace(/\0/g, '');
       } else {
         throw new Error(
           `Unsupported file type: ${file.type || file.name.split('.').pop()}. ` +
