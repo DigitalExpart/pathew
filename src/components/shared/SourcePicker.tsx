@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import mammoth from 'mammoth';
+import * as pdfjsLib from 'pdfjs-dist';
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+
 import { useTranslation } from 'react-i18next';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
@@ -109,17 +113,21 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
           throw new Error('Could not extract any text from this DOCX file. The document may be empty or image-based.');
         }
       } else if (file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf')) {
-        // PDF files — read as text (basic extraction)
-        // For full PDF parsing, pdfjs-dist would be needed. For now, attempt text read.
-        const text = await file.text();
-        // PDF binary starts with %PDF — if we detect it, the text extraction won't work
-        if (text.startsWith('%PDF')) {
-          throw new Error(
-            'PDF text extraction is not yet supported for scanned/binary PDFs. ' +
-            'Please upload your CV as a .docx or .txt file, or use the "Add Manual Notes" tab to paste your CV content.'
-          );
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+        let fullText = '';
+        
+        for (let i = 1; i <= pdf.numPages; i++) {
+          const page = await pdf.getPage(i);
+          const textContent = await page.getTextContent();
+          const pageText = textContent.items.map((item: any) => item.str).join(' ');
+          fullText += pageText + '\n';
         }
-        rawText = text;
+        
+        if (!fullText || fullText.trim().length === 0) {
+          throw new Error('Could not extract any text from this PDF file. The document may be image-based or scanned.');
+        }
+        rawText = fullText;
       } else {
         throw new Error(
           `Unsupported file type: ${file.type || file.name.split('.').pop()}. ` +
@@ -323,7 +331,7 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
             onClick={() => setActiveTab('upload')} 
             style={{ ...tabBtnStyle, borderBottomColor: activeTab === 'upload' ? 'var(--accent-primary)' : 'transparent', color: activeTab === 'upload' ? 'var(--text-primary)' : 'var(--text-secondary)' }}
           >
-            {t('builders.sources.tabUpload', 'Upload Resume (DOCX/TXT)')}
+            {t('builders.sources.tabUpload', 'Upload Resume (PDF/DOCX/TXT)')}
           </button>
           <button 
             onClick={() => setActiveTab('linkedin')} 
@@ -344,7 +352,7 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
             <div style={uploadZoneStyle}>
               <FilePlus size={32} color="var(--text-muted)" style={{ marginBottom: '12px' }} />
               <p style={{ marginBottom: '8px', fontSize: '0.875rem', fontWeight: 600 }}>Upload your CV or Resume</p>
-              <p style={{ marginBottom: '16px', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Supported formats: .docx, .txt — Your document content will be extracted automatically</p>
+              <p style={{ marginBottom: '16px', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>Supported formats: .pdf, .docx, .txt — Your document content will be extracted automatically</p>
               <Button variant="outline" size="sm" style={{ position: 'relative' }} disabled={uploading}>
                 {uploading ? 'Extracting content...' : 'Browse files'}
                 <input 
