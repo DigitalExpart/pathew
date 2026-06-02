@@ -14,7 +14,12 @@ import {
   Trash2, 
   Check, 
   AlertCircle, 
-  Briefcase
+  Briefcase,
+  Eye,
+  Copy,
+  X,
+  Edit3,
+  Save
 } from 'lucide-react';
 import { BuilderService } from '../../services/builderService';
 import type { ProfileSource } from '../../services/builderService';
@@ -62,6 +67,32 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
   const [noteTitle, setNoteTitle] = useState('');
   const [noteContent, setNoteContent] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
+
+  const [viewingSource, setViewingSource] = useState<ProfileSource | null>(null);
+  const [isEditingSource, setIsEditingSource] = useState(false);
+  const [editingContent, setEditingContent] = useState('');
+  const [isSavingEdit, setIsSavingEdit] = useState(false);
+
+  const handleViewSource = (src: ProfileSource) => {
+    setViewingSource(src);
+    setEditingContent(src.raw_text || '');
+    setIsEditingSource(false);
+  };
+
+  const handleSaveEdit = async () => {
+    if (!viewingSource) return;
+    setIsSavingEdit(true);
+    try {
+      await BuilderService.updateProfileSource(viewingSource.id, { raw_text: editingContent });
+      await onRefreshSources();
+      setViewingSource({ ...viewingSource, raw_text: editingContent });
+      setIsEditingSource(false);
+    } catch (error: any) {
+      alert(`Failed to save changes: ${error.message}`);
+    } finally {
+      setIsSavingEdit(false);
+    }
+  };
 
   // Auto-select the Pathew Profile on mount
   useState(() => {
@@ -302,6 +333,24 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
                       <Check size={12} color="#fff" strokeWidth={3} />
                     </span>
                   )}
+                  {src.raw_text && (
+                    <>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleViewSource(src); }}
+                        style={deleteBtnStyle}
+                        title="View/Edit content"
+                      >
+                        <Eye size={14} color="var(--text-muted)" />
+                      </button>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); navigator.clipboard.writeText(src.raw_text || ''); alert('Copied to clipboard!'); }}
+                        style={deleteBtnStyle}
+                        title="Copy content"
+                      >
+                        <Copy size={14} color="var(--text-muted)" />
+                      </button>
+                    </>
+                  )}
                   <button 
                     onClick={(e) => handleDeleteSource(e, src.id)} 
                     style={deleteBtnStyle}
@@ -422,6 +471,73 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
           )}
         </div>
       </Card>
+
+      {viewingSource && (
+        <div style={modalOverlayStyle} onClick={() => setViewingSource(null)}>
+          <div style={modalContentStyle} onClick={e => e.stopPropagation()}>
+            <div style={modalHeaderStyle}>
+              <h4 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-primary)' }}>
+                {viewingSource.file_name}
+              </h4>
+              <button onClick={() => setViewingSource(null)} style={deleteBtnStyle}>
+                <X size={20} color="var(--text-muted)" />
+              </button>
+            </div>
+            
+            <div style={modalBodyStyle}>
+              {isEditingSource ? (
+                <textarea 
+                  value={editingContent}
+                  onChange={(e) => setEditingContent(e.target.value)}
+                  style={{...modalTextareaStyle, backgroundColor: 'var(--bg-primary, #fff)', border: '1px solid var(--accent-primary)'}}
+                  placeholder="Edit content here..."
+                />
+              ) : (
+                <textarea 
+                  readOnly
+                  value={viewingSource.raw_text} 
+                  style={modalTextareaStyle} 
+                />
+              )}
+            </div>
+            
+            <div style={modalFooterStyle}>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <Button 
+                  variant="outline" 
+                  onClick={() => { 
+                    navigator.clipboard.writeText(viewingSource.raw_text || ''); 
+                    alert('Copied to clipboard!');
+                  }} 
+                  size="sm"
+                  style={{ gap: '6px' }}
+                >
+                  <Copy size={14} /> Copy
+                </Button>
+                
+                {isEditingSource ? (
+                  <Button 
+                    onClick={handleSaveEdit} 
+                    size="sm" 
+                    disabled={isSavingEdit}
+                    style={{ gap: '6px' }}
+                  >
+                    <Save size={14} /> {isSavingEdit ? 'Saving...' : 'Save Changes'}
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={() => setIsEditingSource(true)} 
+                    size="sm"
+                    style={{ gap: '6px' }}
+                  >
+                    <Edit3 size={14} /> Edit
+                  </Button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -594,4 +710,67 @@ const feedbackStyle: React.CSSProperties = {
   gap: '8px',
   fontSize: '0.8rem',
   marginTop: '16px',
+};
+
+const modalOverlayStyle: React.CSSProperties = {
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  right: 0,
+  bottom: 0,
+  backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  zIndex: 1000,
+};
+
+const modalContentStyle: React.CSSProperties = {
+  backgroundColor: 'var(--bg-primary, #fff)',
+  borderRadius: 'var(--radius-lg, 8px)',
+  width: '90%',
+  maxWidth: '700px',
+  height: '80vh',
+  maxHeight: '600px',
+  display: 'flex',
+  flexDirection: 'column',
+  boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
+};
+
+const modalHeaderStyle: React.CSSProperties = {
+  padding: '16px 20px',
+  borderBottom: '1px solid var(--border-color, #e5e7eb)',
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+};
+
+const modalBodyStyle: React.CSSProperties = {
+  padding: '20px',
+  overflowY: 'auto',
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+};
+
+const modalTextareaStyle: React.CSSProperties = {
+  flex: 1,
+  width: '100%',
+  backgroundColor: 'var(--bg-secondary, #f9fafb)',
+  border: '1px solid var(--border-color, #e5e7eb)',
+  borderRadius: '4px',
+  padding: '16px',
+  fontFamily: 'monospace',
+  fontSize: '0.875rem',
+  color: 'var(--text-primary)',
+  resize: 'none',
+  outline: 'none',
+  lineHeight: 1.5,
+};
+
+const modalFooterStyle: React.CSSProperties = {
+  padding: '16px 20px',
+  borderTop: '1px solid var(--border-color, #e5e7eb)',
+  display: 'flex',
+  justifyContent: 'flex-end',
 };

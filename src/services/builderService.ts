@@ -140,6 +140,21 @@ export const BuilderService = {
     }
   },
 
+  async updateProfileSource(id: string, updates: Partial<ProfileSource>): Promise<ProfileSource> {
+    const { data, error } = await supabase
+      .from('profile_sources')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single();
+
+    if (error) {
+      console.error('Error updating profile source:', error);
+      throw error;
+    }
+    return data;
+  },
+
   // === GENERATED DOCUMENTS ===
   async fetchGeneratedDocuments(userId: string, documentType?: string): Promise<GeneratedDocument[]> {
     let query = supabase
