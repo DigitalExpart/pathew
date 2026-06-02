@@ -210,7 +210,7 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
         source_type: 'linkedin',
         source_url: linkedinUrl || undefined,
         file_name: linkedinUrl.trim() ? 'LinkedIn Profile' : 'LinkedIn Profile (Pasted)',
-        raw_text: profileText,
+        raw_text: profileText.replace(/\0/g, ''),
       }, userId);
 
       await onRefreshSources();
@@ -242,7 +242,7 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
       await BuilderService.createProfileSource({
         source_type: 'manual_notes',
         file_name: noteTitle.trim() || 'My Background Notes',
-        raw_text: noteContent,
+        raw_text: noteContent.replace(/\0/g, ''),
       }, userId);
 
       await onRefreshSources();
@@ -435,7 +435,7 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
                 style={textareaStyle}
                 required
               />
-              <Button type="submit" size="sm" disabled={uploading || !linkedinContent.trim()} style={{ gap: '8px' }}>
+              <Button type="submit" size="sm" disabled={uploading} style={{ gap: '8px' }}>
                 <LinkedinIcon size={16} /> {uploading ? 'Importing...' : 'Import LinkedIn Profile'}
               </Button>
             </form>
