@@ -211,10 +211,13 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
         sourceIds: selectedSourceIds.filter(id => id !== 'pathew-profile'),
         tone,
         language,
-        currentDraft: opportunityText, // pipe manually pasted opportunity text
+        currentDraft: draftContent || undefined,
         contextData: {
           useProfile: selectedSourceIds.includes('pathew-profile'),
-          manualNotes,
+          manualNotes: {
+            ...manualNotes,
+            additionalContext: opportunityText ? `Target Opportunity / Job Description:\n${opportunityText}\n\n${manualNotes.additionalContext || ''}` : manualNotes.additionalContext
+          },
           pageCount,
           wordLimit,
           customQuestions,
@@ -324,12 +327,12 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
         missingFieldsAnswers: activeAnswers,
         tone,
         language,
-        currentDraft: draftContent || opportunityText,
+        currentDraft: draftContent || undefined,
         contextData: {
           useProfile: selectedSourceIds.includes('pathew-profile'),
           manualNotes: {
             ...manualNotes,
-            additionalContext: (manualNotes.additionalContext || '') + 
+            additionalContext: (opportunityText ? `Target Opportunity / Job Description:\n${opportunityText}\n\n` : '') + (manualNotes.additionalContext || '') + 
               "\n\nCRITICAL FORMATTING INSTRUCTION: The very first lines of your generated draft MUST be the header in EXACTLY this markdown format:\n# [User's Full Name]\n## [Professional Title]\n### [Email] • [Phone] • [Location] • [LinkedIn]\nDo not put anything before the # [User's Name]. Do not include any other markdown before it. Use exactly one # for the name, two ## for the title, and three ### for the contact info."
           },
           pageCount,
@@ -459,7 +462,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
           useProfile: selectedSourceIds.includes('pathew-profile'),
           manualNotes: {
             ...manualNotes,
-            additionalContext: manualNotes.additionalContext || ''
+            additionalContext: (opportunityText ? `Target Opportunity / Job Description:\n${opportunityText}\n\n` : '') + (manualNotes.additionalContext || '')
           },
           pageCount,
           wordLimit,
