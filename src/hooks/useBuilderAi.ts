@@ -165,7 +165,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
     if (builderType === 'cv' || documentType === 'CV') {
       ctx += `- Target CV Type: ${cvType}. `;
       if (cvType === 'Teaching / Academic CV') {
-        ctx += `CRITICAL: You MUST structure the CV using EXACTLY the following 15 sections in this rigid sequence: 1. Personal Details, 2. Specialisation, 3. EDUCATION, 4. WORK EXPERIENCE, 5. TEACHING EXPERTISE, 6. ADMINISTRATIVE EXPERTISE, 7. RESEARCH EXPERIENCE, 8. ACHIEVEMENTS & AWARDS, 9. VOLUNTEER SERVICES, 10. SKILLS & TRAINING, 11. SOFTWARE & TOOLS, 12. SOFT SKILLS, 13. FELLOWSHIPS & AWARDS, 14. CONFERENCES & MEMBERSHIPS, 15. REFEREES - Available on Request. Do NOT omit any section, do NOT add extra sections, and do NOT change this sequence! Use ALL CAPS for section headers from section 3 onwards.\n`;
+        ctx += `CRITICAL: You MUST structure the CV using EXACTLY the following 16 sections in this rigid sequence: 1. Personal Details, 2. Specialisation, 3. EDUCATION, 4. WORK EXPERIENCE, 5. TEACHING EXPERTISE, 6. ADMINISTRATIVE EXPERTISE, 7. RESEARCH EXPERIENCE, 8. ACHIEVEMENTS & AWARDS, 9. VOLUNTEER SERVICES, 10. SKILLS & TRAINING, 11. SOFTWARE & TOOLS, 12. SOFT SKILLS, 13. FELLOWSHIPS & AWARDS, 14. CONFERENCES & MEMBERSHIPS, 15. HOBBIES, 16. REFEREES. Do NOT omit any section, do NOT add extra sections, and do NOT change this sequence! Use ALL CAPS for section headers from section 3 onwards.\n`;
       } else {
         ctx += `Order sections normally (Profile, Skills, Work Experience, Projects, Education).\n`;
       }
