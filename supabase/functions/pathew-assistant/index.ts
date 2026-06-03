@@ -147,6 +147,7 @@ BUILDER-SPECIFIC SYSTEM RULES:
 ====================================================================
 
 1) CV BUILDER SPECIFIC RULES:
+- Target CV Type requested: ${cvType || 'Work CV'}. You MUST strictly follow the formatting rules for this specific type!
 - Experience Level requested: ${experienceLevel || 'Mid Career'}. Tailor CV focus:
   * Graduate: emphasize educational achievements, course highlights, projects, certifications, student leadership.
   * Early Career / Mid Career: focus on work experience, specific technical skills, metrics.
