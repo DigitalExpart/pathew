@@ -152,6 +152,45 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
 
   // === PIPELINE ACTIONS ===
 
+  // Helper: Build robust prompt instructions locally to avoid needing edge function changes
+  const buildEnhancedContext = (isGeneration: boolean = false) => {
+    let ctx = '';
+    if (opportunityText) {
+      ctx += `Target Opportunity / Job Description:\n${opportunityText}\n\n`;
+    }
+    
+    ctx += `CRITICAL GENERATION PARAMETERS:\n`;
+    ctx += `- Tone of Voice: ${tone}. You MUST strictly adopt this tone throughout the document. If 'Casual & Friendly', write in a conversational, warm, and natural style. If 'Concise', use ultra-short high-signal bullets. If 'Creative', be story-driven and expressive.\n`;
+    
+    if (builderType === 'cv' || documentType === 'CV') {
+      ctx += `- Target CV Type: ${cvType}. `;
+      if (cvType === 'Teaching / Academic CV') {
+        ctx += `CRITICAL: You MUST structure the CV using EXACTLY the following 15 sections in this rigid sequence: 1. Personal Details, 2. Specialization, 3. Education, 4. Work Experience, 5. Teaching Expertise, 6. Administrative Expertise, 7. Research Experience, 8. Achievements and Awards, 9. Volunteer Services, 10. Skills and Trainings, 11. Software and Tools, 12. Soft Skills, 13. Fellowship and Awards, 14. Conferences and Memberships, 15. Referees - Available on Request. Do NOT omit any section, do NOT add extra sections, and do NOT change this sequence!\n`;
+      } else {
+        ctx += `Order sections normally (Profile, Skills, Work Experience, Projects, Education).\n`;
+      }
+      
+      ctx += `- Target Experience Level: ${experienceLevel}. `;
+      if (experienceLevel === 'Graduate') {
+        ctx += `Emphasize educational achievements, course highlights, projects, certifications, student leadership.\n`;
+      } else if (experienceLevel === 'Senior' || experienceLevel === 'Executive') {
+        ctx += `Focus heavily on leadership, governance, team management, board advisory, business outcomes, and key strategic initiatives.\n`;
+      } else {
+        ctx += `Focus on work experience, specific technical skills, and metrics.\n`;
+      }
+    }
+    
+    if (manualNotes.additionalContext) {
+      ctx += `\nUSER ADDITIONAL CONTEXT:\n${manualNotes.additionalContext}\n`;
+    }
+    
+    if (isGeneration) {
+      ctx += "\n\nCRITICAL FORMATTING INSTRUCTION: The very first lines of your generated draft MUST be the header in EXACTLY this markdown format:\n# [User's Full Name]\n## [Professional Title]\n### [Email] • [Phone] • [Location] • [LinkedIn]\nDo not put anything before the # [User's Name]. Do not include any other markdown before it. Use exactly one # for the name, two ## for the title, and three ### for the contact info.";
+    }
+    
+    return ctx;
+  };
+
   // 1. EXTRACT CONTEXT & GAP ANALYSIS
   const startExtraction = async () => {
     if (!user) {
@@ -216,7 +255,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
           useProfile: selectedSourceIds.includes('pathew-profile'),
           manualNotes: {
             ...manualNotes,
-            additionalContext: opportunityText ? `Target Opportunity / Job Description:\n${opportunityText}\n\n${manualNotes.additionalContext || ''}` : manualNotes.additionalContext
+            additionalContext: buildEnhancedContext(false)
           },
           pageCount,
           wordLimit,
@@ -332,8 +371,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
           useProfile: selectedSourceIds.includes('pathew-profile'),
           manualNotes: {
             ...manualNotes,
-            additionalContext: (opportunityText ? `Target Opportunity / Job Description:\n${opportunityText}\n\n` : '') + (manualNotes.additionalContext || '') + 
-              "\n\nCRITICAL FORMATTING INSTRUCTION: The very first lines of your generated draft MUST be the header in EXACTLY this markdown format:\n# [User's Full Name]\n## [Professional Title]\n### [Email] • [Phone] • [Location] • [LinkedIn]\nDo not put anything before the # [User's Name]. Do not include any other markdown before it. Use exactly one # for the name, two ## for the title, and three ### for the contact info."
+            additionalContext: buildEnhancedContext(true)
           },
           pageCount,
           wordLimit,
@@ -462,7 +500,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
           useProfile: selectedSourceIds.includes('pathew-profile'),
           manualNotes: {
             ...manualNotes,
-            additionalContext: (opportunityText ? `Target Opportunity / Job Description:\n${opportunityText}\n\n` : '') + (manualNotes.additionalContext || '')
+            additionalContext: buildEnhancedContext(false)
           },
           pageCount,
           wordLimit,
