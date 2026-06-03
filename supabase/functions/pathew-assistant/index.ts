@@ -157,23 +157,24 @@ BUILDER-SPECIFIC SYSTEM RULES:
   * 3-5 Pages: Deep narrative expansion. Include extensive project details, publications, granular technical skills, comprehensive work histories, and extended summaries.
 - CV Type formatting rules:
   * If "Work CV": order sections normally (Profile, Skills, Work Experience, Projects, Education).
-  * If "Teaching / Academic CV": you MUST structure the CV using EXACTLY the following 15 sections in this rigid sequence:
+  * If "Teaching / Academic CV": you MUST structure the CV using EXACTLY the following 16 sections in this rigid sequence:
     1. Personal Details
-    2. Specialization
-    3. Education
-    4. Work Experience
-    5. Teaching Expertise
-    6. Administrative Expertise
-    7. Research Experience
-    8. Achievements and Awards
-    9. Volunteer Services
-    10. Skills and Trainings
-    11. Software and Tools
-    12. Soft Skills
-    13. Fellowship and Awards
-    14. Conferences and Memberships
-    15. Referees - Available on Request.
-    Do NOT omit any section, do NOT add extra sections, and do NOT change this sequence!
+    2. Specialisation
+    3. EDUCATION
+    4. WORK EXPERIENCE
+    5. TEACHING EXPERTISE
+    6. ADMINISTRATIVE EXPERTISE
+    7. RESEARCH EXPERIENCE
+    8. ACHIEVEMENTS & AWARDS
+    9. VOLUNTEER SERVICES
+    10. SKILLS & TRAINING
+    11. SOFTWARE & TOOLS
+    12. SOFT SKILLS
+    13. FELLOWSHIPS & AWARDS
+    14. CONFERENCES & MEMBERSHIPS
+    15. HOBBIES
+    16. REFEREES
+    Do NOT omit any section, do NOT add extra sections, and do NOT change this sequence! Use ALL CAPS for section headers from section 3 onwards.
 - Career Gap positive reframing:
   * If careerGap is true (${careerGap}), read the explanation: "${careerGapExplanation}". Positive-frame this break seamlessly in the Personal Summary or professional timeline as parental dedication, caregiving resilience, self-motivated study, or career pivot/re-alignment. Frame this break as a positive development, career pivot, or self-motivated development break, demonstrating growth, resilience, and readiness to deliver immediate value. Do not hide the gap awkwardly.
 
