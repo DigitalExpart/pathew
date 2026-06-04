@@ -176,7 +176,11 @@ BUILDER-SPECIFIC SYSTEM RULES:
     14. CONFERENCES & MEMBERSHIPS
     15. HOBBIES
     16. REFEREES
-    Do NOT omit any section, do NOT add extra sections, and do NOT change this sequence! Use ALL CAPS for section headers from section 3 onwards.
+    CRITICAL FORMATTING RULES FOR ACADEMIC CV:
+    - Do NOT omit any section, do NOT add extra sections, and do NOT change this sequence!
+    - Use ALL CAPS for section headers from section 3 onwards.
+    - For the WORK EXPERIENCE section, ONLY output the Job Title, Company/Institution, and Dates (e.g. "Senior Lecturer - Oxford University, 2018 - Present"). Do NOT generate any bullet points, tasks, or descriptions under work experience for Academic CVs. It must be a simple list of titles and dates.
+    - Ensure crisp, clean professional formatting with consistent spacing and clear hierarchy.
 - Career Gap positive reframing:
   * If careerGap is true (${careerGap}), read the explanation: "${careerGapExplanation}". Positive-frame this break seamlessly in the Personal Summary or professional timeline as parental dedication, caregiving resilience, self-motivated study, or career pivot/re-alignment. Frame this break as a positive development, career pivot, or self-motivated development break, demonstrating growth, resilience, and readiness to deliver immediate value. Do not hide the gap awkwardly.
 
