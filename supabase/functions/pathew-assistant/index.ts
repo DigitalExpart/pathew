@@ -366,7 +366,7 @@ ${taskPrompt}
             'anthropic-version': '2023-06-01',
           },
           body: JSON.stringify({
-            model, max_tokens: 8192, system: systemPrompt,
+            model, max_tokens: 4096, system: systemPrompt,
             messages: [{ role: "user", content: userMessageContent.trim() }],
           }),
         })
@@ -390,13 +390,31 @@ ${taskPrompt}
               throw new Error('No JSON object found')
             }
           } catch {
+            let extractedDraft = content;
+            
+            // If JSON fails, try to extract the draft string value (handles truncation or unescaped newlines)
+            const draftMatch = content.match(/"draft"\s*:\s*"(.*?)"(?:\s*,|\s*\}|$)/s);
+            if (draftMatch && draftMatch[1]) {
+               extractedDraft = draftMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+            } else {
+               // Fallback: strip markdown wrappers
+               extractedDraft = content.replace(/^```json\s*/, '').replace(/\s*```$/, '');
+               // If it still starts with { and has "draft":, it's severely truncated raw json
+               if (extractedDraft.trim().startsWith('{')) {
+                   const rawMatch = extractedDraft.match(/"draft"\s*:\s*"(.*)/s);
+                   if (rawMatch && rawMatch[1]) {
+                       extractedDraft = rawMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+                   }
+               }
+            }
+
             parsedResponse = {
-              draft: content,
+              draft: extractedDraft,
               matchSummary: { strongMatches: [], gaps: [], priorityPoints: [] },
               missingFields: [],
               editingSuggestions: [],
-              wordCountEstimate: content.split(' ').length,
-              confidence: 'medium',
+              wordCountEstimate: extractedDraft.split(' ').length,
+              confidence: 'low',
               sessionId: sid
             }
           }
