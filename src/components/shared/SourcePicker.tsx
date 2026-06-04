@@ -208,7 +208,6 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
 
       await BuilderService.createProfileSource({
         source_type: 'linkedin',
-        source_url: linkedinUrl || undefined,
         file_name: linkedinUrl.trim() ? 'LinkedIn Profile' : 'LinkedIn Profile (Pasted)',
         raw_text: profileText.replace(/\0/g, ''),
       }, userId);
