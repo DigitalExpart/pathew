@@ -185,7 +185,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
     }
     
     if (isGeneration) {
-      ctx += "\n\nCRITICAL FORMATTING INSTRUCTION: The very first lines of your generated draft MUST be the header in EXACTLY this markdown format:\n# [User's Full Name]\n## [Professional Title]\n### [Email] • [Phone] • [Location] • [LinkedIn]\nDo not put anything before the # [User's Name]. Do not include any other markdown before it. Use exactly one # for the name, two ## for the title, and three ### for the contact info.";
+      ctx += "\n\nCRITICAL FORMATTING INSTRUCTION: The very first lines of your generated draft MUST be the header in EXACTLY this markdown format:\n# [User's Full Name]\n## [Professional Title]\n### [Email] • [Phone] • [Location]\nDo not put anything before the # [User's Name]. Do not include any other markdown before it. Use exactly one # for the name, two ## for the title, and three ### for the contact info.";
     }
     
     return ctx;
@@ -195,6 +195,11 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
   const startExtraction = async () => {
     if (!user) {
       setError('You must be signed in to perform this action.');
+      return;
+    }
+
+    if (opportunityText && opportunityText.length > 12000) {
+      setError(`The job description is too long (${opportunityText.length} characters). Please reduce it to under 12,000 characters to proceed.`);
       return;
     }
 
@@ -310,6 +315,11 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
   // 2. GENERATE TAILORED DRAFT
   const generateTailoredDraft = async (sid?: string, answers?: Record<string, string>) => {
     if (!user) return;
+
+    if (opportunityText && opportunityText.length > 12000) {
+      setError(`The job description is too long (${opportunityText.length} characters). Please reduce it to under 12,000 characters to proceed.`);
+      return;
+    }
 
     setIsGenerating(true);
     setError(null);

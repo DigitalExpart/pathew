@@ -61,7 +61,7 @@ export const mockOpportunities: Opportunity[] = [
     company: 'InnovateX',
     location: 'Remote',
     type: 'Full-time',
-    source: 'LinkedIn',
+    source: 'Manual Notes',
     postedDate: '2 days ago',
     deadline: '2024-06-15',
     matchScore: 92,

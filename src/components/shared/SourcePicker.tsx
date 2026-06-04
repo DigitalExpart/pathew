@@ -24,23 +24,6 @@ import {
 import { BuilderService } from '../../services/builderService';
 import type { ProfileSource } from '../../services/builderService';
 
-const LinkedinIcon = ({ size = 20, color }: { size?: number; color?: string }) => (
-  <svg 
-    width={size} 
-    height={size} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke={color || "currentColor"} 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round"
-  >
-    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-    <rect width="4" height="12" x="2" y="9" />
-    <circle cx="4" cy="4" r="2" />
-  </svg>
-);
-
 interface SourcePickerProps {
   sources: ProfileSource[];
   selectedSourceIds: string[];
@@ -58,12 +41,10 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
 }) => {
   const { t } = useTranslation();
   const PROFILE_ID = 'pathew-profile';
-  const [activeTab, setActiveTab] = useState<'upload' | 'linkedin' | 'notes'>('upload');
+  const [activeTab, setActiveTab] = useState<'upload' | 'notes'>('upload');
   const [uploading, setUploading] = useState(false);
   
   // Form states
-  const [linkedinUrl, setLinkedinUrl] = useState('');
-  const [linkedinContent, setLinkedinContent] = useState('');
   const [noteTitle, setNoteTitle] = useState('');
   const [noteContent, setNoteContent] = useState('');
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -191,45 +172,6 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
     }
   };
 
-  const handleSubmitLinkedin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!linkedinContent.trim()) {
-      setFeedback('Error: Auto-import from URL is not supported. You must manually copy the text from your LinkedIn page and paste it into the large text box below.');
-      return;
-    }
-
-    setUploading(true);
-    setFeedback(null);
-
-    try {
-      const profileText = linkedinUrl.trim()
-        ? `LinkedIn Profile (${linkedinUrl}):\n${linkedinContent}`
-        : linkedinContent;
-
-      await BuilderService.createProfileSource({
-        source_type: 'linkedin',
-        file_name: linkedinUrl.trim() ? 'LinkedIn Profile' : 'LinkedIn Profile (Pasted)',
-        raw_text: profileText.replace(/\0/g, ''),
-      }, userId);
-
-      await onRefreshSources();
-
-      // Auto-select the newly created LinkedIn source
-      const freshSources = await BuilderService.fetchProfileSources(userId);
-      if (freshSources.length > 0) {
-        onChangeSelected([...selectedSourceIds, freshSources[0].id]);
-      }
-
-      setLinkedinUrl('');
-      setLinkedinContent('');
-      setFeedback('LinkedIn profile imported successfully!');
-    } catch (err: any) {
-      setFeedback(`Import failed: ${err.message}`);
-    } finally {
-      setUploading(false);
-    }
-  };
-
   const handleSubmitNote = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!noteContent.trim()) return;
@@ -320,11 +262,7 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
             >
               <div style={sourceCardHeaderStyle}>
                 <div style={iconBoxStyle}>
-                  {src.source_type === 'linkedin' ? (
-                    <LinkedinIcon size={20} color="#0077b5" />
-                  ) : (
-                    <FileText size={20} color="var(--accent-primary)" />
-                  )}
+                  <FileText size={20} color="var(--accent-primary)" />
                 </div>
                 <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
                   {isSelected && (
@@ -362,7 +300,6 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
               <h4 style={cardTitleStyle}>{src.file_name}</h4>
               <p style={cardDescStyle}>
                 {src.source_type === 'uploaded_cv' && 'Uploaded resume file.'}
-                {src.source_type === 'linkedin' && 'LinkedIn Profile details.'}
                 {src.source_type === 'manual_notes' && 'Pasted manual background notes.'}
               </p>
               <span style={dateBadgeStyle}>
@@ -381,12 +318,6 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
             style={{ ...tabBtnStyle, borderBottomColor: activeTab === 'upload' ? 'var(--accent-primary)' : 'transparent', color: activeTab === 'upload' ? 'var(--text-primary)' : 'var(--text-secondary)' }}
           >
             {t('builders.sources.tabUpload', 'Upload Resume (PDF/DOCX/TXT)')}
-          </button>
-          <button 
-            onClick={() => setActiveTab('linkedin')} 
-            style={{ ...tabBtnStyle, borderBottomColor: activeTab === 'linkedin' ? 'var(--accent-primary)' : 'transparent', color: activeTab === 'linkedin' ? 'var(--text-primary)' : 'var(--text-secondary)' }}
-          >
-            {t('builders.sources.tabLinkedin', 'Import LinkedIn')}
           </button>
           <button 
             onClick={() => setActiveTab('notes')} 
@@ -413,36 +344,6 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
                 />
               </Button>
             </div>
-          )}
-
-          {activeTab === 'linkedin' && (
-            <form onSubmit={handleSubmitLinkedin} style={formStyle}>
-              <div style={{ backgroundColor: 'rgba(255, 152, 0, 0.1)', border: '1px solid var(--warning)', borderRadius: '8px', padding: '12px', marginBottom: '16px' }}>
-                <p style={{ fontSize: '0.85rem', color: 'var(--warning)', fontWeight: 600, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <span style={{ fontSize: '1.2rem' }}>⚠️</span> Manual Copy-Paste Required
-                </p>
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
-                  We cannot automatically scan your profile from just a URL. You must <b>open your LinkedIn profile</b>, select all the text (About, Experience, Education), <b>copy it</b>, and <b>paste it</b> into the large box below.
-                </p>
-              </div>
-              <input 
-                type="url" 
-                placeholder="https://linkedin.com/in/username (optional)" 
-                value={linkedinUrl}
-                onChange={(e) => setLinkedinUrl(e.target.value)}
-                style={inputStyle}
-              />
-              <textarea 
-                placeholder="Paste your LinkedIn profile content here...&#10;&#10;Example:&#10;About: Experienced software engineer...&#10;Experience: Senior Developer at [Company Name]...&#10;Skills: React, TypeScript...&#10;Education: BSc Computer Science, [University Name]"
-                value={linkedinContent}
-                onChange={(e) => setLinkedinContent(e.target.value)}
-                style={textareaStyle}
-                required
-              />
-              <Button type="submit" size="sm" disabled={uploading} style={{ gap: '8px' }}>
-                <LinkedinIcon size={16} /> {uploading ? 'Importing...' : 'Import LinkedIn Profile'}
-              </Button>
-            </form>
           )}
 
           {activeTab === 'notes' && (
