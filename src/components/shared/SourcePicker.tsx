@@ -194,7 +194,7 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
   const handleSubmitLinkedin = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!linkedinContent.trim()) {
-      setFeedback('Please paste your LinkedIn profile content below.');
+      setFeedback('Error: Auto-import from URL is not supported. You must manually copy the text from your LinkedIn page and paste it into the large text box below.');
       return;
     }
 
@@ -417,9 +417,14 @@ export const SourcePicker: React.FC<SourcePickerProps> = ({
 
           {activeTab === 'linkedin' && (
             <form onSubmit={handleSubmitLinkedin} style={formStyle}>
-              <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                Copy your LinkedIn profile content (About, Experience, Skills, Education) and paste it below. Optionally include your profile URL.
-              </p>
+              <div style={{ backgroundColor: 'rgba(255, 152, 0, 0.1)', border: '1px solid var(--warning)', borderRadius: '8px', padding: '12px', marginBottom: '16px' }}>
+                <p style={{ fontSize: '0.85rem', color: 'var(--warning)', fontWeight: 600, marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <span style={{ fontSize: '1.2rem' }}>⚠️</span> Manual Copy-Paste Required
+                </p>
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+                  We cannot automatically scan your profile from just a URL. You must <b>open your LinkedIn profile</b>, select all the text (About, Experience, Education), <b>copy it</b>, and <b>paste it</b> into the large box below.
+                </p>
+              </div>
               <input 
                 type="url" 
                 placeholder="https://linkedin.com/in/username (optional)" 
