@@ -34,7 +34,7 @@ export const SettingsPage: React.FC = () => {
     newsletter: true
   });
   const [assistantSettings, setAssistantSettings] = useState({
-    tone: 'Professional & Academic',
+    tone: 'Professional (formal)',
     language: 'English (US)',
     autoSave: true
   });
@@ -604,10 +604,11 @@ export const SettingsPage: React.FC = () => {
                   value={assistantSettings.tone}
                   onChange={(e) => handleAssistantChange('tone', e.target.value)}
                 >
-                  <option>Professional & Academic</option>
-                  <option>Creative & Narrative</option>
-                  <option>Concise & Impactful</option>
-                  <option>Casual & Friendly</option>
+                  <option>Professional (formal)</option>
+                  <option>Academic (Aligned with Teaching and Research CV)</option>
+                  <option>Creative (story-driven)</option>
+                  <option>Concise (short high-signal bullets)</option>
+                  <option>Casual (Friendly and warm)</option>
                 </select>
               </div>
               <div style={formGroupStyle}>

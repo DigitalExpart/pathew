@@ -641,10 +641,11 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                       style={{ ...selectInputStyle, backgroundColor: 'var(--bg-secondary)', border: 'none' }}
                     >
                       <option value="N/A">N/A</option>
-                      <option value="Professional & Academic">{t('builders.style.toneProf', 'Professional & Academic (Formal & polished)')}</option>
-                      <option value="Creative & Narrative">{t('builders.style.toneCreative', 'Creative & Narrative (Story-driven & expressive)')}</option>
-                      <option value="Concise & Impactful">{t('builders.style.toneConcise', 'Concise & Impactful (Short, high-signal bullets)')}</option>
-                      <option value="Casual & Friendly">{t('builders.style.toneCasual', 'Casual & Friendly (Warm & approachable)')}</option>
+                      <option value="Professional (formal)">{t('builders.style.toneProf', 'Professional (formal)')}</option>
+                      <option value="Academic (Aligned with Teaching and Research CV)">{t('builders.style.toneAcademic', 'Academic (Aligned with Teaching and Research CV)')}</option>
+                      <option value="Creative (story-driven)">{t('builders.style.toneCreative', 'Creative (story-driven)')}</option>
+                      <option value="Concise (short high-signal bullets)">{t('builders.style.toneConcise', 'Concise (short high-signal bullets)')}</option>
+                      <option value="Casual (Friendly and warm)">{t('builders.style.toneCasual', 'Casual (Friendly and warm)')}</option>
                     </select>
                   </div>
 

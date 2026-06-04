@@ -35,7 +35,7 @@ export const usePathewAssistant = () => {
       const fullPayload: AssistantRequestPayload = {
         ...payload,
         sessionId,
-        tone: profile.assistant_settings?.tone || 'Professional & Academic',
+        tone: profile.assistant_settings?.tone || 'Professional (formal)',
         language: aiLanguage, // Use current UI language for AI responses
       };
 

@@ -21,7 +21,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
   const [opportunityId, setOpportunityId] = useState<string | null>(initialOpportunityId || null);
   const [opportunityText, setOpportunityText] = useState<string>('');
   const [selectedSourceIds, setSelectedSourceIds] = useState<string[]>([]);
-  const [tone, setTone] = useState<string>(profile?.assistant_settings?.tone || 'Professional & Academic');
+  const [tone, setTone] = useState<string>(profile?.assistant_settings?.tone || 'Professional (formal)');
   const [language, setLanguage] = useState<string>('English (UK)');
   
   // Limits with intelligent defaults based on document type

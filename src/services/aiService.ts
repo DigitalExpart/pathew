@@ -33,7 +33,7 @@ export const AssistantService = {
     }
 
     try {
-      const { type, action, data, language = 'English (US)', tone = 'Professional & Academic' } = context;
+      const { type, action, data, language = 'English (US)', tone = 'Professional (formal)' } = context;
       
       // Constructing a detailed system prompt based on preferences
       const systemPrompt = `You are the PATHEW Career Assistant. Your goal is to help the user with ${type} tasks.
@@ -41,10 +41,11 @@ Selected Tone: ${tone}
 Target Language: ${language}
 
 Tone Guidelines:
-- Professional & Academic: formal, structured, and polished.
-- Creative & Narrative: expressive and story-driven.
-- Concise & Impactful: short, direct, and high-signal.
-- Casual & Friendly: conversational, warm, and natural.
+- Professional (formal): formal, structured, and polished.
+- Academic (Aligned with Teaching and Research CV): focused on scholarly achievements, rigorous, and academic.
+- Creative (story-driven): expressive and story-driven.
+- Concise (short high-signal bullets): short, direct, and high-signal.
+- Casual (Friendly and warm): conversational, warm, and natural.
 
 Language Guidelines:
 - If English (UK), use UK spelling (e.g., -ise, -our).
