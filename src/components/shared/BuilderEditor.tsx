@@ -361,8 +361,11 @@ const extractText = (children: React.ReactNode): string => {
   if (typeof children === 'string') return children;
   if (typeof children === 'number') return String(children);
   if (Array.isArray(children)) return children.map(extractText).join('');
-  if (React.isValidElement(children) && children.props?.children) {
-    return extractText(children.props.children);
+  if (React.isValidElement(children)) {
+    const props = children.props as { children?: React.ReactNode };
+    if (props.children) {
+      return extractText(props.children);
+    }
   }
   return '';
 };
@@ -370,7 +373,7 @@ const extractText = (children: React.ReactNode): string => {
 // ============================================================
 // HELPER: Render experience entry row with right-aligned dates
 // ============================================================
-const renderExperienceRow = (text: string): JSX.Element => {
+const renderExperienceRow = (text: string): React.ReactNode => {
   // Split on pipe to find segments
   const parts = text.split('|').map(p => p.trim());
   
