@@ -311,7 +311,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
 
               {/* Page Footer */}
               <div style={paperFooterStyle}>
-                <span style={{ opacity: 0.5 }}>Powered by Pathew Assistant</span>
+                <span />
                 <span style={pageCounterStyle}>Page {validCurrentPage + 1} / {pages.length}</span>
               </div>
             </div>
