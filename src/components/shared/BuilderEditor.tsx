@@ -451,8 +451,8 @@ const paginateMarkdown = (content: string, maxPages: number): string[] => {
     sections.push(currentSection);
   }
   
-  // Estimate lines per page: ~52 effective content lines per A4 page at our font size
-  const LINES_PER_PAGE = 52;
+  // Estimate lines per page: ~42 effective content lines per A4 page at our font size
+  const LINES_PER_PAGE = 42;
   const totalEstimatedLines = sections.reduce((sum, sec) => {
     return sum + sec.reduce((lineCount, line) => {
       const trimmed = line.trim();
@@ -658,6 +658,7 @@ const a4PaperContainerStyle: React.CSSProperties = {
   padding: '20px',
   display: 'flex',
   justifyContent: 'center',
+  alignItems: 'flex-start',
   maxHeight: '840px',
   overflowY: 'auto',
 };
@@ -668,6 +669,7 @@ const a4SheetStyle: React.CSSProperties = {
   width: '100%',
   maxWidth: '595px',
   minHeight: '842px',
+  height: 'max-content',
   borderRadius: '2px',
   padding: '48px 40px 32px',
   boxShadow: '0 4px 24px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.08)',
