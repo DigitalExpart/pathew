@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
@@ -97,6 +97,10 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
       alert('Failed to generate the document. Please try again.');
     }
   };
+
+  const pages = useMemo(() => paginateMarkdown(draftContent, Math.max(1, estimatedPages)), [draftContent, estimatedPages]);
+  const validCurrentPage = Math.min(currentPage, pages.length - 1);
+  const pageContent = pages[validCurrentPage];
 
   return (
     <div style={containerStyle}>
@@ -202,91 +206,141 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
           </Card>
         </div>
 
-        {/* Right Side: simulated A4 Print Preview Sheet */}
+        {/* Right Side: Professional A4 Print Preview */}
         <div style={previewColumnStyle}>
           <div style={previewLabelStyle}>{t('builders.editor.simulatedPreview', 'Simulated A4 Preview')}</div>
           <div style={a4PaperContainerStyle}>
-            {(() => {
-              const pages = paginateMarkdown(draftContent, Math.max(1, estimatedPages));
-              const validCurrentPage = Math.min(currentPage, pages.length - 1);
-              const pageContent = pages[validCurrentPage];
-              
-              return (
-                <div style={{
-                  ...a4SheetStyle,
-                  minHeight: '1123px',
-                  marginBottom: '0'
-                }}>
-                  {/* Cover Letter Header elements - Only on first page */}
-                  {validCurrentPage === 0 && (
-                    <div style={letterheadStyle}>
-                      <div style={letterheadLogoStyle}>P</div>
-                    </div>
-                  )}
-                  
-                  <div className="a4-preview-content" style={paperBodyStyle}>
-                    {!pageContent ? (
-                      <p style={{ color: 'var(--text-muted)' }}>Drafting document...</p>
-                    ) : (
-                      <ReactMarkdown 
-                        remarkPlugins={[remarkGfm, remarkBreaks]}
-                        components={{
-                          h1: ({node, ...props}) => <h2 style={previewH1Style} {...props} />,
-                          h2: ({node, ...props}) => <h3 style={previewH2Style} {...props} />,
-                          h3: ({node, ...props}) => <h4 style={previewH3Style} {...props} />,
-                          li: ({node, ...props}) => <li style={previewLiStyle} {...props} />,
-                          p: ({node, ...props}) => <p style={previewParaStyle} {...props} />,
-                          hr: () => null,
-                          table: ({node, ...props}) => <table style={{ width: '100%', borderCollapse: 'collapse', tableLayout: 'fixed', marginBottom: '16px' }} {...props} />,
-                          th: ({node, ...props}) => <th style={{ borderBottom: '2px solid #e2e8f0', padding: '8px 4px', textAlign: 'left', overflowWrap: 'break-word', wordWrap: 'break-word' }} {...props} />,
-                          td: ({node, ...props}) => <td style={{ padding: '8px 4px', verticalAlign: 'top', overflowWrap: 'break-word', wordWrap: 'break-word' }} {...props} />,
-                          img: ({node, ...props}) => <img style={{ maxWidth: '100%', height: 'auto' }} {...props} />
-                        }}
-                      >
-                        {pageContent}
-                      </ReactMarkdown>
-                    )}
-                  </div>
+            <div style={a4SheetStyle}>
+              <div className="a4-preview-content" style={paperBodyStyle}>
+                {!pageContent ? (
+                  <p style={{ color: '#94a3b8', fontStyle: 'italic' }}>Drafting document...</p>
+                ) : (
+                  <ReactMarkdown 
+                    remarkPlugins={[remarkGfm, remarkBreaks]}
+                    components={{
+                      // H1 = Full Name (large, centered, uppercase)
+                      h1: ({node, ...props}) => (
+                        <h1 style={pvNameStyle} {...props} />
+                      ),
+                      // H2 = Professional Title (centered subtitle)
+                      h2: ({node, ...props}) => (
+                        <h2 style={pvTitleStyle} {...props} />
+                      ),
+                      // H3 = Contact info line (centered, small, pipe-separated)
+                      h3: ({node, ...props}) => (
+                        <h3 style={pvContactStyle} {...props} />
+                      ),
+                      // H4 = Section headers (PROFESSIONAL SUMMARY, CORE SKILLS, etc.)
+                      h4: ({node, ...props}) => (
+                        <div style={pvSectionHeaderWrapStyle}>
+                          <h4 style={pvSectionHeaderStyle} {...props} />
+                          <div style={pvSectionHrStyle} />
+                        </div>
+                      ),
+                      // H5 = Sub-section or experience entry title
+                      h5: ({node, ...props}) => (
+                        <h5 style={pvSubSectionStyle} {...props} />
+                      ),
+                      // H6 = Minor label
+                      h6: ({node, ...props}) => (
+                        <h6 style={pvMinorLabelStyle} {...props} />
+                      ),
+                      // Horizontal rule = gold divider
+                      hr: () => <div style={pvSectionHrStyle} />,
+                      // Paragraphs with experience-row detection
+                      p: ({node, children, ...props}) => {
+                        const text = extractText(children);
+                        // Detect experience entry rows: contains | and a date pattern
+                        const datePattern = /((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{4})\s*[-–—]\s*((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{4}|Present|Current)/i;
+                        if (text.includes('|') && datePattern.test(text)) {
+                          return renderExperienceRow(text);
+                        }
+                        return <p style={pvParaStyle} {...props}>{children}</p>;
+                      },
+                      // List items
+                      li: ({node, children, ...props}) => (
+                        <li style={pvListItemStyle} {...props}>{children}</li>
+                      ),
+                      ul: ({node, ...props}) => (
+                        <ul style={pvUlStyle} {...props} />
+                      ),
+                      ol: ({node, ...props}) => (
+                        <ol style={pvOlStyle} {...props} />
+                      ),
+                      // Tables (skills grid)
+                      table: ({node, ...props}) => (
+                        <table style={pvTableStyle} {...props} />
+                      ),
+                      thead: ({node, ...props}) => (
+                        <thead style={{ display: 'none' }} {...props} />
+                      ),
+                      tbody: ({node, ...props}) => (
+                        <tbody {...props} />
+                      ),
+                      tr: ({node, ...props}) => (
+                        <tr style={pvTableRowStyle} {...props} />
+                      ),
+                      th: ({node, ...props}) => (
+                        <th style={pvTableCellStyle} {...props} />
+                      ),
+                      td: ({node, ...props}) => (
+                        <td style={pvTableCellStyle} {...props} />
+                      ),
+                      // Strong / Bold
+                      strong: ({node, ...props}) => (
+                        <strong style={{ fontWeight: 700, color: '#1e293b' }} {...props} />
+                      ),
+                      // Emphasis / Italic
+                      em: ({node, ...props}) => (
+                        <em style={{ fontStyle: 'italic', color: '#475569' }} {...props} />
+                      ),
+                      // Links
+                      a: ({node, ...props}) => (
+                        <a style={{ color: '#2563eb', textDecoration: 'none' }} {...props} />
+                      ),
+                      // Images
+                      img: ({node, ...props}) => (
+                        <img style={{ maxWidth: '100%', height: 'auto' }} {...props} />
+                      ),
+                    }}
+                  >
+                    {pageContent}
+                  </ReactMarkdown>
+                )}
+              </div>
 
-                  {/* Watermark/Footer */}
-                  <div style={paperFooterStyle}>
-                    <span>Powered by Pathew Assistant</span>
-                    <span>Page {validCurrentPage + 1} of {pages.length}</span>
-                  </div>
-                </div>
-              );
-            })()}
+              {/* Page Footer */}
+              <div style={paperFooterStyle}>
+                <span style={{ opacity: 0.5 }}>Powered by Pathew Assistant</span>
+                <span style={pageCounterStyle}>Page {validCurrentPage + 1} / {pages.length}</span>
+              </div>
+            </div>
           </div>
           
           {/* Pagination Controls */}
-          {(() => {
-            const pages = paginateMarkdown(draftContent, Math.max(1, estimatedPages));
-            if (pages.length <= 1) return null;
-            const validCurrentPage = Math.min(currentPage, pages.length - 1);
-            return (
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginTop: '16px' }}>
-                <Button 
-                  variant="secondary" 
-                  size="sm" 
-                  onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
-                  disabled={validCurrentPage === 0}
-                >
-                  {t('builders.editor.previous', 'Previous')}
-                </Button>
-                <span style={{ display: 'flex', alignItems: 'center', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-                  {t('builders.editor.pageOf', 'Page {{current}} of {{total}}', { current: validCurrentPage + 1, total: pages.length })}
-                </span>
-                <Button 
-                  variant="secondary" 
-                  size="sm" 
-                  onClick={() => setCurrentPage(prev => Math.min(pages.length - 1, prev + 1))}
-                  disabled={validCurrentPage >= pages.length - 1}
-                >
-                  {t('builders.editor.next', 'Next')}
-                </Button>
-              </div>
-            );
-          })()}
+          {pages.length > 1 && (
+            <div style={paginationRowStyle}>
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
+                disabled={validCurrentPage === 0}
+              >
+                {t('builders.editor.previous', 'Previous')}
+              </Button>
+              <span style={paginationLabelStyle}>
+                {t('builders.editor.pageOf', 'Page {{current}} of {{total}}', { current: validCurrentPage + 1, total: pages.length })}
+              </span>
+              <Button 
+                variant="secondary" 
+                size="sm" 
+                onClick={() => setCurrentPage(prev => Math.min(pages.length - 1, prev + 1))}
+                disabled={validCurrentPage >= pages.length - 1}
+              >
+                {t('builders.editor.next', 'Next')}
+              </Button>
+            </div>
+          )}
         </div>
 
       </div>
@@ -300,35 +354,149 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
   );
 };
 
+// ============================================================
+// HELPER: Extract text from React children for pattern detection
+// ============================================================
+const extractText = (children: React.ReactNode): string => {
+  if (typeof children === 'string') return children;
+  if (typeof children === 'number') return String(children);
+  if (Array.isArray(children)) return children.map(extractText).join('');
+  if (React.isValidElement(children) && children.props?.children) {
+    return extractText(children.props.children);
+  }
+  return '';
+};
+
+// ============================================================
+// HELPER: Render experience entry row with right-aligned dates
+// ============================================================
+const renderExperienceRow = (text: string): JSX.Element => {
+  // Split on pipe to find segments
+  const parts = text.split('|').map(p => p.trim());
+  
+  // Try to find the date part
+  const datePattern = /((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{4})\s*[-–—]\s*((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{4}|Present|Current)/i;
+  
+  let leftParts: string[] = [];
+  let rightParts: string[] = [];
+  let foundDate = false;
+  
+  for (const part of parts) {
+    if (!foundDate && datePattern.test(part)) {
+      foundDate = true;
+      rightParts.push(part);
+    } else if (foundDate) {
+      rightParts.push(part);
+    } else {
+      leftParts.push(part);
+    }
+  }
+  
+  const leftText = leftParts.join('  |  ');
+  const rightText = rightParts.join('  •  ');
+  
+  return (
+    <div style={pvExpRowStyle}>
+      <div style={pvExpLeftStyle}>
+        {renderInlineBold(leftText)}
+      </div>
+      <div style={pvExpRightStyle}>
+        {rightText}
+      </div>
+    </div>
+  );
+};
+
+// ============================================================
+// HELPER: Render inline bold markers **text** in JSX
+// ============================================================
+const renderInlineBold = (text: string): React.ReactNode => {
+  const parts = text.split(/(\*\*.*?\*\*)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**')) {
+      return <strong key={i} style={{ fontWeight: 700, color: '#1e293b' }}>{part.slice(2, -2)}</strong>;
+    }
+    return <span key={i}>{part}</span>;
+  });
+};
+
+// ============================================================
+// SMART PAGINATION: Section-aware page splitting
+// ============================================================
 const paginateMarkdown = (content: string, maxPages: number): string[] => {
   if (!content) return [''];
   if (maxPages <= 1) return [content];
   
-  const blocks = content.split(/\n\n+/);
-  const totalLength = content.length;
-  const targetCharsPerPage = Math.ceil(totalLength / maxPages);
+  // Split content into logical sections based on ## headers or ALL-CAPS lines
+  const lines = content.split('\n');
+  const sections: string[][] = [];
+  let currentSection: string[] = [];
+  
+  for (const line of lines) {
+    const trimmed = line.trim();
+    const isHeader = trimmed.startsWith('## ') || trimmed.startsWith('### ') || trimmed.startsWith('#### ');
+    const isAllCaps = trimmed.length > 3 && trimmed.length < 60 && trimmed === trimmed.toUpperCase() && /[A-Z]/.test(trimmed) && !trimmed.includes('|');
+    
+    if ((isHeader || isAllCaps) && currentSection.length > 0) {
+      sections.push(currentSection);
+      currentSection = [line];
+    } else {
+      currentSection.push(line);
+    }
+  }
+  if (currentSection.length > 0) {
+    sections.push(currentSection);
+  }
+  
+  // Estimate lines per page: ~52 effective content lines per A4 page at our font size
+  const LINES_PER_PAGE = 52;
+  const totalEstimatedLines = sections.reduce((sum, sec) => {
+    return sum + sec.reduce((lineCount, line) => {
+      const trimmed = line.trim();
+      if (!trimmed) return lineCount + 0.5; // blank lines are half
+      // Long lines wrap: estimate ~80 chars per visual line
+      return lineCount + Math.max(1, Math.ceil(trimmed.length / 80));
+    }, 0);
+  }, 0);
+  
+  const targetLinesPerPage = Math.max(LINES_PER_PAGE, Math.ceil(totalEstimatedLines / maxPages));
   
   const pages: string[] = [];
-  let currentPage: string[] = [];
-  let currentChars = 0;
+  let currentPageSections: string[][] = [];
+  let currentPageLines = 0;
   
-  for (const block of blocks) {
-    if (currentChars + block.length > targetCharsPerPage * 1.2 && pages.length < maxPages - 1) {
-      pages.push(currentPage.join('\n\n'));
-      currentPage = [block];
-      currentChars = block.length;
+  for (const section of sections) {
+    const sectionLines = section.reduce((count, line) => {
+      const trimmed = line.trim();
+      if (!trimmed) return count + 0.5;
+      return count + Math.max(1, Math.ceil(trimmed.length / 80));
+    }, 0);
+    
+    // If adding this section would exceed the page target and we have content,
+    // AND we haven't reached the last page yet, start a new page
+    if (currentPageLines + sectionLines > targetLinesPerPage * 1.15 
+        && currentPageSections.length > 0 
+        && pages.length < maxPages - 1) {
+      pages.push(currentPageSections.flat().join('\n'));
+      currentPageSections = [section];
+      currentPageLines = sectionLines;
     } else {
-      currentPage.push(block);
-      currentChars += block.length;
+      currentPageSections.push(section);
+      currentPageLines += sectionLines;
     }
   }
   
-  if (currentPage.length > 0) {
-    pages.push(currentPage.join('\n\n'));
+  // Push remaining content
+  if (currentPageSections.length > 0) {
+    pages.push(currentPageSections.flat().join('\n'));
   }
   
-  return pages.slice(0, maxPages);
+  return pages.length > 0 ? pages.slice(0, maxPages) : [''];
 };
+
+// ============================================================
+// STYLES: Container, Header, Editor, AI Box
+// ============================================================
 
 const containerStyle: React.CSSProperties = {
   marginTop: '24px',
@@ -464,6 +632,10 @@ const aiBoxFooterStyle: React.CSSProperties = {
   marginTop: '10px',
 };
 
+// ============================================================
+// STYLES: A4 Preview Container & Paper
+// ============================================================
+
 const previewColumnStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
@@ -477,13 +649,13 @@ const previewLabelStyle: React.CSSProperties = {
 };
 
 const a4PaperContainerStyle: React.CSSProperties = {
-  backgroundColor: 'var(--bg-secondary)',
+  backgroundColor: '#e2e8f0',
   border: '1px solid var(--border-color)',
-  borderRadius: 'var(--radius-xl)',
-  padding: '24px',
+  borderRadius: '12px',
+  padding: '20px',
   display: 'flex',
   justifyContent: 'center',
-  maxHeight: '660px',
+  maxHeight: '840px',
   overflowY: 'auto',
 };
 
@@ -491,42 +663,20 @@ const a4SheetStyle: React.CSSProperties = {
   backgroundColor: '#ffffff',
   color: '#1e293b',
   width: '100%',
-  maxWidth: '520px',
-  minHeight: '700px',
-  borderRadius: '4px',
-  padding: '40px',
-  boxShadow: '0 8px 30px rgba(0,0,0,0.3)',
+  maxWidth: '595px',
+  minHeight: '842px',
+  borderRadius: '2px',
+  padding: '48px 40px 32px',
+  boxShadow: '0 4px 24px rgba(0,0,0,0.15), 0 1px 3px rgba(0,0,0,0.08)',
   display: 'flex',
   flexDirection: 'column',
+  fontFamily: "'Inter', 'Segoe UI', -apple-system, Arial, sans-serif",
 };
-
-const letterheadStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  borderBottom: '2px solid #e2e8f0',
-  paddingBottom: '16px',
-  marginBottom: '28px',
-};
-
-const letterheadLogoStyle: React.CSSProperties = {
-  width: '32px',
-  height: '32px',
-  borderRadius: '6px',
-  backgroundColor: '#6366f1',
-  color: '#ffffff',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  fontWeight: 800,
-  fontSize: '1.1rem',
-};
-
 
 const paperBodyStyle: React.CSSProperties = {
   flex: '1 0 auto',
-  fontSize: '0.825rem',
-  lineHeight: '1.6',
+  fontSize: '0.78rem',
+  lineHeight: '1.55',
   color: '#334155',
   overflowWrap: 'break-word',
   wordBreak: 'break-word',
@@ -534,50 +684,202 @@ const paperBodyStyle: React.CSSProperties = {
 
 const paperFooterStyle: React.CSSProperties = {
   marginTop: 'auto',
-  borderTop: '1px solid #f1f5f9',
-  paddingTop: '12px',
+  paddingTop: '16px',
   display: 'flex',
   justifyContent: 'space-between',
-  fontSize: '0.625rem',
+  alignItems: 'center',
+  fontSize: '0.6rem',
   color: '#94a3b8',
 };
 
-// Simulated markdown headings and spacing
-const previewH1Style: React.CSSProperties = {
-  fontSize: '1.25rem',
+const pageCounterStyle: React.CSSProperties = {
+  backgroundColor: '#1e293b',
+  color: '#ffffff',
+  padding: '3px 10px',
+  borderRadius: '4px',
+  fontSize: '0.6rem',
+  fontWeight: 700,
+};
+
+const paginationRowStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'center',
+  gap: '16px',
+  marginTop: '12px',
+  alignItems: 'center',
+};
+
+const paginationLabelStyle: React.CSSProperties = {
+  fontSize: '0.875rem',
+  color: 'var(--text-muted)',
+};
+
+// ============================================================
+// STYLES: Preview Content Renderers
+// ============================================================
+
+// H1 = Full Name
+const pvNameStyle: React.CSSProperties = {
+  fontSize: '1.4rem',
   fontWeight: 800,
   color: '#0f172a',
-  marginTop: '16px',
-  marginBottom: '8px',
-  paddingBottom: '4px',
   textAlign: 'center',
+  margin: '0 0 2px 0',
+  padding: 0,
+  letterSpacing: '0.04em',
+  textTransform: 'uppercase',
+  lineHeight: 1.2,
 };
 
-const previewH2Style: React.CSSProperties = {
-  fontSize: '1.05rem',
+// H2 = Professional Title
+const pvTitleStyle: React.CSSProperties = {
+  fontSize: '0.88rem',
+  fontWeight: 600,
+  color: '#334155',
+  textAlign: 'center',
+  margin: '0 0 4px 0',
+  padding: 0,
+  lineHeight: 1.3,
+};
+
+// H3 = Contact Info Row
+const pvContactStyle: React.CSSProperties = {
+  fontSize: '0.68rem',
+  fontWeight: 400,
+  color: '#64748b',
+  textAlign: 'center',
+  margin: '0 0 20px 0',
+  padding: '0 0 14px 0',
+  borderBottom: '1.5px solid #e2e8f0',
+  lineHeight: 1.4,
+  letterSpacing: '0.01em',
+};
+
+// Section Header Wrapper
+const pvSectionHeaderWrapStyle: React.CSSProperties = {
+  marginTop: '18px',
+  marginBottom: '10px',
+};
+
+// H4 = Section Header (PROFESSIONAL SUMMARY, CORE SKILLS, etc.)
+const pvSectionHeaderStyle: React.CSSProperties = {
+  fontSize: '0.82rem',
+  fontWeight: 800,
+  color: '#0f172a',
+  textTransform: 'uppercase',
+  letterSpacing: '0.06em',
+  margin: '0 0 6px 0',
+  padding: 0,
+  lineHeight: 1.2,
+};
+
+// Gold HR divider under section headers
+const pvSectionHrStyle: React.CSSProperties = {
+  height: '2px',
+  background: 'linear-gradient(90deg, #D69E2E, #ECC94B)',
+  borderRadius: '1px',
+  margin: '0 0 10px 0',
+};
+
+// H5 = Sub-section header
+const pvSubSectionStyle: React.CSSProperties = {
+  fontSize: '0.78rem',
   fontWeight: 700,
   color: '#1e293b',
-  marginTop: '14px',
-  marginBottom: '6px',
-  borderBottom: '2px solid #D69E2E',
-  paddingBottom: '2px',
+  margin: '10px 0 4px 0',
+  padding: 0,
+  lineHeight: 1.3,
 };
 
-const previewH3Style: React.CSSProperties = {
-  fontSize: '0.9rem',
-  fontWeight: 650,
+// H6 = Minor label
+const pvMinorLabelStyle: React.CSSProperties = {
+  fontSize: '0.72rem',
+  fontWeight: 600,
+  color: '#475569',
+  margin: '6px 0 2px 0',
+  padding: 0,
+  lineHeight: 1.3,
+};
+
+// Paragraph
+const pvParaStyle: React.CSSProperties = {
+  margin: '0 0 8px 0',
+  lineHeight: 1.55,
+  fontSize: '0.78rem',
   color: '#334155',
-  marginTop: '10px',
-  marginBottom: '4px',
-};
-
-const previewParaStyle: React.CSSProperties = {
-  marginBottom: '10px',
   textAlign: 'left',
 };
 
-const previewLiStyle: React.CSSProperties = {
-  marginLeft: '16px',
-  listStyleType: 'disc',
-  marginBottom: '4px',
+// Unordered list
+const pvUlStyle: React.CSSProperties = {
+  margin: '0 0 8px 0',
+  paddingLeft: '18px',
+};
+
+// Ordered list
+const pvOlStyle: React.CSSProperties = {
+  margin: '0 0 8px 0',
+  paddingLeft: '18px',
+};
+
+// List item
+const pvListItemStyle: React.CSSProperties = {
+  fontSize: '0.75rem',
+  lineHeight: 1.5,
+  color: '#334155',
+  marginBottom: '3px',
+  paddingLeft: '2px',
+};
+
+// Experience entry row
+const pvExpRowStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'baseline',
+  gap: '12px',
+  margin: '10px 0 4px 0',
+  flexWrap: 'wrap',
+};
+
+const pvExpLeftStyle: React.CSSProperties = {
+  fontSize: '0.78rem',
+  fontWeight: 600,
+  color: '#1e293b',
+  flex: '1 1 auto',
+  lineHeight: 1.4,
+};
+
+const pvExpRightStyle: React.CSSProperties = {
+  fontSize: '0.7rem',
+  fontWeight: 500,
+  color: '#64748b',
+  textAlign: 'right',
+  whiteSpace: 'nowrap',
+  flexShrink: 0,
+  lineHeight: 1.4,
+};
+
+// Skills Table (Grid)
+const pvTableStyle: React.CSSProperties = {
+  width: '100%',
+  borderCollapse: 'separate',
+  borderSpacing: '4px',
+  tableLayout: 'fixed',
+  margin: '4px 0 12px 0',
+};
+
+const pvTableRowStyle: React.CSSProperties = {};
+
+const pvTableCellStyle: React.CSSProperties = {
+  backgroundColor: '#f8fafc',
+  border: '1px solid #e2e8f0',
+  borderRadius: '4px',
+  padding: '5px 8px',
+  fontSize: '0.7rem',
+  fontWeight: 600,
+  color: '#334155',
+  textAlign: 'center',
+  verticalAlign: 'middle',
+  overflowWrap: 'break-word',
+  wordWrap: 'break-word',
 };
