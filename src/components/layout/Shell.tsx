@@ -10,6 +10,7 @@ interface ShellProps {
 
 export const Shell: React.FC<ShellProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
   React.useEffect(() => {
@@ -21,16 +22,22 @@ export const Shell: React.FC<ShellProps> = ({ children }) => {
   const isMobile = windowWidth <= 1024;
   const isSmallMobile = windowWidth <= 768;
 
+  const sidebarWidth = isMobile ? 0 : (isSidebarCollapsed ? 0 : 260);
+
   const contentStyle: React.CSSProperties = {
     padding: isSmallMobile ? '16px' : '32px',
-    marginLeft: isMobile ? '0' : '260px',
+    marginLeft: `${sidebarWidth}px`,
     flex: 1,
     transition: 'margin-left 0.3s ease',
   };
 
   return (
     <div style={shellStyle}>
-      <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+      <Sidebar 
+        isOpen={isSidebarOpen} 
+        onClose={() => setIsSidebarOpen(false)} 
+        isCollapsed={isSidebarCollapsed}
+      />
       
       {/* Mobile Overlay */}
       {isSidebarOpen && (
@@ -42,7 +49,12 @@ export const Shell: React.FC<ShellProps> = ({ children }) => {
 
       <AssistantProvider>
         <div style={mainContainerStyle}>
-          <TopBar onMenuClick={() => setIsSidebarOpen(true)} />
+          <TopBar 
+            onMenuClick={() => setIsSidebarOpen(true)} 
+            sidebarWidth={sidebarWidth}
+            isSidebarCollapsed={isSidebarCollapsed}
+            onToggleSidebar={() => setIsSidebarCollapsed(prev => !prev)}
+          />
           <main style={contentStyle}>
             {children}
           </main>
@@ -76,5 +88,5 @@ const mainContainerStyle: React.CSSProperties = {
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
-  minWidth: 0, // Prevent flex items from overflowing
+  minWidth: 0,
 };

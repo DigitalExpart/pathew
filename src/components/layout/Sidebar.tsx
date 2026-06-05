@@ -24,9 +24,10 @@ import logo from '../../assets/images/logo.png';
 interface SidebarProps {
   isOpen?: boolean;
   onClose?: () => void;
+  isCollapsed?: boolean;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
+export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isCollapsed }) => {
   const { signOut, profile } = useAuth();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -81,11 +82,26 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
 
   const isMobile = window.innerWidth <= 1024;
 
+  // On desktop: if collapsed, slide out. On mobile: use isOpen.
+  const getTransform = () => {
+    if (isMobile) {
+      return isOpen ? 'translateX(0)' : 'translateX(-100%)';
+    }
+    return isCollapsed ? 'translateX(-100%)' : 'translateX(0)';
+  };
+
+  const getVisibility = (): React.CSSProperties['visibility'] => {
+    if (isMobile) {
+      return isOpen ? 'visible' : 'hidden';
+    }
+    return isCollapsed ? 'hidden' : 'visible';
+  };
+
   return (
     <aside style={{
       ...sidebarStyle,
-      transform: isMobile ? (isOpen ? 'translateX(0)' : 'translateX(-100%)') : 'none',
-      visibility: isMobile && !isOpen ? 'hidden' : 'visible',
+      transform: getTransform(),
+      visibility: getVisibility(),
     }}>
       <div style={logoContainerStyle}>
         <Link to="/" style={{ display: 'flex', alignItems: 'center' }} onClick={onClose}>

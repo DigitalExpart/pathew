@@ -1,5 +1,5 @@
 import React from 'react';
-import { Search, Bell, HelpCircle, ChevronDown, Coins, Sparkles, UserCircle, LogOut, LayoutDashboard, Menu, Sun, Moon, Globe } from 'lucide-react';
+import { Search, Bell, HelpCircle, ChevronDown, Coins, Sparkles, UserCircle, LogOut, LayoutDashboard, Menu, Sun, Moon, Globe, PanelLeft, PanelLeftClose } from 'lucide-react';
 import { mockUser } from '../../data/mockData';
 import { useAssistant } from '../../context/AssistantContext';
 import { useTheme } from '../../context/ThemeContext';
@@ -11,9 +11,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface TopBarProps {
   onMenuClick?: () => void;
+  sidebarWidth?: number;
+  isSidebarCollapsed?: boolean;
+  onToggleSidebar?: () => void;
 }
 
-export const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
+export const TopBar: React.FC<TopBarProps> = ({ onMenuClick, sidebarWidth = 260, isSidebarCollapsed, onToggleSidebar }) => {
   const { user, profile, signOut } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { openAssistant } = useAssistant();
@@ -58,15 +61,24 @@ export const TopBar: React.FC<TopBarProps> = ({ onMenuClick }) => {
   const headerResponsiveStyle: React.CSSProperties = {
     ...headerStyle,
     padding: isSmallMobile ? '0 16px' : '0 32px',
-    marginLeft: isMobile ? '0' : '260px',
+    marginLeft: isMobile ? '0' : `${sidebarWidth}px`,
   };
 
   return (
     <header style={headerResponsiveStyle}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
         {isMobile && (
           <button onClick={onMenuClick} style={iconButtonStyle}>
             <Menu size={24} color="var(--text-primary)" />
+          </button>
+        )}
+        {!isMobile && onToggleSidebar && (
+          <button 
+            onClick={onToggleSidebar} 
+            style={sidebarToggleStyle}
+            title={isSidebarCollapsed ? 'Show sidebar' : 'Hide sidebar'}
+          >
+            {isSidebarCollapsed ? <PanelLeft size={20} /> : <PanelLeftClose size={20} />}
           </button>
         )}
         {!isSmallMobile && (
@@ -231,8 +243,22 @@ const headerStyle: React.CSSProperties = {
   position: 'sticky',
   top: 0,
   zIndex: 90,
-  marginLeft: window.innerWidth <= 1024 ? '0' : '260px',
   transition: 'margin-left 0.3s ease',
+};
+
+const sidebarToggleStyle: React.CSSProperties = {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '36px',
+  height: '36px',
+  borderRadius: '8px',
+  border: '1px solid var(--border-color)',
+  backgroundColor: 'var(--bg-secondary)',
+  color: 'var(--text-secondary)',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease',
+  padding: 0,
 };
 
 const searchContainerStyle: React.CSSProperties = {
