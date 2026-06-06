@@ -163,11 +163,11 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
     };
 
     const pagesMap: Record<number, string> = {
-      1: `PAGE LIMIT: 1 page only. Be extremely concise. Cut anything that doesn't directly support the target role. Prioritise the last 3 years of experience only. Summary max 2 sentences.`,
+      1: `PAGE LIMIT: 1 page strictly. Be extremely concise. Cut anything that doesn't directly support the target role. Prioritise the last 3 years of experience only. Summary max 2 sentences.`,
       2: `PAGE LIMIT: 2 pages. Standard professional length. Include all relevant experience from the last 10 years. No padding but no cutting of important content.`,
-      3: `PAGE LIMIT: 3 pages. Extended format. Include full career history, all certifications, detailed skills, and any publications or presentations. Useful for senior or academic-leaning roles.`,
-      4: `PAGE LIMIT: 4 pages. Comprehensive format. Include all career history, full education, all certifications, publications, conferences, grants, memberships. Do not omit any section.`,
-      5: `PAGE LIMIT: 5 pages. Full exhaustive format. Include everything — leave nothing out. Every role, every publication, every award, every membership. Appropriate for academic or executive profiles.`
+      3: `PAGE LIMIT: 3 pages exactly. CRITICAL REQUIREMENT: You MUST generate enough extensive, granular detail to completely fill 3 pages. Expand on full career history, all certifications, detailed skills, and any publications or presentations. Provide deep, comprehensive descriptions for every role and project. Do not artificially pad, but elaborate exhaustively.`,
+      4: `PAGE LIMIT: 4 pages exactly. CRITICAL REQUIREMENT: You MUST generate enough extensive, granular detail to completely fill 4 pages. Include all career history, full education, all certifications, publications, conferences, grants, memberships. Provide exhaustive, comprehensive paragraphs and deep bullet points for every single entry. Expand heavily to meet the 4-page length requirement.`,
+      5: `PAGE LIMIT: 5 pages exactly. CRITICAL REQUIREMENT: You MUST generate enough extensive, granular detail to completely fill 5 pages. Include everything — leave nothing out. Every role, every publication, every award, every membership. Provide maximum allowable detail, extensive descriptions, and deep context for academic or executive profiles.`
     };
 
     const toneMap: Record<string, string> = {
