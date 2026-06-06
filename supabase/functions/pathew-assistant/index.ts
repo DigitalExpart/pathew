@@ -123,11 +123,11 @@ Deno.serve(async (req: Request) => {
     };
 
     const pagesMap: Record<number, string> = {
-      1: `PAGE LIMIT: 1 page strictly. Be extremely concise. Cut anything that doesn't directly support the target role. Prioritise the last 3 years of experience only. Summary max 2 sentences.`,
-      2: `PAGE LIMIT: 2 pages. Standard professional length. Include all relevant experience from the last 10 years. No padding but no cutting of important content.`,
-      3: `PAGE LIMIT: 3 pages. CRITICAL REQUIREMENT: You must generate a highly detailed document (approx 1000-1500 words). If the user has limited work experience, you MUST heavily extrapolate and write extensive, verbose paragraphs detailing their academic coursework, methodologies, literature reviews, and transferable skills. Do not return a short document.`,
-      4: `PAGE LIMIT: 4 pages. CRITICAL REQUIREMENT: The user explicitly requested a very long 4-page CV (approx 1500-2000 words). You MUST write highly verbose, extensively detailed paragraphs for every single skill, degree, and project. Break down their academic journey into extremely detailed modular descriptions. Write long, comprehensive narrative sections for their research interests. If they have limited experience, expand significantly on their theoretical knowledge and application of skills to ensure the text is extremely long. Do not return a short document under any circumstance.`,
-      5: `PAGE LIMIT: 5 pages. CRITICAL REQUIREMENT: The user explicitly requested an exhaustive 5-page CV (approx 2000-2500 words). You MUST write at maximum verbosity. Expand every minor detail, coursework, skill, and methodology into massive, comprehensive descriptions. Break down every single aspect of their academic and professional background with extreme granularity.`
+      1: `TARGET PAGE LENGTH: 1 page strictly. Be extremely concise. Cut anything that doesn't directly support the target role. Prioritise the last 3 years of experience only. Summary max 2 sentences.`,
+      2: `TARGET PAGE LENGTH: 2 pages. Standard professional length. Include all relevant experience from the last 10 years. No padding but no cutting of important content.`,
+      3: `TARGET PAGE LENGTH: 3 pages. CRITICAL REQUIREMENT: You must generate a highly detailed document (approx 1000-1500 words). If the user has limited work experience, you MUST heavily extrapolate and write extensive, verbose paragraphs detailing their academic coursework, methodologies, literature reviews, and transferable skills. Do not return a short document.`,
+      4: `TARGET PAGE LENGTH: 4 pages. CRITICAL REQUIREMENT: The user explicitly requested a very long 4-page CV (approx 1500-2000 words). You MUST write highly verbose, extensively detailed paragraphs for every single skill, degree, and project. Break down their academic journey into extremely detailed modular descriptions. Write long, comprehensive narrative sections for their research interests. If they have limited experience, expand significantly on their theoretical knowledge and application of skills to ensure the text is extremely long. Do not return a short document under any circumstance.`,
+      5: `TARGET PAGE LENGTH: 5 pages. CRITICAL REQUIREMENT: The user explicitly requested an exhaustive 5-page CV (approx 2000-2500 words). You MUST write at maximum verbosity. Expand every minor detail, coursework, skill, and methodology into massive, comprehensive descriptions. Break down every single aspect of their academic and professional background with extreme granularity.`
     };
 
     const toneMap: Record<string, string> = {
@@ -206,7 +206,7 @@ Core Principles & Source Prioritization:
 - PRIORITY 3: Database Profile Data (use as the baseline core truth).
 - Merge and deduplicate information intelligently across these sources.
 - Strictly compare the user's background with the opportunity requirements. Identify real matches and gaps.
-- NEVER invent qualifications, experience, dates, or metrics. Be specific, but keep to the absolute truth of what is provided.
+- Do not invent fake jobs or degrees, but DO extrapolate extensively on the theoretical coursework, transferable skills, and methodologies of the actual experiences provided to reach high word counts if requested.
 - Optimize the copy to maximize conversion (ATS optimization, impact metrics, narrative flow).
 
 ====================================================================
@@ -228,7 +228,7 @@ ${pagesMap[pageCount || 2] || pagesMap[2]}
 ABSOLUTE RULES — never break these:
 - Follow the CV Type structure exactly — never invent sections not listed
 - Never mix Work CV and Academic CV formats
-- Respect the page limit — do not exceed it
+- Strictly achieve the requested page length. If a high page count is requested, you MUST generate enough exhaustive content to hit the target length. Do not just stop early.
 - Apply the tone consistently from the first word to the last
 - Write the entire CV in the specified language — no switching
 - Output CV content only — no explanations, no commentary, no preamble
