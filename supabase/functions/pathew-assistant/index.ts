@@ -158,27 +158,29 @@ BUILDER-SPECIFIC SYSTEM RULES:
   * 3-5 Pages: Deep narrative expansion. Include extensive project details, publications, granular technical skills, comprehensive work histories, and extended summaries.
 - CV Type formatting rules:
   * If "Work CV": order sections normally (Profile, Skills, Work Experience, Projects, Education).
-  * If "Teaching / Academic CV": you MUST structure the CV using EXACTLY the following 16 sections in this rigid sequence:
-    1. Personal Details
-    2. Specialisation
-    3. EDUCATION
-    4. WORK EXPERIENCE
-    5. TEACHING EXPERTISE
-    6. ADMINISTRATIVE EXPERTISE
-    7. RESEARCH EXPERIENCE
-    8. ACHIEVEMENTS & AWARDS
-    9. VOLUNTEER SERVICES
-    10. SKILLS & TRAINING
-    11. SOFTWARE & TOOLS
-    12. SOFT SKILLS
-    13. FELLOWSHIPS & AWARDS
-    14. CONFERENCES & MEMBERSHIPS
-    15. HOBBIES
-    16. REFEREES
+  * If "Teaching / Academic CV": you MUST structure the CV using EXACTLY the following sections in this rigid sequence:
+    1. Contact Header (Include institutional email, department, university affiliation, ORCID ID)
+    2. EDUCATION
+    3. WORK EXPERIENCE
+    4. TEACHING EXPERIENCE
+    5. ADMINISTRATIVE EXPERIENCE
+    6. RESEARCH EXPERIENCE
+    7. PUBLICATIONS
+    8. CONFERENCE PRESENTATIONS
+    9. GRANTS & FUNDING
+    10. PROFESSIONAL MEMBERSHIPS
+    11. AWARDS & HONOURS
+    12. SKILLS & LANGUAGES
+    13. REFERENCES
     CRITICAL FORMATTING RULES FOR ACADEMIC CV:
-    - Do NOT omit any section, do NOT add extra sections, and do NOT change this sequence!
-    - Use ALL CAPS for section headers from section 3 onwards.
-    - For the WORK EXPERIENCE section, ONLY output the Job Title, Company/Institution, and Dates (e.g. "Senior Lecturer - Oxford University, 2018 - Present"). Do NOT generate any bullet points, tasks, or descriptions under work experience for Academic CVs. It must be a simple list of titles and dates.
+    - Philosophy: Comprehensive and exhaustive. The goal is scholarly credibility.
+    - ABSOLUTELY NO "Academic Profile" or "Personal Summary" section. DO NOT generate one.
+    - For EDUCATION, do NOT be detailed. 1-2 line listing school, course, grade, reverse chronological.
+    - For WORK EXPERIENCE, ONLY output the Job Title, Company/Institution, and Dates. Do NOT generate any bullet points, tasks, or descriptions.
+    - For TEACHING EXPERIENCE, list with targeted sentences showing number of students/classes taught, bullet describing role.
+    - For ADMINISTRATIVE EXPERIENCE, include roles relating to teaching like project supervision, invigilating exams, managing data.
+    - For RESEARCH EXPERIENCE, use a bulletin list.
+    - For PUBLICATIONS, use a numbered list (not bullets), format as APA/MLA, sub-divided into: Peer-Reviewed Journal Articles, Book Chapters, Books / Monographs, Under Review / In Press. Bold the user's name in each citation.
     - Ensure crisp, clean professional formatting with consistent spacing and clear hierarchy.
 - Career Gap positive reframing:
   * If careerGap is true (${careerGap}), read the explanation: "${careerGapExplanation}". Positive-frame this break seamlessly in the Personal Summary or professional timeline as parental dedication, caregiving resilience, self-motivated study, or career pivot/re-alignment. Frame this break as a positive development, career pivot, or self-motivated development break, demonstrating growth, resilience, and readiness to deliver immediate value. Do not hide the gap awkwardly.

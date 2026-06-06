@@ -165,7 +165,26 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
     if (builderType === 'cv' || documentType === 'CV') {
       ctx += `- Target CV Type: ${cvType}. `;
       if (cvType === 'Teaching / Academic CV') {
-        ctx += `CRITICAL: You MUST structure the CV using EXACTLY the following 16 sections in this rigid sequence: 1. Personal Details, 2. Specialisation, 3. EDUCATION, 4. WORK EXPERIENCE, 5. TEACHING EXPERTISE, 6. ADMINISTRATIVE EXPERTISE, 7. RESEARCH EXPERIENCE, 8. ACHIEVEMENTS & AWARDS, 9. VOLUNTEER SERVICES, 10. SKILLS & TRAINING, 11. SOFTWARE & TOOLS, 12. SOFT SKILLS, 13. FELLOWSHIPS & AWARDS, 14. CONFERENCES & MEMBERSHIPS, 15. HOBBIES, 16. REFEREES. Do NOT omit any section, do NOT add extra sections, and do NOT change this sequence! Use ALL CAPS for section headers from section 3 onwards.\n`;
+        ctx += `CRITICAL FORMATTING RULES FOR ACADEMIC CV:
+- Philosophy: Comprehensive and exhaustive. Academic CVs can be 4–10+ pages. The goal is scholarly credibility — every publication, presentation, grant, and teaching role counts.
+- Section Order & Priority:
+  1. Contact Header (Include institutional email, department, university affiliation, ORCID ID)
+  2. EDUCATION (Not Detailed, 1-2 line listing school, course, grade, reverse chronological)
+  3. WORK EXPERIENCE (All work experience, title and dates listed only, no descriptions)
+  4. TEACHING EXPERIENCE (Listed only with targeted sentences showing number of students/classes taught. Bullet describing role: sole instructor, etc.)
+  5. ADMINISTRATIVE EXPERIENCE (Include administrative role relating to teaching like project supervision, invigilating exams, Managing data)
+  6. RESEARCH EXPERIENCE (Bulletin list)
+  7. PUBLICATIONS (Numbered list, citation format APA/MLA, sub-divided into: Peer-Reviewed Journal Articles, Book Chapters, Books / Monographs, Under Review / In Press. Bold the candidate's name)
+  8. CONFERENCE PRESENTATIONS (Numbered list)
+  9. GRANTS & FUNDING (Table or list)
+  10. PROFESSIONAL MEMBERSHIPS (Inline or list)
+  11. AWARDS & HONOURS (List)
+  12. SKILLS & LANGUAGES (Brief)
+  13. REFERENCES (Available on request)
+- ABSOLUTELY NO "Academic Profile" or "Personal Summary" section.
+- For EDUCATION, do NOT be detailed. Just school, course, and grade.
+- For WORK EXPERIENCE, ONLY output the Job Title, Company/Institution, and Dates. Do NOT generate any bullet points, tasks, or descriptions under work experience.
+- For PUBLICATIONS, use a numbered list (not bullets), and bold the user's name in each citation.\n`;
       } else {
         ctx += `Order sections normally (Profile, Skills, Work Experience, Projects, Education).\n`;
       }
