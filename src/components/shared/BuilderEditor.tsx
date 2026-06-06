@@ -819,6 +819,7 @@ const pvParaStyle: React.CSSProperties = {
 const pvUlStyle: React.CSSProperties = {
   margin: '0 0 8px 0',
   paddingLeft: '18px',
+  listStyleType: "'- '",
 };
 
 // Ordered list

@@ -216,7 +216,10 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
       children.push(
         new Paragraph({
           children: parseInlineFormatting(line.substring(2).trim()),
-          bullet: { level: 0 },
+          numbering: {
+            reference: "dash-bullet",
+            level: 0
+          },
           alignment: AlignmentType.LEFT,
           spacing: { after: 60 }
         })
@@ -241,6 +244,26 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
   }
 
   const doc = new Document({
+    numbering: {
+      config: [
+        {
+          reference: "dash-bullet",
+          levels: [
+            {
+              level: 0,
+              format: "bullet",
+              text: "–", // En-dash
+              alignment: AlignmentType.LEFT,
+              style: {
+                paragraph: {
+                  indent: { left: 360, hanging: 360 },
+                },
+              },
+            },
+          ],
+        },
+      ],
+    },
     styles: {
       default: {
         document: {
