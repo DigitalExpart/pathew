@@ -899,52 +899,6 @@ OUTPUT:
       let finalEditingSuggestions = result.editingSuggestions || editingSuggestions;
       let finalEstimatedPages = result.estimatedPages || estimatedPages;
 
-      // Fallback: If edge function failed to parse the JSON
-      if (finalDraft && finalDraft.includes('"draft":') && (finalDraft.includes('"matchSummary"') || finalDraft.includes('matchSummary'))) {
-        console.warn("Detected raw JSON in draft, attempting robust extraction...");
-        try {
-          let cleanStr = finalDraft.replace(/```json/gi, '').replace(/```/g, '').trim();
-          try {
-            const parsed = JSON.parse(cleanStr);
-            if (parsed.draft) {
-              finalDraft = parsed.draft;
-              if (parsed.matchSummary) finalMatchSummary = parsed.matchSummary;
-              if (parsed.editingSuggestions) finalEditingSuggestions = parsed.editingSuggestions;
-              if (parsed.estimatedPages) finalEstimatedPages = parsed.estimatedPages;
-            }
-          } catch (err) {
-            let draftMatch = cleanStr.match(/"draft"\s*:\s*"([\s\S]*?)"(?:\s*,\s*"|\s*\})/);
-            
-            if (!draftMatch) {
-              draftMatch = cleanStr.match(/"draft"\s*:\s*"([\s\S]*)/);
-              if (draftMatch && draftMatch[1]) {
-                draftMatch[1] = draftMatch[1].replace(/"\s*\}?\s*$/, '');
-              }
-            }
-
-            if (draftMatch && draftMatch[1]) {
-              finalDraft = draftMatch[1];
-              finalDraft = finalDraft.replace(/\\n/g, '\n').replace(/\\"/g, '"');
-            }
-            
-            const pagesMatch = cleanStr.match(/"estimatedPages"\s*:\s*(\d+)/);
-            if (pagesMatch && pagesMatch[1]) {
-              finalEstimatedPages = parseInt(pagesMatch[1], 10);
-            }
-          }
-        } catch (e) {
-          console.error("Robust extraction failed", e);
-        }
-      }
-
-      // Final robust cleanup for escaped newlines and markdown wrappers
-      finalDraft = finalDraft
-        .replace(/^```(markdown|json|text)?\n?/i, '')
-        .replace(/```$/i, '')
-        .replace(/\\n/g, '\n')
-        .replace(/\\"/g, '"')
-        .trim();
-
       setDraftContent(finalDraft);
       if (finalMatchSummary) setMatchSummary(finalMatchSummary);
       if (finalEditingSuggestions) setEditingSuggestions(finalEditingSuggestions);
