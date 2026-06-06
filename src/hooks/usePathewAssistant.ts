@@ -39,7 +39,7 @@ export const usePathewAssistant = () => {
         language: aiLanguage, // Use current UI language for AI responses
       };
 
-      const data = await PathewAssistantService.generateResponse(fullPayload);
+      const data = await PathewAssistantService.streamResponse(fullPayload);
       
       if (data.error) {
         throw new Error(data.error);
