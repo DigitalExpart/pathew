@@ -152,18 +152,56 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
 
   // === PIPELINE ACTIONS ===
 
+  // ── MAPS (Defined inside the hook or outside) ──
+  const buildSystemPromptMaps = () => {
+    const experienceLevelMap: Record<string, string> = {
+      "Graduate": `EXPERIENCE LEVEL: Graduate (Academic highlights & entry roles)\n- Place Education section immediately after Contact Header\n- Highlight dissertation, final year projects, academic achievements\n- Include all internships, part-time jobs, society roles, volunteering\n- Show GPA or degree classification prominently if strong\n- Skills section should be large and near the top to compensate for limited work history\n- Summary should convey ambition and potential, not experience\n- Do not pad roles — be honest about level, focus on transferable skills`,
+      "Early Career": `EXPERIENCE LEVEL: Early Career (1–3 years experience)\n- Balance Education and Work Experience with roughly equal weight\n- Highlight any promotions, new responsibilities, or fast progression\n- Include all work experience including part-time or contract roles\n- Skills section still prominent\n- Summary should show trajectory and momentum`,
+      "Mid Career": `EXPERIENCE LEVEL: Mid Career (3–8 years experience)\n- Work Experience is now the dominant section\n- Education should be brief — no grade unless exceptional\n- Show clear career progression across roles\n- Minimum 2–3 quantified achievements per role\n- Skills should reflect specialisation, not just basics\n- Summary should convey expertise and direction`,
+      "Senior": `EXPERIENCE LEVEL: Senior (8+ years experience & leadership)\n- Open with a strong leadership-focused summary\n- Emphasise team sizes led, budgets owned, strategic decisions made\n- Show scale of impact: revenue influenced, departments managed\n- Roles older than 15 years can be condensed into one line or omitted\n- Education is minimal — degree, institution, year only\n- No need to list every responsibility — focus on outcomes`,
+      "Executive": `EXPERIENCE LEVEL: Executive (Director/C-level corporate governance)\n- Summary should read like a board-level value proposition\n- Lead with executive roles, board positions, governance experience\n- Focus on corporate transformation, P&L ownership, organisational change\n- Include advisory boards or non-executive directorships if any\n- Remove all junior roles entirely — only last 10–15 years\n- Education is a single line only\n- Every line must justify C-suite positioning`
+    };
+
+    const pagesMap: Record<number, string> = {
+      1: `PAGE LIMIT: 1 page only. Be extremely concise. Cut anything that doesn't directly support the target role. Prioritise the last 3 years of experience only. Summary max 2 sentences.`,
+      2: `PAGE LIMIT: 2 pages. Standard professional length. Include all relevant experience from the last 10 years. No padding but no cutting of important content.`,
+      3: `PAGE LIMIT: 3 pages. Extended format. Include full career history, all certifications, detailed skills, and any publications or presentations. Useful for senior or academic-leaning roles.`,
+      4: `PAGE LIMIT: 4 pages. Comprehensive format. Include all career history, full education, all certifications, publications, conferences, grants, memberships. Do not omit any section.`,
+      5: `PAGE LIMIT: 5 pages. Full exhaustive format. Include everything — leave nothing out. Every role, every publication, every award, every membership. Appropriate for academic or executive profiles.`
+    };
+
+    const toneMap: Record<string, string> = {
+      "N/A": `TONE: Neutral standard CV language. Clear and professional. No specific stylistic instruction.`,
+      "Professional": `TONE: Professional (formal)\n- Formal, polished language throughout\n- No first-person pronouns ("I", "my") — use implied third person\n- Precise vocabulary — no slang, no contractions\n- Every sentence must earn its place — remove filler phrases like "responsible for" or "tasked with"\n- Replace weak verbs with strong action verbs: led, delivered, optimised, secured, drove`,
+      "Academic": `TONE: Academic (aligned with Teaching and Research CV)\n- Scholarly, measured, and precise language\n- Use discipline-appropriate terminology where relevant\n- Avoid corporate buzzwords entirely\n- Passive and active voice can be mixed as is normal in academic writing\n- Demonstrate intellectual rigour in all descriptions\n- Research interests and publications should read with authority`,
+      "Creative": `TONE: Creative (story-driven)\n- Professional Summary should read as a compelling career narrative\n- Use vivid, specific, original language — avoid all clichés\n- Show personality while remaining professional\n- Experience descriptions should tell a story of growth, challenge, and impact\n- Avoid generic phrases — replace with specific, memorable language\n- The CV should feel human, not corporate-template-generated`,
+      "Concise": `TONE: Concise (short high-signal bullets)\n- Every single line must earn its place — ruthlessly remove filler\n- Bullets must be 1 line maximum wherever possible\n- Professional Summary: maximum 2 sentences\n- Use numbers and metrics aggressively — no vague claims\n- Remove ALL padding phrases: "responsible for", "worked closely with", "helped to"\n- If something doesn't add signal, delete it`,
+      "Casual": `TONE: Casual (friendly and warm)\n- Approachable, human language — still professional but personable\n- Implied first-person tone is acceptable in the summary\n- Contractions are acceptable (you'll find, I've built, we delivered)\n- Show enthusiasm and personality genuinely\n- Avoid stiff or overly formal corporate language\n- The reader should feel like they're meeting a real person`
+    };
+
+    const languageMap: Record<string, string> = {
+      "UK English": `LANGUAGE: Write entirely in British English.\nSpelling rules: programme, organise, colour, behaviour, centre, licence (noun), practise (verb), travelling, modelling, defence, catalogue.\nVocabulary: use CV (not résumé), mobile (not cell phone), post (not mail), holiday (not vacation).`,
+      "US English": `LANGUAGE: Write entirely in American English.\nSpelling rules: program, organize, color, behavior, center, license, practice, traveling, modeling, defense, catalog.\nVocabulary: use résumé (not CV), cell phone (not mobile), mail (not post), vacation (not holiday).`,
+      "French": `LANGUAGE: Write the entire CV in French (Français).\nUse formal French register throughout (vous-form implied).\nStandard French CV terminology: "Expérience professionnelle", "Formation", "Compétences", "Langues", "Références disponibles sur demande".\nDate format: month written out (janvier, février etc).\nDo not mix English and French — the entire document must be in French.`,
+      "German": `LANGUAGE: Write the entire CV in German (Deutsch).\nUse formal German register throughout (Sie-form implied).\nStandard German CV terminology: "Berufserfahrung", "Ausbildung", "Kenntnisse", "Sprachen", "Referenzen auf Anfrage".\nGerman CVs typically include: date of birth, nationality, marital status in the header — include these if the user has provided them.\nDate format: DD.MM.YYYY\nDo not mix English and German — the entire document must be in German.`,
+      "Spanish": `LANGUAGE: Write the entire CV in Spanish (Español).\nUse formal Spanish register (usted-form implied).\nStandard Spanish CV terminology: "Experiencia profesional", "Formación académica", "Habilidades", "Idiomas", "Referencias disponibles bajo petición".\nDate format: DD/MM/YYYY\nDo not mix English and Spanish — the entire document must be in Spanish.`
+    };
+
+    return { experienceLevelMap, pagesMap, toneMap, languageMap };
+  };
+
   // Helper: Build robust prompt instructions locally to avoid needing edge function changes
   const buildEnhancedContext = (isGeneration: boolean = false) => {
+    const { experienceLevelMap, pagesMap, toneMap, languageMap } = buildSystemPromptMaps();
     let ctx = '';
+    
     if (opportunityText) {
       ctx += `Target Opportunity / Job Description:\n${opportunityText}\n\n`;
     }
     
-    ctx += `CRITICAL GENERATION PARAMETERS:\n`;
-    ctx += `- Tone of Voice: ${tone}. You MUST strictly adopt this tone throughout the document. If 'Casual & Friendly', write in a conversational, warm, and natural style. If 'Concise', use ultra-short high-signal bullets. If 'Creative', be story-driven and expressive.\n`;
-    
     if (builderType === 'cv' || documentType === 'CV') {
-      ctx += `- Target CV Type: ${cvType}. `;
+      ctx += `You are generating a ${cvType.toUpperCase()}.\n\n`;
+      
       if (cvType === 'Teaching / Academic CV') {
         ctx += `CRITICAL FORMATTING RULES FOR ACADEMIC CV:
 - Philosophy: Formal, comprehensive scholarship. Academic CVs can be 4–10+ pages. Focus on scholarship & credentials.
@@ -182,31 +220,36 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
   12. AWARDS & HONOURS (List)
   13. SKILLS & LANGUAGES (Minor, near end)
   14. REFERENCES (Named referees included. 2-3 referees with Full name, title, institution, email, phone)
-- Do not mix this format with a corporate Work CV format under any circumstance.\n`;
+- Do not mix this format with a corporate Work CV format under any circumstance.\n\n`;
       } else {
         ctx += `CRITICAL FORMATTING RULES FOR WORK CV:
 - Philosophy: Achievements-first, recruiter-scannable, ATS-optimized. Every section should answer "what value did you deliver?"
 - Section Order & Priority:
   1. Contact Header (Name, Job Title, Email, Phone, LinkedIn, Location (city only), Portfolio/GitHub. NO photo, DOB, or marital status)
   2. PROFESSIONAL SUMMARY (3-4 sentences, paragraph form - NOT bullets. who you are -> key strength -> value proposition -> what you are seeking)
-  3. CORE SKILLS / COMPETENCIES (8-16 items max, bullet grid. Hard + soft skills mixed. NO proficiency bars)
-  4. WORK EXPERIENCE (Format per role: "Job Title | Company Name | City | Month YYYY - Month YYYY". Start with 1 sentence describing role scope, then 3-6 bullet points starting with strong action verbs showing impact/metrics. NO duty-style bullets)
-  5. EDUCATION (Degree | Institution | Year. Brief, 1-2 lines. NO modules/courses listed)
+  3. CORE SKILLS / COMPETENCIES (8-16 items max, bullet list. Hard + soft skills mixed. NO proficiency bars)
+  4. WORK EXPERIENCE (Most important section. Format per role: "Job Title | Company Name | City | Month YYYY - Month YYYY". Start with 1 sentence describing role scope, then 3-6 bullet points starting with strong action verbs showing impact/metrics. NO duty-style bullets)
+  5. EDUCATION (Degree | Institution | Year. Brief, 1-2 lines per entry. NO modules/courses listed)
   6. CERTIFICATIONS & COURSES (Bullet list, reverse chronological: Certification Name | Issuing Body | Year)
   7. TOOLS & TECHNOLOGIES (Grouped tags or bullets)
   8. LANGUAGES (Inline or bullet)
-  9. VOLUNTEER / EXTRA (Brief bullets - optional)\n`;
+  9. VOLUNTEER / EXTRA (Brief bullets - optional)\n\n`;
       }
       
-      ctx += `- Target Experience Level: ${experienceLevel}. `;
-      if (experienceLevel === 'Graduate') {
-        ctx += `Emphasize educational achievements, course highlights, projects, certifications, student leadership.\n`;
-      } else if (experienceLevel === 'Senior' || experienceLevel === 'Executive') {
-        ctx += `Focus heavily on leadership, governance, team management, board advisory, business outcomes, and key strategic initiatives.\n`;
-      } else {
-        ctx += `Focus on work experience, specific technical skills, and metrics.\n`;
-      }
-    }
+      ctx += `${experienceLevelMap[experienceLevel] || experienceLevelMap["Mid Career"]}\n\n`;
+      ctx += `${pagesMap[pageCount] || pagesMap[2]}\n\n`;
+      ctx += `${toneMap[tone] || toneMap["N/A"]}\n\n`;
+      ctx += `${languageMap[language] || languageMap["UK English"]}\n\n`;
+      
+      ctx += `ABSOLUTE RULES — never break these:
+- Follow the CV Type structure exactly — never invent sections not listed
+- Never mix Work CV and Academic CV formats
+- Respect the page limit — do not exceed it
+- Apply the tone consistently from the first word to the last
+- Write the entire CV in the specified language — no switching
+- Output CV content only — no explanations, no commentary, no preamble
+- Section headers should be in BOLD or ALL CAPS\n\n`;
+
     
     if (manualNotes.additionalContext) {
       ctx += `\nUSER ADDITIONAL CONTEXT:\n${manualNotes.additionalContext}\n`;
