@@ -166,25 +166,23 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
       ctx += `- Target CV Type: ${cvType}. `;
       if (cvType === 'Teaching / Academic CV') {
         ctx += `CRITICAL FORMATTING RULES FOR ACADEMIC CV:
-- Philosophy: Comprehensive and exhaustive. Academic CVs can be 4–10+ pages. The goal is scholarly credibility — every publication, presentation, grant, and teaching role counts.
+- Philosophy: Formal, comprehensive scholarship. Academic CVs can be 4–10+ pages. Focus on scholarship & credentials.
 - Section Order & Priority:
   1. Contact Header (Include institutional email, department, university affiliation, ORCID ID)
-  2. EDUCATION (Not Detailed, 1-2 line listing school, course, grade, reverse chronological)
-  3. WORK EXPERIENCE (All work experience, title and dates listed only, no descriptions)
-  4. TEACHING EXPERIENCE (Listed only with targeted sentences showing number of students/classes taught. Bullet describing role: sole instructor, etc.)
-  5. ADMINISTRATIVE EXPERIENCE (Include administrative role relating to teaching like project supervision, invigilating exams, Managing data)
-  6. RESEARCH EXPERIENCE (Bulletin list)
-  7. PUBLICATIONS (Numbered list, citation format APA/MLA, sub-divided into: Peer-Reviewed Journal Articles, Book Chapters, Books / Monographs, Under Review / In Press. Bold the candidate's name)
-  8. CONFERENCE PRESENTATIONS (Numbered list)
-  9. GRANTS & FUNDING (Table or list)
-  10. PROFESSIONAL MEMBERSHIPS (Inline or list)
-  11. AWARDS & HONOURS (List)
-  12. SKILLS & LANGUAGES (Brief)
-  13. REFERENCES (Available on request)
-- ABSOLUTELY NO "Academic Profile" or "Personal Summary" section.
-- For EDUCATION, do NOT be detailed. Just school, course, and grade.
-- For WORK EXPERIENCE, ONLY output the Job Title, Company/Institution, and Dates. Do NOT generate any bullet points, tasks, or descriptions under work experience.
-- For PUBLICATIONS, use a numbered list (not bullets), and bold the user's name in each citation.\n`;
+  2. ACADEMIC PROFILE / RESEARCH INTERESTS (3–5 sentences, paragraph form. Covers: research specialization -> methodological approach -> current projects/interests)
+  3. EDUCATION (Exhaustive detail. PhD in [Field] | University | YYYY. Include Thesis title, Supervisor name, Committee members, and honours/distinctions)
+  4. WORK EXPERIENCE (All work experience, title and dates listed only. Paragraph + bullets if relevant)
+  5. TEACHING EXPERIENCE (Course Code + Course Title + Level + Year. Bullet describing role: sole instructor, etc. Note class sizes)
+  6. ADMINISTRATIVE EXPERIENCE (Include project supervision, invigilating exams, managing data)
+  7. RESEARCH EXPERIENCE (Bulletin list)
+  8. PUBLICATIONS (Numbered list, citation format APA/MLA, sub-divided into: Peer-Reviewed Journal Articles, Book Chapters, Books / Monographs, Under Review / In Press. Bold the candidate's name)
+  9. CONFERENCE PRESENTATIONS (Numbered list)
+  10. GRANTS & FUNDING (Table or list)
+  11. PROFESSIONAL MEMBERSHIPS (Inline or list)
+  12. AWARDS & HONOURS (List)
+  13. SKILLS & LANGUAGES (Minor, near end)
+  14. REFERENCES (Named referees included. 2-3 referees with Full name, title, institution, email, phone)
+- Do not mix this format with a corporate Work CV format under any circumstance.\n`;
       } else {
         ctx += `CRITICAL FORMATTING RULES FOR WORK CV:
 - Philosophy: Achievements-first, recruiter-scannable, ATS-optimized. Every section should answer "what value did you deliver?"
