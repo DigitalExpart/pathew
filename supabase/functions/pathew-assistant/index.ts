@@ -726,7 +726,7 @@ ${taskPrompt}
             'anthropic-version': '2023-06-01',
           },
           body: JSON.stringify({
-            model, max_tokens: 8000, system: systemPrompt,
+            model, max_tokens: 4500, system: systemPrompt,
             messages: [{ role: "user", content: userMessageContent.trim() }],
           }),
         })
