@@ -157,7 +157,23 @@ BUILDER-SPECIFIC SYSTEM RULES:
   * 2 Pages: Balanced depth, standard detail for mid-career.
   * 3-5 Pages: Deep narrative expansion. Include extensive project details, publications, granular technical skills, comprehensive work histories, and extended summaries.
 - CV Type formatting rules:
-  * If "Work CV": order sections normally (Profile, Skills, Work Experience, Projects, Education).
+  * If "Work CV": you MUST structure the CV using EXACTLY the following sections in this sequence:
+    1. Contact Header (Name, Job Title, Email, Phone, LinkedIn, Location (city only), Portfolio/GitHub. NO photo, DOB, or marital status)
+    2. PROFESSIONAL SUMMARY
+    3. CORE SKILLS / COMPETENCIES
+    4. WORK EXPERIENCE
+    5. EDUCATION
+    6. CERTIFICATIONS & COURSES
+    7. TOOLS & TECHNOLOGIES
+    8. LANGUAGES
+    9. VOLUNTEER / EXTRA
+    CRITICAL FORMATTING RULES FOR WORK CV:
+    - Philosophy: Achievements-first, recruiter-scannable, ATS-optimized. Every section should answer "what value did you deliver?"
+    - PROFESSIONAL SUMMARY: 3-4 sentences, paragraph form (NOT bullets). Include: who you are -> key strength -> value proposition -> what you are seeking.
+    - CORE SKILLS / COMPETENCIES: 8-16 items max, bullet list. Hard + soft skills mixed. NO proficiency bars.
+    - WORK EXPERIENCE: Most important section. Format per role: "Job Title | Company Name | City | Month YYYY - Month YYYY". Start with 1 sentence describing role scope, then 3-6 bullet points starting with strong action verbs showing impact/metrics. NO duty-style bullets.
+    - EDUCATION: Degree | Institution | Year. Brief, 1-2 lines per entry. NO modules/courses listed.
+    - CERTIFICATIONS & COURSES: Bullet list, reverse chronological: Certification Name | Issuing Body | Year.
   * If "Teaching / Academic CV": you MUST structure the CV using EXACTLY the following sections in this rigid sequence:
     1. Contact Header (Include institutional email, department, university affiliation, ORCID ID)
     2. EDUCATION

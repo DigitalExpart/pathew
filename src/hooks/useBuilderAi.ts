@@ -186,7 +186,18 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
 - For WORK EXPERIENCE, ONLY output the Job Title, Company/Institution, and Dates. Do NOT generate any bullet points, tasks, or descriptions under work experience.
 - For PUBLICATIONS, use a numbered list (not bullets), and bold the user's name in each citation.\n`;
       } else {
-        ctx += `Order sections normally (Profile, Skills, Work Experience, Projects, Education).\n`;
+        ctx += `CRITICAL FORMATTING RULES FOR WORK CV:
+- Philosophy: Achievements-first, recruiter-scannable, ATS-optimized. Every section should answer "what value did you deliver?"
+- Section Order & Priority:
+  1. Contact Header (Name, Job Title, Email, Phone, LinkedIn, Location (city only), Portfolio/GitHub. NO photo, DOB, or marital status)
+  2. PROFESSIONAL SUMMARY (3-4 sentences, paragraph form - NOT bullets. who you are -> key strength -> value proposition -> what you are seeking)
+  3. CORE SKILLS / COMPETENCIES (8-16 items max, bullet grid. Hard + soft skills mixed. NO proficiency bars)
+  4. WORK EXPERIENCE (Format per role: "Job Title | Company Name | City | Month YYYY - Month YYYY". Start with 1 sentence describing role scope, then 3-6 bullet points starting with strong action verbs showing impact/metrics. NO duty-style bullets)
+  5. EDUCATION (Degree | Institution | Year. Brief, 1-2 lines. NO modules/courses listed)
+  6. CERTIFICATIONS & COURSES (Bullet list, reverse chronological: Certification Name | Issuing Body | Year)
+  7. TOOLS & TECHNOLOGIES (Grouped tags or bullets)
+  8. LANGUAGES (Inline or bullet)
+  9. VOLUNTEER / EXTRA (Brief bullets - optional)\n`;
       }
       
       ctx += `- Target Experience Level: ${experienceLevel}. `;
