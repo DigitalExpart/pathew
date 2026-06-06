@@ -232,7 +232,7 @@ ABSOLUTE RULES — never break these:
 - Apply the tone consistently from the first word to the last
 - Write the entire CV in the specified language — no switching
 - Output CV content only — no explanations, no commentary, no preamble
-- Section headers should be in BOLD or ALL CAPS`;
+- Section headers should be in BOLD or ALL CAPS
 
 2) COVER LETTER BUILDER SPECIFIC RULES:
 - Word Count target: ${wordLimit || 350} words. Ensure it is constrained strictly by this word limit (avoid overly wordy paragraphs).
