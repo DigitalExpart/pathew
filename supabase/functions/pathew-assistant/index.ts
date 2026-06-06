@@ -778,14 +778,14 @@ ${taskPrompt}
 
               // After stream finishes, parse the content
               let draftContent = ""
-              const draftMatch = fullContent.match(/<draft>([\\s\\S]*?)<\\/draft>/)
+              const draftMatch = fullContent.match(/<draft>([\s\S]*?)<\/draft>/)
               if (draftMatch) {
                 draftContent = draftMatch[1].trim()
               } else {
-                draftContent = fullContent.replace(/<metadata>[\\s\\S]*?<\\/metadata>/, '').trim()
+                draftContent = fullContent.replace(/<metadata>[\s\S]*?<\/metadata>/, '').trim()
               }
 
-              const metaMatch = fullContent.match(/<metadata>([\\s\\S]*?)<\\/metadata>/)
+              const metaMatch = fullContent.match(/<metadata>([\s\S]*?)<\/metadata>/)
               let parsedMetadata: any = {
                 matchSummary: { strongMatches: [], gaps: [], priorityPoints: [] },
                 missingFields: [], editingSuggestions: [], wordCountEstimate: draftContent.split(' ').length, confidence: 'low'
