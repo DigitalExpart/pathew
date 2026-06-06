@@ -249,7 +249,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
 - Write the entire CV in the specified language — no switching
 - Output CV content only — no explanations, no commentary, no preamble
 - Section headers should be in BOLD or ALL CAPS\n\n`;
-
+    }
     
     if (manualNotes.additionalContext) {
       ctx += `\nUSER ADDITIONAL CONTEXT:\n${manualNotes.additionalContext}\n`;
