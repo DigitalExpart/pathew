@@ -564,10 +564,13 @@ ABSOLUTE RULES — never break these:
 - Reporting & Accountability: weave in a solid Accountability & Reporting section focusing heavily on these performance indicators: ${JSON.stringify(reportingMethods || [])}.
 - Dynamic Custom Questions: you MUST systematically answer every question listed in: ${JSON.stringify(customQuestions || [])}. Format each response clearly under a corresponding heading matching the question, adhering to its specific question word limit.
 
-CRITICAL: Your ENTIRE response must be a valid JSON object with this exact structure. Do not put markdown wraps or "json" prefix blocks; output only the raw JSON.
-Ensure you properly escape all newlines as \\n inside strings to make it valid JSON. NEVER use raw unescaped newlines inside the JSON string values.
+CRITICAL: You MUST output your response in two distinct XML blocks: <draft> and <metadata>.
+DO NOT wrap them in JSON or markdown blocks.
+
+Output the full document text inside <draft>...</draft>.
+
+Output the analytical metadata inside <metadata>...</metadata> as a raw JSON string matching this exact structure:
 {
-  "draft": "Your detailed drafted document or summary here. Clean text only, no raw JSON.",
   "matchSummary": {
     "strongMatches": ["Match point 1", "Match point 2"],
     "gaps": ["Gap point 1", "Gap point 2"],
@@ -726,119 +729,142 @@ ${taskPrompt}
             'anthropic-version': '2023-06-01',
           },
           body: JSON.stringify({
-            model, max_tokens: 4500, system: systemPrompt,
+            model, max_tokens: 8000, system: systemPrompt,
+            stream: true,
             messages: [{ role: "user", content: userMessageContent.trim() }],
           }),
         })
 
-        if (claudeResponse.ok) {
-          const result = await claudeResponse.json()
-          const content = result.content?.[0]?.text || ''
-          const tokensIn = result.usage?.input_tokens || 0
-          const tokensOut = result.usage?.output_tokens || 0
-          console.log(`[SUCCESS] Model ${model} | Tokens: ${tokensIn}in/${tokensOut}out`)
+        if (claudeResponse.ok && claudeResponse.body) {
+          const encoder = new TextEncoder()
+          const decoder = new TextDecoder()
+          
+          const stream = new ReadableStream({
+            async start(controller) {
+              const reader = claudeResponse.body!.getReader()
+              let buffer = ""
+              let fullContent = ""
+              
+              try {
+                while (true) {
+                  const { done, value } = await reader.read()
+                  if (done) break
+                  
+                  const chunk = decoder.decode(value, { stream: true })
+                  buffer += chunk
+                  const lines = buffer.split('\\n')
+                  buffer = lines.pop() || ""
+                  
+                  for (const line of lines) {
+                    if (line.startsWith('data: ')) {
+                      const data = line.substring(6)
+                      if (data === '[DONE]') continue
+                      try {
+                        const event = JSON.parse(data)
+                        if (event.type === 'content_block_delta' && event.delta?.text) {
+                          const text = event.delta.text
+                          fullContent += text
+                          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'chunk', text })}\\n\\n`))
+                        }
+                      } catch (e) {
+                         // ignore parse errors for partial JSON
+                      }
+                    }
+                  }
+                }
+              } catch (err) {
+                console.error('Stream read error:', err)
+              }
 
-          let parsedResponse
-          try {
-            // Find the first { and last } to extract the JSON object
-            const firstBrace = content.indexOf('{')
-            const lastBrace = content.lastIndexOf('}')
-            if (firstBrace !== -1 && lastBrace !== -1) {
-              const jsonStr = content.substring(firstBrace, lastBrace + 1)
-              parsedResponse = JSON.parse(jsonStr)
-            } else {
-              throw new Error('No JSON object found')
+              // After stream finishes, parse the content
+              let draftContent = ""
+              const draftMatch = fullContent.match(/<draft>([\\s\\S]*?)<\\/draft>/)
+              if (draftMatch) {
+                draftContent = draftMatch[1].trim()
+              } else {
+                draftContent = fullContent.replace(/<metadata>[\\s\\S]*?<\\/metadata>/, '').trim()
+              }
+
+              const metaMatch = fullContent.match(/<metadata>([\\s\\S]*?)<\\/metadata>/)
+              let parsedMetadata: any = {
+                matchSummary: { strongMatches: [], gaps: [], priorityPoints: [] },
+                missingFields: [], editingSuggestions: [], wordCountEstimate: draftContent.split(' ').length, confidence: 'low'
+              }
+              
+              if (metaMatch) {
+                try {
+                  parsedMetadata = JSON.parse(metaMatch[1].trim())
+                } catch (e) {
+                  console.error("JSON parse error on metadata", e)
+                }
+              }
+              parsedMetadata.draft = draftContent
+              parsedMetadata.sessionId = sid
+
+              // === DEDUCT CREDIT ===
+              let creditCost = requiredCredits
+              if (sessionId && documentType !== 'Roadmap') {
+                const { count } = await supabaseAdmin
+                  .from('assistant_messages')
+                  .select('*', { count: 'exact', head: true })
+                  .eq('session_id', sid)
+                  .eq('role', 'user')
+                
+                if (count && count >= 3) {
+                  creditCost = 0.25
+                }
+              }
+
+              const newCredits = Math.max(0, currentCredits - creditCost)
+              const { error: creditError } = await supabaseAdmin.from('profiles').update({ credits: newCredits }).eq('id', user.id)
+              if (creditError) console.error(`[CREDIT ERROR] ${creditError.message}`)
+              else console.log(`[CREDITS] ${currentCredits} -> ${newCredits} (Cost: ${creditCost}) for user ${user.id}`)
+
+              // === SAVE TO HISTORY ===
+              if (!sessionId) {
+                const { error: sessionError } = await supabaseAdmin.from('assistant_sessions').insert({
+                  id: sid,
+                  user_id: user.id,
+                  task: action === "extract_context" ? "Context Extraction" : (documentType || 'General Builder'),
+                  page: documentType || 'General'
+                })
+                if (sessionError) console.error(`[HISTORY ERROR SESSION] ${sessionError.message}`)
+              }
+
+              const tokensIn = 0 // Stream doesn't give this as easily, just record 0
+              const tokensOut = 0
+
+              const { error: userMsgError } = await supabaseAdmin.from('assistant_messages').insert({
+                user_id: user.id,
+                role: 'user',
+                content: action === "extract_context" ? "Gap Analysis and Context Extraction" : `Draft Generation (${documentType})`,
+                session_id: sid,
+                tokens_in: tokensIn,
+                tokens_out: 0,
+              })
+              if (userMsgError) console.error(`[HISTORY ERROR USER] ${userMsgError.message}`)
+
+              const { error: asstMsgError } = await supabaseAdmin.from('assistant_messages').insert({
+                user_id: user.id,
+                role: 'assistant',
+                content: draftContent,
+                session_id: sid,
+                tokens_in: 0,
+                tokens_out: tokensOut,
+              })
+              if (asstMsgError) console.error(`[HISTORY ERROR ASST] ${asstMsgError.message}`)
+              else console.log(`[HISTORY] Saved messages for session ${sid}`)
+
+              parsedMetadata.creditsRemaining = newCredits
+              parsedMetadata.creditsDeducted = creditCost
+
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'done', metadata: parsedMetadata })}\\n\\n`))
+              controller.close()
             }
-          } catch {
-            let extractedDraft = content;
-            
-            // If JSON fails, try to extract the draft string value (handles truncation or unescaped newlines)
-            const draftMatch = content.match(/"draft"\s*:\s*"(.*?)"(?:\s*,|\s*\}|$)/s);
-            if (draftMatch && draftMatch[1]) {
-               extractedDraft = draftMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\\\/g, '\\');
-            } else {
-               // Fallback: strip markdown wrappers
-               extractedDraft = content.replace(/^```json\s*/, '').replace(/\s*```$/, '');
-               // If it still starts with { and has "draft":, it's severely truncated raw json
-               if (extractedDraft.trim().startsWith('{')) {
-                   const rawMatch = extractedDraft.match(/"draft"\s*:\s*"(.*)/s);
-                   if (rawMatch && rawMatch[1]) {
-                       extractedDraft = rawMatch[1].replace(/\\n/g, '\n').replace(/\\"/g, '"').replace(/\\\\/g, '\\');
-                   }
-               }
-            }
-
-            parsedResponse = {
-              draft: extractedDraft,
-              matchSummary: { strongMatches: [], gaps: [], priorityPoints: [] },
-              missingFields: [],
-              editingSuggestions: [],
-              wordCountEstimate: extractedDraft.split(' ').length,
-              confidence: 'low',
-              sessionId: sid
-            }
-          }
-
-          let creditCost = requiredCredits
-          if (sessionId && documentType !== 'Roadmap') {
-            const { count } = await supabaseAdmin
-              .from('assistant_messages')
-              .select('*', { count: 'exact', head: true })
-              .eq('session_id', sid)
-              .eq('role', 'user')
-            
-            if (count && count >= 3) {
-              creditCost = 0.25
-            }
-          }
-
-          // === DEDUCT CREDIT ===
-          const newCredits = Math.max(0, currentCredits - creditCost)
-          const { error: creditError } = await supabaseAdmin.from('profiles').update({ credits: newCredits }).eq('id', user.id)
-          if (creditError) console.error(`[CREDIT ERROR] ${creditError.message}`)
-          else console.log(`[CREDITS] ${currentCredits} -> ${newCredits} (Cost: ${creditCost}) for user ${user.id}`)
-
-          // === SAVE TO HISTORY ===
-          if (!sessionId) {
-            const { error: sessionError } = await supabaseAdmin.from('assistant_sessions').insert({
-              id: sid,
-              user_id: user.id,
-              task: action === "extract_context" ? "Context Extraction" : (documentType || 'General Builder'),
-              page: documentType || 'General'
-            })
-            if (sessionError) console.error(`[HISTORY ERROR SESSION] ${sessionError.message}`)
-          }
-
-          // Save user message
-          const { error: userMsgError } = await supabaseAdmin.from('assistant_messages').insert({
-            user_id: user.id,
-            role: 'user',
-            content: action === "extract_context" ? "Gap Analysis and Context Extraction" : `Draft Generation (${documentType})`,
-            session_id: sid,
-            tokens_in: tokensIn,
-            tokens_out: 0,
           })
-          if (userMsgError) console.error(`[HISTORY ERROR USER] ${userMsgError.message}`)
 
-          // Save assistant response
-          const { error: asstMsgError } = await supabaseAdmin.from('assistant_messages').insert({
-            user_id: user.id,
-            role: 'assistant',
-            content: parsedResponse.draft || content,
-            session_id: sid,
-            tokens_in: 0,
-            tokens_out: tokensOut,
-          })
-          if (asstMsgError) console.error(`[HISTORY ERROR ASST] ${asstMsgError.message}`)
-          else console.log(`[HISTORY] Saved messages for session ${sid}`)
-
-          // Add credits and sessionId info to response
-          parsedResponse.creditsRemaining = newCredits
-          parsedResponse.creditsDeducted = creditCost
-          parsedResponse.sessionId = sid
-
-          return new Response(JSON.stringify(parsedResponse), {
-            status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+          return new Response(stream, {
+            headers: { ...corsHeaders, 'Content-Type': 'text/event-stream' }
           })
         }
 

@@ -37,17 +37,65 @@ export interface AssistantResponseData {
 }
 
 export const PathewAssistantService = {
-  async generateResponse(payload: AssistantRequestPayload): Promise<AssistantResponseData> {
-    try {
-      const { data, error } = await supabase.functions.invoke('pathew-assistant', {
-        body: payload,
-      });
+  async streamResponse(
+    payload: AssistantRequestPayload,
+    onChunk?: (text: string) => void
+  ): Promise<AssistantResponseData> {
+    return new Promise(async (resolve, reject) => {
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData.session?.access_token;
+        
+        const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+        const response = await fetch(`${supabaseUrl}/functions/v1/pathew-assistant`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+          },
+          body: JSON.stringify(payload)
+        });
 
-      if (error) throw error;
-      return data;
-    } catch (error: any) {
-      console.error('Pathew Assistant Service Error:', error);
-      throw new Error(error.message || 'Failed to communicate with PATHEW Assistant');
-    }
+        if (!response.ok) {
+          throw new Error(`Edge Function returned a non-2xx status code: ${response.status}`);
+        }
+
+        const reader = response.body?.getReader();
+        if (!reader) throw new Error('No stream returned');
+
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          for (const line of lines) {
+            if (line.startsWith('data: ')) {
+              const dataStr = line.substring(6);
+              if (dataStr === '[DONE]') continue;
+
+              try {
+                const event = JSON.parse(dataStr);
+                if (event.type === 'chunk') {
+                  if (onChunk) onChunk(event.text);
+                } else if (event.type === 'done') {
+                  resolve(event.metadata);
+                }
+              } catch (e) {
+                console.warn('Failed to parse SSE event', e);
+              }
+            }
+          }
+        }
+      } catch (error: any) {
+        console.error('Pathew Assistant Service Streaming Error:', error);
+        reject(error);
+      }
+    });
   }
 };

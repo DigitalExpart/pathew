@@ -637,7 +637,7 @@ OUTPUT:
       }, user.id);
 
       // 2. Call Edge Function with action = "extract_context"
-      const result = await PathewAssistantService.generateResponse({
+      const result = await PathewAssistantService.streamResponse({
         action: 'extract_context',
         sessionId,
         documentType,
@@ -757,7 +757,10 @@ OUTPUT:
         reporting_methods: reportingMethods
       }, user.id);
 
-      const result = await PathewAssistantService.generateResponse({
+      let accumulatedDraft = '';
+      if (!sid) setDraftContent(''); // Clear draft only if it's a new generation
+
+      const result = await PathewAssistantService.streamResponse({
         action: 'generate_draft',
         sessionId: activeSessionId,
         documentType,
@@ -794,71 +797,23 @@ OUTPUT:
           },
           reportingMethods
         }
+      }, (chunk) => {
+        accumulatedDraft += chunk;
+        let display = accumulatedDraft;
+        if (display.includes('<draft>')) display = display.split('<draft>')[1];
+        if (display.includes('</draft>')) display = display.split('</draft>')[0];
+        if (!display.includes('<metadata>')) {
+          setDraftContent(display);
+        }
       });
 
       if (result.error) {
         throw new Error(result.error);
       }
 
-      let finalDraft = result.draft;
-      let finalMatchSummary = result.matchSummary || { strongMatches: [], gaps: [], priorityPoints: [] };
-      let finalEditingSuggestions = result.editingSuggestions || [];
-      let finalEstimatedPages = result.estimatedPages || 1;
-
-      // Fallback: If edge function failed to parse the JSON due to unescaped newlines or markdown wraps
-      if (finalDraft && finalDraft.includes('"draft"')) {
-        console.warn("Detected raw JSON in draft, attempting robust extraction...");
-        try {
-          let cleanStr = finalDraft.replace(/```json/gi, '').replace(/```/g, '').trim();
-          try {
-            const parsed = JSON.parse(cleanStr);
-            if (parsed.draft) {
-              finalDraft = parsed.draft;
-              if (parsed.matchSummary) finalMatchSummary = parsed.matchSummary;
-              if (parsed.editingSuggestions) finalEditingSuggestions = parsed.editingSuggestions;
-              if (parsed.estimatedPages) finalEstimatedPages = parsed.estimatedPages;
-            }
-          } catch (err) {
-            // Attempt to extract the draft text safely via regex if JSON parse still fails
-            // This matches the draft string even if matchSummary is missing
-            let draftMatch = cleanStr.match(/"draft"\s*:\s*"([\s\S]*?)"(?:\s*,\s*"|\s*\})/);
-            
-            if (!draftMatch) {
-              // If it's completely truncated at the end of the string
-              draftMatch = cleanStr.match(/"draft"\s*:\s*"([\s\S]*)/);
-              if (draftMatch && draftMatch[1]) {
-                draftMatch[1] = draftMatch[1].replace(/"\s*\}?\s*$/, ''); // strip trailing quote if it exists
-              }
-            }
-
-            if (draftMatch && draftMatch[1]) {
-              finalDraft = draftMatch[1];
-              // Unescape any escaped newlines just in case
-              finalDraft = finalDraft.replace(/\\n/g, '\n').replace(/\\"/g, '"');
-            }
-            
-            const pagesMatch = cleanStr.match(/"estimatedPages"\s*:\s*(\d+)/);
-            if (pagesMatch && pagesMatch[1]) {
-              finalEstimatedPages = parseInt(pagesMatch[1], 10);
-            }
-          }
-        } catch (e) {
-          console.error("Robust extraction failed", e);
-        }
-      }
-
-      // Final robust cleanup for escaped newlines and markdown wrappers
-      finalDraft = finalDraft
-        .replace(/^```(markdown|json|text)?\n?/i, '')
-        .replace(/```$/i, '')
-        .replace(/\\n/g, '\n')
-        .replace(/\\"/g, '"')
-        .trim();
-
-      setDraftContent(finalDraft);
-      setMatchSummary(finalMatchSummary);
-      setEditingSuggestions(finalEditingSuggestions);
-      setEstimatedPages(finalEstimatedPages);
+      setMatchSummary(result.matchSummary || { strongMatches: [], gaps: [], priorityPoints: [] });
+      setEditingSuggestions(result.editingSuggestions || []);
+      setEstimatedPages(result.estimatedPages || 1);
       setConfidence(result.confidence || 'medium');
       setSessionId(result.sessionId);
 
@@ -886,7 +841,9 @@ OUTPUT:
     setError(null);
 
     try {
-      const result = await PathewAssistantService.generateResponse({
+      let accumulatedDraft = '';
+
+      const result = await PathewAssistantService.streamResponse({
         action: `regenerate: ${customInstructions}`,
         sessionId,
         documentType,
@@ -922,6 +879,14 @@ OUTPUT:
             partner_role: partnerRole
           },
           reportingMethods
+        }
+      }, (chunk) => {
+        accumulatedDraft += chunk;
+        let display = accumulatedDraft;
+        if (display.includes('<draft>')) display = display.split('<draft>')[1];
+        if (display.includes('</draft>')) display = display.split('</draft>')[0];
+        if (!display.includes('<metadata>')) {
+          setDraftContent(display);
         }
       });
 
