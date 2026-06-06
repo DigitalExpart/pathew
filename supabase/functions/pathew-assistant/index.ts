@@ -752,7 +752,7 @@ ${taskPrompt}
                   
                   const chunk = decoder.decode(value, { stream: true })
                   buffer += chunk
-                  const lines = buffer.split('\\n')
+                  const lines = buffer.split('\n')
                   buffer = lines.pop() || ""
                   
                   for (const line of lines) {
@@ -764,7 +764,7 @@ ${taskPrompt}
                         if (event.type === 'content_block_delta' && event.delta?.text) {
                           const text = event.delta.text
                           fullContent += text
-                          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'chunk', text })}\\n\\n`))
+                          controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'chunk', text })}\n\n`))
                         }
                       } catch (e) {
                          // ignore parse errors for partial JSON
@@ -858,7 +858,7 @@ ${taskPrompt}
               parsedMetadata.creditsRemaining = newCredits
               parsedMetadata.creditsDeducted = creditCost
 
-              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'done', metadata: parsedMetadata })}\\n\\n`))
+              controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'done', metadata: parsedMetadata })}\n\n`))
               controller.close()
             }
           })
