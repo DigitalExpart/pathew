@@ -149,18 +149,34 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
       continue;
     }
     
-    const isList = line.startsWith('- ') || line.startsWith('* ') || line.startsWith('+ ');
+    const isListMatch = line.match(/^[-\u2013\u2014*+]\s+/);
+    const isList = !!isListMatch;
     const hasPipe = line.includes('|');
     const dateRegex = /((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{4})\s*[-–—]\s*((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{4}|Present|Current)/i;
     
     // Check if it's an entry row with dates
-    if (!isList && !isHeaderArea && hasPipe && dateRegex.test(line)) {
+    if (!isHeaderArea && hasPipe && dateRegex.test(line)) {
       let cleanLine = line.replace(/^\*\*/, '').replace(/\*\*$/, '');
+      if (isListMatch) {
+        cleanLine = cleanLine.substring(isListMatch[0].length);
+      }
+      
       const parts = cleanLine.split('|').map(p => p.trim());
       
       if (parts.length >= 2) {
         const leftPart = parts.slice(0, parts.length - 1).join(' | ');
-        const rightPart = parts[parts.length - 1];
+        let rightPart = parts[parts.length - 1];
+        let descriptionPart = '';
+        
+        const dateMatch = rightPart.match(dateRegex);
+        if (dateMatch) {
+          const dateEndIndex = dateMatch.index! + dateMatch[0].length;
+          const afterDate = rightPart.substring(dateEndIndex).trim();
+          if (afterDate) {
+            descriptionPart = afterDate.replace(/^[:\-–—.,;]\s*/, '').trim();
+            rightPart = rightPart.substring(0, dateEndIndex).trim();
+          }
+        }
         
         const table = new Table({
           width: { size: 100, type: WidthType.PERCENTAGE },
@@ -206,7 +222,18 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
           ]
         });
         children.push(table);
-        children.push(new Paragraph({ spacing: { after: 60 } })); // small spacing after the row
+        
+        if (descriptionPart) {
+          children.push(
+            new Paragraph({
+              children: parseInlineFormatting(descriptionPart),
+              alignment: AlignmentType.LEFT,
+              spacing: { before: 60, after: 120 }
+            })
+          );
+        } else {
+          children.push(new Paragraph({ spacing: { after: 60 } }));
+        }
         continue;
       }
     }
