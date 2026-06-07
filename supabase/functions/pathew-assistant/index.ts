@@ -473,8 +473,8 @@ NEVER:
 - Mix bullet styles — pick one and use it throughout
 
 BULLETS:
-- Use ONLY (–) dash for every bullet in the entire document
-- Never mix (•) and (–) and (-) — one style only
+- Use standard Markdown bullets (-) for every list item in the entire document
+- Never use en-dashes (–) for bullets — use standard (-) only
 - Every bullet starts with a strong action verb
 
 DATES:

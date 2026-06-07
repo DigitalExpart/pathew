@@ -222,9 +222,12 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
                       h1: ({node, ...props}) => (
                         <h1 style={pvNameStyle} {...props} />
                       ),
-                      // H2 = Professional Title (centered subtitle)
+                      // H2 = Section headers (PROFESSIONAL SUMMARY, CORE SKILLS, etc.) - matching DOCX behavior
                       h2: ({node, ...props}) => (
-                        <h2 style={pvTitleStyle} {...props} />
+                        <div style={pvSectionHeaderWrapStyle}>
+                          <h2 style={pvSectionHeaderStyle} {...props} />
+                          <div style={pvSectionHrStyle} />
+                        </div>
                       ),
                       // H3 = Contact info line (centered, small, pipe-separated)
                       h3: ({node, ...props}) => (
@@ -818,8 +821,8 @@ const pvParaStyle: React.CSSProperties = {
 // Unordered list
 const pvUlStyle: React.CSSProperties = {
   margin: '0 0 8px 0',
-  paddingLeft: '18px',
-  listStyleType: "'- '",
+  paddingLeft: '24px',
+  listStyleType: "disc",
 };
 
 // Ordered list
@@ -831,10 +834,10 @@ const pvOlStyle: React.CSSProperties = {
 // List item
 const pvListItemStyle: React.CSSProperties = {
   fontSize: '0.75rem',
-  lineHeight: 1.5,
+  lineHeight: 1.6,
   color: '#334155',
-  marginBottom: '3px',
-  paddingLeft: '2px',
+  marginBottom: '4px',
+  paddingLeft: '4px',
 };
 
 // Experience entry row
