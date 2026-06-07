@@ -307,7 +307,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
                       ),
                     }}
                   >
-                    {pageContent}
+                    {pageContent.replace(/^[\p{Pd}*+•]\s+/gmu, '- ')}
                   </ReactMarkdown>
                 )}
               </div>
