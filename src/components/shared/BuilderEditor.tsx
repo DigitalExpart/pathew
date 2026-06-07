@@ -739,16 +739,6 @@ const pvNameStyle: React.CSSProperties = {
   lineHeight: 1.2,
 };
 
-// H2 = Professional Title
-const pvTitleStyle: React.CSSProperties = {
-  fontSize: '0.88rem',
-  fontWeight: 600,
-  color: '#334155',
-  textAlign: 'center',
-  margin: '0 0 4px 0',
-  padding: 0,
-  lineHeight: 1.3,
-};
 
 // H3 = Contact Info Row
 const pvContactStyle: React.CSSProperties = {
