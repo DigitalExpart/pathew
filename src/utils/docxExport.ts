@@ -64,7 +64,7 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
   
   for (let i = 0; i < lines.length; i++) {
     const originalLine = lines[i];
-    const line = originalLine.trim();
+    const line = originalLine.replace(/\u00A0/g, ' ').trim();
     
     // Ignore simple decorative lines completely
     if (line.match(/^[-=_*]{3,}$/)) {
@@ -104,7 +104,7 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
     // Allow uppercase detection if it's relatively short and doesn't contain a pipe
     const isUppercaseHeader = cleanHeader.length > 0 && cleanHeader.length < 60 && cleanHeader === cleanHeader.toUpperCase() && !cleanHeader.includes('|');
     
-    if (line.startsWith('## ') || (!isHeaderArea && isUppercaseHeader)) {
+    if (line.startsWith('## ') || isUppercaseHeader) {
       isHeaderArea = false;
       children.push(
         new Paragraph({
@@ -149,7 +149,7 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
       continue;
     }
     
-    const isListMatch = line.match(/^[-\u2013\u2014*+]\s+/);
+    const isListMatch = line.match(/^[\p{Pd}*+•]\s+/u);
     const isList = !!isListMatch;
     const hasPipe = line.includes('|');
     const dateRegex = /((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{4})\s*[-–—]\s*((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{4}|Present|Current)/i;
@@ -243,7 +243,7 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
     if (isList) {
       children.push(
         new Paragraph({
-          children: parseInlineFormatting(line.substring(2).trim()),
+          children: parseInlineFormatting(line.substring(isListMatch![0].length).trim()),
           numbering: {
             reference: "dash-bullet",
             level: 0
