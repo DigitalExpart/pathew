@@ -219,16 +219,28 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
                     remarkPlugins={[remarkGfm, remarkBreaks]}
                     components={{
                       // H1 = Full Name (large, centered, uppercase)
-                      h1: ({node, ...props}) => (
-                        <h1 style={pvNameStyle} {...props} />
-                      ),
-                      // H2 = Section headers (PROFESSIONAL SUMMARY, CORE SKILLS, etc.) - matching DOCX behavior
-                      h2: ({node, ...props}) => (
-                        <div style={pvSectionHeaderWrapStyle}>
-                          <h2 style={pvSectionHeaderStyle} {...props} />
-                          <div style={pvSectionHrStyle} />
-                        </div>
-                      ),
+                      // H1 = Full Name OR Professional Title (if it was accidentally generated as h1)
+                      h1: ({node, children, ...props}) => {
+                        const text = extractText(children);
+                        if (text.includes('|') || text.length > 50) {
+                          return <h2 style={pvTitleStyle} {...props}>{children}</h2>;
+                        }
+                        return <h1 style={pvNameStyle} {...props}>{children}</h1>;
+                      },
+                      // H2 = Professional Title (centered subtitle)
+                      h2: ({node, children, ...props}) => {
+                        const text = extractText(children);
+                        // If it's all caps and short, it might be a section header instead
+                        if (text === text.toUpperCase() && text.length < 50 && !text.includes('|')) {
+                          return (
+                            <div style={pvSectionHeaderWrapStyle}>
+                              <h2 style={pvSectionHeaderStyle} {...props}>{children}</h2>
+                              <div style={pvSectionHrStyle} />
+                            </div>
+                          );
+                        }
+                        return <h2 style={pvTitleStyle} {...props}>{children}</h2>;
+                      },
                       // H3 = Contact info line (centered, small, pipe-separated)
                       h3: ({node, ...props}) => (
                         <h3 style={pvContactStyle} {...props} />
@@ -251,8 +263,18 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
                       // Horizontal rule = gold divider
                       hr: () => <div style={pvSectionHrStyle} />,
                       // Paragraphs with experience-row detection
+                      // Paragraphs with experience-row detection and section header fallback
                       p: ({node, children, ...props}) => {
                         const text = extractText(children);
+                        // Fallback: If paragraph is ALL CAPS and short, treat it as a Section Header
+                        if (text === text.toUpperCase() && text.length > 3 && text.length < 50 && /[A-Z]/.test(text) && !text.includes('|')) {
+                          return (
+                            <div style={pvSectionHeaderWrapStyle}>
+                              <h4 style={pvSectionHeaderStyle} {...props}>{children}</h4>
+                              <div style={pvSectionHrStyle} />
+                            </div>
+                          );
+                        }
                         // Detect experience entry rows: contains | and a date pattern
                         const datePattern = /((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{4})\s*[-–—]\s*((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{4}|Present|Current)/i;
                         if (text.includes('|') && datePattern.test(text)) {
@@ -739,6 +761,16 @@ const pvNameStyle: React.CSSProperties = {
   lineHeight: 1.2,
 };
 
+// H2 = Professional Title
+const pvTitleStyle: React.CSSProperties = {
+  fontSize: '0.88rem',
+  fontWeight: 600,
+  color: '#334155',
+  textAlign: 'center',
+  margin: '0 0 4px 0',
+  padding: 0,
+  lineHeight: 1.3,
+};
 
 // H3 = Contact Info Row
 const pvContactStyle: React.CSSProperties = {
