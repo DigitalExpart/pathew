@@ -280,11 +280,11 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
             {
               level: 0,
               format: "bullet",
-              text: "–", // En-dash
+              text: "•", // Standard bullet dot
               alignment: AlignmentType.LEFT,
               style: {
                 paragraph: {
-                  indent: { left: 360, hanging: 360 },
+                  indent: { left: 720, hanging: 360 },
                 },
               },
             },
