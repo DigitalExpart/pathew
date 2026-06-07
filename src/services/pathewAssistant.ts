@@ -60,11 +60,19 @@ export const PathewAssistantService = {
           throw new Error(`Edge Function returned a non-2xx status code: ${response.status}`);
         }
 
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const jsonResponse = await response.json();
+          resolve(jsonResponse);
+          return;
+        }
+
         const reader = response.body?.getReader();
         if (!reader) throw new Error('No stream returned');
 
         const decoder = new TextDecoder();
         let buffer = '';
+        let resolved = false;
 
         while (true) {
           const { done, value } = await reader.read();
@@ -84,6 +92,7 @@ export const PathewAssistantService = {
                 if (event.type === 'chunk') {
                   if (onChunk) onChunk(event.text);
                 } else if (event.type === 'done') {
+                  resolved = true;
                   resolve(event.metadata);
                 }
               } catch (e) {
@@ -91,6 +100,10 @@ export const PathewAssistantService = {
               }
             }
           }
+        }
+        
+        if (!resolved) {
+          reject(new Error("Stream ended unexpectedly. The AI service may be temporarily unavailable."));
         }
       } catch (error: any) {
         console.error('Pathew Assistant Service Streaming Error:', error);

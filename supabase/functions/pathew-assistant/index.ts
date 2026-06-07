@@ -713,13 +713,15 @@ ${taskPrompt}
 `
 
     const modelsToTry = [
-      preferredModel, "claude-sonnet-4-5", "claude-sonnet-4-6",
-      "claude-opus-4-5", "claude-opus-4-6", "claude-opus-4-7", "claude-opus-4-1",
+      preferredModel, "claude-3-5-sonnet-20241022", "claude-3-5-sonnet-20240620",
+      "claude-3-opus-20240229", "claude-3-haiku-20240307"
     ]
     const uniqueModels = [...new Set(modelsToTry)]
 
     for (const model of uniqueModels) {
       console.log(`[TRY] Model: ${model}`)
+      const isSonnet = model.includes('sonnet');
+      const maxTokens = isSonnet ? 8000 : 4096;
       try {
         const claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
@@ -729,7 +731,7 @@ ${taskPrompt}
             'anthropic-version': '2023-06-01',
           },
           body: JSON.stringify({
-            model, max_tokens: 8000, system: systemPrompt,
+            model, max_tokens: maxTokens, system: systemPrompt,
             stream: true,
             messages: [{ role: "user", content: userMessageContent.trim() }],
           }),
