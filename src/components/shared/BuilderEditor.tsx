@@ -750,7 +750,7 @@ const paginationLabelStyle: React.CSSProperties = {
 
 // H1 = Full Name
 const pvNameStyle: React.CSSProperties = {
-  fontSize: '1.4rem',
+  fontSize: '1.15rem',
   fontWeight: 800,
   color: '#0f172a',
   textAlign: 'center',
@@ -763,8 +763,8 @@ const pvNameStyle: React.CSSProperties = {
 
 // H2 = Professional Title
 const pvTitleStyle: React.CSSProperties = {
-  fontSize: '0.88rem',
-  fontWeight: 600,
+  fontSize: '0.85rem',
+  fontWeight: 700,
   color: '#334155',
   textAlign: 'center',
   margin: '0 0 4px 0',
@@ -775,7 +775,7 @@ const pvTitleStyle: React.CSSProperties = {
 // H3 = Contact Info Row
 const pvContactStyle: React.CSSProperties = {
   fontSize: '0.68rem',
-  fontWeight: 400,
+  fontWeight: 600,
   color: '#64748b',
   textAlign: 'center',
   margin: '0 0 20px 0',
@@ -793,7 +793,7 @@ const pvSectionHeaderWrapStyle: React.CSSProperties = {
 
 // H4 = Section Header (PROFESSIONAL SUMMARY, CORE SKILLS, etc.)
 const pvSectionHeaderStyle: React.CSSProperties = {
-  fontSize: '0.82rem',
+  fontSize: '0.85rem',
   fontWeight: 800,
   color: '#0f172a',
   textTransform: 'uppercase',
@@ -874,7 +874,7 @@ const pvExpRowStyle: React.CSSProperties = {
 
 const pvExpLeftStyle: React.CSSProperties = {
   fontSize: '0.78rem',
-  fontWeight: 600,
+  fontWeight: 700,
   color: '#1e293b',
   flex: '1 1 auto',
   lineHeight: 1.4,

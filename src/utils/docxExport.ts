@@ -89,7 +89,7 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
             new TextRun({
               text: line.replace('# ', '').toUpperCase(),
               bold: true,
-              size: 48,
+              size: 32,
             })
           ],
           alignment: AlignmentType.CENTER,
