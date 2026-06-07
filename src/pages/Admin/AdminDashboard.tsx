@@ -101,8 +101,8 @@ export const AdminDashboard: React.FC = () => {
                       {(u.full_name || '?')[0].toUpperCase()}
                     </div>
                     <div style={{ flex: 1 }}>
-                      <p style={{ fontSize: '0.8125rem', fontWeight: 600 }}>{u.full_name || 'Unnamed'}</p>
-                      <p style={{ fontSize: '0.6875rem', color: '#64748b' }}>{new Date(u.created_at).toLocaleDateString()}</p>
+                      <p style={{ fontSize: '0.8125rem', fontWeight: 600, color: '#e2e8f0' }}>{u.full_name || 'Unnamed'}</p>
+                      <p style={{ fontSize: '0.6875rem', color: '#64748b' }}>{u.id.slice(0, 8)}... • {new Date(u.created_at).toLocaleDateString()}</p>
                     </div>
                     <span style={{ fontSize: '0.6875rem', fontWeight: 600, padding: '3px 8px', borderRadius: '4px', backgroundColor: u.subscription_plan === 'Free' || !u.subscription_plan ? 'rgba(100,116,139,0.15)' : 'rgba(245,158,11,0.1)', color: u.subscription_plan === 'Free' || !u.subscription_plan ? '#64748b' : '#f59e0b' }}>
                       {u.subscription_plan || 'Free'}

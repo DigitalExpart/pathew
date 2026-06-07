@@ -124,8 +124,8 @@ export const AdminUsersPage: React.FC = () => {
                         {(u.full_name || '?')[0].toUpperCase()}
                       </div>
                       <div>
-                        <p style={{ fontWeight: 600, fontSize: '0.8125rem' }}>{u.full_name || 'Unnamed'}</p>
-                        <p style={{ fontSize: '0.6875rem', color: '#64748b' }}>{u.id.slice(0, 8)}...</p>
+                        <p style={{ fontWeight: 600, fontSize: '0.8125rem', color: '#e2e8f0' }}>{u.full_name || 'Unnamed'}</p>
+                        <p style={{ fontSize: '0.6875rem', color: '#64748b' }}>{u.email || u.id.slice(0, 8) + '...'}</p>
                       </div>
                     </div>
                   </td>
@@ -146,7 +146,7 @@ export const AdminUsersPage: React.FC = () => {
                       {u.subscription_plan || 'Free'}
                     </span>
                   </td>
-                  <td style={tdStyle}><span style={{ fontWeight: 700 }}>{u.credits ?? 0}</span></td>
+                  <td style={tdStyle}><span style={{ fontWeight: 700, color: '#e2e8f0' }}>{u.credits ?? 0}</span></td>
                   <td style={tdStyle}><span style={{ color: '#64748b', fontSize: '0.8125rem' }}>{new Date(u.created_at).toLocaleDateString()}</span></td>
                   <td style={tdStyle}>
                     <button onClick={() => { setEditingUser(u); setEditCredits(String(u.credits || 0)); setEditPlan(u.subscription_plan || 'Free'); setEditRole(u.role || 'user'); }} style={actionBtnStyle}>
