@@ -192,7 +192,7 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
             new TableRow({
               children: [
                 new TableCell({
-                  width: { size: 80, type: WidthType.PERCENTAGE },
+                  width: { size: 75, type: WidthType.PERCENTAGE },
                   borders: { top: { style: BorderStyle.NONE, size: 0 }, bottom: { style: BorderStyle.NONE, size: 0 }, left: { style: BorderStyle.NONE, size: 0 }, right: { style: BorderStyle.NONE, size: 0 } },
                   children: [
                     new Paragraph({
@@ -202,7 +202,7 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
                   ]
                 }),
                 new TableCell({
-                  width: { size: 20, type: WidthType.PERCENTAGE },
+                  width: { size: 25, type: WidthType.PERCENTAGE },
                   borders: { top: { style: BorderStyle.NONE, size: 0 }, bottom: { style: BorderStyle.NONE, size: 0 }, left: { style: BorderStyle.NONE, size: 0 }, right: { style: BorderStyle.NONE, size: 0 } },
                   children: [
                     new Paragraph({
@@ -212,6 +212,7 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
                           text: rightPart,
                           bold: true,
                           color: "D69E2E",
+                          size: 20,
                         })
                       ]
                     })
