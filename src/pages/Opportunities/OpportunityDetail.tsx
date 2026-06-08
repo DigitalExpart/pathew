@@ -1,4 +1,5 @@
 import React from 'react';
+import { PlanSelectionModal } from '../../components/shared/PlanSelectionModal';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
@@ -34,7 +35,7 @@ export const OpportunityDetail: React.FC = () => {
   
   const [opp, setOpp] = React.useState<any>(null);
   const [loading, setLoading] = React.useState(true);
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isPlanModalOpen, setIsPlanModalOpen] = React.useState(false);
   const [saving, setSaving] = React.useState(false);
   const [applying, setApplying] = React.useState(false);
   const [descExpanded, setDescExpanded] = React.useState(false);
@@ -126,9 +127,9 @@ export const OpportunityDetail: React.FC = () => {
     }
   };
 
-  const handleCreatePlan = (duration: string) => {
-    setIsModalOpen(false);
-    navigate(`/preparation?type=${duration.toLowerCase()}&oppId=${id}`);
+  const handleCreatePlan = (duration: string, pages: number) => {
+    setIsPlanModalOpen(false);
+    navigate(`/preparation?type=${duration.toLowerCase()}&oppId=${id}&pages=${pages}`);
   };
 
   return (
@@ -250,28 +251,23 @@ export const OpportunityDetail: React.FC = () => {
               <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>
                 {t('opportunities.preparationPlanDesc')}
               </p>
-              <div style={{ 
-                display: 'flex', 
-                flexWrap: 'wrap', 
-                gap: '12px' 
-              }}>
-                {['Quick', '90-day', '180-day', '365-day'].map(duration => (
-                  <Button 
-                    key={duration} 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => handleCreatePlan(duration)}
-                    style={{ 
-                      fontSize: '0.75rem', 
-                      fontWeight: 600, 
-                      flex: '1 1 calc(25% - 12px)',
-                      minWidth: '100px'
-                    }}
-                  >
-                    {t(`dashboard.horizons.${duration.toLowerCase()}`)}
-                  </Button>
-                ))}
-              </div>
+              <Button 
+                variant="outline" 
+                onClick={() => setIsPlanModalOpen(true)}
+                style={{ 
+                  width: '100%',
+                  justifyContent: 'center',
+                  fontSize: '0.875rem', 
+                  fontWeight: 600,
+                  gap: '8px',
+                  padding: '12px',
+                  color: 'var(--accent-primary)',
+                  borderColor: 'rgba(245, 158, 11, 0.3)'
+                }}
+              >
+                <Target size={16} />
+                {t('planSelection.title', 'Choose Your Preparation Plan')}
+              </Button>
             </Card>
           </Card>
 
@@ -306,7 +302,7 @@ export const OpportunityDetail: React.FC = () => {
                   icon={Send} 
                   title={t('builders.proposal.title')}
                   desc={t('builders.proposal.desc')}
-                  path={`/proposal?oppId=${opp.id}`}
+                  path={`/cover-letter?oppId=${opp.id}`}
                 />
               )}
             </div>
@@ -361,26 +357,13 @@ export const OpportunityDetail: React.FC = () => {
         </div>
       </div>
 
-      {isModalOpen && (
-        <div style={modalOverlayStyle}>
-          <Card style={modalContentStyle}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h3 style={{ fontSize: '1.25rem' }}>{t('opportunities.preparationPlan')}</h3>
-              <Button variant="ghost" size="sm" onClick={() => setIsModalOpen(false)}>✕</Button>
-            </div>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
-              {t('opportunities.preparationPlanSelectDesc')}
-            </p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              {['Quick', '90-day', '180-day', '365-day'].map(duration => (
-                <Button key={duration} variant="outline" onClick={() => handleCreatePlan(duration)}>
-                  {t(`dashboard.horizons.${duration.toLowerCase()}`)}
-                </Button>
-              ))}
-            </div>
-          </Card>
-        </div>
-      )}
+      <PlanSelectionModal
+        isOpen={isPlanModalOpen}
+        onClose={() => setIsPlanModalOpen(false)}
+        onSelect={handleCreatePlan}
+        deadline={opp.deadline}
+        opportunityTitle={opp.title}
+      />
         </>
       )}
     </div>
@@ -545,23 +528,3 @@ const infoItemStyle: React.CSSProperties = {
   alignItems: 'center',
 };
 
-const modalOverlayStyle: React.CSSProperties = {
-  position: 'fixed',
-  top: 0,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  backgroundColor: 'rgba(0, 0, 0, 0.8)',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  zIndex: 2000,
-  backdropFilter: 'blur(8px)',
-};
-
-const modalContentStyle: React.CSSProperties = {
-  width: '100%',
-  maxWidth: '450px',
-  padding: '32px',
-  animation: 'scaleIn 0.2s ease-out',
-};
