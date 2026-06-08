@@ -530,11 +530,6 @@ Output your conversational response inside <draft>...</draft>.
 
 Output the analytical metadata inside <metadata>...</metadata> as a raw JSON string matching this exact structure:
 {
-  "matchSummary": {
-    "strongMatches": [],
-    "gaps": [],
-    "priorityPoints": []
-  },
   "editingSuggestions": [],
   "wordCountEstimate": 0,
   "confidence": "high"
