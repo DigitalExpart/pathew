@@ -60,6 +60,18 @@ export const LandingPage: React.FC = () => {
       }
     };
     fetchDynamicSettings();
+    
+    // Subscribe to realtime updates for opportunities
+    const channel = supabase
+      .channel('public:opportunities')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'opportunities' }, () => {
+        fetchDynamicSettings();
+      })
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, []);
 
   const getPlanInfo = (name: string, fallback: any) => {
