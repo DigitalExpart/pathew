@@ -290,19 +290,12 @@ export const OpportunityDetail: React.FC = () => {
                 desc={t('builders.coverLetter.desc')}
                 path={`/cover-letter?oppId=${opp.id}`}
               />
-              {opp.type === 'grant' ? (
+              {opp.type === 'grant' && (
                 <DocGenCard 
                   icon={Target} 
                   title={t('builders.proposal.grantBuilderTitle', 'Grant Builder')}
                   desc={t('builders.proposal.grantBuilderDesc', 'Build your grant application proposal.')}
                   path={`/grant-builder?oppId=${opp.id}`}
-                />
-              ) : (
-                <DocGenCard 
-                  icon={Send} 
-                  title={t('builders.proposal.title')}
-                  desc={t('builders.proposal.desc')}
-                  path={`/cover-letter?oppId=${opp.id}`}
                 />
               )}
             </div>
