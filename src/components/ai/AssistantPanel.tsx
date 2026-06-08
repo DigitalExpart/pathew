@@ -6,6 +6,8 @@ import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { usePathewAssistant } from '../../hooks/usePathewAssistant';
 import { useTranslation } from 'react-i18next';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export const AssistantPanel: React.FC = () => {
   const { t } = useTranslation();
@@ -186,7 +188,13 @@ export const AssistantPanel: React.FC = () => {
                 }}>
                   {res.isError && <AlertCircle size={16} style={{ marginBottom: '8px', display: 'block' }} />}
                   
-                  {res.text}
+                  {res.type === 'assistant' ? (
+                    <div className="markdown-content">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]}>{res.text}</ReactMarkdown>
+                    </div>
+                  ) : (
+                    res.text
+                  )}
 
                   {res.data?.mediaUrl && (
                     <div style={mediaPreviewStyle}>
