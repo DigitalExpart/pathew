@@ -12,7 +12,6 @@ import {
   AlertCircle,
   FileText,
   FileEdit,
-  Send,
   XCircle,
   Target,
   Globe,
