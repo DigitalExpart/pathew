@@ -17,6 +17,8 @@ const mockOpportunities = [
   { id: 2, title: 'Product Manager', company: 'InnovateSpace', location: 'London, UK', type: 'Hybrid', source: 'Indeed', match: 88 },
   { id: 3, title: 'Marketing Director', company: 'GlobalReach', location: 'Manchester, UK', type: 'Remote', source: 'Direct', match: 91 },
   { id: 4, title: 'Data Scientist', company: 'QuantCorp', location: 'Remote, EU', type: 'Contract', source: 'Glassdoor', match: 85 },
+  { id: 5, title: 'UX/UI Designer', company: 'CreativePulse', location: 'New York, US', type: 'Full-time', source: 'Dribbble', match: 96 },
+  { id: 6, title: 'DevOps Engineer', company: 'CloudWorks', location: 'Remote, Global', type: 'Contract', source: 'Wellfound', match: 92 },
 ];
 
 const features = [
