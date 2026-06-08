@@ -34,6 +34,7 @@ export const PreparationPage: React.FC = () => {
   
   const planType = searchParams.get('type') || '90-day';
   const oppId = searchParams.get('oppId');
+  const planPages = parseInt(searchParams.get('pages') || '1', 10) || 1;
   const [plan, setPlan] = useState<any>(null);
   const [opportunity, setOpportunity] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -158,7 +159,8 @@ export const PreparationPage: React.FC = () => {
         startDate: now,
         completedWeeks: [],
         opportunity_id: oppId === 'general' ? null : (oppId || null),
-        planType
+        planType,
+        planPages
       };
 
       const { data: existingDocs } = await supabase
@@ -242,22 +244,24 @@ export const PreparationPage: React.FC = () => {
         
         if (!parsedPlan.weeks || parsedPlan.weeks.length === 0) {
           openAssistant('Pathew Assistant', [
-            `Generate a ${planType} plan`,
+            `Generate a ${planType} plan${planPages === 3 ? ' with detailed 3-page level content' : ' with a concise 1-page overview'}`,
             'How does this work?'
           ], (text) => handleInsertPlan(text), { 
             type: 'Roadmap', 
             duration: planType, 
+            pages: planPages,
             opportunity: opportunity?.title,
             requestId: Date.now() 
           });
         }
       } else {
         openAssistant('Pathew Assistant', [
-          `Generate a ${planType} plan`,
+          `Generate a ${planType} plan${planPages === 3 ? ' with detailed 3-page level content' : ' with a concise 1-page overview'}`,
           'How does this work?'
         ], (text) => handleInsertPlan(text), { 
           type: 'Roadmap', 
           duration: planType, 
+          pages: planPages,
           opportunity: opportunity?.title,
           requestId: Date.now()
         });
@@ -271,12 +275,13 @@ export const PreparationPage: React.FC = () => {
 
   const generateNewPlan = async () => {
     openAssistant('Pathew Assistant', [
-      `Regenerate my ${planType} plan`,
+      `Regenerate my ${planType} plan${planPages === 3 ? ' with detailed 3-page level content' : ' with a concise 1-page overview'}`,
       `Adjust my ${planType} plan to be more aggressive`,
       'How does this work?'
     ], (text) => handleInsertPlan(text), { 
       type: 'Roadmap', 
       duration: planType, 
+      pages: planPages,
       opportunity: opportunity?.title,
       requestId: Date.now()
     });
@@ -767,6 +772,9 @@ export const PreparationPage: React.FC = () => {
           </div>
           <div style={{ textAlign: isMobile ? 'left' : 'right' }}>
              <Badge variant="primary" style={{ marginBottom: '8px' }}>{t('preparation.roadmapBadge', { type: planType.toUpperCase() })}</Badge>
+             {planPages > 1 && (
+               <Badge variant="info" style={{ marginBottom: '8px', marginLeft: '8px' }}>{t('planSelection.pagesBadge', { count: planPages })}</Badge>
+             )}
              <h3 style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: 800 }}>{progress}% {t('preparation.complete')}</h3>
           </div>
         </div>
