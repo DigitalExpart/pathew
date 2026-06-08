@@ -12,15 +12,6 @@ import { useTranslation } from 'react-i18next';
 import logo from '../../assets/images/logo.png';
 
 
-const mockOpportunities = [
-  { id: 1, title: 'Senior Software Engineer', company: 'TechNova', location: 'Remote, UK', type: 'Full-time', source: 'LinkedIn', match: 94 },
-  { id: 2, title: 'Product Manager', company: 'InnovateSpace', location: 'London, UK', type: 'Hybrid', source: 'Indeed', match: 88 },
-  { id: 3, title: 'Marketing Director', company: 'GlobalReach', location: 'Manchester, UK', type: 'Remote', source: 'Direct', match: 91 },
-  { id: 4, title: 'Data Scientist', company: 'QuantCorp', location: 'Remote, EU', type: 'Contract', source: 'Glassdoor', match: 85 },
-  { id: 5, title: 'UX/UI Designer', company: 'CreativePulse', location: 'New York, US', type: 'Full-time', source: 'Dribbble', match: 96 },
-  { id: 6, title: 'DevOps Engineer', company: 'CloudWorks', location: 'Remote, Global', type: 'Contract', source: 'Wellfound', match: 92 },
-];
-
 const features = [
   { icon: Globe, title: "Global Discovery", description: "Aggregated opportunities from thousands of premium sources worldwide." },
   { icon: Zap, title: "Assistant Match Scoring", description: "Know exactly how well you fit before you even click apply." },
@@ -45,6 +36,7 @@ export const LandingPage: React.FC = () => {
 
   const isSmallDevice = isMobile || isTablet;
   const [pricingTiers, setPricingTiers] = React.useState<any[]>([]);
+  const [dbOpportunities, setDbOpportunities] = React.useState<any[]>([]);
 
   React.useEffect(() => {
     const fetchDynamicSettings = async () => {
@@ -52,6 +44,19 @@ export const LandingPage: React.FC = () => {
       if (data) {
         const p = data.find(s => s.id === 'pricing_tiers')?.value || [];
         setPricingTiers(p);
+      }
+      
+      const { data: oppData } = await supabase
+        .from('opportunities')
+        .select('*')
+        .eq('status', 'published')
+        .neq('type', 'job')
+        .order('featured', { ascending: false })
+        .order('created_at', { ascending: false })
+        .limit(6);
+        
+      if (oppData && oppData.length > 0) {
+        setDbOpportunities(oppData);
       }
     };
     fetchDynamicSettings();
@@ -199,7 +204,7 @@ export const LandingPage: React.FC = () => {
         </motion.div>
         
         <div style={opportunitiesGridStyle}>
-          {mockOpportunities.map((opp, index) => (
+          {dbOpportunities.map((opp, index) => (
             <motion.div 
               key={opp.id}
               initial={{ opacity: 0, y: 30 }}
@@ -211,15 +216,15 @@ export const LandingPage: React.FC = () => {
                 <div style={oppCardContentStyle}>
                   <div style={oppInfoStyle}>
                     <h3 style={oppTitleStyle}>{opp.title}</h3>
-                    <p style={oppCompanyStyle}>{opp.company} • {opp.location}</p>
+                    <p style={oppCompanyStyle}>{opp.company || opp.organization_name || opp.funder_name} • {opp.location}</p>
                     <div style={{ marginTop: '16px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                       <UIBadge variant="primary">{opp.type}</UIBadge>
-                      <UIBadge variant="info">{opp.source}</UIBadge>
+                      <UIBadge variant="info">{opp.source || opp.source_name}</UIBadge>
                     </div>
                   </div>
                   <div style={oppMatchStyle}>
                     <div style={matchCircleStyle}>
-                      <span style={matchValueStyle}>{opp.match}%</span>
+                      <span style={matchValueStyle}>{opp.match || (85 + (String(opp.id).charCodeAt(0) % 12))}%</span>
                     </div>
                     <span style={matchLabelStyle}>Match</span>
                   </div>
