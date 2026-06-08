@@ -282,11 +282,11 @@ export const AssistantPanel: React.FC = () => {
               <span>{t('assistant.creditCost')}</span>
             </div>
             <div style={chipsContainerStyle}>
-              {suggestedPrompts.map((prompt, i) => (
+              {Array.isArray(suggestedPrompts) ? suggestedPrompts.map((prompt, i) => (
                 <button key={i} onClick={() => setInput(prompt)} style={chipStyle}>
                   {prompt}
                 </button>
-              ))}
+              )) : null}
             </div>
             <div style={inputWrapperStyle}>
               <input 
@@ -554,7 +554,7 @@ const drawerStyle: React.CSSProperties = {
   flexDirection: 'column',
   zIndex: 1000,
   boxShadow: '-10px 0 30px rgba(0,0,0,0.5)',
-  animation: 'slideIn 0.3s ease-out',
+  animation: 'slideInRight 0.3s ease-out',
 };
 
 const headerStyle: React.CSSProperties = {
