@@ -634,7 +634,7 @@ Output the analytical metadata inside <metadata>...</metadata> as a raw JSON str
   "confidence": "high" | "medium" | "low"
 }
 
-If the user asks for a Roadmap or Preparation Plan, format the draft with clear "Week X:" headings on new lines.\`;
+If the user asks for a Roadmap or Preparation Plan, format the draft with clear "Week X:" headings on new lines.`;
     }
 
     // Layer 2: Context Prompt (compiles user profile, sources, target opportunity, and filled answers)
