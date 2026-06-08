@@ -73,7 +73,7 @@ export const LoginPage: React.FC = () => {
             <div style={inputGroupStyle}>
               <div style={{ display: 'flex', justifyContent: 'space-between' }}>
                 <label style={labelStyle}>{t('auth.password')}</label>
-                <a href="#" style={forgotLinkStyle}>{t('auth.forgotPassword')}</a>
+                <Link to="/forgot-password" style={forgotLinkStyle}>{t('auth.forgotPassword')}</Link>
               </div>
               <div style={inputWrapperStyle}>
                 <Lock size={18} color="var(--text-muted)" />
@@ -509,4 +509,163 @@ const verifyIconStyle: React.CSSProperties = {
   alignItems: 'center',
   justifyContent: 'center',
   margin: '0 auto 24px',
+};
+
+export const ForgotPasswordPage: React.FC = () => {
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const [email, setEmail] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [success, setSuccess] = React.useState(false);
+
+  const handleResetPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/reset-password',
+      });
+      if (error) throw error;
+      setSuccess(true);
+    } catch (err: any) {
+      setError(err.message || 'Failed to send reset link');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (success) {
+    return (
+      <div style={authWrapperStyle}>
+        <div style={authContentStyle}>
+          <Card style={{ padding: '48px', textAlign: 'center' }}>
+            <div style={verifyIconStyle}>
+              <Mail size={48} color="var(--accent-primary)" />
+            </div>
+            <h2 style={{ marginBottom: '16px' }}>Check Your Email</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: 1.6 }}>
+              We've sent a password reset link to <strong style={{ color: 'var(--text-primary)' }}>{email}</strong>. 
+              Please check your inbox and click the link to choose a new password.
+            </p>
+            <Button onClick={() => navigate('/login')} style={{ width: '100%' }}>
+              {t('auth.backToLogin')}
+            </Button>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={authWrapperStyle}>
+      <Link to="/login" style={backButtonStyle}>
+        <ArrowLeft size={20} /> Back to Login
+      </Link>
+      
+      <div style={authContentStyle}>
+        <Link to="/" style={logoWrapperStyle}>
+          <img src={logo} alt="PATHEW Logo" style={{ height: '48px', objectFit: 'contain' }} />
+        </Link>
+
+        <Card style={{ padding: '40px' }}>
+          <h2 style={{ marginBottom: '8px' }}>Reset Password</h2>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>
+            Enter your email address and we'll send you a link to reset your password.
+          </p>
+
+          <form onSubmit={handleResetPassword} style={formStyle}>
+            <div style={inputGroupStyle}>
+              <label style={labelStyle}>{t('auth.email')}</label>
+              <div style={inputWrapperStyle}>
+                <Mail size={18} color="var(--text-muted)" />
+                <input 
+                  type="email" 
+                  placeholder={t('auth.placeholders.email')} 
+                  style={inputStyle} 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required 
+                />
+              </div>
+            </div>
+
+            {error && <p style={errorTextStyle}>{error}</p>}
+
+            <Button type="submit" style={{ width: '100%', marginTop: '12px' }} disabled={loading}>
+              {loading ? 'Sending Link...' : 'Send Reset Link'}
+            </Button>
+          </form>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export const ResetPasswordPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [password, setPassword] = React.useState('');
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+
+  const handleUpdatePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setError(null);
+
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: password
+      });
+      if (error) throw error;
+      navigate('/dashboard');
+    } catch (err: any) {
+      setError(err.message || 'Failed to update password');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div style={authWrapperStyle}>
+      <div style={authContentStyle}>
+        <Link to="/" style={logoWrapperStyle}>
+          <img src={logo} alt="PATHEW Logo" style={{ height: '48px', objectFit: 'contain' }} />
+        </Link>
+
+        <Card style={{ padding: '40px' }}>
+          <h2 style={{ marginBottom: '8px' }}>Create New Password</h2>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>
+            Please enter your new password below.
+          </p>
+
+          <form onSubmit={handleUpdatePassword} style={formStyle}>
+            <div style={inputGroupStyle}>
+              <label style={labelStyle}>New Password</label>
+              <div style={inputWrapperStyle}>
+                <Lock size={18} color="var(--text-muted)" />
+                <input 
+                  type="password" 
+                  placeholder="••••••••" 
+                  style={inputStyle} 
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required 
+                  minLength={8}
+                />
+              </div>
+            </div>
+
+            {error && <p style={errorTextStyle}>{error}</p>}
+
+            <Button type="submit" style={{ width: '100%', marginTop: '12px' }} disabled={loading}>
+              {loading ? 'Updating Password...' : 'Update Password'}
+            </Button>
+          </form>
+        </Card>
+      </div>
+    </div>
+  );
 };

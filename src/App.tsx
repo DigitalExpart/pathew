@@ -7,7 +7,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import { AdminProvider, RequireAdmin } from './context/AdminContext';
 import { AssistantPanel } from './components/ai/AssistantPanel';
 import { LandingPage } from './pages/Landing/LandingPage';
-import { LoginPage, SignUpPage } from './pages/Auth/AuthPages';
+import { LoginPage, SignUpPage, ForgotPasswordPage, ResetPasswordPage } from './pages/Auth/AuthPages';
 import { Dashboard } from './pages/Dashboard/Dashboard';
 import { OpportunityList } from './pages/Opportunities/OpportunityList';
 import { OpportunityDetail } from './pages/Opportunities/OpportunityDetail';
@@ -59,6 +59,8 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignUpPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+            <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/terms" element={<PublicTermsPage />} />
             <Route path="/privacy-policy" element={<PublicPrivacyPage />} />
             <Route path="/contact" element={<ContactPage />} />
