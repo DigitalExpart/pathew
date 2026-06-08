@@ -140,9 +140,11 @@ SECTION ORDER — follow exactly:
 5. WORK EXPERIENCE ← MOST IMPORTANT
    - Reverse chronological
    - Each role header on ONE line: Job Title | Company | Location | Mon YYYY – Mon YYYY
-   - 2–3 sentences describing scope of the role (paragraph)
-   - 4–6 bullets per role starting with strong action verbs
-   - Every bullet must show measurable impact where possible
+   - NO introductory sentences or paragraphs under the role header
+   - Generate enough bullets to fill the target page count
+   - Each bullet must be strictly achievement-focused and start with an action verb
+   - Each bullet must be one simple sentence with NO commas
+   - Keep each bullet concise (maximum two lines)
 
 6. EDUCATION
    - One line per qualification: Degree | Institution | Year | Grade
@@ -157,7 +159,11 @@ SECTION ORDER — follow exactly:
 9. LANGUAGES
    - Inline or short list with proficiency level
 
-10. REFERENCES
+10. CONFERENCE PRESENTATIONS
+    - Bullet list, if applicable
+    - Format: "Title." Event, Location, Year.
+
+11. REFERENCES
     - "References available on request"
 
 STRICT RULES:
@@ -182,7 +188,8 @@ SECTION ORDER — follow exactly:
    - NO thesis titles, NO supervisor names, NO module lists
 
 3. WORK EXPERIENCE
-   - ALL roles listed: Job Title | Institution | Mon YYYY – Mon YYYY
+   - Reverse chronological
+   - Each role header on ONE line: Job Title | Institution | Location | Mon YYYY – Mon YYYY
    - NO descriptions — titles and dates ONLY
 
 4. TEACHING EXPERIENCE
@@ -228,13 +235,15 @@ SECTION ORDER — follow exactly:
 12. SKILLS & LANGUAGES
     - Brief — tools, software, languages with proficiency
 
-13. REFERENCES
+13. CERTIFICATIONS
+    - Bullet list, reverse chronological
+
+14. REFERENCES
     - "References available on request"
 
 STRICT RULES:
 - NO Academic Profile or Personal Statement section
 - NO named references
-- Work Experience has zero descriptions — titles and dates only
 - Teaching must show class sizes where provided
 - Publications must be APA format with name bolded`
     };
