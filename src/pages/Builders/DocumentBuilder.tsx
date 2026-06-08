@@ -736,7 +736,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                   justifyContent: 'center'
                 }}
               >
-                {t('builders.style.analyseBtn', 'Analyse Suitability & Gaps')}
+                {t('builders.style.analyseBtn', 'Analysing Suitability')}
                 <ArrowRight size={16} />
               </Button>
             </div>

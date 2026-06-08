@@ -687,12 +687,12 @@ Current Draft: ${currentDraft || '(No current draft)'}
     // Layer 3: Task Prompt (specifies the operation to execute)
     let taskPrompt = ""
     if (action === "extract_context") {
-      taskPrompt = `Task: Extraction & Gap Analysis
+      taskPrompt = `Task: Suitability Analysis
 Instructions:
 1. Carefully read the [USER BACKGROUND MATERIAL] and compare it against the [OPPORTUNITY REQUIREMENTS].
-2. Populate the '<metadata>' block with actual matches ("strongMatches") and key mismatches/gaps ("gaps").
-3. Determine if there is any crucial information missing to make this document high-converting. List these missing fields in the "missingFields" array within '<metadata>'. Limit to the 3-6 critical items (e.g. specific project metrics, target timelines, missing dates, or funder questions if not answered).
-4. Inside the '<draft>...</draft>' tags, write a brief, friendly, professional summary (1-2 paragraphs) outlining what PATHEW has understood, what fits beautifully, and why we are asking for these missing details.`
+2. Populate the '<metadata>' block with actual matches ("strongMatches") ONLY. Do not identify any gaps.
+3. Keep the "gaps" and "missingFields" arrays completely empty in the '<metadata>' block.
+4. Inside the '<draft>...</draft>' tags, write a brief, friendly, professional summary (1-2 paragraphs) outlining what PATHEW has understood and what fits beautifully.`
     } else if (action && action.startsWith("regenerate:")) {
       const instructions = action.substring("regenerate:".length).trim();
       taskPrompt = `Task: Tailored Section Rewrite / Document Regeneration
