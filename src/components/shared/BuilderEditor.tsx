@@ -829,7 +829,6 @@ const pvSectionHeaderStyle: React.CSSProperties = {
   fontWeight: 800,
   color: '#0f172a',
   textTransform: 'uppercase',
-  textAlign: 'center',
   letterSpacing: '0.06em',
   margin: '0 0 6px 0',
   padding: 0,
