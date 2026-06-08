@@ -2,6 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
+import { Badge } from '../../components/ui/Badge';
 import { Navbar } from '../../components/layout/Navbar';
 import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap, Plus, Star } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -9,6 +10,14 @@ import { Link } from 'react-router-dom';
 import { StripeCheckoutModal } from '../../components/payment/StripeCheckoutModal';
 import { useTranslation } from 'react-i18next';
 import logo from '../../assets/images/logo.png';
+
+
+const mockOpportunities = [
+  { id: 1, title: 'Senior Software Engineer', company: 'TechNova', location: 'Remote, UK', type: 'Full-time', source: 'LinkedIn', match: 94 },
+  { id: 2, title: 'Product Manager', company: 'InnovateSpace', location: 'London, UK', type: 'Hybrid', source: 'Indeed', match: 88 },
+  { id: 3, title: 'Marketing Director', company: 'GlobalReach', location: 'Manchester, UK', type: 'Remote', source: 'Direct', match: 91 },
+  { id: 4, title: 'Data Scientist', company: 'QuantCorp', location: 'Remote, EU', type: 'Contract', source: 'Glassdoor', match: 85 },
+];
 
 const features = [
   { icon: Globe, title: "Global Discovery", description: "Aggregated opportunities from thousands of premium sources worldwide." },
@@ -1405,4 +1414,72 @@ const columnGlowStyle: React.CSSProperties = {
   height: '200px',
   background: 'radial-gradient(circle, rgba(245, 158, 11, 0.1) 0%, transparent 70%)',
   zIndex: 0,
+};
+
+
+const oppCardContentStyle: React.CSSProperties = {
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'flex-start',
+  padding: '24px 20px',
+  gap: '16px',
+};
+
+const oppInfoStyle: React.CSSProperties = {
+  flex: 1,
+};
+
+const oppTitleStyle: React.CSSProperties = {
+  fontSize: '1.25rem',
+  fontWeight: 700,
+  color: 'var(--text-primary)',
+  marginBottom: '8px',
+  lineHeight: 1.3,
+};
+
+const oppCompanyStyle: React.CSSProperties = {
+  color: 'var(--text-secondary)',
+  fontSize: '0.875rem',
+  fontWeight: 500,
+};
+
+const oppMatchStyle: React.CSSProperties = {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: '8px',
+  flexShrink: 0,
+};
+
+const matchCircleStyle: React.CSSProperties = {
+  width: '56px',
+  height: '56px',
+  borderRadius: '50%',
+  border: '3px solid var(--accent-primary)',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  backgroundColor: 'rgba(245, 158, 11, 0.05)',
+};
+
+const matchValueStyle: React.CSSProperties = {
+  fontSize: '1rem',
+  fontWeight: 800,
+  color: 'var(--accent-primary)',
+};
+
+const matchLabelStyle: React.CSSProperties = {
+  fontSize: '0.7rem',
+  color: 'var(--text-secondary)',
+  fontWeight: 700,
+  textTransform: 'uppercase',
+  letterSpacing: '0.5px',
+};
+
+const opportunitiesGridStyle: React.CSSProperties = {
+  display: 'grid',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+  gap: '24px',
+  maxWidth: '1200px',
+  margin: '0 auto',
 };

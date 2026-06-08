@@ -85,7 +85,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
       {/* Desktop Links */}
       {!isMobile && (
         <div style={navLinksStyle}>
-          <a href="#features" style={navLinkStyle('features')}>{t('nav.features', 'Features')}</a>
+          <a href="#opportunities" style={navLinkStyle('opportunities')}>{t('nav.opportunities', 'Explore Opportunities')}</a>
           <a href="#pricing" style={navLinkStyle('pricing')}>{t('nav.pricing', 'Pricing')}</a>
           <a href="#how-it-works" style={navLinkStyle('how-it-works')}>{t('nav.howItWorks', 'How it works')}</a>
           <a href="#faq" style={navLinkStyle('faq')}>{t('nav.faq', 'FAQs')}</a>
@@ -196,7 +196,7 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
             style={mobileMenuStyle}
           >
             <div style={{ display: 'flex', flexDirection: 'column', padding: '40px 20px' }}>
-              <a href="#features" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('features')}>{t('nav.features', 'Features')}</a>
+              <a href="#opportunities" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('opportunities')}>{t('nav.opportunities', 'Explore Opportunities')}</a>
               <a href="#pricing" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('pricing')}>{t('nav.pricing', 'Pricing')}</a>
               <a href="#how-it-works" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('how-it-works')}>{t('nav.howItWorks', 'How it works')}</a>
               <a href="#faq" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('faq')}>{t('nav.faq', 'FAQs')}</a>
