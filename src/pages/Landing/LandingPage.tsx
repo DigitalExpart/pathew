@@ -161,7 +161,7 @@ export const LandingPage: React.FC = () => {
             <img 
               src="/hero.png" 
               alt="Platform Dashboard" 
-              style={{ width: '100%', height: 'auto', objectFit: 'contain', display: 'block', borderRadius: 'inherit' }} 
+              style={{ width: '100%', height: '700px', objectFit: 'cover', objectPosition: 'left top', display: 'block', borderRadius: 'inherit' }} 
             />
             <div style={heroImageOverlayStyle}>
               <motion.div 
@@ -1050,7 +1050,7 @@ const statItemStyle: React.CSSProperties = {
 const heroImageContainerStyle: React.CSSProperties = {
   flex: 1.8,
   position: 'relative',
-  transform: 'scale(1.20)',
+  transform: 'scale(1.05)',
   transformOrigin: 'center right',
 };
 
