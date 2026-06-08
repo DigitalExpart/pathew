@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { StripeCheckoutModal } from '../../components/payment/StripeCheckoutModal';
 import { useTranslation } from 'react-i18next';
 import logo from '../../assets/images/logo.png';
+import { useAuth } from '../../context/AuthContext';
 
 
 const features = [
@@ -21,6 +22,7 @@ const features = [
 
 export const LandingPage: React.FC = () => {
   const { t } = useTranslation();
+  const { user } = useAuth();
   const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
   const [isTablet, setIsTablet] = React.useState(window.innerWidth <= 1024 && window.innerWidth > 768);
   const [showAllFaqs, setShowAllFaqs] = React.useState(false);
@@ -242,10 +244,10 @@ export const LandingPage: React.FC = () => {
                   </div>
                 </div>
                 <div style={{ padding: '0 20px 20px', display: 'flex', gap: '12px', marginTop: 'auto' }}>
-                  <Link to="/signup" style={{ flex: 1 }}>
+                  <Link to={user ? `/opportunities/${opp.id}` : "/login"} style={{ flex: 1 }}>
                     <Button style={{ width: '100%' }}>Apply</Button>
                   </Link>
-                  <Link to="/signup" style={{ flex: 1 }}>
+                  <Link to={user ? `/opportunities/${opp.id}` : "/login"} style={{ flex: 1 }}>
                     <Button variant="outline" style={{ width: '100%' }}>Prepare</Button>
                   </Link>
                 </div>
@@ -255,7 +257,7 @@ export const LandingPage: React.FC = () => {
         </div>
         
         <div style={{ textAlign: 'center', marginTop: '48px' }}>
-          <Link to="/signup">
+          <Link to={user ? "/opportunities" : "/login"}>
             <Button variant="outline" style={{ gap: '10px' }}>
               View More Opportunities <ArrowRight size={18} />
             </Button>
