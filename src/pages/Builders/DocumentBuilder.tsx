@@ -802,7 +802,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
             {builder.isGenerating ? (
               <Card style={{ padding: '60px', textAlign: 'center' }}>
                 <Sparkles size={32} color="var(--accent-primary)" style={{ animation: 'pulse 2s infinite' }} />
-                <p>{t('builders.loading.generatingDraft', 'Pathew Assistant is generating your tailored draft...')}</p>
+                <p>{t('builders.loading.generatingDraft', 'Pathew AI is generating documentation')}</p>
               </Card>
             ) : (
               <BuilderEditor 

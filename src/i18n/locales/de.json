@@ -555,7 +555,7 @@
       "parsing": "Der Pathew-Assistent analysiert Ihre Dokumente, vergleicht Schlüsselwörter mit den Anforderungen und bereitet progressive Profilfragen vor...",
       "atsMatchHigh": "ATS-Match-Score: Hoch • Lücken in der Generierung vollständig behoben",
       "validated": "Validiert",
-      "generatingDraft": "Der Pathew-Assistent generiert Ihren maßgeschneiderten Entwurf..."
+      "generatingDraft": "Pathew AI is generating documentation"
     },
     "gaps": {
       "matchTitle": "ATS-Übereinstimmungsbewertung:",

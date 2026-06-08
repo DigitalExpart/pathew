@@ -555,7 +555,7 @@
       "parsing": "L'Assistant Pathew analyse vos documents, compare les mots-clés aux exigences de l'opportunité et prépare des questions de profilage progressif...",
       "atsMatchHigh": "Score de Correspondance ATS : Élevé • Lacunes entièrement traitées lors de la génération",
       "validated": "Validé",
-      "generatingDraft": "L'Assistant Pathew génère votre brouillon sur mesure..."
+      "generatingDraft": "Pathew AI is generating documentation"
     },
     "gaps": {
       "matchTitle": "Score de Correspondance ATS :",
