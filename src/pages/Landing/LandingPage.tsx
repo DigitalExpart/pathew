@@ -174,60 +174,6 @@ export const LandingPage: React.FC = () => {
         </motion.div>
       </header>
 
-      {/* Problem/Solution Narrative */}
-      <section className="section-padding" style={problemSectionStyle}>
-        <div style={{
-          ...problemContentStyle,
-          flexDirection: isSmallDevice ? 'column' : 'row',
-          gap: isSmallDevice ? '40px' : '80px',
-        }}>
-          <motion.div 
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            style={{ flex: 1 }}
-          >
-            <h2 style={{ 
-              fontSize: isMobile ? '2rem' : '3rem', 
-              fontWeight: 800, 
-              marginBottom: '24px', 
-              lineHeight: 1.2 
-            }}>
-              {t('landing.problem.title1')}<span style={{ color: 'var(--accent-primary)' }}>{t('landing.problem.title2')}</span>.
-            </h2>
-            <p style={{ fontSize: '1.125rem', color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: 1.6 }}>
-              {t('landing.problem.subtitle')}
-            </p>
-            <div style={benefitListStyle}>
-              <BenefitItem text={t('landing.problem.b1')} />
-              <BenefitItem text={t('landing.problem.b2')} />
-              <BenefitItem text={t('landing.problem.b3')} />
-            </div>
-          </motion.div>
-          <motion.div 
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            style={{
-              ...problemImageStyle,
-              marginTop: isMobile ? '32px' : '0',
-            }}
-          >
-            <Card className="card-padding" style={{ border: '1px solid rgba(239, 68, 68, 0.2)', backgroundColor: 'rgba(239, 68, 68, 0.02)' }}>
-              <h4 style={{ color: '#ef4444', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Shield size={18} /> {t('landing.problem.oldWay')}
-              </h4>
-              <ul style={{ listStyle: 'none', padding: 0, color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <li>{t('landing.problem.o1')}</li>
-                <li>{t('landing.problem.o2')}</li>
-                <li>{t('landing.problem.o3')}</li>
-                <li>{t('landing.problem.o4')}</li>
-              </ul>
-            </Card>
-          </motion.div>
-        </div>
-      </section>
-
       {/* Features Section */}
       <section id="features" className="section-padding" style={featuresSectionStyle}>
         <motion.div 
@@ -276,78 +222,6 @@ export const LandingPage: React.FC = () => {
             </motion.div>
           </div>
         )}
-      </section>
-
-      {/* How It Works */}
-      <section id="how-it-works" className="section-padding" style={howItWorksSectionStyle}>
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          style={sectionHeaderStyle}
-        >
-          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>{t('landing.howItWorksTitle')}</h2>
-          <p style={sectionSubtitleStyle}>{t('landing.howItWorksSubtitle')}</p>
-        </motion.div>
-        
-        <div className="grid-responsive">
-          <StepItem number="01" title={t('landing.steps.0.title')} description={t('landing.steps.0.desc')} />
-          <StepItem number="02" title={t('landing.steps.1.title')} description={t('landing.steps.1.desc')} />
-          <StepItem number="03" title={t('landing.steps.2.title')} description={t('landing.steps.2.desc')} />
-        </div>
-
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.6 }}
-          style={{ textAlign: 'center', marginTop: '64px' }}
-        >
-          <Link to="/signup">
-            <Button variant="outline" style={{ gap: '10px', padding: '16px 40px' }}>
-              {t('landing.learnMore')} <ArrowRight size={18} />
-            </Button>
-          </Link>
-        </motion.div>
-      </section>
-
-      {/* Comparison Section */}
-      <section className="section-padding" style={comparisonSectionStyle}>
-        <motion.div 
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          style={sectionHeaderStyle}
-        >
-          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '1.75rem' : '3.5rem' }}>{t('landing.compare.title1')} <br/> <span style={{ color: 'var(--accent-primary)' }}>{t('landing.compare.title2')}</span></h2>
-          <p style={sectionSubtitleStyle}>{t('landing.compare.subtitle')}</p>
-        </motion.div>
-
-        <div className="comparison-grid" style={{ 
-          maxWidth: '1200px', 
-          margin: '0 auto',
-          gridTemplateColumns: isSmallDevice ? '1fr' : '1fr 1fr' 
-        }}>
-          <ComparisonColumn 
-            title={t('landing.compare.generic')} 
-            items={[
-              t('landing.compare.g1'),
-              t('landing.compare.g2'),
-              t('landing.compare.g3'),
-              t('landing.compare.g4')
-            ]} 
-          />
-          <ComparisonColumn 
-            title={t('landing.compare.pathew')} 
-            highlight 
-            items={[
-              t('landing.compare.p1'),
-              t('landing.compare.p2'),
-              t('landing.compare.p3'),
-              t('landing.compare.p4')
-            ]} 
-          />
-        </div>
       </section>
 
       {/* Pricing Section */}
@@ -417,6 +291,132 @@ export const LandingPage: React.FC = () => {
         </div>
 
 
+      </section>
+
+      {/* How It Works */}
+      <section id="how-it-works" className="section-padding" style={howItWorksSectionStyle}>
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          style={sectionHeaderStyle}
+        >
+          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>{t('landing.howItWorksTitle')}</h2>
+          <p style={sectionSubtitleStyle}>{t('landing.howItWorksSubtitle')}</p>
+        </motion.div>
+        
+        <div className="grid-responsive">
+          <StepItem number="01" title={t('landing.steps.0.title')} description={t('landing.steps.0.desc')} />
+          <StepItem number="02" title={t('landing.steps.1.title')} description={t('landing.steps.1.desc')} />
+          <StepItem number="03" title={t('landing.steps.2.title')} description={t('landing.steps.2.desc')} />
+        </div>
+
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.6 }}
+          style={{ textAlign: 'center', marginTop: '64px' }}
+        >
+          <Link to="/signup">
+            <Button variant="outline" style={{ gap: '10px', padding: '16px 40px' }}>
+              {t('landing.learnMore')} <ArrowRight size={18} />
+            </Button>
+          </Link>
+        </motion.div>
+      </section>
+
+      {/* Problem/Solution Narrative */}
+      <section className="section-padding" style={problemSectionStyle}>
+        <div style={{
+          ...problemContentStyle,
+          flexDirection: isSmallDevice ? 'column' : 'row',
+          gap: isSmallDevice ? '40px' : '80px',
+        }}>
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            style={{ flex: 1 }}
+          >
+            <h2 style={{ 
+              fontSize: isMobile ? '2rem' : '3rem', 
+              fontWeight: 800, 
+              marginBottom: '24px', 
+              lineHeight: 1.2 
+            }}>
+              {t('landing.problem.title1')}<span style={{ color: 'var(--accent-primary)' }}>{t('landing.problem.title2')}</span>.
+            </h2>
+            <p style={{ fontSize: '1.125rem', color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: 1.6 }}>
+              {t('landing.problem.subtitle')}
+            </p>
+            <div style={benefitListStyle}>
+              <BenefitItem text={t('landing.problem.b1')} />
+              <BenefitItem text={t('landing.problem.b2')} />
+              <BenefitItem text={t('landing.problem.b3')} />
+            </div>
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, x: 30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            style={{
+              ...problemImageStyle,
+              marginTop: isMobile ? '32px' : '0',
+            }}
+          >
+            <Card className="card-padding" style={{ border: '1px solid rgba(239, 68, 68, 0.2)', backgroundColor: 'rgba(239, 68, 68, 0.02)' }}>
+              <h4 style={{ color: '#ef4444', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Shield size={18} /> {t('landing.problem.oldWay')}
+              </h4>
+              <ul style={{ listStyle: 'none', padding: 0, color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <li>{t('landing.problem.o1')}</li>
+                <li>{t('landing.problem.o2')}</li>
+                <li>{t('landing.problem.o3')}</li>
+                <li>{t('landing.problem.o4')}</li>
+              </ul>
+            </Card>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Comparison Section */}
+      <section className="section-padding" style={comparisonSectionStyle}>
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          style={sectionHeaderStyle}
+        >
+          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '1.75rem' : '3.5rem' }}>{t('landing.compare.title1')} <br/> <span style={{ color: 'var(--accent-primary)' }}>{t('landing.compare.title2')}</span></h2>
+          <p style={sectionSubtitleStyle}>{t('landing.compare.subtitle')}</p>
+        </motion.div>
+
+        <div className="comparison-grid" style={{ 
+          maxWidth: '1200px', 
+          margin: '0 auto',
+          gridTemplateColumns: isSmallDevice ? '1fr' : '1fr 1fr' 
+        }}>
+          <ComparisonColumn 
+            title={t('landing.compare.generic')} 
+            items={[
+              t('landing.compare.g1'),
+              t('landing.compare.g2'),
+              t('landing.compare.g3'),
+              t('landing.compare.g4')
+            ]} 
+          />
+          <ComparisonColumn 
+            title={t('landing.compare.pathew')} 
+            highlight 
+            items={[
+              t('landing.compare.p1'),
+              t('landing.compare.p2'),
+              t('landing.compare.p3'),
+              t('landing.compare.p4')
+            ]} 
+          />
+        </div>
       </section>
 
       {/* Social Proof Section (Trustpilot Reviews) */}

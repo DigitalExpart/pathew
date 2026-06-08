@@ -86,9 +86,9 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
       {!isMobile && (
         <div style={navLinksStyle}>
           <a href="#features" style={navLinkStyle('features')}>{t('nav.features', 'Features')}</a>
-          <Link to="/how-it-works" style={navLinkStyle('how-it-works')}>{t('nav.howItWorks', 'How it works')}</Link>
-          <Link to="/pricing" style={navLinkStyle('pricing')}>{t('nav.pricing', 'Pricing')}</Link>
-          <Link to="/contact" style={navLinkStyle('contact')}>{t('nav.contact', 'Contact')}</Link>
+          <a href="#pricing" style={navLinkStyle('pricing')}>{t('nav.pricing', 'Pricing')}</a>
+          <a href="#how-it-works" style={navLinkStyle('how-it-works')}>{t('nav.howItWorks', 'How it works')}</a>
+          <a href="#faq" style={navLinkStyle('faq')}>{t('nav.faq', 'FAQs')}</a>
         </div>
       )}
 
@@ -197,9 +197,9 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
           >
             <div style={{ display: 'flex', flexDirection: 'column', padding: '40px 20px' }}>
               <a href="#features" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('features')}>{t('nav.features', 'Features')}</a>
-              <Link to="/how-it-works" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('how-it-works')}>{t('nav.howItWorks', 'How it works')}</Link>
-              <Link to="/pricing" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('pricing')}>{t('nav.pricing', 'Pricing')}</Link>
-              <Link to="/contact" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('contact')}>{t('nav.contact', 'Contact')}</Link>
+              <a href="#pricing" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('pricing')}>{t('nav.pricing', 'Pricing')}</a>
+              <a href="#how-it-works" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('how-it-works')}>{t('nav.howItWorks', 'How it works')}</a>
+              <a href="#faq" onClick={() => setIsMobileMenuOpen(false)} style={navLinkStyle('faq')}>{t('nav.faq', 'FAQs')}</a>
               
               <div style={{ marginTop: '24px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 {languages.map(lang => (
