@@ -48,7 +48,7 @@ export const Dashboard: React.FC = () => {
       const [oppsCount, jobsCount, docsCount] = await Promise.all([
         supabase.from('opportunities').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
         supabase.from('jobs').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
-        supabase.from('documents').select('*', { count: 'exact', head: true }).eq('user_id', user.id)
+        supabase.from('generated_documents').select('*', { count: 'exact', head: true }).eq('user_id', user.id)
       ]);
 
       setStats({
