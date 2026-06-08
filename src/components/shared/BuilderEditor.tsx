@@ -310,7 +310,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
                         // Detect experience entry rows: contains | and a date pattern
                         const datePattern = /((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{4})\s*[-–—]\s*((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{4}|Present|Current)/i;
                         if (text.includes('|') && datePattern.test(text)) {
-                          return renderExperienceRow(text);
+                          return renderExperienceRow(text, accentColor);
                         }
                         return <p style={pvParaStyle} {...props}>{children}</p>;
                       },
@@ -430,7 +430,7 @@ const extractText = (children: React.ReactNode): string => {
 // ============================================================
 // HELPER: Render experience entry row with right-aligned dates
 // ============================================================
-const renderExperienceRow = (text: string): React.ReactNode => {
+const renderExperienceRow = (text: string, accentColor: { start: string, end: string }): React.ReactNode => {
   // Split on pipe to find segments
   const parts = text.split('|').map(p => p.trim());
   
@@ -460,7 +460,7 @@ const renderExperienceRow = (text: string): React.ReactNode => {
       <div style={pvExpLeftStyle}>
         {renderInlineBold(leftText)}
       </div>
-      <div style={pvExpRightStyle}>
+      <div style={{ ...pvExpRightStyle, color: accentColor.start }}>
         {rightText}
       </div>
     </div>

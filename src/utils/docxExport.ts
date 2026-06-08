@@ -239,7 +239,7 @@ export const generateDocxBlob = async (markdownText: string, accentColorHex: str
                         new TextRun({
                           text: rightPart,
                           bold: true,
-                          color: "D69E2E",
+                          color: accentColorHex,
                           size: 20,
                         })
                       ]
