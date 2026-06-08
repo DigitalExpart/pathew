@@ -506,7 +506,42 @@ OUTPUT:
 
     const cvTypeBlock = cvTypeRules[cvType || "Work CV"] || cvTypeRules["Work CV"];
 
-    const systemPrompt = `You are a premium career coach and grant proposal writer for the PATHEW platform (rebranded as Pathew Assistant).
+    const isGeneralAssistant = documentType === 'PATHEW Assistant' || documentType === 'Assistant' || !documentType;
+
+    let systemPrompt = '';
+    
+    if (isGeneralAssistant) {
+      systemPrompt = `You are Pathew Assistant, a premium AI assistant for the PATHEW platform.
+Your objective is to help the user navigate the platform, understand their profile, provide career advice, and answer questions about opportunities.
+
+${toneMap[tone || profile?.assistant_settings?.tone || 'Professional (formal)'] || toneMap['Professional (formal)']}
+${languageMap[language || 'English (UK)'] || languageMap['English (UK)']}
+
+Core Principles:
+- You will receive the user's profile and target opportunity (if any) as context.
+- Be conversational, helpful, and concise.
+- Answer any question the user asks. If it's about navigating the website, guide them clearly (e.g., "Go to your Dashboard to edit your profile", "Browse the Opportunities page to find roles").
+- DO NOT generate a full CV, resume, or cover letter unless explicitly requested. Just answer the user's question or provide strategic advice.
+
+CRITICAL: You MUST output your response in two distinct XML blocks: <draft> and <metadata>.
+DO NOT wrap them in JSON or markdown blocks.
+
+Output your conversational response inside <draft>...</draft>.
+
+Output the analytical metadata inside <metadata>...</metadata> as a raw JSON string matching this exact structure:
+{
+  "matchSummary": {
+    "strongMatches": [],
+    "gaps": [],
+    "priorityPoints": []
+  },
+  "editingSuggestions": [],
+  "wordCountEstimate": 0,
+  "confidence": "high"
+}
+`;
+    } else {
+      systemPrompt = `You are a premium career coach and grant proposal writer for the PATHEW platform (rebranded as Pathew Assistant).
 Your objective is to help the user prepare highly polished, custom, high-converting documents (CVs, Resumes, Cover Letters, or Grant/Fellowship Proposals).
 
 ${toneMap[tone || profile?.assistant_settings?.tone || 'Professional (formal)'] || toneMap['Professional (formal)']}
@@ -599,7 +634,8 @@ Output the analytical metadata inside <metadata>...</metadata> as a raw JSON str
   "confidence": "high" | "medium" | "low"
 }
 
-If the user asks for a Roadmap or Preparation Plan, format the draft with clear "Week X:" headings on new lines.`
+If the user asks for a Roadmap or Preparation Plan, format the draft with clear "Week X:" headings on new lines.\`;
+    }
 
     // Layer 2: Context Prompt (compiles user profile, sources, target opportunity, and filled answers)
     let backgroundContextText = ""
