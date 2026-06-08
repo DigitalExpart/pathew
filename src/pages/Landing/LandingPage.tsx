@@ -1039,8 +1039,10 @@ const statItemStyle: React.CSSProperties = {
 };
 
 const heroImageContainerStyle: React.CSSProperties = {
-  flex: 1.5,
+  flex: 1.8,
   position: 'relative',
+  transform: 'scale(1.20)',
+  transformOrigin: 'center right',
 };
 
 const heroImagePlaceholderStyle: React.CSSProperties = {
