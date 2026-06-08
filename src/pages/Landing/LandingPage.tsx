@@ -4,7 +4,7 @@ import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Badge as UIBadge } from '../../components/ui/Badge';
 import { Navbar } from '../../components/layout/Navbar';
-import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap, Plus, Star } from 'lucide-react';
+import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap, Plus, Star, ChevronDown } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Link } from 'react-router-dom';
 import { StripeCheckoutModal } from '../../components/payment/StripeCheckoutModal';
@@ -32,6 +32,7 @@ export const LandingPage: React.FC = () => {
   const { t } = useTranslation();
   const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
   const [isTablet, setIsTablet] = React.useState(window.innerWidth <= 1024 && window.innerWidth > 768);
+  const [showAllFaqs, setShowAllFaqs] = React.useState(false);
 
   React.useEffect(() => {
     const handleResize = () => {
@@ -520,7 +521,9 @@ export const LandingPage: React.FC = () => {
         </motion.div>
         
         <div style={faqContainerStyle}>
-          {(t('landing.faqList', { returnObjects: true }) as any[]).map((faq, index) => (
+          {((t('landing.faqList', { returnObjects: true }) as any[]) || [])
+            .slice(0, showAllFaqs ? undefined : 4)
+            .map((faq, index) => (
             <FAQItem 
               key={index}
               question={faq.question} 
@@ -528,6 +531,13 @@ export const LandingPage: React.FC = () => {
             />
           ))}
         </div>
+        {!showAllFaqs && ((t('landing.faqList', { returnObjects: true }) as any[]) || []).length > 4 && (
+          <div style={{ textAlign: 'center', marginTop: '32px' }}>
+            <Button variant="outline" onClick={() => setShowAllFaqs(true)}>
+              Show All <ChevronDown size={16} style={{ marginLeft: '8px' }} />
+            </Button>
+          </div>
+        )}
       </section>
 
       {/* Footer */}
