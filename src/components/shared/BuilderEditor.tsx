@@ -48,7 +48,6 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
   const [saveTitle, setSaveTitle] = useState('');
   const [savingVersion, setSavingVersion] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
-  const [editingContent, setEditingContent] = useState(false);
 
   // Predefined professional gradient accents for section headers
   const ACCENT_COLORS = useMemo(() => [
