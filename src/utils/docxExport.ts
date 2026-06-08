@@ -115,7 +115,7 @@ export const generateDocxBlob = async (markdownText: string, accentColorHex: str
         children.push(
           new Paragraph({
             children: [new TextRun({ text: cleanHeader, bold: true, size: 26 })],
-            alignment: AlignmentType.LEFT,
+            alignment: AlignmentType.CENTER,
             spacing: { before: 240, after: 120 },
             border: { bottom: { color: accentColorHex, space: 4, style: BorderStyle.SINGLE, size: 12 } }
           })
@@ -151,7 +151,7 @@ export const generateDocxBlob = async (markdownText: string, accentColorHex: str
       children.push(
         new Paragraph({
           children: [new TextRun({ text: cleanHeader, bold: true, size: 26 })],
-          alignment: AlignmentType.LEFT,
+          alignment: AlignmentType.CENTER,
           spacing: { before: 240, after: 120 },
           border: { bottom: { color: accentColorHex, space: 4, style: BorderStyle.SINGLE, size: 12 } }
         })
@@ -169,7 +169,7 @@ export const generateDocxBlob = async (markdownText: string, accentColorHex: str
       children.push(
         new Paragraph({
           children: [new TextRun({ text: cleanHeader, bold: true, size: 26 })],
-          alignment: AlignmentType.LEFT,
+          alignment: AlignmentType.CENTER,
           spacing: { before: 240, after: 120 },
           border: { bottom: { color: accentColorHex, space: 4, style: BorderStyle.SINGLE, size: 12 } }
         })
