@@ -200,7 +200,7 @@ SECTION ORDER — follow exactly:
 
 6. RESEARCH EXPERIENCE
    - Bullet list
-   - Each bullet: your role | project title | funder | years
+   - Each bullet: your role | project title | funder | Mon YYYY – Mon YYYY
 
 7. PUBLICATIONS
    - Numbered list, APA format
