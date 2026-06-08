@@ -722,7 +722,15 @@ Current Draft: ${currentDraft || '(No current draft)'}
 
     // Layer 3: Task Prompt (specifies the operation to execute)
     let taskPrompt = ""
-    if (action === "extract_context") {
+    if (isGeneralAssistant) {
+      taskPrompt = `Task: Conversational Assistance
+Instructions:
+1. Respond directly to the user's prompt or question: "${action}"
+2. Use the [USER BACKGROUND MATERIAL] and [OPPORTUNITY REQUIREMENTS] if they provide helpful context to answer the question.
+3. Provide a friendly, conversational, and concise response in the selected tone: ${tone || 'Professional & Academic'} and the target language: ${language || 'English (UK)'}.
+4. Write your response directly inside the '<draft>...</draft>' tags. DO NOT output JSON for the draft.
+5. Provide any relevant metadata inside the '<metadata>' block.`
+    } else if (action === "extract_context") {
       taskPrompt = `Task: Suitability Analysis
 Instructions:
 1. Carefully read the [USER BACKGROUND MATERIAL] and compare it against the [OPPORTUNITY REQUIREMENTS].
