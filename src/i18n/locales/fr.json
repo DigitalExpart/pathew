@@ -117,16 +117,32 @@
     "trustpilot": "Découvrez pourquoi des milliers de professionnels nous font confiance",
     "faqList": [
       {
-        "question": "Comment l'Assistant Pathew me met-il en correspondance avec les opportunités ?",
-        "answer": "Notre moteur d'Assistant avancé analyse votre profil par rapport à des milliers de points de données dans les descriptions d'opportunités pour fournir un score de correspondance de précision."
+        "question": "Do I need to have a CV to use PATHEW?",
+        "answer": "No! PATHEW is designed for everyone, whether you’re starting from scratch or updating an existing CV. You can build a professional CV from the ground up using our guided onboarding form and step-by-step prompts."
       },
       {
-        "question": "Mes données personnelles sont-elles sécurisées ?",
-        "answer": "Oui, nous utilisons un cryptage standard de l'industrie. Votre profil complet n'est partagé avec les recruteurs que lorsque vous choisissez explicitement de postuler."
+        "question": "Is PATHEW free to use?",
+        "answer": "PATHEW offers a free plan that gives you access to free credits to build functional CVs. Once you top up your credit, you’ll be able to create more CVs, cover letters, and grant proposals."
       },
       {
-        "question": "Puis-je utiliser la plateforme gratuitement ?",
-        "answer": "Absolument ! Notre plan gratuit vous permet d'explorer les correspondances et d'effectuer jusqu'à 3 candidatures par mois."
+        "question": "Can I download my CV in different formats?",
+        "answer": "Yes. Once your CV is complete, you can download it in PDF, Word (.docx), or plain text format, making it easy to submit to any employer or job platform."
+      },
+      {
+        "question": "How long does it take to create a CV with PATHEW?",
+        "answer": "Most users complete a polished, professional CV in under 15 minutes. If you already have your work history and key details ready, it can take even less time."
+      },
+      {
+        "question": "Can I create multiple CVs for different job applications?",
+        "answer": "Absolutely. PATHEW allows you to save and manage multiple CV versions, so you can tailor each one to a specific role or industry without starting over each time."
+      },
+      {
+        "question": "Are the CV templates suitable for my industry?",
+        "answer": "PATHEW offers a wide range of CVs designed for various industries and career levels, from creative fields to corporate, tech, healthcare, and more. You can prompt PATHEW to develop a CV for an industry that suits you best."
+      },
+      {
+        "question": "Is my personal data safe on PATHEW?",
+        "answer": "Yes. PATHEW takes data privacy seriously. Your information is encrypted, never shared with third parties, and you remain in full control of your data at all times."
       }
     ],
     "trustedBy": "Approuvé par des professionnels chez",
@@ -366,6 +382,34 @@
     "tailoringRoadmap": "Adaptation de votre feuille de route en fonction des exigences et de vos compétences actuelles.",
     "focusArea": "Domaine de concentration",
     "deleteRoadmap": "Supprimer la feuille de route"
+  },
+  "planSelection": {
+    "title": "Choisissez votre plan de préparation",
+    "subtitle": "Sélectionnez un délai basé sur la date limite de votre bourse.",
+    "subtitleFor": "Sélectionnez un délai pour \"{{title}}\"",
+    "recommended": "Recommandé",
+    "pageCount": "Niveau de détail du plan",
+    "page1": "1 page",
+    "page1Desc": "Aperçu concis",
+    "page3": "3 pages",
+    "page3Desc": "Feuille de route détaillée",
+    "deadline": "Date limite",
+    "deadlineWarning": "La date limite de cette bourse ne permet peut-être pas une préparation de {{duration}}.",
+    "deadlinePassed": "La date limite de cette bourse est passée. Préparez-vous pour le prochain cycle.",
+    "deadlineTooSoon": "Seulement {{days}} jours restants — ce plan ne sera peut-être pas achevé à temps.",
+    "nextCycleRecommended": "Recommandé pour le prochain cycle de candidature.",
+    "suggestShorter": "Il y a assez de temps — envisagez un plan {{suggested}} pour le cycle actuel.",
+    "suggestLonger": "Envisagez un plan {{suggested}} pour préparer le prochain cycle.",
+    "currentCycle": "Postuler ce cycle",
+    "currentCycleDesc": "Sprint ciblé pour postuler dans la fenêtre de candidature actuelle.",
+    "nextCycle": "Préparer le prochain cycle",
+    "nextCycleDesc": "Développer des compétences pour le prochain tour de candidatures.",
+    "futuresCycle": "Préparation à long terme",
+    "futuresCycleDesc": "Croissance globale à long terme et transformation de carrière.",
+    "confirm": "Commencer ce plan",
+    "daysRemaining": "{{days}} jours avant la date limite",
+    "deadlineUnknown": "Aucune date limite spécifiée",
+    "pagesBadge": "{{count}} PAGE(S)"
   },
   "assistant": {
     "title": "Assistant PATHEW",

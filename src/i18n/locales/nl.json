@@ -117,16 +117,32 @@
     "trustpilot": "Zie waarom duizenden professionals ons vertrouwen",
     "faqList": [
       {
-        "question": "Hoe matcht Pathew Assistant mij met kansen?",
-        "answer": "Onze geavanceerde Assistant-engine analyseert je profiel aan de hand van duizenden datapunten in vacaturebeschrijvingen om een precisie match-score te geven."
+        "question": "Do I need to have a CV to use PATHEW?",
+        "answer": "No! PATHEW is designed for everyone, whether you’re starting from scratch or updating an existing CV. You can build a professional CV from the ground up using our guided onboarding form and step-by-step prompts."
       },
       {
-        "question": "Zijn mijn persoonlijke gegevens veilig?",
-        "answer": "Ja, we gebruiken industriestandaard versleuteling. Je volledige profiel wordt alleen gedeeld met recruiters als je er expliciet voor kiest om te solliciteren."
+        "question": "Is PATHEW free to use?",
+        "answer": "PATHEW offers a free plan that gives you access to free credits to build functional CVs. Once you top up your credit, you’ll be able to create more CVs, cover letters, and grant proposals."
       },
       {
-        "question": "Kan ik het platform gratis gebruiken?",
-        "answer": "Absoluut! Ons gratis plan stelt je in staat om matches te verkennen en tot 3 sollicitaties per maand te doen."
+        "question": "Can I download my CV in different formats?",
+        "answer": "Yes. Once your CV is complete, you can download it in PDF, Word (.docx), or plain text format, making it easy to submit to any employer or job platform."
+      },
+      {
+        "question": "How long does it take to create a CV with PATHEW?",
+        "answer": "Most users complete a polished, professional CV in under 15 minutes. If you already have your work history and key details ready, it can take even less time."
+      },
+      {
+        "question": "Can I create multiple CVs for different job applications?",
+        "answer": "Absolutely. PATHEW allows you to save and manage multiple CV versions, so you can tailor each one to a specific role or industry without starting over each time."
+      },
+      {
+        "question": "Are the CV templates suitable for my industry?",
+        "answer": "PATHEW offers a wide range of CVs designed for various industries and career levels, from creative fields to corporate, tech, healthcare, and more. You can prompt PATHEW to develop a CV for an industry that suits you best."
+      },
+      {
+        "question": "Is my personal data safe on PATHEW?",
+        "answer": "Yes. PATHEW takes data privacy seriously. Your information is encrypted, never shared with third parties, and you remain in full control of your data at all times."
       }
     ],
     "trustedBy": "Vertrouwd door professionals bij",
@@ -366,6 +382,34 @@
     "tailoringRoadmap": "Je stappenplan wordt op maat gemaakt op basis van de vereisten en je huidige vaardigheden.",
     "focusArea": "Aandachtsgebied",
     "deleteRoadmap": "Stappenplan verwijderen"
+  },
+  "planSelection": {
+    "title": "Kies je voorbereidingsplan",
+    "subtitle": "Selecteer een tijdsbestek op basis van je deadline.",
+    "subtitleFor": "Selecteer een tijdsbestek voor \"{{title}}\"",
+    "recommended": "Aanbevolen",
+    "pageCount": "Detailniveau van het plan",
+    "page1": "1 pagina",
+    "page1Desc": "Beknopt overzicht",
+    "page3": "3 pagina's",
+    "page3Desc": "Gedetailleerd stappenplan",
+    "deadline": "Deadline",
+    "deadlineWarning": "De deadline biedt mogelijk niet genoeg tijd voor een {{duration}}-voorbereiding.",
+    "deadlinePassed": "De deadline is verstreken. Bereid je voor op de volgende ronde.",
+    "deadlineTooSoon": "Nog maar {{days}} dagen — dit plan kan mogelijk niet op tijd worden afgerond.",
+    "nextCycleRecommended": "Aanbevolen voor de volgende sollicitatieronde.",
+    "suggestShorter": "Er is genoeg tijd — overweeg een {{suggested}}-plan voor de huidige ronde.",
+    "suggestLonger": "Overweeg een {{suggested}}-plan om je voor te bereiden op de volgende ronde.",
+    "currentCycle": "Solliciteer deze ronde",
+    "currentCycleDesc": "Gerichte sprint om te solliciteren in het huidige venster.",
+    "nextCycle": "Volgende ronde voorbereiden",
+    "nextCycleDesc": "Vaardigheden opbouwen voor de volgende sollicitatieronde.",
+    "futuresCycle": "Langetermijnvoorbereiding",
+    "futuresCycleDesc": "Uitgebreide langetermijngroei en carrièretransformatie.",
+    "confirm": "Start dit plan",
+    "daysRemaining": "{{days}} dagen tot deadline",
+    "deadlineUnknown": "Geen deadline opgegeven",
+    "pagesBadge": "{{count}} PAGINA('S)"
   },
   "assistant": {
     "title": "PATHEW Assistant",

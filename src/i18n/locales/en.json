@@ -122,16 +122,32 @@
     "trustpilot": "See why thousands of professionals trust us",
     "faqList": [
       {
-        "question": "How does Pathew Assistant match me to opportunities?",
-        "answer": "Our advanced Assistant engine analyzes your profile against thousands of data points in opportunity descriptions to provide a precision match score."
+        "question": "Do I need to have a CV to use PATHEW?",
+        "answer": "No! PATHEW is designed for everyone, whether you’re starting from scratch or updating an existing CV. You can build a professional CV from the ground up using our guided onboarding form and step-by-step prompts."
       },
       {
-        "question": "Is my personal data secure?",
-        "answer": "Yes, we use industry-standard encryption. Your full profile is only shared with recruiters when you explicitly choose to apply."
+        "question": "Is PATHEW free to use?",
+        "answer": "PATHEW offers a free plan that gives you access to free credits to build functional CVs. Once you top up your credit, you’ll be able to create more CVs, cover letters, and grant proposals."
       },
       {
-        "question": "Can I use the platform for free?",
-        "answer": "Absolutely! Our Free plan allows you to explore matches and make up to 3 applications per month."
+        "question": "Can I download my CV in different formats?",
+        "answer": "Yes. Once your CV is complete, you can download it in PDF, Word (.docx), or plain text format, making it easy to submit to any employer or job platform."
+      },
+      {
+        "question": "How long does it take to create a CV with PATHEW?",
+        "answer": "Most users complete a polished, professional CV in under 15 minutes. If you already have your work history and key details ready, it can take even less time."
+      },
+      {
+        "question": "Can I create multiple CVs for different job applications?",
+        "answer": "Absolutely. PATHEW allows you to save and manage multiple CV versions, so you can tailor each one to a specific role or industry without starting over each time."
+      },
+      {
+        "question": "Are the CV templates suitable for my industry?",
+        "answer": "PATHEW offers a wide range of CVs designed for various industries and career levels, from creative fields to corporate, tech, healthcare, and more. You can prompt PATHEW to develop a CV for an industry that suits you best."
+      },
+      {
+        "question": "Is my personal data safe on PATHEW?",
+        "answer": "Yes. PATHEW takes data privacy seriously. Your information is encrypted, never shared with third parties, and you remain in full control of your data at all times."
       }
     ],
     "trustedBy": "Trusted by professionals at",
