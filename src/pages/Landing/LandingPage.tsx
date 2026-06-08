@@ -2,7 +2,7 @@ import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
+import { Badge as UIBadge } from '../../components/ui/Badge';
 import { Navbar } from '../../components/layout/Navbar';
 import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap, Plus, Star } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
@@ -182,6 +182,66 @@ export const LandingPage: React.FC = () => {
           </div>
         </motion.div>
       </header>
+
+      {/* Opportunities Section */}
+      <section id="opportunities" className="section-padding" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          style={sectionHeaderStyle}
+        >
+          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>Explore Opportunities</h2>
+          <p style={sectionSubtitleStyle}>Discover roles tailored to your unique profile and start applying in seconds.</p>
+        </motion.div>
+        
+        <div style={opportunitiesGridStyle}>
+          {mockOpportunities.map((opp, index) => (
+            <motion.div 
+              key={opp.id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.1 }}
+            >
+              <Card style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+                <div style={oppCardContentStyle}>
+                  <div style={oppInfoStyle}>
+                    <h3 style={oppTitleStyle}>{opp.title}</h3>
+                    <p style={oppCompanyStyle}>{opp.company} • {opp.location}</p>
+                    <div style={{ marginTop: '16px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                      <UIBadge variant="primary">{opp.type}</UIBadge>
+                      <UIBadge variant="info">{opp.source}</UIBadge>
+                    </div>
+                  </div>
+                  <div style={oppMatchStyle}>
+                    <div style={matchCircleStyle}>
+                      <span style={matchValueStyle}>{opp.match}%</span>
+                    </div>
+                    <span style={matchLabelStyle}>Match</span>
+                  </div>
+                </div>
+                <div style={{ padding: '0 20px 20px', display: 'flex', gap: '12px', marginTop: 'auto' }}>
+                  <Link to="/signup" style={{ flex: 1 }}>
+                    <Button style={{ width: '100%' }}>Apply</Button>
+                  </Link>
+                  <Link to="/signup" style={{ flex: 1 }}>
+                    <Button variant="outline" style={{ width: '100%' }}>Prepare</Button>
+                  </Link>
+                </div>
+              </Card>
+            </motion.div>
+          ))}
+        </div>
+        
+        <div style={{ textAlign: 'center', marginTop: '48px' }}>
+          <Link to="/signup">
+            <Button variant="outline" style={{ gap: '10px' }}>
+              View More Opportunities <ArrowRight size={18} />
+            </Button>
+          </Link>
+        </div>
+      </section>
 
       {/* Features Section */}
       <section id="features" className="section-padding" style={featuresSectionStyle}>
