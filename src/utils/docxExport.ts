@@ -81,69 +81,97 @@ export const generateDocxBlob = async (markdownText: string, accentColorHex: str
     }
     emptyLineCount = 0;
     
-    // Header 1 (Usually Name)
+    const cleanHeader = line.replace(/^[#]+ /, '').replace(/\*/g, '').trim();
+
+    // H1 (Name or Professional Title)
     if (line.startsWith('# ')) {
+      // If it contains a pipe or is very long, it's a Professional Title
+      if (cleanHeader.includes('|') || cleanHeader.length > 50) {
+        children.push(
+          new Paragraph({
+            children: [new TextRun({ text: cleanHeader, bold: true, size: 24, color: accentColorHex })],
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 120 },
+          })
+        );
+      } else {
+        // Main Name
+        children.push(
+          new Paragraph({
+            children: [new TextRun({ text: cleanHeader.toUpperCase(), bold: true, size: 32 })],
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 120 },
+          })
+        );
+      }
+      continue;
+    }
+    
+    // H2 (Professional Title or Section Header)
+    if (line.startsWith('## ')) {
+      // If it's all caps and short and doesn't contain a pipe, it's a Section Title
+      if (cleanHeader === cleanHeader.toUpperCase() && cleanHeader.length < 50 && !cleanHeader.includes('|')) {
+        isHeaderArea = false;
+        children.push(
+          new Paragraph({
+            children: [new TextRun({ text: cleanHeader, bold: true, size: 26 })],
+            alignment: AlignmentType.LEFT,
+            spacing: { before: 240, after: 120 },
+            border: { bottom: { color: accentColorHex, space: 4, style: BorderStyle.SINGLE, size: 12 } }
+          })
+        );
+      } else {
+        // Professional Title (Subtitle)
+        children.push(
+          new Paragraph({
+            children: [new TextRun({ text: cleanHeader, bold: true, size: 24, color: accentColorHex })],
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 120 },
+          })
+        );
+      }
+      continue;
+    }
+    
+    // H3 (Contact Info)
+    if (line.startsWith('### ')) {
       children.push(
         new Paragraph({
-          children: [
-            new TextRun({
-              text: line.replace('# ', '').toUpperCase(),
-              bold: true,
-              size: 32,
-            })
-          ],
+          children: [new TextRun({ text: cleanHeader, bold: false, size: 20 })],
           alignment: AlignmentType.CENTER,
           spacing: { after: 120 },
         })
       );
       continue;
     }
-    
-    // Header 2 (Section Title) - Starts with ## OR is completely UPPERCASE and short
-    const cleanHeader = line.replace(/^[#]+ /, '').replace(/\*/g, '').trim();
-    // Allow uppercase detection if it's relatively short and doesn't contain a pipe
-    const isUppercaseHeader = cleanHeader.length > 0 && cleanHeader.length < 60 && cleanHeader === cleanHeader.toUpperCase() && !cleanHeader.includes('|');
-    
-    if (line.startsWith('## ') || isUppercaseHeader) {
+
+    // H4 (Section Header)
+    if (line.startsWith('#### ')) {
       isHeaderArea = false;
       children.push(
         new Paragraph({
-          children: [
-            new TextRun({
-              text: cleanHeader,
-              bold: true,
-              size: 26,
-            })
-          ],
+          children: [new TextRun({ text: cleanHeader, bold: true, size: 26 })],
           alignment: AlignmentType.LEFT,
           spacing: { before: 240, after: 120 },
-          border: {
-            bottom: {
-              color: accentColorHex,
-              space: 4,
-              style: BorderStyle.SINGLE,
-              size: 12, // 1.5 pt
-            }
-          }
+          border: { bottom: { color: accentColorHex, space: 4, style: BorderStyle.SINGLE, size: 12 } }
         })
       );
       continue;
     }
+
+    // Fallback detection for Section Headers that are plain text
+    // Allow uppercase detection if it's short, doesn't contain a pipe, and not a date
+    const isUppercaseHeader = cleanHeader.length > 0 && cleanHeader.length < 60 && cleanHeader === cleanHeader.toUpperCase() && !cleanHeader.includes('|') && !cleanHeader.match(/\d{4}/);
     
-    // Header 3
-    if (line.startsWith('### ')) {
+    // Only apply uppercase fallback if we are OUTSIDE the header area, or if it explicitly looks like a section header like "PROFESSIONAL SUMMARY"
+    if (isUppercaseHeader && (!isHeaderArea || cleanHeader === 'PROFESSIONAL SUMMARY' || cleanHeader === 'EDUCATION' || cleanHeader === 'WORK EXPERIENCE')) {
       isHeaderArea = false;
       children.push(
         new Paragraph({
-          children: [
-            new TextRun({
-              text: line.replace(/^###\s+/, ''),
-              bold: true,
-              size: 24,
-            })
-          ],
+          children: [new TextRun({ text: cleanHeader, bold: true, size: 26 })],
           alignment: AlignmentType.LEFT,
-          spacing: { before: 120, after: 60 },
+          spacing: { before: 240, after: 120 },
+          border: { bottom: { color: accentColorHex, space: 4, style: BorderStyle.SINGLE, size: 12 } }
         })
       );
       continue;
