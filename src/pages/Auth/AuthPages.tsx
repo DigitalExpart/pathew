@@ -93,24 +93,6 @@ export const LoginPage: React.FC = () => {
             </Button>
           </form>
 
-          <div style={dividerWrapperStyle}>
-            <div style={lineStyle}></div>
-            <span style={dividerTextStyle}>{t('auth.orContinueWith')}</span>
-            <div style={lineStyle}></div>
-          </div>
-
-          <div style={socialGridStyle}>
-            <Button variant="outline" style={{ flex: 1, gap: '8px' }}>
-              <Globe size={18} /> GitHub
-            </Button>
-            <Button variant="outline" style={{ flex: 1, gap: '8px' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.908 3.152-1.928 4.176-1.288 1.288-3.136 2.536-7.12 2.536-6.392 0-11.408-5.144-11.408-11.536s5.016-11.536 11.408-11.536c3.416 0 5.856 1.336 7.64 3.032l2.312-2.312C18.76 1.112 15.96 0 12.48 0 5.688 0 0 5.688 0 12.48s5.688 12.48 12.48 12.48c3.704 0 6.504-1.224 8.712-3.528 2.272-2.272 2.992-5.456 2.992-8.008 0-.768-.064-1.512-.184-2.24h-11.52z"/>
-              </svg>
-              Google
-            </Button>
-          </div>
-
           <p style={footerTextStyle}>
             {t('auth.noAccount')} <Link to="/signup" style={linkStyle}>{t('auth.createAccount')}</Link>
           </p>
