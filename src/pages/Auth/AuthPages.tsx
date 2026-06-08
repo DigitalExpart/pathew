@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { Mail, Lock, Globe, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, ArrowLeft } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
 import { supabase } from '../../lib/supabase';
@@ -409,31 +409,6 @@ const forgotLinkStyle: React.CSSProperties = {
   fontWeight: 600,
 };
 
-const dividerWrapperStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '16px',
-  margin: '32px 0',
-};
-
-const lineStyle: React.CSSProperties = {
-  flex: 1,
-  height: '1px',
-  backgroundColor: 'var(--border-color)',
-};
-
-const dividerTextStyle: React.CSSProperties = {
-  fontSize: '0.75rem',
-  color: 'var(--text-muted)',
-  textTransform: 'uppercase',
-  letterSpacing: '0.05em',
-};
-
-const socialGridStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: '16px',
-  marginBottom: '32px',
-};
 
 const footerTextStyle: React.CSSProperties = {
   textAlign: 'center',
