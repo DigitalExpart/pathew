@@ -152,7 +152,7 @@ export const LandingPage: React.FC = () => {
             <img 
               src="/hero.png" 
               alt="Platform Dashboard" 
-              style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+              style={{ width: '100%', height: 'auto', objectFit: 'contain', display: 'block', borderRadius: 'inherit' }} 
             />
             <div style={heroImageOverlayStyle}>
               <motion.div 
@@ -1045,12 +1045,10 @@ const heroImageContainerStyle: React.CSSProperties = {
 
 const heroImagePlaceholderStyle: React.CSSProperties = {
   width: '100%',
-  height: '750px',
   backgroundColor: 'var(--bg-secondary)',
-  borderRadius: '32px',
+  borderRadius: '16px',
   border: '1px solid var(--border-color)',
   position: 'relative',
-  overflow: 'hidden',
   boxShadow: '0 40px 80px -20px rgba(0, 0, 0, 0.6)',
 };
 
@@ -1058,12 +1056,14 @@ const heroImageOverlayStyle: React.CSSProperties = {
   position: 'absolute',
   inset: 0,
   background: 'linear-gradient(to top, var(--bg-primary), transparent)',
+  borderRadius: 'inherit',
+  pointerEvents: 'none',
 };
 
 const floatingCardStyle: React.CSSProperties = {
   position: 'absolute',
-  top: '60px',
-  left: '-30px',
+  top: '40px',
+  left: '-40px',
   backgroundColor: 'var(--bg-secondary)',
   padding: '24px',
   borderRadius: '20px',
