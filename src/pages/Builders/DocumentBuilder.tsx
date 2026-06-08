@@ -749,7 +749,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
             <div className="animate-pulse" style={loadingShimmerStyle}>
               <Sparkles size={48} color="var(--accent-primary)" style={{ marginBottom: '20px' }} />
               <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>
-                {t('builders.loading.analyzing', 'Analyzing suitability fit...')}
+                {t('builders.loading.analyzing', 'Analysing Suitability...')}
               </h3>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', maxWidth: '380px' }}>
                 {t('builders.loading.parsing', 'Pathew Assistant is parsing your documents, matching keywords against opportunity requirements, and preparing progressive profile questions...')}

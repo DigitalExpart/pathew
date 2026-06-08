@@ -565,7 +565,7 @@
       "analyseBtn": "Analyse Suitability & Gaps"
     },
     "loading": {
-      "analyzing": "Analyzing suitability fit...",
+      "analyzing": "Analysing Suitability...",
       "parsing": "Pathew Assistant is parsing your documents, matching keywords against opportunity requirements, and preparing progressive profile questions...",
       "atsMatchHigh": "ATS Match Fit Score: High • Gaps fully addressed in generation",
       "validated": "Validated",

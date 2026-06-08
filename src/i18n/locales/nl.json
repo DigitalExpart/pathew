@@ -552,7 +552,7 @@
       "analyseBtn": "Analyseer Geschiktheid & Gaten"
     },
     "loading": {
-      "analyzing": "Geschiktheid analyseren...",
+      "analyzing": "Analysing Suitability...",
       "parsing": "Pathew Assistent analyseert uw documenten, vergelijkt trefwoorden met kansvereisten en stelt progressieve profielvragen op...",
       "atsMatchHigh": "ATS Match Fit Score: Hoog • Hiaten volledig aangepakt bij het genereren",
       "validated": "Gevalideerd",

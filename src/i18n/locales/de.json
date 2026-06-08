@@ -551,7 +551,7 @@
       "analyseBtn": "Eignung & Lücken analysieren"
     },
     "loading": {
-      "analyzing": "Eignung wird analysiert...",
+      "analyzing": "Analysing Suitability...",
       "parsing": "Der Pathew-Assistent analysiert Ihre Dokumente, vergleicht Schlüsselwörter mit den Anforderungen und bereitet progressive Profilfragen vor...",
       "atsMatchHigh": "ATS-Match-Score: Hoch • Lücken in der Generierung vollständig behoben",
       "validated": "Validiert",

@@ -551,7 +551,7 @@
       "analyseBtn": "Analyser l'adéquation et les lacunes"
     },
     "loading": {
-      "analyzing": "Analyse de l'adéquation...",
+      "analyzing": "Analysing Suitability...",
       "parsing": "L'Assistant Pathew analyse vos documents, compare les mots-clés aux exigences de l'opportunité et prépare des questions de profilage progressif...",
       "atsMatchHigh": "Score de Correspondance ATS : Élevé • Lacunes entièrement traitées lors de la génération",
       "validated": "Validé",

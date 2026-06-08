@@ -551,7 +551,7 @@
       "analyseBtn": "Analizar Idoneidad y Brechas"
     },
     "loading": {
-      "analyzing": "Analizando idoneidad...",
+      "analyzing": "Analysing Suitability...",
       "parsing": "El Asistente Pathew está analizando sus documentos, comparando palabras clave con los requisitos de la oportunidad y preparando preguntas de perfil progresivas...",
       "atsMatchHigh": "Puntuación de Ajuste ATS: Alta • Brechas abordadas completamente en la generación",
       "validated": "Validado",
