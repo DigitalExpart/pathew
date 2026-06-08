@@ -59,6 +59,12 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
     { name: 'Purple', start: '#7C3AED', end: '#A78BFA', border: '7C3AED' }, // Purple
     { name: 'Cyan', start: '#0891B2', end: '#22D3EE', border: '0891B2' }, // Cyan
     { name: 'Slate', start: '#475569', end: '#94A3B8', border: '475569' }, // Gray
+    { name: 'Black', start: '#0F172A', end: '#334155', border: '0F172A' }, // Slate Black
+    { name: 'Yellow', start: '#EAB308', end: '#FDE047', border: 'EAB308' }, // Yellow
+    { name: 'Teal', start: '#0D9488', end: '#2DD4BF', border: '0D9488' }, // Teal
+    { name: 'Maroon', start: '#9F1239', end: '#E11D48', border: '9F1239' }, // Maroon/Rose
+    { name: 'Navy', start: '#1E3A8A', end: '#3B82F6', border: '1E3A8A' }, // Navy Blue
+    { name: 'Orange', start: '#EA580C', end: '#FB923C', border: 'EA580C' }, // Bright Orange
   ], []);
 
   // Pick an accent color based on the current version number, so it changes for every generation!
