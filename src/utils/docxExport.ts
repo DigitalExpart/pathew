@@ -55,7 +55,7 @@ function parseInlineFormatting(text: string): TextRun[] {
   return tokens.length > 0 ? tokens : [new TextRun({ text })];
 }
 
-export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
+export const generateDocxBlob = async (markdownText: string, accentColorHex: string = "D69E2E"): Promise<Blob> => {
   const lines = markdownText.split('\n');
   const children: any[] = [];
   
@@ -119,7 +119,7 @@ export const generateDocxBlob = async (markdownText: string): Promise<Blob> => {
           spacing: { before: 240, after: 120 },
           border: {
             bottom: {
-              color: "D69E2E",
+              color: accentColorHex,
               space: 4,
               style: BorderStyle.SINGLE,
               size: 12, // 1.5 pt

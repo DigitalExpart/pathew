@@ -48,6 +48,33 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
   const [saveTitle, setSaveTitle] = useState('');
   const [savingVersion, setSavingVersion] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
+  const [editingContent, setEditingContent] = useState(false);
+
+  // Predefined professional gradient accents for section headers
+  const ACCENT_COLORS = useMemo(() => [
+    { name: 'Gold', start: '#D69E2E', end: '#ECC94B', border: 'D69E2E' }, // Default
+    { name: 'Blue', start: '#2563EB', end: '#60A5FA', border: '2563EB' }, // Royal Blue
+    { name: 'Red', start: '#DC2626', end: '#F87171', border: 'DC2626' }, // Crimson Red
+    { name: 'Green', start: '#059669', end: '#34D399', border: '059669' }, // Emerald
+    { name: 'Indigo', start: '#4F46E5', end: '#818CF8', border: '4F46E5' }, // Indigo
+    { name: 'Purple', start: '#7C3AED', end: '#A78BFA', border: '7C3AED' }, // Purple
+    { name: 'Cyan', start: '#0891B2', end: '#22D3EE', border: '0891B2' }, // Cyan
+    { name: 'Slate', start: '#475569', end: '#94A3B8', border: '475569' }, // Gray
+  ], []);
+
+  // Pick an accent color based on the current version number, so it changes for every generation!
+  const accentColor = useMemo(() => {
+    const versionNum = currentVersionNumber || 1;
+    // We use versionNum - 1 so version 1 gets the first color, version 2 gets the second, etc.
+    const index = (versionNum - 1) % ACCENT_COLORS.length;
+    return ACCENT_COLORS[index];
+  }, [currentVersionNumber, ACCENT_COLORS]);
+
+  // Dynamic HR style
+  const dynamicSectionHrStyle: React.CSSProperties = {
+    ...pvSectionHrStyle,
+    background: `linear-gradient(90deg, ${accentColor.start}, ${accentColor.end})`,
+  };
 
   const handleCopy = () => {
     navigator.clipboard.writeText(draftContent);
@@ -73,7 +100,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
   const handleDownload = async (format: string) => {
     try {
       if (format === 'docx') {
-        const blob = await generateDocxBlob(draftContent);
+        const blob = await generateDocxBlob(draftContent, accentColor.border);
         const element = document.createElement('a');
         element.href = URL.createObjectURL(blob);
         element.download = `${documentType.replace(/\s+/g, '_')}_Version_${currentVersionNumber}.docx`;
@@ -235,7 +262,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
                           return (
                             <div style={pvSectionHeaderWrapStyle}>
                               <h2 style={pvSectionHeaderStyle} {...props}>{children}</h2>
-                              <div style={pvSectionHrStyle} />
+                              <div style={dynamicSectionHrStyle} />
                             </div>
                           );
                         }
@@ -249,7 +276,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
                       h4: ({node, ...props}) => (
                         <div style={pvSectionHeaderWrapStyle}>
                           <h4 style={pvSectionHeaderStyle} {...props} />
-                          <div style={pvSectionHrStyle} />
+                          <div style={dynamicSectionHrStyle} />
                         </div>
                       ),
                       // H5 = Sub-section or experience entry title
@@ -261,7 +288,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
                         <h6 style={pvMinorLabelStyle} {...props} />
                       ),
                       // Horizontal rule = gold divider
-                      hr: () => <div style={pvSectionHrStyle} />,
+                      hr: () => <div style={dynamicSectionHrStyle} />,
                       // Paragraphs with experience-row detection
                       // Paragraphs with experience-row detection and section header fallback
                       p: ({node, children, ...props}) => {
@@ -271,7 +298,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
                           return (
                             <div style={pvSectionHeaderWrapStyle}>
                               <h4 style={pvSectionHeaderStyle} {...props}>{children}</h4>
-                              <div style={pvSectionHrStyle} />
+                              <div style={dynamicSectionHrStyle} />
                             </div>
                           );
                         }
