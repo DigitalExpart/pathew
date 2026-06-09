@@ -73,6 +73,7 @@ export const PathewAssistantService = {
         const decoder = new TextDecoder();
         let buffer = '';
         let resolved = false;
+        let fullText = '';
 
         while (true) {
           const { done, value } = await reader.read();
@@ -90,10 +91,14 @@ export const PathewAssistantService = {
               try {
                 const event = JSON.parse(dataStr);
                 if (event.type === 'chunk') {
+                  fullText += event.text;
                   if (onChunk) onChunk(event.text);
                 } else if (event.type === 'done') {
                   resolved = true;
                   resolve(event.metadata);
+                } else if (event.type === 'error') {
+                  resolved = true;
+                  reject(new Error(event.error || 'AI Service Error'));
                 }
               } catch (e) {
                 console.warn('Failed to parse SSE event', e);
@@ -103,7 +108,23 @@ export const PathewAssistantService = {
         }
         
         if (!resolved) {
-          reject(new Error("Stream ended unexpectedly. The AI service may be temporarily unavailable."));
+          if (fullText.trim().length > 100) {
+            let cleanDraft = fullText;
+            if (cleanDraft.includes('<draft>')) cleanDraft = cleanDraft.split('<draft>')[1];
+            if (cleanDraft.includes('</draft>')) cleanDraft = cleanDraft.split('</draft>')[0];
+            if (cleanDraft.includes('<metadata>')) cleanDraft = cleanDraft.split('<metadata>')[0];
+            
+            resolve({
+              draft: cleanDraft.trim(),
+              matchSummary: { strongMatches: [], gaps: [], priorityPoints: [] },
+              editingSuggestions: [],
+              wordCountEstimate: cleanDraft.split(' ').length,
+              confidence: 'low',
+              sessionId: 'partial-' + Date.now()
+            });
+          } else {
+            reject(new Error("Stream ended unexpectedly. The AI service may be temporarily unavailable."));
+          }
         }
       } catch (error: any) {
         console.error('Pathew Assistant Service Streaming Error:', error);
