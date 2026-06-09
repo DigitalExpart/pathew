@@ -152,24 +152,25 @@ export const OpportunityDetail: React.FC = () => {
       {!loading && opp && (
         <>
 
-      <div style={headerStyle}>
+      <div style={{ ...headerStyle, flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '24px' : '0' }}>
         <div style={headerMainStyle}>
-          <div style={companyLogoStyle}>{(opp.organization_name || opp.funder_name || 'O').charAt(0)}</div>
+          <div style={{ ...companyLogoStyle, flexShrink: 0 }}>{(opp.organization_name || opp.funder_name || 'O').charAt(0)}</div>
           <div>
             <h1 style={titleStyle}>{opp.title}</h1>
             <p style={companyNameStyle}>{opp.organization_name || opp.funder_name || t('opportunities.variousSources')}</p>
           </div>
         </div>
-        <div style={headerActionsStyle}>
+        <div style={{ ...headerActionsStyle, width: isMobile ? '100%' : 'auto' }}>
           <Button 
             variant="outline"
             onClick={handleSave}
             disabled={saving}
+            style={{ flex: isMobile ? 1 : 'none', justifyContent: 'center' }}
           >
             {saving ? t('common.saving') : t('common.save')}
           </Button>
           <Button 
-            style={{ gap: '8px', whiteSpace: 'nowrap' }}
+            style={{ gap: '8px', whiteSpace: 'nowrap', flex: isMobile ? 1 : 'none', justifyContent: 'center' }}
             onClick={handleApply}
             disabled={applying}
           >
