@@ -154,10 +154,10 @@ export const OpportunityDetail: React.FC = () => {
 
       <div style={{ ...headerStyle, flexDirection: isMobile ? 'column' : 'row', gap: isMobile ? '24px' : '0' }}>
         <div style={headerMainStyle}>
-          <div style={{ ...companyLogoStyle, flexShrink: 0 }}>{(opp.organization_name || opp.funder_name || 'O').charAt(0)}</div>
+          <div style={{ ...companyLogoStyle, flexShrink: 0, width: isMobile ? '48px' : '64px', height: isMobile ? '48px' : '64px', fontSize: isMobile ? '1.25rem' : '1.5rem', borderRadius: isMobile ? '12px' : '16px' }}>{(opp.organization_name || opp.funder_name || 'O').charAt(0)}</div>
           <div>
-            <h1 style={titleStyle}>{opp.title}</h1>
-            <p style={companyNameStyle}>{opp.organization_name || opp.funder_name || t('opportunities.variousSources')}</p>
+            <h1 style={{ ...titleStyle, fontSize: isMobile ? '1.125rem' : '1.5rem' }}>{opp.title}</h1>
+            <p style={{ ...companyNameStyle, fontSize: isMobile ? '0.9375rem' : '1.125rem' }}>{opp.organization_name || opp.funder_name || t('opportunities.variousSources')}</p>
           </div>
         </div>
         <div style={{ ...headerActionsStyle, width: isMobile ? '100%' : 'auto' }}>
