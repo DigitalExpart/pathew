@@ -5,8 +5,6 @@ import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { 
   Calendar as CalendarIcon, 
-  CheckCircle2, 
-  Circle, 
   Clock, 
   ChevronRight, 
   ChevronLeft,
@@ -18,7 +16,8 @@ import {
   Loader2,
   Sparkles,
   Briefcase,
-  Trash2
+  Trash2,
+  Plus
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useAssistant } from '../../context/AssistantContext';
@@ -239,30 +238,55 @@ export const PreparationPage: React.FC = () => {
 
       if (matchingDoc) {
         const parsedPlan = JSON.parse(matchingDoc.content);
-        setPlan(parsedPlan);
-        setCompletedWeeks(parsedPlan.completedWeeks || []);
         
-        if (!parsedPlan.weeks || parsedPlan.weeks.length === 0) {
+        // Migrate legacy formats (array of strings -> array of objects)
+        const migratePlanToTrackerFormat = (rawPlan: any) => {
+          if (!rawPlan || !rawPlan.weeks) return rawPlan;
+          const migratedWeeks = rawPlan.weeks.map((week: any) => {
+            const isLegacy = week.tasks && week.tasks.length > 0 && typeof week.tasks[0] === 'string';
+            const isWeekCompleted = rawPlan.completedWeeks?.includes(week.number);
+            
+            const newTasks = isLegacy ? week.tasks.map((taskStr: string) => ({
+              id: Math.random().toString(36).substr(2, 9),
+              text: taskStr,
+              status: isWeekCompleted ? 'Completed' : 'Not Started',
+              notes: ''
+            })) : week.tasks;
+            
+            return { ...week, tasks: newTasks || [] };
+          });
+          return { ...rawPlan, weeks: migratedWeeks };
+        };
+
+        const migratedPlan = migratePlanToTrackerFormat(parsedPlan);
+        setPlan(migratedPlan);
+        setCompletedWeeks(migratedPlan.completedWeeks || []);
+        
+        if (!migratedPlan.weeks || migratedPlan.weeks.length === 0) {
           openAssistant('Pathew Assistant', [
             `Generate a ${planType} plan${planPages === 3 ? ' with detailed 3-page level content' : ' with a concise 1-page overview'}`,
-            'How does this work?'
+            'How does this work?',
+            'Generate a detailed version of this plan as a downloadable Word document'
           ], (text) => handleInsertPlan(text), { 
             type: 'Roadmap', 
             duration: planType, 
             pages: planPages,
             opportunity: opportunity?.title,
+            opportunityId: oppId !== 'general' ? oppId : undefined,
             requestId: Date.now() 
           });
         }
       } else {
         openAssistant('Pathew Assistant', [
           `Generate a ${planType} plan${planPages === 3 ? ' with detailed 3-page level content' : ' with a concise 1-page overview'}`,
-          'How does this work?'
+          'How does this work?',
+          'Generate a detailed version of this plan as a downloadable Word document'
         ], (text) => handleInsertPlan(text), { 
           type: 'Roadmap', 
           duration: planType, 
           pages: planPages,
           opportunity: opportunity?.title,
+          opportunityId: oppId !== 'general' ? oppId : undefined,
           requestId: Date.now()
         });
       }
@@ -277,12 +301,14 @@ export const PreparationPage: React.FC = () => {
     openAssistant('Pathew Assistant', [
       `Regenerate my ${planType} plan${planPages === 3 ? ' with detailed 3-page level content' : ' with a concise 1-page overview'}`,
       `Adjust my ${planType} plan to be more aggressive`,
-      'How does this work?'
+      'How does this work?',
+      'Generate a detailed version of this plan as a downloadable Word document'
     ], (text) => handleInsertPlan(text), { 
       type: 'Roadmap', 
       duration: planType, 
       pages: planPages,
       opportunity: opportunity?.title,
+      opportunityId: oppId !== 'general' ? oppId : undefined,
       requestId: Date.now()
     });
   };
@@ -307,7 +333,7 @@ export const PreparationPage: React.FC = () => {
       const subParts = content.split(/\n|(?=\s*[\-*•])|(?=\s*\d+\.\s+)/);
       
       let title = t('preparation.focusArea');
-      const tasks: string[] = [];
+      const tasks: any[] = [];
       
       subParts.forEach((part, idx) => {
         const trimmed = part.trim().replace(/^[:\-*•\d.\s]+/, '').trim();
@@ -320,10 +346,22 @@ export const PreparationPage: React.FC = () => {
             const multiTasks = trimmed.split(' - ');
             multiTasks.forEach(t => {
               const cleaned = t.trim();
-              if (cleaned.length > 3) tasks.push(cleaned);
+              if (cleaned.length > 3) {
+                tasks.push({
+                  id: Math.random().toString(36).substr(2, 9),
+                  text: cleaned,
+                  status: 'Not Started',
+                  notes: ''
+                });
+              }
             });
           } else {
-            tasks.push(trimmed);
+            tasks.push({
+              id: Math.random().toString(36).substr(2, 9),
+              text: trimmed,
+              status: 'Not Started',
+              notes: ''
+            });
           }
         }
       });
@@ -340,17 +378,9 @@ export const PreparationPage: React.FC = () => {
     return weeks.sort((a, b) => a.number - b.number);
   };
 
-  const toggleWeek = async (weekNumber: number) => {
-    if (!user || !plan) return;
-    
-    const newCompleted = completedWeeks.includes(weekNumber)
-      ? completedWeeks.filter(w => w !== weekNumber)
-      : [...completedWeeks, weekNumber];
-    
-    setCompletedWeeks(newCompleted);
-    
+  const savePlanToDB = async (updatedPlan: any) => {
+    if (!user) return;
     try {
-      const updatedPlan = { ...plan, completedWeeks: newCompleted };
       const { data: docs } = await supabase
         .from('documents')
         .select('id, content')
@@ -372,14 +402,64 @@ export const PreparationPage: React.FC = () => {
           .update({ content: JSON.stringify(updatedPlan) })
           .eq('id', matchingDoc.id);
       }
-      
-      setPlan(updatedPlan);
     } catch (error) {
-      console.error('Error updating progress:', error);
+      console.error('Error auto-saving plan:', error);
     }
   };
 
-  const progress = plan?.weeks && plan.weeks.length > 0 ? Math.round((completedWeeks.length / plan.weeks.length) * 100) : 0;
+  const updateTask = (weekIndex: number, taskIndex: number, field: string, value: string) => {
+    if (!plan) return;
+    const updatedPlan = { ...plan };
+    updatedPlan.weeks[weekIndex].tasks[taskIndex][field] = value;
+    setPlan(updatedPlan);
+  };
+
+  const commitTaskUpdate = (updatedPlan: any) => {
+    savePlanToDB(updatedPlan);
+  };
+
+  const addTask = (weekIndex: number) => {
+    if (!plan) return;
+    const updatedPlan = { ...plan };
+    updatedPlan.weeks[weekIndex].tasks.push({
+      id: Math.random().toString(36).substr(2, 9),
+      text: 'New Task',
+      status: 'Not Started',
+      notes: ''
+    });
+    setPlan(updatedPlan);
+    commitTaskUpdate(updatedPlan);
+  };
+
+  const deleteTask = (weekIndex: number, taskIndex: number) => {
+    if (!plan) return;
+    const updatedPlan = { ...plan };
+    updatedPlan.weeks[weekIndex].tasks.splice(taskIndex, 1);
+    setPlan(updatedPlan);
+    commitTaskUpdate(updatedPlan);
+  };
+
+  const handleStatusChange = (weekIndex: number, taskIndex: number, newStatus: string) => {
+    if (!plan) return;
+    const updatedPlan = { ...plan };
+    updatedPlan.weeks[weekIndex].tasks[taskIndex].status = newStatus;
+    setPlan(updatedPlan);
+    commitTaskUpdate(updatedPlan);
+  };
+
+  const calculateProgress = () => {
+    if (!plan || !plan.weeks) return 0;
+    let totalTasks = 0;
+    let completedTasks = 0;
+    plan.weeks.forEach((week: any) => {
+      week.tasks?.forEach((task: any) => {
+        totalTasks++;
+        if (task.status === 'Completed') completedTasks++;
+      });
+    });
+    return totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+  };
+  const progress = calculateProgress();
 
   // Responsive Styles
   const containerStyle: React.CSSProperties = {
@@ -528,31 +608,6 @@ export const PreparationPage: React.FC = () => {
     flexDirection: 'column',
     gap: '16px',
     width: '100%'
-  };
-
-  const weekCardStyle: React.CSSProperties = {
-    padding: isMobile ? '16px' : '20px',
-    transition: 'all 0.3s ease',
-  };
-
-  const weekHeaderStyle: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: isMobile ? 'column' : 'row',
-    justifyContent: 'space-between',
-    alignItems: isMobile ? 'flex-start' : 'center',
-    gap: isMobile ? '12px' : '0',
-  };
-
-  const weekTitleStyle: React.CSSProperties = {
-    fontSize: isMobile ? '1rem' : '1.125rem',
-    fontWeight: 700,
-    marginBottom: '4px',
-    lineHeight: 1.3
-  };
-
-  const weekDescStyle: React.CSSProperties = {
-    fontSize: '0.875rem',
-    color: 'var(--text-muted)',
   };
 
   const calendarHeaderStyle: React.CSSProperties = {
@@ -809,47 +864,103 @@ export const PreparationPage: React.FC = () => {
                   {t('preparation.tailoringRoadmap')}
                 </p>
               </div>
-            ) : plan?.weeks?.map((week: any) => (
-              <Card 
-                key={week.number} 
-                style={{ 
-                  ...weekCardStyle, 
-                  opacity: completedWeeks.includes(week.number) ? 0.7 : 1,
-                  borderLeft: completedWeeks.includes(week.number) ? '4px solid #22c55e' : '4px solid var(--accent-primary)'
-                }}
-              >
-                <div style={weekHeaderStyle}>
-                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px', flex: 1, minWidth: 0 }}>
-                    <div 
-                      onClick={() => toggleWeek(week.number)}
-                      style={{ cursor: 'pointer', marginTop: '2px', flexShrink: 0 }}
-                    >
-                      {completedWeeks.includes(week.number) ? (
-                        <CheckCircle2 size={24} color="#22c55e" />
-                      ) : (
-                        <Circle size={24} color="var(--text-muted)" />
-                      )}
-                    </div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <h4 style={weekTitleStyle}>{t('preparation.week')} {week.number}: {week.title}</h4>
-                      <p style={{ ...weekDescStyle, color: 'var(--accent-primary)', marginBottom: '6px', fontWeight: 600 }}>
-                        {(() => {
-                          const startDateStr = plan.startDate || plan.created_at || new Date().toISOString();
-                          const start = new Date(startDateStr);
-                          start.setDate(start.getDate() + (week.number - 1) * 7);
-                          const end = new Date(start);
-                          end.setDate(end.getDate() + 6);
-                          return `${start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`;
-                        })()}
-                      </p>
-                      <p style={{ ...weekDescStyle, lineHeight: 1.4 }}>{week.tasks[0]}</p>
-                    </div>
+            ) : plan?.weeks?.map((week: any, weekIndex: number) => (
+              <div key={week.number} style={{ marginBottom: '32px', backgroundColor: 'var(--bg-secondary)', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border-color)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', backgroundColor: 'rgba(0,0,0,0.2)', borderBottom: '1px solid var(--border-color)' }}>
+                  <div>
+                    <h3 style={{ fontSize: '1.25rem', fontWeight: 700 }}>Week {week.number}: {week.title}</h3>
+                    <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: '4px' }}>
+                      {(() => {
+                        const startDateStr = plan.startDate || plan.created_at || new Date().toISOString();
+                        const start = new Date(startDateStr);
+                        start.setDate(start.getDate() + (week.number - 1) * 7);
+                        const end = new Date(start);
+                        end.setDate(end.getDate() + 6);
+                        return `${start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`;
+                      })()}
+                    </p>
                   </div>
-                  <Badge variant={completedWeeks.includes(week.number) ? "success" : "outline"} style={{ flexShrink: 0, marginTop: isMobile ? '4px' : '0', marginLeft: isMobile ? '40px' : '0' }}>
-                    {completedWeeks.includes(week.number) ? t('preparation.completed') : t('preparation.pending')}
-                  </Badge>
+                  <Button variant="outline" size="sm" onClick={() => addTask(weekIndex)}>
+                    <Plus size={16} style={{ marginRight: '4px' }} /> Add Task
+                  </Button>
                 </div>
-              </Card>
+                
+                <div style={{ overflowX: 'auto', padding: '16px' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid var(--border-color)', textAlign: 'left', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+                        <th style={{ padding: '0 12px 12px', width: '40%', fontWeight: 600 }}>Task</th>
+                        <th style={{ padding: '0 12px 12px', width: '20%', fontWeight: 600 }}>Status</th>
+                        <th style={{ padding: '0 12px 12px', width: '35%', fontWeight: 600 }}>Notes</th>
+                        <th style={{ padding: '0 12px 12px', width: '5%' }}></th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {week.tasks.map((task: any, taskIndex: number) => (
+                        <tr key={task.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                          <td style={{ padding: '12px' }}>
+                            <input 
+                              type="text" 
+                              value={task.text || ''} 
+                              onChange={(e) => updateTask(weekIndex, taskIndex, 'text', e.target.value)}
+                              onBlur={() => commitTaskUpdate(plan)}
+                              style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--border-color)', borderRadius: '6px', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.9375rem' }}
+                            />
+                          </td>
+                          <td style={{ padding: '12px' }}>
+                            <select 
+                              value={task.status || 'Not Started'} 
+                              onChange={(e) => handleStatusChange(weekIndex, taskIndex, e.target.value)}
+                              style={{ 
+                                width: '100%', padding: '10px 12px', border: '1px solid var(--border-color)', borderRadius: '6px', 
+                                background: task.status === 'Completed' ? 'rgba(34, 197, 94, 0.1)' : 
+                                            task.status === 'Ongoing' ? 'rgba(59, 130, 246, 0.1)' : 
+                                            task.status === 'Pending' ? 'rgba(245, 158, 11, 0.1)' : 'var(--bg-primary)', 
+                                color: task.status === 'Completed' ? '#4ade80' : 
+                                       task.status === 'Ongoing' ? '#60a5fa' : 
+                                       task.status === 'Pending' ? '#fbbf24' : 'var(--text-primary)', 
+                                fontSize: '0.9375rem', fontWeight: 600
+                              }}
+                            >
+                              <option value="Not Started">Not Started</option>
+                              <option value="Pending">Pending</option>
+                              <option value="Ongoing">Ongoing</option>
+                              <option value="Completed">Completed</option>
+                            </select>
+                          </td>
+                          <td style={{ padding: '12px' }}>
+                            <input 
+                              type="text"
+                              value={task.notes || ''} 
+                              onChange={(e) => updateTask(weekIndex, taskIndex, 'notes', e.target.value)}
+                              onBlur={() => commitTaskUpdate(plan)}
+                              placeholder="Add notes..."
+                              style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--border-color)', borderRadius: '6px', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.9375rem' }}
+                            />
+                          </td>
+                          <td style={{ padding: '12px', textAlign: 'center' }}>
+                            <button 
+                              onClick={() => deleteTask(weekIndex, taskIndex)}
+                              style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '8px', borderRadius: '4px' }}
+                              onMouseEnter={(e) => e.currentTarget.style.color = '#ef4444'}
+                              onMouseLeave={(e) => e.currentTarget.style.color = 'var(--text-muted)'}
+                            >
+                              <Trash2 size={16} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      {(!week.tasks || week.tasks.length === 0) && (
+                        <tr>
+                          <td colSpan={4} style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                            No tasks for this week. Click 'Add Task' to create one.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
             )) || (
               <div style={{ textAlign: 'center', padding: '60px', color: 'var(--text-muted)' }}>
                 <Target size={48} style={{ marginBottom: '16px', opacity: 0.3 }} />
