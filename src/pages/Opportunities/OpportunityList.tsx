@@ -336,9 +336,10 @@ const matchTextStyle: React.CSSProperties = {
 };
 
 const oppTitleStyle: React.CSSProperties = {
-  fontSize: '1.25rem',
+  fontSize: '1.05rem',
   fontWeight: 700,
-  marginBottom: '4px',
+  lineHeight: 1.4,
+  marginBottom: '6px',
 };
 
 const companyStyle: React.CSSProperties = {

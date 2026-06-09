@@ -186,7 +186,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
       {/* Title block */}
       <header style={headerBlockStyle}>
         <div>
-          <h1 style={{ fontSize: isMobile ? '1.5rem' : '2rem', fontWeight: 800, marginBottom: '4px' }}>
+          <h1 style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: 800, marginBottom: '4px', lineHeight: 1.3 }}>
             {oppDetails ? t('builders.common.tailoredOppTitle', 'Tailored {{type}} - {{title}}', { type, title: oppDetails.title }) : (initialTitle || t('builders.common.tailoredTitle', 'Tailored {{type}} Workspace', { type }))}
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>

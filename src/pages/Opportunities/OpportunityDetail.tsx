@@ -430,8 +430,9 @@ const companyLogoStyle: React.CSSProperties = {
 };
 
 const titleStyle: React.CSSProperties = {
-  fontSize: '2.25rem',
-  marginBottom: '4px',
+  fontSize: '1.5rem',
+  lineHeight: 1.3,
+  marginBottom: '8px',
 };
 
 const companyNameStyle: React.CSSProperties = {
