@@ -91,6 +91,18 @@ Deno.serve(async (req: Request) => {
       opportunity = oppData
     }
 
+    const isGeneralAssistant = documentType === 'PATHEW Assistant' || documentType === 'Assistant' || !documentType;
+
+    let platformOpportunities: any[] = []
+    if (isGeneralAssistant) {
+      const { data: allOpps } = await supabaseAdmin
+        .from('opportunities')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(20)
+      platformOpportunities = allOpps || []
+    }
+
     // Fetch background sources
     let sources = []
     if (sourceIds && sourceIds.length > 0) {
@@ -506,22 +518,29 @@ OUTPUT:
 
     const cvTypeBlock = cvTypeRules[cvType || "Work CV"] || cvTypeRules["Work CV"];
 
-    const isGeneralAssistant = documentType === 'PATHEW Assistant' || documentType === 'Assistant' || !documentType;
-
     let systemPrompt = '';
     
     if (isGeneralAssistant) {
+      let oppsContext = '';
+      if (platformOpportunities.length > 0) {
+        oppsContext = `\nAVAILABLE OPPORTUNITIES DATABASE (Use this to recommend opportunities!):\n`;
+        platformOpportunities.forEach(opp => {
+          oppsContext += `- [ID: ${opp.id}] ${opp.title} at ${opp.organization_name || opp.funder_name || opp.company || 'Unknown'} (${opp.location || 'Remote'}) - Type: ${opp.type || 'N/A'}. Deadline: ${opp.deadline || 'N/A'}\n`;
+        });
+      }
+
       systemPrompt = `You are Pathew Assistant, a premium AI assistant for the PATHEW platform.
-Your objective is to help the user navigate the platform, understand their profile, provide career advice, and answer questions about opportunities.
+Your objective is to help the user navigate the platform, understand their profile, provide career advice, and strongly recommend matching opportunities from the database below based on their skills and background.
 
 ${toneMap[tone || profile?.assistant_settings?.tone || 'Professional (formal)'] || toneMap['Professional (formal)']}
 ${languageMap[language || 'English (UK)'] || languageMap['English (UK)']}
 
 Core Principles:
-- You will receive the user's profile and target opportunity (if any) as context.
+- You will receive the user's profile as context. Match their skills and experience against the Available Opportunities Database.
 - Be conversational, helpful, and concise.
-- Answer any question the user asks. If it's about navigating the website, guide them clearly (e.g., "Go to your Dashboard to edit your profile", "Browse the Opportunities page to find roles").
+- Answer any question the user asks. If they ask for recommendations, actively suggest 2-3 matching opportunities from the list below and explain why they fit.
 - DO NOT generate a full CV, resume, or cover letter unless explicitly requested. Just answer the user's question or provide strategic advice.
+${oppsContext}`;
 
 CRITICAL: You MUST output your response in two distinct XML blocks: <draft> and <metadata>.
 DO NOT wrap them in JSON or markdown blocks.
