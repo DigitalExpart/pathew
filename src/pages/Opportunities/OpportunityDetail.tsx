@@ -19,6 +19,8 @@ import {
   Briefcase
 } from 'lucide-react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useAssistant } from '../../context/AssistantContext';
+import { Sparkles } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { useTranslation } from 'react-i18next';
@@ -27,6 +29,7 @@ export const OpportunityDetail: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user, profile } = useAuth();
+  const { openAssistant } = useAssistant();
   const { t } = useTranslation();
   
   const [opp, setOpp] = React.useState<any>(null);
@@ -64,6 +67,16 @@ export const OpportunityDetail: React.FC = () => {
     fetchOpp();
   }, [id]);
 
+  const handleFitAnalysis = () => {
+    if (!opp) return;
+    (window as any).currentOpportunityId = opp.id;
+    openAssistant('Pathew Assistant', t('opportunities.compatibilityPrompts', { returnObjects: true }) as string[], undefined, {
+      opportunityId: opp.id,
+      opportunityDescription: opp.description,
+      title: opp.title,
+      company: opp.company
+    });
+  };
 
   const handleSave = async () => {
     if (!user || !opp) return;
@@ -200,59 +213,38 @@ export const OpportunityDetail: React.FC = () => {
             
             <h2 style={{ ...sectionTitleStyle, marginTop: '32px' }}>{t('opportunities.requirementComparison')}</h2>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
-              {(() => {
-                const reqs = opp.requirements || [];
-                let gapCount = 0;
-                const reqElements = reqs.map((req: string, i: number) => {
-                  const searchReq = req?.toLowerCase() || '';
-                  const hasSkill = profile?.skills?.some(s => s.toLowerCase().includes(searchReq)) || 
-                                   profile?.experience?.some(e => e.description?.toLowerCase().includes(searchReq)) ||
-                                   profile?.story?.toLowerCase().includes(searchReq);
-                  if (!hasSkill) gapCount++;
-                  return (
-                    <div key={i} style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      justifyContent: 'space-between', 
-                      padding: '12px 16px', 
-                      backgroundColor: 'var(--bg-secondary)', 
-                      borderRadius: 'var(--radius-md)',
-                      border: `1px solid ${hasSkill ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)'}`
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        {hasSkill ? (
-                          <CheckCircle2 size={18} color="#22c55e" />
-                        ) : (
-                          <XCircle size={18} color="#ef4444" />
-                        )}
-                        <span style={{ 
-                          fontWeight: 500,
-                          color: hasSkill ? 'var(--text-primary)' : 'var(--text-secondary)' 
-                        }}>
-                          {req}
-                        </span>
-                      </div>
-                      {!hasSkill && <Badge variant="outline" style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)', fontSize: '0.7rem' }}>{t('opportunities.skillGap')}</Badge>}
-                    </div>
-                  );
-                });
-                
-                const isPoorMatch = opp.type === 'grant' && gapCount > 0 && (gapCount / Math.max(1, reqs.length)) >= 0.5;
-
+              {(opp.requirements || []).map((req: string, i: number) => {
+                const searchReq = req?.toLowerCase() || '';
+                const hasSkill = profile?.skills?.some(s => s.toLowerCase().includes(searchReq)) || 
+                                 profile?.experience?.some(e => e.description?.toLowerCase().includes(searchReq)) ||
+                                 profile?.story?.toLowerCase().includes(searchReq);
                 return (
-                  <>
-                    {isPoorMatch && (
-                      <div style={{ marginBottom: '16px', padding: '16px', borderRadius: '8px', backgroundColor: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.3)', display: 'flex', gap: '12px', alignItems: 'center' }}>
-                         <AlertCircle size={24} color="#ef4444" style={{ flexShrink: 0 }} />
-                         <p style={{ fontSize: '0.9375rem', color: '#ef4444', margin: 0, lineHeight: 1.5 }}>
-                           <strong>Pathew Assistant Advice:</strong> Your profile doesn't strongly match the requirements for this grant. We recommend against applying.
-                         </p>
-                      </div>
-                    )}
-                    {reqElements}
-                  </>
+                  <div key={i} style={{ 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'space-between', 
+                    padding: '12px 16px', 
+                    backgroundColor: 'var(--bg-secondary)', 
+                    borderRadius: 'var(--radius-md)',
+                    border: `1px solid ${hasSkill ? 'rgba(34, 197, 94, 0.1)' : 'rgba(239, 68, 68, 0.1)'}`
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      {hasSkill ? (
+                        <CheckCircle2 size={18} color="#22c55e" />
+                      ) : (
+                        <XCircle size={18} color="#ef4444" />
+                      )}
+                      <span style={{ 
+                        fontWeight: 500,
+                        color: hasSkill ? 'var(--text-primary)' : 'var(--text-secondary)' 
+                      }}>
+                        {req}
+                      </span>
+                    </div>
+                    {!hasSkill && <Badge variant="outline" style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)', fontSize: '0.7rem' }}>{t('opportunities.skillGap')}</Badge>}
+                  </div>
                 );
-              })()}
+              })}
             </div>
 
             <Card title={t('opportunities.getPreparationPlan')} icon={Target} style={{ backgroundColor: 'rgba(245, 158, 11, 0.03)', borderColor: 'var(--accent-glow)', marginTop: '32px' }}>
@@ -311,6 +303,23 @@ export const OpportunityDetail: React.FC = () => {
         </div>
 
         <div style={sidebarColStyle}>
+          <Card style={{ marginBottom: '24px', textAlign: 'center' }}>
+            <h3 style={matchScoreTitleStyle}>{t('assistant.title')}</h3>
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginTop: '12px' }}>
+              {t('opportunities.analysisDesc')}
+            </p>
+            
+            <Button 
+              variant="outline" 
+              size="sm" 
+              style={{ marginTop: '20px', width: '100%', gap: '8px', color: 'var(--accent-primary)', borderColor: 'rgba(245, 158, 11, 0.2)' }}
+              onClick={handleFitAnalysis}
+            >
+              <Sparkles size={14} />
+              {t('opportunities.analyzeFit')}
+            </Button>
+          </Card>
+
           <Card title={t('opportunities.atAGlance')}>
             <div style={infoGridStyle}>
               <InfoItem icon={MapPin} label={t('opportunities.location')} value={opp.location || `${t('opportunities.remoteOnly')} / ${t('opportunities.variousSources')}`} />
@@ -483,8 +492,6 @@ const docGenCardStyle: React.CSSProperties = {
   transition: 'all 0.2s ease',
 };
 
-
-
 const docIconWrapperStyle: React.CSSProperties = {
   width: '40px',
   height: '40px',
@@ -493,6 +500,14 @@ const docIconWrapperStyle: React.CSSProperties = {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
+};
+
+const matchScoreTitleStyle: React.CSSProperties = {
+  fontSize: '0.875rem',
+  textTransform: 'uppercase',
+  letterSpacing: '0.05em',
+  color: 'var(--text-muted)',
+  marginBottom: '20px',
 };
 
 const infoGridStyle: React.CSSProperties = {
