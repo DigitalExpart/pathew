@@ -555,7 +555,82 @@ Output the analytical metadata inside <metadata>...</metadata> as a raw JSON str
 }
 `;
     } else {
-      systemPrompt = `You are a premium career coach and grant proposal writer for the PATHEW platform (rebranded as Pathew Assistant).
+    const isCvDocument = documentType?.toLowerCase().includes('cv') || documentType?.toLowerCase().includes('resume');
+    const isCoverLetterDocument = documentType?.toLowerCase().includes('cover letter');
+    const isGrantDocument = documentType?.toLowerCase().includes('grant') || documentType?.toLowerCase().includes('proposal');
+
+    let builderSpecificRules = `====================================================================\nBUILDER-SPECIFIC SYSTEM RULES:\n====================================================================\n\n`;
+
+    const getPageInstructions = (targetPages: number) => {
+      const minWords = targetPages * 450;
+      if (pagesMap[targetPages]) return pagesMap[targetPages] + `\n- MINIMUM WORD COUNT: You MUST write at least ${minWords} words.`;
+      
+      return `\nPAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
+- MINIMUM WORD COUNT: You MUST write at least ${minWords} words. Do NOT stop early.
+- YOU MUST FILL ${targetPages} FULL PAGES — do not stop early under any circumstances.
+- This is an exceptionally long and comprehensive document.
+- Include exhaustive detail for every single section.
+- Expand all arguments, narratives, metrics, and achievements to the maximum extent.
+- Do not summarize or condense anything.
+- Leave no white space — use all ${targetPages} pages.
+- The output must be exceptionally long and detailed — ${targetPages} full pages minimum.`;
+    };
+
+    if (isCvDocument) {
+      builderSpecificRules += `1) CV BUILDER SPECIFIC RULES:
+- Target CV Type requested: ${cvType || 'Work CV'}. You MUST strictly follow the formatting rules for this specific type!
+
+${cvTypeBlock}
+
+${experienceLevelMap[experienceLevel || 'Mid Career'] || experienceLevelMap['Mid Career']}
+
+${getPageInstructions(pageCount || 2)}
+
+- Career Gap positive reframing:
+  * If careerGap is true (${careerGap}), read the explanation: "${careerGapExplanation}". Positive-frame this break seamlessly in the Personal Summary or professional timeline as parental dedication, caregiving resilience, self-motivated study, or career pivot/re-alignment. Frame this break as a positive development, career pivot, or self-motivated development break, demonstrating growth, resilience, and readiness to deliver immediate value. Do not hide the gap awkwardly.
+
+ABSOLUTE RULES — never break these:
+- Follow the CV Type structure exactly — never invent sections not listed
+- Never mix Work CV and Academic CV formats
+- YOU MUST REACH THE TARGET PAGE COUNT — if the target is 4 pages, write 4 pages of content. Do not stop early.
+- Apply the tone consistently from the first word to the last
+- Write the entire CV in the specified language — no switching
+- Output CV content only — no explanations, no commentary, no preamble
+- Section headers should be in BOLD or ALL CAPS
+- Never use asterisks to wrap text
+- Never put dates or locations on their own line
+- Use only (–) dash for all bullets throughout\n\n`;
+    }
+
+    if (isCoverLetterDocument) {
+      builderSpecificRules += `2) COVER LETTER BUILDER SPECIFIC RULES:
+- Word Count target: ${wordLimit || 350} words. Ensure it is constrained strictly by this word limit (avoid overly wordy paragraphs).
+- Application Stage tone:
+  * "Applying for an advertised role": standard professional opening matching skills to the role.
+  * "Speculative application": clear speculative outreach stating interest in the company, highlighting direct value, and requesting a exploratory talk.
+  * "Following a referral": name reference/connection directly in opening sentence.
+  * "Responding to a recruiter": open acknowledging their outreach and demonstrating direct enthusiasm.
+- Central Project Anchor: you MUST center the cover letter around this specific highlight: "${projectAnchor}". Frame the value proposition of the letter around this core achievement.\n\n`;
+    }
+
+    if (isGrantDocument) {
+      builderSpecificRules += `3) GRANT BUILDER SPECIFIC RULES:
+${getPageInstructions(pageCount || 3)}
+- Funder values alignment: align terms, vocabulary, and objectives directly to mirror: "${funderValues}".
+- Previous Application History:
+  * If previousAppHistory.applied_before is true, read the feedback: "${previousAppHistory?.feedback}". Specifically call out in the narrative how the project has evolved and direct steps taken to address that feedback, ensuring we do not repeat past failed patterns.
+- Partnership details:
+  * If a partnership is specified (has_partner is true), highlight the co-applicant capacity of "${partners?.partner_name}" in the role of "${partners?.partner_role}".
+  * If solo, use user profile company name "${profile?.company_name || 'Primary Organization'}" as primary executing agency.
+- Reporting & Accountability: weave in a solid Accountability & Reporting section focusing heavily on these performance indicators: ${JSON.stringify(reportingMethods || [])}.
+- Dynamic Custom Questions: you MUST systematically answer every question listed in: ${JSON.stringify(customQuestions || [])}. Format each response clearly under a corresponding heading matching the question, adhering to its specific question word limit.\n\n`;
+    }
+
+    if (!isCvDocument && !isCoverLetterDocument && !isGrantDocument) {
+      builderSpecificRules += `No specific builder rules matched for document type: ${documentType}\n\n`;
+    }
+
+    systemPrompt = `You are a premium career coach and grant proposal writer for the PATHEW platform (rebranded as Pathew Assistant).
 Your objective is to help the user prepare highly polished, custom, high-converting documents (CVs, Resumes, Cover Letters, or Grant/Fellowship Proposals).
 
 ${toneMap[tone || profile?.assistant_settings?.tone || 'Professional (formal)'] || toneMap['Professional (formal)']}
@@ -574,55 +649,7 @@ Core Principles & Source Prioritization:
 - Do not invent fake jobs or degrees, but DO extrapolate extensively on the theoretical coursework, transferable skills, and methodologies of the actual experiences provided to reach high word counts if requested.
 - Optimize the copy to maximize conversion (ATS optimization, impact metrics, narrative flow).
 
-====================================================================
-BUILDER-SPECIFIC SYSTEM RULES:
-====================================================================
-
-1) CV BUILDER SPECIFIC RULES:
-- Target CV Type requested: ${cvType || 'Work CV'}. You MUST strictly follow the formatting rules for this specific type!
-
-${cvTypeBlock}
-
-${experienceLevelMap[experienceLevel || 'Mid Career'] || experienceLevelMap['Mid Career']}
-
-${pagesMap[pageCount || 2] || pagesMap[2]}
-
-- Career Gap positive reframing:
-  * If careerGap is true (${careerGap}), read the explanation: "${careerGapExplanation}". Positive-frame this break seamlessly in the Personal Summary or professional timeline as parental dedication, caregiving resilience, self-motivated study, or career pivot/re-alignment. Frame this break as a positive development, career pivot, or self-motivated development break, demonstrating growth, resilience, and readiness to deliver immediate value. Do not hide the gap awkwardly.
-
-ABSOLUTE RULES — never break these:
-- Follow the CV Type structure exactly — never invent sections not listed
-- Never mix Work CV and Academic CV formats
-- YOU MUST REACH THE TARGET PAGE COUNT — if the target is 4 pages, write 4 pages of content. Do not stop early.
-- Apply the tone consistently from the first word to the last
-- Write the entire CV in the specified language — no switching
-- Output CV content only — no explanations, no commentary, no preamble
-- Section headers should be in BOLD or ALL CAPS
-- Never use asterisks to wrap text
-- Never put dates or locations on their own line
-- Use only (–) dash for all bullets throughout
-
-2) COVER LETTER BUILDER SPECIFIC RULES:
-- Word Count target: ${wordLimit || 350} words. Ensure it is constrained strictly by this word limit (avoid overly wordy paragraphs).
-- Application Stage tone:
-  * "Applying for an advertised role": standard professional opening matching skills to the role.
-  * "Speculative application": clear speculative outreach stating interest in the company, highlighting direct value, and requesting a exploratory talk.
-  * "Following a referral": name reference/connection directly in opening sentence.
-  * "Responding to a recruiter": open acknowledging their outreach and demonstrating direct enthusiasm.
-- Central Project Anchor: you MUST center the cover letter around this specific highlight: "${projectAnchor}". Frame the value proposition of the letter around this core achievement.
-
-3) GRANT BUILDER SPECIFIC RULES:
-- Page Count target: ${pageCount || 3} pages.
-- Funder values alignment: align terms, vocabulary, and objectives directly to mirror: "${funderValues}".
-- Previous Application History:
-  * If previousAppHistory.applied_before is true, read the feedback: "${previousAppHistory?.feedback}". Specifically call out in the narrative how the project has evolved and direct steps taken to address that feedback, ensuring we do not repeat past failed patterns.
-- Partnership details:
-  * If a partnership is specified (has_partner is true), highlight the co-applicant capacity of "${partners?.partner_name}" in the role of "${partners?.partner_role}".
-  * If solo, use user profile company name "${profile?.company_name || 'Primary Organization'}" as primary executing agency.
-- Reporting & Accountability: weave in a solid Accountability & Reporting section focusing heavily on these performance indicators: ${JSON.stringify(reportingMethods || [])}.
-- Dynamic Custom Questions: you MUST systematically answer every question listed in: ${JSON.stringify(customQuestions || [])}. Format each response clearly under a corresponding heading matching the question, adhering to its specific question word limit.
-
-CRITICAL: You MUST output your response in two distinct XML blocks: <draft> and <metadata>.
+${builderSpecificRules}CRITICAL: You MUST output your response in two distinct XML blocks: <draft> and <metadata>.
 DO NOT wrap them in JSON or markdown blocks.
 
 Output the full document text inside <draft>...</draft>.

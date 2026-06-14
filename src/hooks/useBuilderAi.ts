@@ -561,7 +561,20 @@ OUTPUT:
       
       ctx += `${cvTypeRules[cvType] || cvTypeRules["Work CV"]}\n\n`;
       ctx += `${experienceLevelMap[experienceLevel] || experienceLevelMap["Mid Career"]}\n\n`;
-      ctx += `${pagesMap[pageCount] || pagesMap[2]}\n\n`;
+      const getPageInstructions = (targetPages: number) => {
+        if (pagesMap[targetPages]) return pagesMap[targetPages];
+        return `
+PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
+- YOU MUST FILL ${targetPages} FULL PAGES — do not stop early under any circumstances.
+- This is an exceptionally long and comprehensive document.
+- Include exhaustive detail for every single section.
+- Expand all arguments, narratives, metrics, and achievements to the maximum extent.
+- Do not summarize or condense anything.
+- Leave no white space — use all ${targetPages} pages.
+- The output must be exceptionally long and detailed — ${targetPages} full pages minimum.`;
+      };
+
+      ctx += `${getPageInstructions(pageCount)}\n\n`;
       ctx += `${toneMap[tone] || toneMap["N/A"]}\n\n`;
       ctx += `${languageMap[language] || languageMap["UK English"]}\n\n`;
       ctx += `${formattingRules}\n\n`;

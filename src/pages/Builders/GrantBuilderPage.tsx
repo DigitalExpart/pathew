@@ -1,15 +1,379 @@
-import React from 'react';
-import { DocumentBuilder } from './DocumentBuilder';
+import React, { useState, useEffect } from 'react';
+import { Card } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
+import { Download, Eye, Save, Settings2, X, Sparkles } from 'lucide-react';
+import { useAssistant } from '../../context/AssistantContext';
 import { useTranslation } from 'react-i18next';
 
 export const GrantBuilderPage: React.FC = () => {
   const { t } = useTranslation();
+  const [docType, setDocType] = useState(t('grantBuilder.docTypes.full'));
+  const [pageCount, setPageCount] = useState(t('grantBuilder.pages.five'));
+  const [previewMode, setPreviewMode] = useState(false);
+  const [content, setContent] = useState(t('grantBuilder.placeholder'));
+  const [questions, setQuestions] = useState([{ id: 1, text: t('grantBuilder.abstract'), limit: 250 }]);
+  const { openAssistant } = useAssistant();
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const addQuestion = () => {
+    setQuestions([...questions, { id: Date.now(), text: '', limit: 500 }]);
+  };
+
+  const openAIGrantHelp = () => {
+    openAssistant('Grant Builder', [
+      'Draft an answer',
+      'Shorten to word limit',
+      'Make this more persuasive',
+      'Use my achievements to strengthen this answer'
+    ], (text) => {
+      setContent(prev => prev + '\n\n' + text);
+    }, {
+      docType: docType,
+      content: content,
+      questions: questions
+    });
+  };
+
+  // Dynamic Responsive Styles
+  const containerStyle: React.CSSProperties = {
+    maxWidth: '1200px',
+    margin: '0 auto',
+    height: isMobile ? 'auto' : 'calc(100vh - 120px)',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: isMobile ? '16px' : '0'
+  };
+
+  const headerStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    justifyContent: 'space-between',
+    alignItems: isMobile ? 'stretch' : 'flex-start',
+    marginBottom: isMobile ? '16px' : '24px',
+    gap: isMobile ? '16px' : '0'
+  };
+
+  const titleStyle: React.CSSProperties = {
+    fontSize: isMobile ? '1.5rem' : '2rem',
+    marginBottom: '4px',
+  };
+
+  const subtitleStyle: React.CSSProperties = {
+    color: 'var(--text-secondary)',
+    fontSize: '0.875rem'
+  };
+
+  const headerActionsStyle: React.CSSProperties = {
+    display: 'flex',
+    gap: '12px',
+    width: isMobile ? '100%' : 'auto',
+  };
+
+  const layoutGridStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    gap: isMobile ? '24px' : '32px',
+    flex: 1,
+    minHeight: 0,
+  };
+
+  const settingsSidebarStyle: React.CSSProperties = {
+    width: isMobile ? '100%' : '320px',
+    display: 'flex',
+    flexDirection: 'column',
+    overflowY: isMobile ? 'visible' : 'auto',
+    paddingRight: isMobile ? '0' : '4px',
+    gap: '20px'
+  };
+
+  const editorAreaStyle: React.CSSProperties = {
+    flex: 1,
+    display: 'flex',
+    flexDirection: 'column',
+    backgroundColor: 'var(--bg-secondary)',
+    borderRadius: 'var(--radius-xl)',
+    border: '1px solid var(--border-color)',
+    overflow: 'hidden',
+    height: isMobile ? '450px' : 'auto',
+    minHeight: isMobile ? '350px' : '0',
+  };
+
+  const formGroupStyle: React.CSSProperties = {
+    marginBottom: '16px',
+  };
+
+  const labelStyle: React.CSSProperties = {
+    display: 'block',
+    fontSize: '0.875rem',
+    fontWeight: 600,
+    marginBottom: '8px',
+    color: 'var(--text-secondary)',
+  };
+
+  const selectStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '10px 12px',
+    backgroundColor: 'var(--bg-primary)',
+    border: '1px solid var(--border-color)',
+    borderRadius: 'var(--radius-md)',
+    color: 'var(--text-primary)',
+    fontSize: '0.875rem',
+  };
+
+  const questionsListStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+  };
+
+  const questionItemStyle: React.CSSProperties = {
+    backgroundColor: 'var(--bg-primary)',
+    padding: '12px',
+    borderRadius: 'var(--radius-md)',
+    border: '1px solid var(--border-color)',
+  };
+
+  const inputStyle: React.CSSProperties = {
+    width: '100%',
+    padding: '8px',
+    backgroundColor: 'var(--bg-secondary)',
+    border: '1px solid var(--border-color)',
+    borderRadius: 'var(--radius-md)',
+    color: 'var(--text-primary)',
+    fontSize: '0.875rem',
+  };
+
+  const smallInputStyle: React.CSSProperties = {
+    width: '80px',
+    padding: '4px 8px',
+    backgroundColor: 'var(--bg-secondary)',
+    border: '1px solid var(--border-color)',
+    borderRadius: 'var(--radius-sm)',
+    color: 'var(--text-primary)',
+    fontSize: '0.75rem',
+  };
+
+  const iconBtnStyle: React.CSSProperties = {
+    background: 'none',
+    border: 'none',
+    color: 'var(--text-muted)',
+    cursor: 'pointer',
+    padding: '2px',
+  };
+
+  const editorToolbarStyle: React.CSSProperties = {
+    display: 'flex',
+    flexDirection: isMobile ? 'column' : 'row',
+    justifyContent: 'space-between',
+    alignItems: isMobile ? 'stretch' : 'center',
+    padding: isMobile ? '12px' : '16px 24px',
+    borderBottom: '1px solid var(--border-color)',
+    backgroundColor: 'var(--bg-primary)',
+    gap: isMobile ? '12px' : '0',
+  };
+
+  const toolbarDividerStyle: React.CSSProperties = {
+    display: isMobile ? 'none' : 'block',
+    width: '1px',
+    height: '20px',
+    backgroundColor: 'var(--border-color)',
+    margin: '0 4px',
+  };
+
+  const AssistantGrantHelpButtonStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '6px',
+    padding: '6px 12px',
+    borderRadius: '20px',
+    backgroundColor: 'rgba(245, 158, 11, 0.05)',
+    border: '1px solid rgba(245, 158, 11, 0.1)',
+    color: 'var(--accent-primary)',
+    fontSize: '0.75rem',
+    fontWeight: 600,
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
+    width: isMobile ? '100%' : 'auto',
+  };
+
+  const editorContainerStyle: React.CSSProperties = {
+    flex: 1,
+    padding: isMobile ? '16px' : '24px',
+    overflowY: 'auto',
+    backgroundColor: '#1a1a1a',
+  };
+
+  const textareaStyle: React.CSSProperties = {
+    width: '100%',
+    height: '100%',
+    minHeight: '300px',
+    backgroundColor: 'transparent',
+    border: 'none',
+    color: 'var(--text-primary)',
+    fontSize: '0.9375rem',
+    lineHeight: 1.6,
+    resize: 'none',
+    outline: 'none',
+  };
+
+  const previewBoxStyle: React.CSSProperties = {
+    maxWidth: '800px',
+    margin: '0 auto',
+    backgroundColor: '#fff',
+    color: '#000',
+    padding: isMobile ? '24px 16px' : '64px',
+    minHeight: '100%',
+    borderRadius: '4px',
+    boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+  };
 
   return (
-    <DocumentBuilder 
-      type="Proposal" 
-      initialTitle={t('grantBuilder.title') || "Grant Proposal Builder"}
-      initialContent={`PROJECT SUMMARY\nDescribe your target project overview, objectives, and community impact...\n\nBUDGET & PLAN\nOutlines targets, expenses, resource plans, and project phases...`}
-    />
+    <div style={containerStyle}>
+      <header style={headerStyle}>
+        <div>
+          <h1 style={titleStyle}>{t('grantBuilder.title')}</h1>
+          <p style={subtitleStyle}>{t('grantBuilder.subtitle')}</p>
+        </div>
+        <div style={headerActionsStyle}>
+          <Button 
+            variant="outline" 
+            onClick={() => setPreviewMode(!previewMode)}
+            style={{ flex: isMobile ? 1 : 'none', justifyContent: 'center', gap: '6px' }}
+          >
+            <Eye size={16} />
+            {previewMode ? t('grantBuilder.editMode') : t('grantBuilder.preview')}
+          </Button>
+          <Button 
+            style={{ backgroundColor: '#22c55e', color: '#000', flex: isMobile ? 1 : 'none', justifyContent: 'center', gap: '6px' }}
+          >
+            <Save size={16} />
+            {t('grantBuilder.saveDraft')}
+          </Button>
+        </div>
+      </header>
+
+      <div style={layoutGridStyle}>
+        {/* Settings Sidebar */}
+        <aside style={settingsSidebarStyle}>
+          <Card title={t('grantBuilder.docSetup')} icon={Settings2}>
+            <div style={formGroupStyle}>
+              <label style={labelStyle}>{t('grantBuilder.docType')}</label>
+              <select 
+                style={selectStyle}
+                value={docType}
+                onChange={(e) => setDocType(e.target.value)}
+              >
+                <option value={t('grantBuilder.docTypes.full')}>{t('grantBuilder.docTypes.full')}</option>
+                <option value={t('grantBuilder.docTypes.onePage')}>{t('grantBuilder.docTypes.onePage')}</option>
+                <option value={t('grantBuilder.docTypes.ukCV')}>{t('grantBuilder.docTypes.ukCV')}</option>
+                <option value={t('grantBuilder.docTypes.usCV')}>{t('grantBuilder.docTypes.usCV')}</option>
+                <option value={t('grantBuilder.docTypes.euCV')}>{t('grantBuilder.docTypes.euCV')}</option>
+                <option value={t('grantBuilder.docTypes.academicCV')}>{t('grantBuilder.docTypes.academicCV')}</option>
+                <option value={t('grantBuilder.docTypes.coverLetter')}>{t('grantBuilder.docTypes.coverLetter')}</option>
+              </select>
+            </div>
+
+            {(docType === t('grantBuilder.docTypes.full') || docType === t('grantBuilder.docTypes.academicCV')) && (
+              <div style={formGroupStyle}>
+                <label style={labelStyle}>{t('grantBuilder.targetPageCount')}</label>
+                <select 
+                  style={selectStyle}
+                  value={pageCount}
+                  onChange={(e) => setPageCount(e.target.value)}
+                >
+                  <option value={t('grantBuilder.pages.one')}>{t('grantBuilder.pages.one')}</option>
+                  <option value={t('grantBuilder.pages.two')}>{t('grantBuilder.pages.two')}</option>
+                  <option value={t('grantBuilder.pages.three')}>{t('grantBuilder.pages.three')}</option>
+                  <option value={t('grantBuilder.pages.five')}>{t('grantBuilder.pages.five')}</option>
+                  <option value={t('grantBuilder.pages.tenPlus')}>{t('grantBuilder.pages.tenPlus')}</option>
+                </select>
+              </div>
+            )}
+          </Card>
+
+          {docType.includes(t('grantBuilder.docTypes.onePage').split(' ')[1]) && (
+            <Card title={t('grantBuilder.customQuestions')}>
+              <div style={questionsListStyle}>
+                {questions.map((q, idx) => (
+                  <div key={q.id} style={questionItemStyle}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
+                      <span style={{ fontSize: '0.875rem', fontWeight: 600 }}>Q{idx + 1}</span>
+                      <button style={iconBtnStyle}><X size={14} /></button>
+                    </div>
+                    <input 
+                      type="text" 
+                      placeholder={t('grantBuilder.questionPlaceholder')} 
+                      defaultValue={q.text}
+                      style={inputStyle} 
+                    />
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '8px' }}>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{t('grantBuilder.wordLimit')}</span>
+                      <input type="number" defaultValue={q.limit} style={smallInputStyle} />
+                    </div>
+                  </div>
+                ))}
+                <Button variant="outline" size="sm" onClick={addQuestion} style={{ width: '100%' }}>
+                  {t('grantBuilder.addQuestion')}
+                </Button>
+              </div>
+            </Card>
+          )}
+        </aside>
+
+        {/* Editor Area */}
+        <div style={editorAreaStyle}>
+          <div style={editorToolbarStyle}>
+            <div style={{ display: 'flex', gap: isMobile ? '8px' : '12px', alignItems: 'center', flexWrap: 'wrap', width: isMobile ? '100%' : 'auto' }}>
+              <span style={{ fontWeight: 600, fontSize: isMobile ? '0.8125rem' : '1rem' }}>{docType}</span>
+              <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem' }}>• {content.split(' ').length} {t('grantBuilder.words')}</span>
+              <div style={toolbarDividerStyle}></div>
+              <button 
+                style={AssistantGrantHelpButtonStyle}
+                onClick={openAIGrantHelp}
+              >
+                <Sparkles size={14} />
+                <span>{t('assistant.title', 'Assistant')}</span>
+              </button>
+            </div>
+            <div style={{ display: 'flex', gap: '12px', width: isMobile ? '100%' : 'auto' }}>
+              <Button variant="outline" size="sm" style={{ flex: isMobile ? 1 : 'none', justifyContent: 'center' }}>
+                <Download size={14} style={{ marginRight: '6px' }} />
+                PDF
+              </Button>
+              <Button variant="outline" size="sm" style={{ flex: isMobile ? 1 : 'none', justifyContent: 'center' }}>
+                <Download size={14} style={{ marginRight: '6px' }} />
+                DOCX
+              </Button>
+            </div>
+          </div>
+
+          <div style={editorContainerStyle}>
+            {previewMode ? (
+              <div style={previewBoxStyle}>
+                <h2 style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', color: '#1e293b' }}>{docType}</h2>
+                <div style={{ whiteSpace: 'pre-wrap', marginTop: isMobile ? '16px' : '24px', color: '#334155', fontSize: isMobile ? '0.8125rem' : '0.9375rem' }}>
+                  {content}
+                </div>
+              </div>
+            ) : (
+              <textarea 
+                style={textareaStyle}
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                placeholder={t('grantBuilder.placeholder')}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
