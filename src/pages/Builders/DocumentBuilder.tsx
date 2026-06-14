@@ -384,7 +384,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                           onChange={(e) => builder.setPageCount(Number(e.target.value))}
                           style={{ ...selectInputStyle, border: 'none', backgroundColor: 'var(--bg-tertiary)', marginTop: '8px' }}
                         >
-                          {Array.from({ length: 20 }, (_, i) => i + 1).map(num => (
+                          {Array.from({ length: 10 }, (_, i) => i + 1).map(num => (
                             <option key={num} value={num}>{num} {num > 1 ? t('builders.grant.pages', 'Pages') : t('builders.grant.page', 'Page')}</option>
                           ))}
                         </select>
