@@ -191,9 +191,9 @@ export const OpportunityList: React.FC = () => {
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
           >
-            <option value="Newest">{t('opportunities.sortBy.newest')}</option>
-            <option value="Deadline">{t('opportunities.sortBy.deadline')}</option>
-            <option value="Highest Match">Highest Match</option>
+            <option value="Newest" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>{t('opportunities.sortBy.newest')}</option>
+            <option value="Deadline" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>{t('opportunities.sortBy.deadline')}</option>
+            <option value="Highest Match" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>Highest Match</option>
           </select>
         </div>
       </div>
