@@ -563,7 +563,7 @@ Output the analytical metadata inside <metadata>...</metadata> as a raw JSON str
 
     const getPageInstructions = (targetPages: number) => {
       const minWords = targetPages * 450;
-      if (pagesMap[targetPages]) return pagesMap[targetPages] + `\n- MINIMUM WORD COUNT: You MUST write at least ${minWords} words.`;
+      if (pagesMap[targetPages]) return pagesMap[targetPages] + `\n- MINIMUM WORD COUNT: You MUST write at least ${minWords} words. Elaborate extensively to reach this length. Do not stop early.`;
       
       return `\nPAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
 - MINIMUM WORD COUNT: You MUST write at least ${minWords} words. Do NOT stop early.
@@ -616,7 +616,7 @@ ABSOLUTE RULES — never break these:
     if (isGrantDocument) {
       builderSpecificRules += `3) GRANT BUILDER SPECIFIC RULES:
 ${getPageInstructions(pageCount || 3)}
-- Funder values alignment: align terms, vocabulary, and objectives directly to mirror: "${funderValues}".
+- Funder values alignment: Ensure the tone is natural and authentic. Align generally with these funder values: "${funderValues}". Do NOT over-tailor or force keywords unnaturally. Focus heavily on the user's actual project logic.
 - Previous Application History:
   * If previousAppHistory.applied_before is true, read the feedback: "${previousAppHistory?.feedback}". Specifically call out in the narrative how the project has evolved and direct steps taken to address that feedback, ensuring we do not repeat past failed patterns.
 - Partnership details:
@@ -793,9 +793,9 @@ Instructions:
 Instructions:
 1. Write a complete, high-quality, tailored draft for the document type: ${documentType || 'CV'}.
 2. Use all [USER BACKGROUND MATERIAL] (including all manual notes, achievements, and project notes) and incorporate the [USER ANSWERS TO GAPS / MISSING INFO] directly into the writing.
-3. Tailor the content perfectly to match the [OPPORTUNITY REQUIREMENTS] without inventing any untruths.
+3. Tailor the content to match the [OPPORTUNITY REQUIREMENTS], but DO NOT OVER-TAILOR. Keep it natural, authentic, and realistic. Do not force keywords where they don't belong (especially for grant proposals).
 4. Keep the writing in the selected tone: ${tone || 'Professional & Academic'} and the target language: ${language || 'English (UK)'}.
-5. ${constraintsInstruction} Ensure the draft fits perfectly within these target limits.
+5. ${constraintsInstruction} Ensure the draft fits perfectly within these target limits. If the target page limit is >1 page, you MUST write extensively by elaborating on methodologies, background context, and detailed achievements to reach the required length. Do NOT summarize or stop early.
 6. Write the full text directly inside the '<draft>...</draft>' tags. DO NOT output JSON for the draft.
 7. Provide specific "editingSuggestions" for improving the document further inside the '<metadata>' block.`
     }

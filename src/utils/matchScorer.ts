@@ -14,18 +14,19 @@ export const calculateMatchScore = (profile: any, opportunity: any): number => {
     if (!term) return 0;
     const t = term.toLowerCase();
     
-    if (reqText.includes(t)) return base * 1.5;
-    if (titleText.includes(t)) return base * 1.2;
-    if (descText.includes(t)) return base * 1.0;
+    // More generous multipliers to restore earlier matching feel
+    if (reqText.includes(t)) return base * 2.5;
+    if (titleText.includes(t)) return base * 2.0;
+    if (descText.includes(t)) return base * 1.5;
     return 0;
   };
 
-  const stopWords = new Set(['their', 'there', 'about', 'which', 'would', 'these', 'those', 'where', 'while', 'after', 'before', 'under', 'over', 'other', 'could', 'should', 'might', 'first', 'years', 'using', 'based', 'through', 'experience', 'working', 'skills']);
+  const stopWords = new Set(['their', 'there', 'about', 'which', 'would', 'these', 'those', 'where', 'while', 'after', 'before', 'under', 'over', 'other', 'could', 'should', 'might', 'first', 'years', 'using', 'based', 'through', 'experience', 'working', 'skills', 'project', 'team', 'management']);
   const getSignificantWords = (text: string) => {
-    return text.toLowerCase().split(/\\W+/).filter(w => w.length > 4 && !stopWords.has(w));
+    return text.toLowerCase().split(/\W+/).filter(w => w.length > 4 && !stopWords.has(w));
   };
 
-  // 1. Check Skills Match (up to 30 points)
+  // 1. Check Skills Match (up to 40 points)
   if (profile.skills && profile.skills.length > 0) {
     let skillScore = 0;
     profile.skills.forEach((skill: string) => {
@@ -35,26 +36,26 @@ export const calculateMatchScore = (profile: any, opportunity: any): number => {
         hasAnyMatch = true;
       }
     });
-    score += Math.min(30, skillScore);
+    score += Math.min(40, skillScore);
   }
   
-  // 2. Check Achievements Match (up to 20 points)
+  // 2. Check Achievements Match (up to 25 points)
   if (profile.achievements && profile.achievements.length > 0) {
     let achScore = 0;
     profile.achievements.forEach((ach: string) => {
       const words = getSignificantWords(ach);
       words.forEach(word => {
-        const pts = getMatchPoints(word, 1.5);
+        const pts = getMatchPoints(word, 2.0);
         if (pts > 0) {
           achScore += pts;
           hasAnyMatch = true;
         }
       });
     });
-    score += Math.min(20, achScore);
+    score += Math.min(25, achScore);
   }
   
-  // 3. Check Experience Match (up to 25 points)
+  // 3. Check Experience Match (up to 30 points)
   if (profile.experience && profile.experience.length > 0) {
     let expScore = 0;
     profile.experience.forEach((exp: any) => {
@@ -65,22 +66,24 @@ export const calculateMatchScore = (profile: any, opportunity: any): number => {
         hasAnyMatch = true;
       }
     });
-    score += Math.min(25, expScore);
+    score += Math.min(30, expScore);
   }
   
-  // 4. Check Education Match (up to 15 points)
+  // 4. Check Education Match (up to 20 points)
   if (profile.education && profile.education.length > 0) {
     const degree = profile.education[0]?.degree || '';
     const field = profile.education[0]?.field_of_study || '';
     
-    const degPts = getMatchPoints(degree, 5);
-    const fieldPts = getMatchPoints(field, 10);
+    const degPts = getMatchPoints(degree, 6);
+    const fieldPts = getMatchPoints(field, 12);
     
     if (degPts > 0 || fieldPts > 0) {
       score += degPts + fieldPts;
       hasAnyMatch = true;
     }
   }
+
+  let coreScore = score;
   
   // 5. Check Location Match (up to 5 points)
   if (profile.location && oppText.includes(profile.location.toLowerCase())) {
@@ -88,13 +91,13 @@ export const calculateMatchScore = (profile: any, opportunity: any): number => {
     hasAnyMatch = true;
   }
   
-  // If no matches at all, return 0
-  if (!hasAnyMatch) {
-    return 0;
+  // explicit check for totally irrelevant match (e.g. tech vs art)
+  if (!hasAnyMatch || coreScore < 15) {
+    return 0; // Does not fit at all
   }
   
   // Add a small baseline only if there are some matches to boost them slightly
-  score += 10;
+  score += 15;
   
   // Fallback randomizer for slight variety on matching opportunities
   const stableHash = opportunity.id 
