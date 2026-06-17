@@ -17,6 +17,14 @@ export const OpportunityList: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [savingId, setSavingId] = useState<string | null>(null);
+  
+  // Filter & Sort State
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [sortBy, setSortBy] = useState('Newest');
+  const [minMatchScore, setMinMatchScore] = useState(0);
+  const [locationFilter, setLocationFilter] = useState('');
+  const [typeFilter, setTypeFilter] = useState('All');
+  
   const navigate = useNavigate();
 
   const isMobile = window.innerWidth <= 768;
@@ -63,12 +71,10 @@ export const OpportunityList: React.FC = () => {
         .maybeSingle();
       
       if (existing) {
-        // Already saved — just update local UI
         setOpportunities(prev => prev.map(o => o.id === opp.id ? { ...o, status: 'Saved' } : o));
         return;
       }
 
-      // Insert a user-owned copy with status 'Saved'
       const { error } = await supabase
         .from('opportunities')
         .insert({
@@ -92,10 +98,8 @@ export const OpportunityList: React.FC = () => {
       
       if (error) throw error;
       
-      // Update local state
       setOpportunities(prev => prev.map(o => o.id === opp.id ? { ...o, status: 'Saved' } : o));
       
-      // Record activity
       await supabase.from('activities').insert({
         user_id: user.id,
         content: `Saved opportunity: ${opp.title}`
@@ -109,10 +113,48 @@ export const OpportunityList: React.FC = () => {
     }
   };
 
-  const filteredOpps = opportunities.filter(opp => 
-    opp.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    opp.company.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const processedOpps = React.useMemo(() => {
+    return opportunities.map(opp => ({
+      ...opp,
+      matchScore: calculateMatchScore(profile, opp)
+    }));
+  }, [opportunities, profile]);
+
+  const filteredOpps = React.useMemo(() => {
+    let result = processedOpps.filter(opp => 
+      opp.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (opp.organization_name || opp.funder_name || '').toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    if (minMatchScore > 0) {
+      result = result.filter(opp => opp.matchScore >= minMatchScore);
+    }
+    
+    if (locationFilter) {
+      result = result.filter(opp => (opp.location || '').toLowerCase().includes(locationFilter.toLowerCase()));
+    }
+
+    if (typeFilter !== 'All') {
+      result = result.filter(opp => opp.type.toLowerCase() === typeFilter.toLowerCase());
+    }
+
+    if (sortBy === 'Newest') {
+      result.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
+    } else if (sortBy === 'Deadline') {
+      result.sort((a, b) => {
+        if (!a.deadline) return 1;
+        if (!b.deadline) return -1;
+        return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+      });
+    } else if (sortBy === 'Highest Match') {
+      result.sort((a, b) => b.matchScore - a.matchScore);
+    }
+
+    // Keep featured opportunities at the top
+    result.sort((a, b) => (b.featured ? 1 : 0) - (a.featured ? 1 : 0));
+
+    return result;
+  }, [processedOpps, searchTerm, minMatchScore, locationFilter, typeFilter, sortBy]);
 
   return (
     <div style={{ ...containerStyle, padding: isMobile ? '0' : '0' }}>
@@ -135,16 +177,64 @@ export const OpportunityList: React.FC = () => {
         </div>
         
         <div style={{ ...filterButtonsStyle, width: isMobile ? '100%' : 'auto', justifyContent: isMobile ? 'space-between' : 'flex-start' }}>
-          <Button variant="outline" size="sm" style={{ gap: '8px', flex: isMobile ? 1 : 'none' }}>
+          <Button 
+            variant={isFilterOpen ? "primary" : "outline"} 
+            size="sm" 
+            style={{ gap: '8px', flex: isMobile ? 1 : 'none' }}
+            onClick={() => setIsFilterOpen(!isFilterOpen)}
+          >
             <Filter size={16} /> {t('opportunities.filters')}
           </Button>
           {!isMobile && <div style={dividerStyle}></div>}
-          <select style={{ ...selectStyle, flex: isMobile ? 1 : 'none' }}>
-            <option>{t('opportunities.sortBy.newest')}</option>
-            <option>{t('opportunities.sortBy.deadline')}</option>
+          <select 
+            style={{ ...selectStyle, flex: isMobile ? 1 : 'none' }}
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+          >
+            <option value="Newest">{t('opportunities.sortBy.newest')}</option>
+            <option value="Deadline">{t('opportunities.sortBy.deadline')}</option>
+            <option value="Highest Match">Highest Match</option>
           </select>
         </div>
       </div>
+
+      {/* Expanded Filter Panel */}
+      {isFilterOpen && (
+        <div style={{ padding: '16px', backgroundColor: 'var(--bg-secondary)', borderRadius: '12px', marginBottom: '24px', display: 'flex', gap: '16px', flexWrap: 'wrap', border: '1px solid var(--border-color)' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: '1 1 200px' }}>
+            <label style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Minimum Match %</label>
+            <select style={{ ...searchInputStyle, backgroundColor: 'var(--bg-primary)', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-color)' }} value={minMatchScore} onChange={(e) => setMinMatchScore(Number(e.target.value))}>
+              <option value={0}>Any Match Score</option>
+              <option value={20}>&gt; 20% Match</option>
+              <option value={50}>&gt; 50% Match</option>
+              <option value={80}>&gt; 80% Match</option>
+            </select>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: '1 1 200px' }}>
+            <label style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Opportunity Type</label>
+            <select style={{ ...searchInputStyle, backgroundColor: 'var(--bg-primary)', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-color)', textTransform: 'capitalize' }} value={typeFilter} onChange={(e) => setTypeFilter(e.target.value)}>
+              <option value="All">All Types</option>
+              <option value="grant">Grant</option>
+              <option value="fellowship">Fellowship</option>
+              <option value="scholarship">Scholarship</option>
+              <option value="bursary">Bursary</option>
+              <option value="internship">Internship</option>
+              <option value="accelerator">Accelerator</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: '1 1 200px' }}>
+            <label style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-secondary)' }}>Location Keyword</label>
+            <input 
+              type="text" 
+              placeholder="e.g. Nigeria, Remote..." 
+              style={{ ...searchInputStyle, backgroundColor: 'var(--bg-primary)', padding: '10px 12px', borderRadius: '8px', border: '1px solid var(--border-color)' }}
+              value={locationFilter}
+              onChange={(e) => setLocationFilter(e.target.value)}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Opportunity Cards */}
       <div className="grid-responsive" style={{
@@ -164,7 +254,7 @@ export const OpportunityList: React.FC = () => {
             <Card key={opp.id} style={{ display: 'flex', flexDirection: 'column' }}>
             <div style={cardHeaderStyle}>
               <div style={matchBadgeStyle}>
-                <span style={matchScoreStyle}>{calculateMatchScore(profile, opp)}%</span>
+                <span style={matchScoreStyle}>{opp.matchScore}%</span>
                 <span style={matchTextStyle}>{t('savedItems.match')}</span>
               </div>
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
