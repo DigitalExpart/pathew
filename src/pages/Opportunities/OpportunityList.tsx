@@ -141,10 +141,30 @@ export const OpportunityList: React.FC = () => {
     if (sortBy === 'Newest') {
       result.sort((a, b) => new Date(b.created_at || 0).getTime() - new Date(a.created_at || 0).getTime());
     } else if (sortBy === 'Deadline') {
+      const parseDeadline = (d: string | null | undefined): number | null => {
+        if (!d || d.toLowerCase().includes('unspecified') || d.toLowerCase().includes('rolling') || d.toLowerCase().includes('open')) return null;
+        // Strip leading text like "Due " and try parsing
+        const cleaned = d.replace(/^due\s*/i, '').trim();
+        const ts = Date.parse(cleaned);
+        if (!isNaN(ts)) return ts;
+        // Try reversing day-month patterns like "30 June, 2026"
+        const match = cleaned.match(/^(\d{1,2})\s+(\w+),?\s+(\d{4})$/);
+        if (match) {
+          const reversed = `${match[2]} ${match[1]}, ${match[3]}`;
+          const ts2 = Date.parse(reversed);
+          if (!isNaN(ts2)) return ts2;
+        }
+        return null;
+      };
       result.sort((a, b) => {
-        if (!a.deadline) return 1;
-        if (!b.deadline) return -1;
-        return new Date(a.deadline).getTime() - new Date(b.deadline).getTime();
+        const aTime = parseDeadline(a.deadline);
+        const bTime = parseDeadline(b.deadline);
+        // Unspecified deadlines come first
+        if (aTime === null && bTime === null) return 0;
+        if (aTime === null) return -1;
+        if (bTime === null) return 1;
+        // Nearest deadline first
+        return aTime - bTime;
       });
     } else if (sortBy === 'Highest Match') {
       result.sort((a, b) => b.matchScore - a.matchScore);
