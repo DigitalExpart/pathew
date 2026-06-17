@@ -143,17 +143,30 @@ export const OpportunityList: React.FC = () => {
     } else if (sortBy === 'Deadline') {
       const parseDeadline = (d: string | null | undefined): number | null => {
         if (!d || d.toLowerCase().includes('unspecified') || d.toLowerCase().includes('rolling') || d.toLowerCase().includes('open')) return null;
-        // Strip leading text like "Due " and try parsing
-        const cleaned = d.replace(/^due\s*/i, '').trim();
-        const ts = Date.parse(cleaned);
-        if (!isNaN(ts)) return ts;
-        // Try reversing day-month patterns like "30 June, 2026"
-        const match = cleaned.match(/^(\d{1,2})\s+(\w+),?\s+(\d{4})$/);
-        if (match) {
-          const reversed = `${match[2]} ${match[1]}, ${match[3]}`;
-          const ts2 = Date.parse(reversed);
-          if (!isNaN(ts2)) return ts2;
+        
+        const months = "january|february|march|april|may|june|july|august|september|october|november|december|jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec";
+        
+        // Pattern 1: Day Month Year (e.g. 30 June, 2026)
+        const regex1 = new RegExp(`(\\d{1,2})\\s+(${months}),?\\s+(\\d{4})`, 'i');
+        const match1 = d.match(regex1);
+        if (match1) {
+          const ts = Date.parse(`${match1[2]} ${match1[1]}, ${match1[3]}`);
+          if (!isNaN(ts)) return ts;
         }
+
+        // Pattern 2: Month Day, Year (e.g. August 5, 2026)
+        const regex2 = new RegExp(`(${months})\\s+(\\d{1,2}),?\\s+(\\d{4})`, 'i');
+        const match2 = d.match(regex2);
+        if (match2) {
+          const ts = Date.parse(`${match2[1]} ${match2[2]}, ${match2[3]}`);
+          if (!isNaN(ts)) return ts;
+        }
+
+        // Fallback
+        const cleaned = d.replace(/^due\s*/i, '').trim();
+        const tsFallback = Date.parse(cleaned);
+        if (!isNaN(tsFallback)) return tsFallback;
+        
         return null;
       };
       result.sort((a, b) => {
