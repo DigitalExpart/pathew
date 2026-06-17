@@ -91,13 +91,17 @@ export const calculateMatchScore = (profile: any, opportunity: any): number => {
     hasAnyMatch = true;
   }
   
-  // explicit check for totally irrelevant match (e.g. tech vs art)
-  if (!hasAnyMatch || coreScore < 15) {
+  // explicit check for totally irrelevant match
+  if (!hasAnyMatch) {
     return 0; // Does not fit at all
   }
   
-  // Add a small baseline only if there are some matches to boost them slightly
-  score += 15;
+  // Scale the baseline so weak matches don't get artificially inflated to ~20%
+  if (coreScore >= 10) {
+    score += 15;
+  } else {
+    score += coreScore; // Add a smaller baseline for weak matches
+  }
   
   // Fallback randomizer for slight variety on matching opportunities
   const stableHash = opportunity.id 
