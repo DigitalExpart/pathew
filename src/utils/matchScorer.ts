@@ -68,15 +68,27 @@ export const calculateMatchScore = (profile: any, opportunity: any): number => {
     }
   }
   
-  // Location Match
-  if (profile.location && oppText.includes(profile.location.toLowerCase())) {
-    demoScore += 5;
+  // Location / Nationality Match
+  const userLocs = [profile.location, profile.country, profile.nationality]
+    .filter(Boolean)
+    .map((l: string) => l.toLowerCase());
+    
+  let locMatched = false;
+  for (const loc of userLocs) {
+    if (oppText.includes(loc)) {
+      locMatched = true;
+      break;
+    }
+  }
+  
+  if (locMatched) {
+    demoScore += 20; // Massive boost for local opportunities
   }
   
   if (expectsHighExpertise) {
     demoScore = demoScore * 0.5;
   }
-  score += Math.min(15, demoScore);
+  score += Math.min(30, demoScore);
 
   // Helper for word-level matches
   const getMatchPoints = (text: string, base: number): number => {
