@@ -8,6 +8,7 @@ import { SUPPORTED_LANGUAGES } from '../../i18n/index';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
+import { supabase } from '../../lib/supabase';
 
 interface TopBarProps {
   onMenuClick?: () => void;
@@ -28,6 +29,40 @@ export const TopBar: React.FC<TopBarProps> = ({ onMenuClick, sidebarWidth = 260,
   const langRef = React.useRef<HTMLDivElement>(null);
 
   const [windowWidth, setWindowWidth] = React.useState(window.innerWidth);
+  const [unreadCount, setUnreadCount] = React.useState(0);
+
+  React.useEffect(() => {
+    if (!user) return;
+    const fetchUnreadCount = async () => {
+      try {
+        const { count, error } = await supabase
+          .from('notifications')
+          .select('*', { count: 'exact', head: true })
+          .eq('user_id', user.id)
+          .eq('is_read', false);
+        
+        if (!error && count !== null) {
+          setUnreadCount(count);
+        }
+      } catch (err) {
+        console.error('Error fetching unread count:', err);
+      }
+    };
+    
+    fetchUnreadCount();
+
+    // Subscribe to new notifications
+    const subscription = supabase
+      .channel('notifications_topbar')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications', filter: `user_id=eq.${user.id}` }, () => {
+        fetchUnreadCount();
+      })
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(subscription);
+    };
+  }, [user]);
 
   React.useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -119,7 +154,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onMenuClick, sidebarWidth = 260,
               <HelpCircle size={20} color="var(--text-secondary)" />
             </button>
             <Link to="/notifications" style={iconButtonStyle}>
-              <div style={notificationBadgeStyle}></div>
+              {unreadCount > 0 && <div style={notificationBadgeStyle}></div>}
               <Bell size={20} color="var(--text-secondary)" />
             </Link>
           </>

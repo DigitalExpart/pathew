@@ -51,7 +51,29 @@ export const NotificationsPage: React.FC = () => {
         .order('created_at', { ascending: false });
 
       if (error) throw error;
-      setNotifications(data || []);
+      
+      if (!data || data.length === 0) {
+        // Create a default welcome notification if they have none
+        const welcomeNotif = {
+          user_id: user.id,
+          title: 'Welcome to Pathew! 🎉',
+          description: 'Your profile is set up. Explore new opportunities matched just for you.',
+          type: 'system',
+          is_read: false
+        };
+        const { data: newData, error: insertError } = await supabase
+          .from('notifications')
+          .insert(welcomeNotif)
+          .select();
+          
+        if (!insertError && newData) {
+          setNotifications(newData);
+        } else {
+          setNotifications([]);
+        }
+      } else {
+        setNotifications(data);
+      }
     } catch (err) {
       console.error('Error fetching notifications:', err);
     } finally {
