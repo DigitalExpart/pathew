@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
-import { FileText, Download, Eye, Clock, X } from 'lucide-react';
+import { FileText, Download, Eye, Clock, X, Trash2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { BuilderService } from '../../services/builderService';
 import type { GeneratedDocument } from '../../services/builderService';
@@ -47,6 +47,18 @@ export const DocumentsPage: React.FC = () => {
     }
   };
 
+  const handleDelete = async (docId: string) => {
+    if (window.confirm('Are you sure you want to delete this document? This action cannot be undone.')) {
+      try {
+        await BuilderService.deleteGeneratedDocument(docId);
+        setDocuments(documents.filter(d => d.id !== docId));
+      } catch (error) {
+        console.error('Failed to delete document:', error);
+        alert('Failed to delete document. Please try again.');
+      }
+    }
+  };
+
   return (
     <div style={containerStyle}>
       <header style={headerStyle}>
@@ -71,10 +83,19 @@ export const DocumentsPage: React.FC = () => {
           {documents.map((doc) => (
             <Card key={doc.id} style={docCardStyle}>
               <div style={docCardHeaderStyle}>
-                <Badge variant={doc.document_type === 'cv' ? 'primary' : 'secondary'}>
-                  {doc.document_type.toUpperCase().replace('_', ' ')}
-                </Badge>
-                {doc.is_current && <Badge variant="info">Latest Version</Badge>}
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <Badge variant={doc.document_type === 'cv' ? 'primary' : 'secondary'}>
+                    {doc.document_type.toUpperCase().replace('_', ' ')}
+                  </Badge>
+                  {doc.is_current && <Badge variant="info">Latest Version</Badge>}
+                </div>
+                <button 
+                  onClick={() => handleDelete(doc.id)}
+                  style={deleteBtnStyle}
+                  title="Delete Document"
+                >
+                  <Trash2 size={18} />
+                </button>
               </div>
               
               <h3 style={docTitleStyle}>{doc.title}</h3>
@@ -268,4 +289,17 @@ const markdownWrapperStyle: React.CSSProperties = {
   maxWidth: '100%',
   fontFamily: 'Arial, sans-serif',
   lineHeight: 1.6,
+};
+
+const deleteBtnStyle: React.CSSProperties = {
+  background: 'none',
+  border: 'none',
+  color: 'var(--text-muted)',
+  cursor: 'pointer',
+  padding: '4px',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: '4px',
+  transition: 'color 0.2s',
 };

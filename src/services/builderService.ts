@@ -206,6 +206,18 @@ export const BuilderService = {
     return data;
   },
 
+  async deleteGeneratedDocument(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('generated_documents')
+      .delete()
+      .eq('id', id);
+
+    if (error) {
+      console.error('Error deleting generated document:', error);
+      throw error;
+    }
+  },
+
   // === BUILDER REQUESTS ===
   async createBuilderRequest(
     request: Omit<BuilderRequest, 'id' | 'user_id' | 'status' | 'created_at' | 'updated_at'>,
