@@ -56,7 +56,8 @@ function parseInlineFormatting(text: string): TextRun[] {
 }
 
 export const generateDocxBlob = async (markdownText: string, accentColorHex: string = "D69E2E", documentType: string = 'cv'): Promise<Blob> => {
-  if (documentType === 'cover_letter') {
+  const normalizedType = documentType.toLowerCase().replace(/[\s-]/g, '_');
+  if (normalizedType === 'cover_letter') {
     return generateCoverLetterDocx(markdownText, accentColorHex);
   }
 
