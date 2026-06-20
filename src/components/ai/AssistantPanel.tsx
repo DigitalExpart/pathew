@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { X, Send, Sparkles, RefreshCw, Check, History, AlertCircle, Download, Trash2, Copy, CheckCheck, Plus, FileText, Loader2 } from 'lucide-react';
+import { X, Send, Sparkles, RefreshCw, Check, History, AlertCircle, Download, Trash2, Copy, CheckCheck, Plus, FileText, Loader2, ThumbsUp, ThumbsDown } from 'lucide-react';
 import { useAssistant } from '../../context/AssistantContext';
 import { Button } from '../ui/Button';
 import { useAuth } from '../../context/AuthContext';
@@ -8,6 +8,7 @@ import { usePathewAssistant } from '../../hooks/usePathewAssistant';
 import { useTranslation } from 'react-i18next';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import { generateDocxBlob } from '../../utils/docxExport';
 
 export const AssistantPanel: React.FC = () => {
   const { t } = useTranslation();
@@ -33,6 +34,10 @@ export const AssistantPanel: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'chat' | 'history'>('chat');
   const lastRequestIdRef = useRef<number | null>(null);
 
+  const [ratings, setRatings] = useState<Record<number, 'up' | 'down'>>({});
+  const [copiedMsgIdx, setCopiedMsgIdx] = useState<number | null>(null);
+  const [downloadingMsgIdx, setDownloadingMsgIdx] = useState<number | null>(null);
+
   useEffect(() => {
     if (isAssistantPanelOpen) {
       if (messages.length === 0) {
@@ -51,13 +56,45 @@ export const AssistantPanel: React.FC = () => {
     }
   }, [isAssistantPanelOpen, activeContext, fullContextData, messages.length]);
 
-  const handleDownload = (text: string) => {
-    const element = document.createElement("a");
-    const file = new Blob([text], {type: 'text/plain'});
-    element.href = URL.createObjectURL(file);
-    element.download = "Pathew_Assistant_Content.txt";
-    document.body.appendChild(element);
-    element.click();
+  const handleDownload = async (text: string, idx: number) => {
+    setDownloadingMsgIdx(idx);
+    try {
+      const blob = await generateDocxBlob(text, "D69E2E", fullContextData?.type || activeContext || "General");
+      const url = URL.createObjectURL(blob);
+      const element = document.createElement("a");
+      element.href = url;
+      element.download = "Pathew_Assistant_Content.docx";
+      document.body.appendChild(element);
+      element.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error('Error generating docx:', e);
+      const element = document.createElement("a");
+      const file = new Blob([text], {type: 'text/plain'});
+      element.href = URL.createObjectURL(file);
+      element.download = "Pathew_Assistant_Content.txt";
+      document.body.appendChild(element);
+      element.click();
+    } finally {
+      setDownloadingMsgIdx(null);
+    }
+  };
+
+  const handleCopyMsg = async (text: string, idx: number) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedMsgIdx(idx);
+      setTimeout(() => setCopiedMsgIdx(null), 2000);
+    } catch (err) {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+      setCopiedMsgIdx(idx);
+      setTimeout(() => setCopiedMsgIdx(null), 2000);
+    }
   };
 
   const handleSend = async (text: string = input) => {
@@ -236,25 +273,52 @@ export const AssistantPanel: React.FC = () => {
 
                   {res.type === 'assistant' && i > 0 && !res.isError && (
                     <div style={AssistantActionStyle}>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        style={smallBtnStyle}
-                        onClick={() => handleInsert(res.text)}
-                      >
-                        <Check size={14} /> {t('assistant.insert')}
-                      </Button>
-                      <Button 
-                        variant="outline" 
-                        size="sm" 
-                        style={smallBtnStyle}
-                        onClick={() => handleDownload(res.text)}
-                      >
-                        <Download size={14} /> {t('assistant.download')}
-                      </Button>
-                      <Button variant="outline" size="sm" style={smallBtnStyle} onClick={() => handleSend(messages[i-1].text)}>
-                        <RefreshCw size={14} /> {t('assistant.regenerate')}
-                      </Button>
+                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', flex: 1 }}>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          style={smallBtnStyle}
+                          onClick={() => handleInsert(res.text)}
+                        >
+                          <Check size={14} /> {t('assistant.insert', 'Insert')}
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          style={smallBtnStyle}
+                          onClick={() => handleDownload(res.text, i)}
+                          disabled={downloadingMsgIdx === i}
+                        >
+                          {downloadingMsgIdx === i ? <Loader2 size={14} className="animate-spin" /> : <Download size={14} />} {t('assistant.download', 'Download')}
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm" 
+                          style={smallBtnStyle}
+                          onClick={() => handleCopyMsg(res.text, i)}
+                        >
+                          {copiedMsgIdx === i ? <CheckCheck size={14} color="#22c55e" /> : <Copy size={14} />} {t('assistant.copy', 'Copy')}
+                        </Button>
+                        <Button variant="outline" size="sm" style={smallBtnStyle} onClick={() => handleSend(messages[i-1].text)}>
+                          <RefreshCw size={14} /> {t('assistant.regenerate', 'Regenerate')}
+                        </Button>
+                      </div>
+                      <div style={{ display: 'flex', gap: '4px' }}>
+                        <button 
+                          style={{ ...iconActionBtnStyle, backgroundColor: ratings[i] === 'up' ? 'rgba(34, 197, 94, 0.1)' : 'var(--bg-primary)', borderColor: ratings[i] === 'up' ? 'rgba(34, 197, 94, 0.3)' : 'var(--border-color)' }}
+                          onClick={() => setRatings(prev => ({ ...prev, [i]: prev[i] === 'up' ? undefined : 'up' as any }))}
+                          title="Helpful"
+                        >
+                          <ThumbsUp size={14} color={ratings[i] === 'up' ? '#22c55e' : 'var(--text-muted)'} />
+                        </button>
+                        <button 
+                          style={{ ...iconActionBtnStyle, backgroundColor: ratings[i] === 'down' ? 'rgba(239, 68, 68, 0.1)' : 'var(--bg-primary)', borderColor: ratings[i] === 'down' ? 'rgba(239, 68, 68, 0.3)' : 'var(--border-color)' }}
+                          onClick={() => setRatings(prev => ({ ...prev, [i]: prev[i] === 'down' ? undefined : 'down' as any }))}
+                          title="Not Helpful"
+                        >
+                          <ThumbsDown size={14} color={ratings[i] === 'down' ? '#ef4444' : 'var(--text-muted)'} />
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -696,6 +760,9 @@ const creditWarningStyle: React.CSSProperties = {
 
 const AssistantActionStyle: React.CSSProperties = {
   display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  flexWrap: 'wrap',
   gap: '8px',
   marginTop: '12px',
   paddingTop: '12px',
