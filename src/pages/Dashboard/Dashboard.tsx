@@ -181,7 +181,7 @@ export const Dashboard: React.FC = () => {
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
                   {profile?.goals?.length ? (
                     <>
-                      {(goalsExpanded ? profile.goals : profile.goals.slice(0, 3)).map((g: any, i: number) => (
+                      {(goalsExpanded ? (profile.goals || []) : (profile.goals || []).slice(0, 3)).map((g: any, i: number) => (
                         <Badge key={i} variant="primary">{t(`setup.goalsList.${g}`, g) as string}</Badge>
                       ))}
                     </>
@@ -189,7 +189,7 @@ export const Dashboard: React.FC = () => {
                     <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('dashboard.noGoals')}</p>
                   )}
                 </div>
-                {profile?.goals?.length > 3 && (
+                {(profile?.goals?.length || 0) > 3 && (
                   <button
                     onClick={() => setGoalsExpanded(prev => !prev)}
                     style={{
@@ -204,7 +204,7 @@ export const Dashboard: React.FC = () => {
                       letterSpacing: '0.01em',
                     }}
                   >
-                    {goalsExpanded ? t('common.viewLess', 'View less') : t('common.viewMore', `+${profile.goals.length - 3} more`)}
+                    {goalsExpanded ? t('common.viewLess', 'View less') : t('common.viewMore', `+${(profile?.goals?.length || 0) - 3} more`)}
                   </button>
                 )}
               </Card>
@@ -213,7 +213,7 @@ export const Dashboard: React.FC = () => {
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
                   {profile?.achievements?.length ? (
                     <>
-                      {(achievementsExpanded ? profile.achievements : profile.achievements.slice(0, 3)).map((a: any, i: number) => (
+                      {(achievementsExpanded ? (profile.achievements || []) : (profile.achievements || []).slice(0, 3)).map((a: any, i: number) => (
                         <Badge key={i} variant="secondary">{a}</Badge>
                       ))}
                     </>
@@ -221,7 +221,7 @@ export const Dashboard: React.FC = () => {
                     <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('dashboard.noAchievements')}</p>
                   )}
                 </div>
-                {profile?.achievements?.length > 3 && (
+                {(profile?.achievements?.length || 0) > 3 && (
                   <button
                     onClick={() => setAchievementsExpanded(prev => !prev)}
                     style={{
@@ -236,7 +236,7 @@ export const Dashboard: React.FC = () => {
                       letterSpacing: '0.01em',
                     }}
                   >
-                    {achievementsExpanded ? t('common.viewLess', 'View less') : t('common.viewMore', `+${profile.achievements.length - 3} more`)}
+                    {achievementsExpanded ? t('common.viewLess', 'View less') : t('common.viewMore', `+${(profile?.achievements?.length || 0) - 3} more`)}
                   </button>
                 )}
               </Card>
