@@ -9,7 +9,10 @@ import {
   ArrowRight,
   Zap,
   Target,
-  Briefcase
+  Briefcase,
+  Edit2,
+  Check,
+  X
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -18,10 +21,44 @@ import { useTranslation } from 'react-i18next';
 import { calculateMatchScore } from '../../utils/matchScorer';
 
 export const Dashboard: React.FC = () => {
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
+
+  const [isEditingGoals, setIsEditingGoals] = React.useState(false);
+  const [tempGoals, setTempGoals] = React.useState<string[]>([]);
+  const [savingGoals, setSavingGoals] = React.useState(false);
+  const predefinedGoals = ['Full-time Roles', 'Contract Work', 'Freelance Projects', 'Fellowships', 'Grants', 'Leadership Positions'];
+
+  const handleEditGoalsClick = () => {
+    setTempGoals(profile?.goals || []);
+    setIsEditingGoals(true);
+  };
+
+  const handleSaveGoals = async () => {
+    if (!user) return;
+    setSavingGoals(true);
+    try {
+      const { error } = await supabase
+        .from('profiles')
+        .update({ goals: tempGoals })
+        .eq('id', user.id);
+      if (error) throw error;
+      if (refreshProfile) await refreshProfile();
+      setIsEditingGoals(false);
+    } catch (error) {
+      console.error('Error saving goals:', error);
+    } finally {
+      setSavingGoals(false);
+    }
+  };
+
+  const toggleTempGoal = (goal: string) => {
+    setTempGoals(prev => 
+      prev.includes(goal) ? prev.filter(g => g !== goal) : [...prev, goal]
+    );
+  };
 
   React.useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -177,35 +214,83 @@ export const Dashboard: React.FC = () => {
                 </div>
               </Card>
               <Card style={{ flex: 2 }}>
-                <p style={statLabelStyle}>{t('dashboard.topGoals')}</p>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
-                  {profile?.goals?.length ? (
-                    <>
-                      {(goalsExpanded ? (profile.goals || []) : (profile.goals || []).slice(0, 3)).map((g: any, i: number) => (
-                        <Badge key={i} variant="primary">{t(`setup.goalsList.${g}`, g) as string}</Badge>
-                      ))}
-                    </>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <p style={statLabelStyle}>{t('dashboard.topGoals')}</p>
+                  {!isEditingGoals ? (
+                    <button onClick={handleEditGoalsClick} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px' }}>
+                      <Edit2 size={14} />
+                    </button>
                   ) : (
-                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('dashboard.noGoals')}</p>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <button onClick={() => setIsEditingGoals(false)} disabled={savingGoals} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '4px' }}>
+                        <X size={16} />
+                      </button>
+                      <button onClick={handleSaveGoals} disabled={savingGoals} style={{ background: 'none', border: 'none', color: 'var(--accent-primary)', cursor: 'pointer', padding: '4px' }}>
+                        <Check size={16} />
+                      </button>
+                    </div>
                   )}
                 </div>
-                {(profile?.goals?.length || 0) > 3 && (
-                  <button
-                    onClick={() => setGoalsExpanded(prev => !prev)}
-                    style={{
-                      marginTop: '10px',
-                      background: 'none',
-                      border: 'none',
-                      cursor: 'pointer',
-                      fontSize: '0.8rem',
-                      color: 'var(--accent-primary)',
-                      fontWeight: 600,
-                      padding: '2px 0',
-                      letterSpacing: '0.01em',
-                    }}
-                  >
-                    {goalsExpanded ? t('common.viewLess', 'View less') : t('common.viewMore', `+${(profile?.goals?.length || 0) - 3} more`)}
-                  </button>
+
+                {isEditingGoals ? (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
+                    {predefinedGoals.map(goal => {
+                      const isSelected = tempGoals.includes(goal);
+                      return (
+                        <div key={goal} onClick={() => !savingGoals && toggleTempGoal(goal)}>
+                          <Badge 
+                            variant={isSelected ? "primary" : "outline"} 
+                            style={{ cursor: 'pointer', opacity: savingGoals ? 0.5 : 1 }}
+                          >
+                            {t(`setup.goalsList.${goal}`, goal) as string}
+                          </Badge>
+                        </div>
+                      );
+                    })}
+                    {/* Render any custom goals that the user might have added previously */}
+                    {tempGoals.filter(g => !predefinedGoals.includes(g)).map(customGoal => (
+                      <div key={customGoal} onClick={() => !savingGoals && toggleTempGoal(customGoal)}>
+                        <Badge 
+                          variant="primary" 
+                          style={{ cursor: 'pointer', opacity: savingGoals ? 0.5 : 1 }}
+                        >
+                          {customGoal} <X size={12} style={{ marginLeft: '4px', display: 'inline', verticalAlign: 'middle' }} />
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
+                      {profile?.goals?.length ? (
+                        <>
+                          {(goalsExpanded ? (profile.goals || []) : (profile.goals || []).slice(0, 3)).map((g: any, i: number) => (
+                            <Badge key={i} variant="primary">{t(`setup.goalsList.${g}`, g) as string}</Badge>
+                          ))}
+                        </>
+                      ) : (
+                        <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('dashboard.noGoals')}</p>
+                      )}
+                    </div>
+                    {(profile?.goals?.length || 0) > 3 && (
+                      <button
+                        onClick={() => setGoalsExpanded(prev => !prev)}
+                        style={{
+                          marginTop: '10px',
+                          background: 'none',
+                          border: 'none',
+                          cursor: 'pointer',
+                          fontSize: '0.8rem',
+                          color: 'var(--accent-primary)',
+                          fontWeight: 600,
+                          padding: '2px 0',
+                          letterSpacing: '0.01em',
+                        }}
+                      >
+                        {goalsExpanded ? t('common.viewLess', 'View less') : t('common.viewMore', `+${(profile?.goals?.length || 0) - 3} more`)}
+                      </button>
+                    )}
+                  </>
                 )}
               </Card>
               <Card style={{ flex: 2 }}>
