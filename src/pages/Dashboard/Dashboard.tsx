@@ -30,6 +30,8 @@ export const Dashboard: React.FC = () => {
   }, []);
 
   const [prepHorizon, setPrepHorizon] = React.useState('90-day');
+  const [goalsExpanded, setGoalsExpanded] = React.useState(false);
+  const [achievementsExpanded, setAchievementsExpanded] = React.useState(false);
   const [stats, setStats] = React.useState({
     opps: 0,
     jobs: 0,
@@ -170,7 +172,7 @@ export const Dashboard: React.FC = () => {
               <Card style={{ flex: 1, backgroundColor: 'var(--bg-tertiary)' }}>
                 <p style={statLabelStyle}>{t('dashboard.readinessScore')}</p>
                 <div style={{ display: 'flex', alignItems: 'flex-end', gap: '8px', marginTop: '8px' }}>
-                  <h3 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--accent-primary)' }}>{readinessScore}%</h3>
+                  <h3 style={{ fontSize: '2rem', fontWeight: 600, color: 'var(--accent-primary)' }}>{readinessScore}%</h3>
                   <span style={{ color: 'var(--text-muted)', marginBottom: '6px' }}>/ 100</span>
                 </div>
               </Card>
@@ -178,21 +180,65 @@ export const Dashboard: React.FC = () => {
                 <p style={statLabelStyle}>{t('dashboard.topGoals')}</p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
                   {profile?.goals?.length ? (
-                    profile.goals.map((g: any, i: number) => <Badge key={i} variant="primary">{t(`setup.goalsList.${g}`, g) as string}</Badge>)
+                    <>
+                      {(goalsExpanded ? profile.goals : profile.goals.slice(0, 3)).map((g: any, i: number) => (
+                        <Badge key={i} variant="primary">{t(`setup.goalsList.${g}`, g) as string}</Badge>
+                      ))}
+                    </>
                   ) : (
                     <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('dashboard.noGoals')}</p>
                   )}
                 </div>
+                {profile?.goals?.length > 3 && (
+                  <button
+                    onClick={() => setGoalsExpanded(prev => !prev)}
+                    style={{
+                      marginTop: '10px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      color: 'var(--accent-primary)',
+                      fontWeight: 600,
+                      padding: '2px 0',
+                      letterSpacing: '0.01em',
+                    }}
+                  >
+                    {goalsExpanded ? t('common.viewLess', 'View less') : t('common.viewMore', `+${profile.goals.length - 3} more`)}
+                  </button>
+                )}
               </Card>
               <Card style={{ flex: 2 }}>
                 <p style={statLabelStyle}>{t('dashboard.achievements')}</p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
                   {profile?.achievements?.length ? (
-                    profile.achievements.map((a: any, i: number) => <Badge key={i} variant="secondary">{a}</Badge>)
+                    <>
+                      {(achievementsExpanded ? profile.achievements : profile.achievements.slice(0, 3)).map((a: any, i: number) => (
+                        <Badge key={i} variant="secondary">{a}</Badge>
+                      ))}
+                    </>
                   ) : (
                     <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('dashboard.noAchievements')}</p>
                   )}
                 </div>
+                {profile?.achievements?.length > 3 && (
+                  <button
+                    onClick={() => setAchievementsExpanded(prev => !prev)}
+                    style={{
+                      marginTop: '10px',
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '0.8rem',
+                      color: 'var(--accent-primary)',
+                      fontWeight: 600,
+                      padding: '2px 0',
+                      letterSpacing: '0.01em',
+                    }}
+                  >
+                    {achievementsExpanded ? t('common.viewLess', 'View less') : t('common.viewMore', `+${profile.achievements.length - 3} more`)}
+                  </button>
+                )}
               </Card>
             </div>
 

@@ -91,9 +91,15 @@ ul {
 
 /* Typography Helpers */
 h1, h2, h3, h4, h5, h6 {
-  font-weight: 700;
-  letter-spacing: -0.025em;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
+
+h1 { font-weight: 600; }
+h2 { font-weight: 600; }
+h3 { font-weight: 500; }
+h4 { font-weight: 500; }
+h5, h6 { font-weight: 500; }
 
 .text-gradient {
   background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
