@@ -105,7 +105,7 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
   const handleDownload = async (format: string) => {
     try {
       if (format === 'docx') {
-        const blob = await generateDocxBlob(draftContent, accentColor.border);
+        const blob = await generateDocxBlob(draftContent, accentColor.border, documentType);
         const element = document.createElement('a');
         element.href = URL.createObjectURL(blob);
         element.download = `${documentType.replace(/\s+/g, '_')}_Version_${currentVersionNumber}.docx`;

@@ -55,7 +55,11 @@ function parseInlineFormatting(text: string): TextRun[] {
   return tokens.length > 0 ? tokens : [new TextRun({ text })];
 }
 
-export const generateDocxBlob = async (markdownText: string, accentColorHex: string = "D69E2E"): Promise<Blob> => {
+export const generateDocxBlob = async (markdownText: string, accentColorHex: string = "D69E2E", documentType: string = 'cv'): Promise<Blob> => {
+  if (documentType === 'cover_letter') {
+    return generateCoverLetterDocx(markdownText, accentColorHex);
+  }
+
   const lines = markdownText.split('\n');
   const children: any[] = [];
   
@@ -348,3 +352,105 @@ export const generateDocxBlob = async (markdownText: string, accentColorHex: str
 
   return await Packer.toBlob(doc);
 };
+
+async function generateCoverLetterDocx(markdownText: string, accentColorHex: string): Promise<Blob> {
+  const lines = markdownText.split('\n');
+  const children: any[] = [];
+  
+  let state = 'HEADER';
+  
+  for (let i = 0; i < lines.length; i++) {
+    const originalLine = lines[i];
+    const line = originalLine.replace(/\u00A0/g, ' ').trim();
+    
+    if (line.match(/^[-=_*]{3,}$/)) continue;
+    
+    if (!line) {
+      children.push(new Paragraph({ spacing: { after: 120 } }));
+      continue;
+    }
+    
+    const cleanHeader = line.replace(/^[#]+ /, '').replace(/\*/g, '').trim();
+
+    if (state === 'HEADER') {
+      // If we see something that doesn't look like a header/contact, move to ADDRESS
+      if (!line.startsWith('#') && !line.includes('@') && !line.includes('•') && !line.includes('|')) {
+        state = 'ADDRESS';
+      }
+    }
+    
+    if (state === 'BODY') {
+      const lower = line.toLowerCase();
+      if (lower.startsWith('sincerely') || lower.startsWith('best regards') || lower.startsWith('yours') || lower.startsWith('kind regards') || lower.startsWith('thank you,')) {
+        state = 'CONCLUSION';
+      }
+    }
+
+    let align = AlignmentType.LEFT;
+    if (state === 'HEADER') align = AlignmentType.CENTER;
+    else if (state === 'ADDRESS') align = AlignmentType.LEFT;
+    else if (state === 'BODY') align = AlignmentType.CENTER;
+    else if (state === 'CONCLUSION') align = AlignmentType.LEFT;
+
+    if (line.startsWith('# ')) {
+      if (cleanHeader.includes('|') || cleanHeader.length > 50) {
+        children.push(
+          new Paragraph({
+            children: [new TextRun({ text: cleanHeader, bold: true, size: 24, color: accentColorHex })],
+            alignment: align,
+            spacing: { after: 120 },
+          })
+        );
+      } else {
+        children.push(
+          new Paragraph({
+            children: [new TextRun({ text: cleanHeader.toUpperCase(), bold: true, size: 32 })],
+            alignment: align,
+            spacing: { after: 120 },
+          })
+        );
+      }
+    } else if (line.startsWith('## ')) {
+      children.push(
+        new Paragraph({
+          children: [new TextRun({ text: cleanHeader, bold: true, size: 24, color: accentColorHex })],
+          alignment: align,
+          spacing: { after: 120 },
+        })
+      );
+    } else {
+      children.push(
+        new Paragraph({
+          children: parseInlineFormatting(cleanHeader),
+          alignment: align,
+          spacing: { after: 120 }
+        })
+      );
+    }
+
+    // Transition out of ADDRESS if we just printed the salutation
+    if (state === 'ADDRESS' && line.toLowerCase().startsWith('dear ')) {
+      state = 'BODY';
+    }
+  }
+
+  const doc = new Document({
+    styles: {
+      default: {
+        document: {
+          run: { font: "Arial", size: 22, color: "2D3748" }
+        }
+      }
+    },
+    sections: [{
+      properties: {
+        page: {
+          margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 }
+        }
+      },
+      children: children
+    }]
+  });
+
+  return await Packer.toBlob(doc);
+}

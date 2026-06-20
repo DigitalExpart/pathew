@@ -35,7 +35,7 @@ export const DocumentsPage: React.FC = () => {
 
   const handleExport = async (doc: GeneratedDocument) => {
     try {
-      const blob = await generateDocxBlob(doc.content);
+      const blob = await generateDocxBlob(doc.content, "D69E2E", doc.document_type);
       const element = document.createElement('a');
       element.href = URL.createObjectURL(blob);
       element.download = `${doc.title.replace(/\s+/g, '_')}_v${doc.version}.docx`;
