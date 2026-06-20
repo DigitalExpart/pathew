@@ -49,9 +49,13 @@ export const AssistantPanel: React.FC = () => {
 
       // Auto-trigger for preparation plan or any requestId change
       const currentRequestId = fullContextData?.requestId;
-      if (fullContextData?.duration && currentRequestId && currentRequestId !== lastRequestIdRef.current) {
+      if (currentRequestId && currentRequestId !== lastRequestIdRef.current) {
         lastRequestIdRef.current = currentRequestId;
-        handleSend(`Generate a ${fullContextData.duration} preparation plan`);
+        if (fullContextData?.duration) {
+          handleSend(`Generate a ${fullContextData.duration} preparation plan`);
+        } else if (fullContextData?.autoTrigger) {
+          handleSend(fullContextData.autoTrigger);
+        }
       }
     }
   }, [isAssistantPanelOpen, activeContext, fullContextData, messages.length]);

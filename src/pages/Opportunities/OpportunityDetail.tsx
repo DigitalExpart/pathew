@@ -74,7 +74,9 @@ export const OpportunityDetail: React.FC = () => {
       opportunityId: opp.id,
       opportunityDescription: opp.description,
       title: opp.title,
-      company: opp.company
+      company: opp.company,
+      requestId: Date.now(),
+      autoTrigger: `Analyze my fit for this ${opp.type || 'opportunity'}. Keep your response to a maximum of 250 words.`
     });
   };
 

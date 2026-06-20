@@ -64,7 +64,7 @@ export const generateDocxBlob = async (markdownText: string, accentColorHex: str
   const lines = markdownText.split('\n');
   const children: any[] = [];
   
-  let isHeaderArea = true;
+  let isHeaderArea = normalizedType.includes('cv') || normalizedType.includes('resume');
   let emptyLineCount = 0;
   
   for (let i = 0; i < lines.length; i++) {
