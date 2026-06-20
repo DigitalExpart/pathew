@@ -386,7 +386,7 @@ async function generateCoverLetterDocx(markdownText: string, accentColorHex: str
       }
     }
 
-    let align = AlignmentType.LEFT;
+    let align: any = AlignmentType.LEFT;
     if (state === 'HEADER') align = AlignmentType.CENTER;
     else if (state === 'ADDRESS') align = AlignmentType.LEFT;
     else if (state === 'BODY') align = AlignmentType.CENTER;
