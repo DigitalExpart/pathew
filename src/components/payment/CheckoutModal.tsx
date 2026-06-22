@@ -783,7 +783,7 @@ export const CheckoutModal = ({ isOpen, onClose, planTitle, planPrice, planCredi
             </form>
           ) : clientSecret ? (
             <Elements stripe={stripePromise} options={{ clientSecret, appearance: stripeAppearance }}>
-              <CheckoutForm planTitle={planTitle} planPrice={planPrice} planCredits={planCredits} onSuccess={() => setSuccess(true)} onCancel={handleClose} />
+              <CheckoutForm planTitle={planTitle} planPrice={formattedFinalPrice} planCredits={planCredits} onSuccess={() => setSuccess(true)} onCancel={handleClose} />
             </Elements>
           ) : null}
         </motion.div>
