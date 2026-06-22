@@ -689,6 +689,22 @@ export const PreparationPage: React.FC = () => {
     borderRadius: 'var(--radius-md)',
   };
 
+  const updateOpportunityTitle = async (oppId: string, newTitle: string) => {
+    try {
+      await supabase.from('opportunities').update({ title: newTitle }).eq('id', oppId);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const updateRoadmapTitle = async (docId: string, newTitle: string) => {
+    try {
+      await supabase.from('documents').update({ title: newTitle }).eq('id', docId);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   if (!viewingSpecific) {
     const activeProjects = allOpportunities.filter(opp => 
       allRoadmaps.some(r => r.opportunity_id === opp.id)
@@ -724,11 +740,27 @@ export const PreparationPage: React.FC = () => {
                     <Briefcase size={24} color="var(--accent-primary)" />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <h3 style={projectTitleStyle} className="truncate">{opp.title}</h3>
+                    <input 
+                      type="text"
+                      value={opp.title || ''}
+                      onChange={(e) => setAllOpportunities(prev => prev.map(o => o.id === opp.id ? { ...o, title: e.target.value } : o))}
+                      onBlur={(e) => updateOpportunityTitle(opp.id, e.target.value)}
+                      onClick={(e) => e.stopPropagation()}
+                      style={{ ...projectTitleStyle, background: 'transparent', border: 'none', borderBottom: '1px dashed transparent', outline: 'none', width: '100%', cursor: 'text' }}
+                      onFocus={(e) => e.target.style.borderBottom = '1px dashed var(--accent-primary)'}
+                      onMouseLeave={(e) => { if(document.activeElement !== e.target) e.target.style.borderBottom = '1px dashed transparent'; }}
+                      className="truncate"
+                      title={t('common.editTitle', 'Edit Title')}
+                    />
                     <p style={projectCompanyStyle} className="truncate">{opp.organization_name || opp.funder_name || opp.company || ''}</p>
                     <div style={projectMetaStyle}>
                       <Badge variant="success">{roadmapProgress}% {t('preparation.complete')}</Badge>
                       <span style={weekCountStyle}>{roadmap?.weeks?.length} {t('preparation.weeks')}</span>
+                      {opp.deadline && (
+                        <span style={{...weekCountStyle, marginLeft: '8px', color: '#fbbf24', fontWeight: 600}}>
+                          Deadline: {new Date(opp.deadline).toLocaleDateString()}
+                        </span>
+                      )}
                     </div>
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center', flexShrink: 0 }}>
@@ -764,7 +796,18 @@ export const PreparationPage: React.FC = () => {
                     <Briefcase size={24} color="var(--accent-primary)" />
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <h3 style={projectTitleStyle} className="truncate">{displayTitle}</h3>
+                    <input 
+                      type="text"
+                      value={roadmap.title?.replace('Roadmap: ', '').replace(/^\d+-day\s*/i, '').trim() || ''}
+                      onChange={(e) => setAllRoadmaps(prev => prev.map(r => r.dbId === roadmap.dbId ? { ...r, title: e.target.value } : r))}
+                      onBlur={(e) => updateRoadmapTitle(roadmap.dbId, e.target.value)}
+                      onClick={(e) => e.stopPropagation()}
+                      style={{ ...projectTitleStyle, background: 'transparent', border: 'none', borderBottom: '1px dashed transparent', outline: 'none', width: '100%', cursor: 'text' }}
+                      onFocus={(e) => e.target.style.borderBottom = '1px dashed var(--accent-primary)'}
+                      onMouseLeave={(e) => { if(document.activeElement !== e.target) e.target.style.borderBottom = '1px dashed transparent'; }}
+                      className="truncate"
+                      title={t('common.editTitle', 'Edit Title')}
+                    />
                     <p style={projectCompanyStyle} className="truncate">{roadmap.planType?.toUpperCase() || '90-Day'} {t('preparation.title')}</p>
                     <div style={projectMetaStyle}>
                       <Badge variant="success">{roadmapProgress}% {t('preparation.complete')}</Badge>
