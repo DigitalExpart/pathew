@@ -45,55 +45,64 @@ export const MissingInfoPanel: React.FC<MissingInfoPanelProps> = ({
           <div>
             <h4 style={alertTitleStyle}>{t('builders.panel.targetedTailoring', 'Targeted Tailoring Enabled')}</h4>
             <p style={alertDescStyle}>
-              {t('builders.panel.targetedTailoringDesc', 'Pathew Assistant analyzed your profile and the target opportunity. To write the highest converting copy, please answer these final {{count}} details. No other long forms needed!', { count: missingFields.length })}
+              {missingFields.length === 0 
+                ? t('builders.panel.targetedTailoringNoGaps', 'Pathew Assistant analyzed your profile and the target opportunity. We did not find any critical missing fields that require your manual input. You can proceed with generation!')
+                : t('builders.panel.targetedTailoringDesc', 'Pathew Assistant analyzed your profile and the target opportunity. To write the highest converting copy, please answer these final {{count}} details. No other long forms needed!', { count: missingFields.length })
+              }
             </p>
           </div>
         </div>
 
         {/* Dynamic Inputs Form */}
         <div style={formWrapperStyle}>
-          {missingFields.map((field) => (
-            <div key={field.key} style={fieldContainerStyle}>
-              <div style={labelRowStyle}>
-                <label style={labelStyle}>{field.label}</label>
+          {missingFields.length === 0 ? (
+            <div style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px 0' }}>
+              <p>{t('builders.panel.noFields', 'No specific data fields were requested by the AI. You can proceed with generation.')}</p>
+            </div>
+          ) : (
+            missingFields.map((field) => (
+              <div key={field.key} style={fieldContainerStyle}>
+                <div style={labelRowStyle}>
+                  <label style={labelStyle}>{field.label}</label>
+                  {field.description && (
+                    <div style={tooltipWrapperStyle} title={field.description}>
+                      <HelpCircle size={14} color="var(--text-muted)" />
+                    </div>
+                  )}
+                </div>
+
                 {field.description && (
-                  <div style={tooltipWrapperStyle} title={field.description}>
-                    <HelpCircle size={14} color="var(--text-muted)" />
-                  </div>
+                  <p style={fieldHintStyle}>{field.description}</p>
+                )}
+
+                {field.type === 'textarea' ? (
+                  <textarea 
+                    value={answers[field.key] || ''}
+                    onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                    placeholder={t('builders.panel.provideDetails', 'Provide details for {{label}}...', { label: field.label })}
+                    style={textareaStyle}
+                    disabled={isLoading}
+                  />
+                ) : (
+                  <input 
+                    type="text"
+                    value={answers[field.key] || ''}
+                    onChange={(e) => handleFieldChange(field.key, e.target.value)}
+                    placeholder={t('builders.panel.egPlaceholder', 'e.g. 2024, or $15,000')}
+                    style={inputStyle}
+                    disabled={isLoading}
+                  />
                 )}
               </div>
-
-              {field.description && (
-                <p style={fieldHintStyle}>{field.description}</p>
-              )}
-
-              {field.type === 'textarea' ? (
-                <textarea 
-                  value={answers[field.key] || ''}
-                  onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                  placeholder={t('builders.panel.provideDetails', 'Provide details for {{label}}...', { label: field.label })}
-                  style={textareaStyle}
-                  disabled={isLoading}
-                />
-              ) : (
-                <input 
-                  type="text"
-                  value={answers[field.key] || ''}
-                  onChange={(e) => handleFieldChange(field.key, e.target.value)}
-                  placeholder={t('builders.panel.egPlaceholder', 'e.g. 2024, or $15,000')}
-                  style={inputStyle}
-                  disabled={isLoading}
-                />
-              )}
-            </div>
-          ))}
+            ))
+          )}
         </div>
 
         {/* Action button */}
         <div style={footerStyle}>
           <Button 
             onClick={onSubmit} 
-            disabled={isLoading || missingFields.length === 0}
+            disabled={isLoading}
             style={{ 
               gap: '10px', 
               paddingLeft: '32px', 

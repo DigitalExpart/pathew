@@ -597,7 +597,7 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
     }
     
     if (forceGaps) {
-      ctx += `\nCRITICAL INSTRUCTION: The user explicitly requested to see progressive gaps. You MUST identify at least 3 critical gaps, weaknesses, or missing qualifications in their profile compared to the target opportunity. Be strict and demanding. Return these as 'missingFields'.\n`;
+      ctx += `\nCRITICAL INSTRUCTION: The user explicitly requested to see progressive gaps and provide manual input. You MUST identify at least 3 critical gaps, weaknesses, or missing qualifications in their profile compared to the target opportunity. For EACH gap, you MUST create an object in the 'missingFields' JSON array so the user can manually provide the missing information. Ensure 'type' is 'textarea' and 'description' asks them how they can address this gap.\n`;
     }
     
     if (isGeneration) {
