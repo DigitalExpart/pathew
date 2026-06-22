@@ -71,10 +71,7 @@ export const LoginPage: React.FC = () => {
             {error && <p style={errorTextStyle}>{error}</p>}
 
             <div style={inputGroupStyle}>
-              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                <label style={labelStyle}>{t('auth.password')}</label>
-                <Link to="/forgot-password" style={forgotLinkStyle}>{t('auth.forgotPassword')}</Link>
-              </div>
+              <label style={labelStyle}>{t('auth.password')}</label>
               <div style={inputWrapperStyle}>
                 <Lock size={18} color="var(--text-muted)" />
                 <input 
@@ -85,6 +82,9 @@ export const LoginPage: React.FC = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required 
                 />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2px' }}>
+                <Link to="/forgot-password" style={forgotLinkStyle}>{t('auth.forgotPassword')}</Link>
               </div>
             </div>
 
