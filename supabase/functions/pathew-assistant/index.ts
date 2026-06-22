@@ -672,6 +672,7 @@ Output the analytical metadata inside <metadata>...</metadata> as a raw JSON str
     }
   ],
   "editingSuggestions": ["Suggestion 1", "Suggestion 2"],
+  "matchScore": 85,
   "wordCountEstimate": 300,
   "estimatedPages": ${pageCount || 2},
   "confidence": "high" | "medium" | "low"

@@ -76,6 +76,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
     strongMatches: string[];
     gaps: string[];
     priorityPoints: string[];
+    matchScore?: number;
   }>({ strongMatches: [], gaps: [], priorityPoints: [] });
   
   const [missingFields, setMissingFields] = useState<any[]>([]);
@@ -705,8 +706,10 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
         throw new Error(result.error);
       }
 
-      // Update states
-      setMatchSummary(result.matchSummary || { strongMatches: [], gaps: [], priorityPoints: [] });
+      setMatchSummary({
+        ...(result.matchSummary || { strongMatches: [], gaps: [], priorityPoints: [] }),
+        matchScore: result.matchScore
+      });
       let mf = result.missingFields || [];
       if (forceAction === 'gaps' && mf.length === 0) {
         if (result.matchSummary?.gaps && result.matchSummary.gaps.length > 0) {

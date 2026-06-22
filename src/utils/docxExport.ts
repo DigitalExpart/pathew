@@ -55,13 +55,21 @@ function parseInlineFormatting(text: string): TextRun[] {
   return tokens.length > 0 ? tokens : [new TextRun({ text })];
 }
 
+function sanitizeXml(text: string): string {
+  if (!text) return '';
+  // Removes control characters that are invalid in XML 1.0, preserving tabs, newlines, and carriage returns
+  // Also removes the null character which causes Postgres and XML parsing errors
+  return text.replace(/[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]/g, '');
+}
+
 export const generateDocxBlob = async (markdownText: string, accentColorHex: string = "D69E2E", documentType: string = 'cv'): Promise<Blob> => {
+  const sanitizedText = sanitizeXml(markdownText);
   const normalizedType = documentType.toLowerCase().replace(/[\s-]/g, '_');
   if (normalizedType === 'cover_letter') {
-    return generateCoverLetterDocx(markdownText, accentColorHex);
+    return generateCoverLetterDocx(sanitizedText, accentColorHex);
   }
 
-  const lines = markdownText.split('\n');
+  const lines = sanitizedText.split('\n');
   const children: any[] = [];
   
   let isHeaderArea = normalizedType.includes('cv') || normalizedType.includes('resume');

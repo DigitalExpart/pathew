@@ -20,9 +20,11 @@ export const ContextSummary: React.FC<ContextSummaryProps> = ({
   const { t } = useTranslation();
   const { strongMatches = [], gaps = [], priorityPoints = [] } = matchSummary;
 
-  // Calculate a mock fitness score based on counts
+  // Use explicit AI matchScore if provided, otherwise fallback to generic math
   const totalItems = strongMatches.length + gaps.length;
-  const matchScore = totalItems > 0 ? Math.round((strongMatches.length / totalItems) * 100) : 75;
+  const matchScore = matchSummary.matchScore !== undefined 
+    ? matchSummary.matchScore 
+    : (totalItems > 0 ? Math.round((strongMatches.length / totalItems) * 100) : 75);
 
   return (
     <div style={containerStyle}>
