@@ -573,7 +573,7 @@
       "keyStrengths": "Points Forts Clés",
       "contextGaps": "Lacunes Identifiées",
       "fallbackStrength": "Correspondance dans les compétences techniques de base.",
-      "fallbackGap": "Aucune statistique de leadership ou de mise à l'échelle trouvée."
+      "fallbackGap": "Aucune lacune critique n'a été identifiée par l'IA. Votre profil correspond bien aux exigences."
     },
     "panel": {
       "targetedTailoring": "Adaptation Ciblée Activée",

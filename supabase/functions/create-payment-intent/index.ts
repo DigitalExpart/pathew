@@ -26,7 +26,14 @@ serve(async (req) => {
       'Power User': 4800,
     }
 
-    const amount = amountMap[plan] || 1199 // fallback to Starter
+    let amount = amountMap[plan] || 1199 // fallback to Starter
+    
+    if (price) {
+       const numStr = price.toString().replace(/[^\d.]/g, '');
+       if (numStr) {
+           amount = Math.round(parseFloat(numStr) * 100);
+       }
+    }
 
     const paymentIntent = await stripe.paymentIntents.create({
       amount,

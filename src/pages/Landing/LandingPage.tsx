@@ -7,7 +7,7 @@ import { Navbar } from '../../components/layout/Navbar';
 import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap, Plus, Star, ChevronDown } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Link } from 'react-router-dom';
-import { StripeCheckoutModal } from '../../components/payment/StripeCheckoutModal';
+import { CheckoutModal } from '../../components/payment/CheckoutModal';
 import { useTranslation } from 'react-i18next';
 import logo from '../../assets/images/logo.png';
 import { useAuth } from '../../context/AuthContext';
@@ -851,7 +851,7 @@ const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedF
     </div>
   </motion.div>
 
-  <StripeCheckoutModal 
+  <CheckoutModal 
     isOpen={isModalOpen} 
     onClose={() => setIsModalOpen(false)} 
     planTitle={title} 

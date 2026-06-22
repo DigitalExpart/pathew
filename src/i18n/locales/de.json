@@ -573,7 +573,7 @@
       "keyStrengths": "Hauptstärken",
       "contextGaps": "Identifizierte Lücken",
       "fallbackStrength": "Übereinstimmung bei grundlegenden technischen Fähigkeiten.",
-      "fallbackGap": "Keine Teamführungs- oder Skalierungsstatistiken gefunden."
+      "fallbackGap": "Von der KI wurden keine kritischen Lücken festgestellt. Ihr Profil stimmt gut mit den Anforderungen überein."
     },
     "panel": {
       "targetedTailoring": "Gezielte Anpassung aktiviert",

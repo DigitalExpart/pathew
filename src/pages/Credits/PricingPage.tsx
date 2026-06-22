@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '../../components/ui/Button';
 import { CheckCircle } from 'lucide-react';
-import { StripeCheckoutModal } from '../../components/payment/StripeCheckoutModal';
+import { CheckoutModal } from '../../components/payment/CheckoutModal';
 import { useTranslation } from 'react-i18next';
 
 const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedFeatures, badge, badgeColor = 'var(--accent-primary)', isMobile }: any) => {
@@ -129,7 +129,7 @@ const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedF
     </div>
   </div>
 
-  <StripeCheckoutModal 
+  <CheckoutModal 
     isOpen={isModalOpen} 
     onClose={() => setIsModalOpen(false)} 
     planTitle={title} 

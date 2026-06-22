@@ -11,10 +11,11 @@ import { useAuth } from '../../context/AuthContext';
 import { calculateMatchScore } from '../../utils/matchScorer';
 
 export const JobsPage: React.FC = () => {
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const { t } = useTranslation();
   const [jobs, setJobs] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
+  const [savingId, setSavingId] = React.useState<string | null>(null);
   const navigate = useNavigate();
 
   const isMobile = window.innerWidth <= 768;
@@ -51,6 +52,66 @@ export const JobsPage: React.FC = () => {
       await supabase.from('opportunities').update({ click_count: currentClicks + 1 }).eq('id', job.id);
     } catch (e) {
       console.error('Failed to update click count:', e);
+    }
+  };
+
+  const handleSave = async (opp: any) => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+    
+    setSavingId(opp.id);
+    try {
+      // Check if already saved by this user
+      const { data: existing } = await supabase
+        .from('opportunities')
+        .select('id')
+        .eq('user_id', user.id)
+        .eq('status', 'Saved')
+        .eq('title', opp.title)
+        .maybeSingle();
+      
+      if (existing) {
+        setJobs(prev => prev.map(o => o.id === opp.id ? { ...o, status: 'Saved' } : o));
+        return;
+      }
+
+      const { error } = await supabase
+        .from('opportunities')
+        .insert({
+          user_id: user.id,
+          title: opp.title,
+          description: opp.description,
+          type: opp.type,
+          status: 'Saved',
+          organization_name: opp.organization_name,
+          funder_name: opp.funder_name,
+          location: opp.location,
+          deadline: opp.deadline,
+          requirements: opp.requirements,
+          apply_link: opp.apply_link,
+          amount: opp.amount,
+          salary: opp.salary,
+          work_mode: opp.work_mode,
+          source_name: opp.source_name,
+          featured: false,
+        });
+      
+      if (error) throw error;
+      
+      setJobs(prev => prev.map(o => o.id === opp.id ? { ...o, status: 'Saved' } : o));
+      
+      await supabase.from('activities').insert({
+        user_id: user.id,
+        content: `Saved opportunity: ${opp.title}`
+      });
+
+    } catch (error: any) {
+      console.error('Error saving opportunity:', error);
+      alert(`Could not save: ${error.message}`);
+    } finally {
+      setSavingId(null);
     }
   };
 
@@ -119,17 +180,12 @@ export const JobsPage: React.FC = () => {
 
               <div style={cardFooterStyle}>
                 <Button 
-                  variant="outline" 
-                  style={{ flex: 1, display: 'flex', flexDirection: 'column', height: 'auto', padding: '8px 4px' }}
-                  onClick={() => window.open(job.apply_link, '_blank')}
-                  title="This link will take you to the Extraordinary Woman Blog to apply"
+                  variant={job.status === 'Saved' ? 'secondary' : 'outline'} 
+                  style={{ flex: 1, gap: '4px' }}
+                  onClick={() => handleSave(job)}
+                  disabled={savingId === job.id || job.status === 'Saved'}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center' }}>
-                    {t('opportunities.apply')} <ExternalLink size={14} style={{ marginLeft: '4px' }} />
-                  </div>
-                  <span style={{ fontSize: '0.55rem', fontWeight: 400, color: 'var(--text-muted)', marginTop: '2px', textTransform: 'none' }}>
-                    via Extraordinary Woman Blog
-                  </span>
+                  {savingId === job.id ? t('opportunities.saving') : job.status === 'Saved' ? t('opportunities.saved') : t('opportunities.save')}
                 </Button>
                 {(profile?.role === 'admin' || profile?.role === 'sub_admin') && (
                   <Button 

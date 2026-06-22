@@ -42,6 +42,7 @@ import { AdminOpportunitiesPage } from './pages/Admin/AdminOpportunitiesPage';
 import { AdminOpportunityForm } from './pages/Admin/AdminOpportunityForm';
 import { AdminReviewsPage } from './pages/Admin/AdminReviewsPage';
 import { AdminRssSourcesPage } from './pages/Admin/AdminRssSourcesPage';
+import { AdminCouponsPage } from './pages/Admin/AdminCouponsPage';
 
 // Sub Admin Pages
 import { SubAdminDashboard } from './pages/SubAdmin/SubAdminDashboard';
@@ -109,6 +110,7 @@ function App() {
             <Route path="/admin/reviews" element={<RequireAdmin><AdminShell><AdminReviewsPage /></AdminShell></RequireAdmin>} />
             <Route path="/admin/ai-usage" element={<RequireAdmin><AdminShell><AdminAIUsagePage /></AdminShell></RequireAdmin>} />
             <Route path="/admin/settings" element={<RequireAdmin><AdminShell><AdminSettingsPage /></AdminShell></RequireAdmin>} />
+            <Route path="/admin/coupons" element={<RequireAdmin><AdminShell><AdminCouponsPage /></AdminShell></RequireAdmin>} />
             
             {/* Fallback */}
             <Route path="*" element={<Navigate to="/" replace />} />

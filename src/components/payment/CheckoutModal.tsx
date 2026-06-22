@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Lock, CheckCircle2, Shield, Zap } from 'lucide-react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
+import { usePaystackPayment } from 'react-paystack';
 import { Button } from '../ui/Button';
 import { supabase } from '../../lib/supabase';
 import { useTheme } from '../../context/ThemeContext';
@@ -33,8 +34,8 @@ const CheckoutForm = ({ planTitle, planPrice, planCredits, onSuccess, onCancel }
        addedCredits = planCredits;
     }
     if (!addedCredits) {
-       const planCreditsMap: Record<string, number> = { 'Starter': 150, 'Growth': 300, 'Power User': 600 };
-       addedCredits = planCreditsMap[planTitle] || 50;
+       const planCreditsMap: Record<string, number> = { 'Starter': 25, 'Growth': 60, 'Power User': 120 };
+       addedCredits = planCreditsMap[planTitle] || 25;
     }
 
     localStorage.setItem('pending_plan', planTitle);
@@ -71,6 +72,17 @@ const CheckoutForm = ({ planTitle, planPrice, planCredits, onSuccess, onCancel }
             amount: addedCredits,
             description: `Upgraded to ${planTitle} Plan`
           });
+          
+          const appliedCouponId = localStorage.getItem('applied_coupon_id');
+          if (appliedCouponId) {
+            // Best effort update, since we might not have the current_uses locally,
+            // but we can try to fetch it first or use an RPC.
+            const { data: cData } = await supabase.from('coupons').select('current_uses').eq('id', appliedCouponId).single();
+            if (cData) {
+              await supabase.from('coupons').update({ current_uses: cData.current_uses + 1 }).eq('id', appliedCouponId);
+            }
+            localStorage.removeItem('applied_coupon_id');
+          }
           
           localStorage.removeItem('pending_plan');
           localStorage.removeItem('pending_credits');
@@ -173,12 +185,20 @@ const CheckoutForm = ({ planTitle, planPrice, planCredits, onSuccess, onCancel }
 };
 
 /* ── Main Modal ────────────────────────────────────────────── */
-export const StripeCheckoutModal = ({ isOpen, onClose, planTitle, planPrice, planCredits }: any) => {
+export const CheckoutModal = ({ isOpen, onClose, planTitle, planPrice, planCredits }: any) => {
   const [success, setSuccess] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [step, setStep] = useState<'billing' | 'payment'>('billing');
+  const [paymentGateway, setPaymentGateway] = useState<'stripe' | 'paystack'>('stripe');
+  const [userEmail, setUserEmail] = useState('');
+  
+  // Coupon state
+  const [couponCodeInput, setCouponCodeInput] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
+  const [couponError, setCouponError] = useState<string | null>(null);
+  const [validatingCoupon, setValidatingCoupon] = useState(false);
   
   const [billingInfo, setBillingInfo] = useState({
     company_name: '',
@@ -190,6 +210,83 @@ export const StripeCheckoutModal = ({ isOpen, onClose, planTitle, planPrice, pla
     country: 'United Kingdom',
     phone_number: '',
   });
+
+  // Paystack Configuration
+  const PAYSTACK_PUBLIC_KEY = import.meta.env.VITE_PAYSTACK_PUBLIC_KEY || '';
+  const numericPriceMatch = typeof planPrice === 'string' ? planPrice.match(/[\d.]+/) : null;
+  const originalNumericPrice = numericPriceMatch ? parseFloat(numericPriceMatch[0]) : 0;
+  
+  // Calculate final price with coupon
+  let finalNumericPrice = originalNumericPrice;
+  if (appliedCoupon) {
+    if (appliedCoupon.discount_type === 'percentage') {
+      finalNumericPrice = originalNumericPrice * (1 - appliedCoupon.discount_value / 100);
+    } else if (appliedCoupon.discount_type === 'fixed') {
+      finalNumericPrice = Math.max(0, originalNumericPrice - appliedCoupon.discount_value);
+    }
+  }
+  
+  // Ensure we round to 2 decimal places to avoid float issues
+  finalNumericPrice = Math.round(finalNumericPrice * 100) / 100;
+  const formattedFinalPrice = typeof planPrice === 'string' 
+    ? planPrice.replace(/[\d.]+/, finalNumericPrice.toFixed(2)) 
+    : `£${finalNumericPrice.toFixed(2)}`;
+
+  const amountInNaira = finalNumericPrice * 2000; // GBP to NGN conversion (example rate)
+  const paystackAmount = amountInNaira * 100; // in kobo
+
+  const initializePaystack = usePaystackPayment({
+    reference: (new Date()).getTime().toString(),
+    email: userEmail || 'user@example.com',
+    amount: paystackAmount, 
+    publicKey: PAYSTACK_PUBLIC_KEY,
+    currency: 'NGN',
+  });
+
+  const handleValidateCoupon = async () => {
+    if (!couponCodeInput.trim()) return;
+    
+    setValidatingCoupon(true);
+    setCouponError(null);
+    setAppliedCoupon(null);
+    
+    try {
+      const { data, error } = await supabase
+        .from('coupons')
+        .select('*')
+        .eq('code', couponCodeInput.toUpperCase())
+        .maybeSingle();
+        
+      if (error) throw error;
+      
+      if (!data) {
+        setCouponError('Invalid coupon code.');
+        return;
+      }
+      
+      if (!data.is_active) {
+        setCouponError('This coupon is no longer active.');
+        return;
+      }
+      
+      if (data.expires_at && new Date(data.expires_at) < new Date()) {
+        setCouponError('This coupon has expired.');
+        return;
+      }
+      
+      if (data.max_uses !== null && data.current_uses >= data.max_uses) {
+        setCouponError('This coupon has reached its maximum usage limit.');
+        return;
+      }
+      
+      setAppliedCoupon(data);
+    } catch (err: any) {
+      console.error('Error validating coupon:', err);
+      setCouponError('Failed to validate coupon.');
+    } finally {
+      setValidatingCoupon(false);
+    }
+  };
 
   useEffect(() => {
     if (!isOpen) return;
@@ -209,6 +306,10 @@ export const StripeCheckoutModal = ({ isOpen, onClose, planTitle, planPrice, pla
       }
 
       try {
+        if (session.user.email) {
+          setUserEmail(session.user.email);
+        }
+        
         const { data: profileData } = await supabase
           .from('profiles')
           .select('billing_completed, billing_info')
@@ -270,16 +371,83 @@ export const StripeCheckoutModal = ({ isOpen, onClose, planTitle, planPrice, pla
 
       if (updateError) throw updateError;
 
-      // 2. Fetch payment intent from Supabase Edge Function
+      if (paymentGateway === 'paystack') {
+        if (!PAYSTACK_PUBLIC_KEY) {
+          throw new Error("Paystack is not configured. Please use Stripe.");
+        }
+
+        const onSuccess = async () => {
+          try {
+            let addedCredits = 0;
+            if (typeof planCredits === 'string') {
+               const match = planCredits.match(/\d+/);
+               if (match) addedCredits = parseInt(match[0], 10);
+            } else if (typeof planCredits === 'number') {
+               addedCredits = planCredits;
+            }
+            if (!addedCredits) {
+               const planCreditsMap: Record<string, number> = { 'Starter': 25, 'Growth': 60, 'Power User': 120 };
+               addedCredits = planCreditsMap[planTitle] || 25;
+            }
+            
+            const { data: profile } = await supabase.from('profiles').select('credits').eq('id', session.user.id).single();
+            const newCredits = (profile?.credits || 0) + addedCredits;
+            
+            await supabase.from('profiles').update({
+               credits: newCredits,
+               subscription_plan: planTitle
+            }).eq('id', session.user.id);
+
+            await supabase.from('transactions').insert({
+              user_id: session.user.id,
+              type: 'credit',
+              amount: addedCredits,
+              description: `Upgraded to ${planTitle} Plan (via Paystack)`
+            });
+            
+            // Increment coupon usage if one was applied
+            if (appliedCoupon) {
+              await supabase.rpc('increment_coupon_usage', { coupon_id: appliedCoupon.id });
+              // Alternatively if RPC doesn't exist, we can just do:
+              await supabase.from('coupons').update({ current_uses: appliedCoupon.current_uses + 1 }).eq('id', appliedCoupon.id);
+            }
+            
+            setSuccess(true);
+            setStep('billing');
+          } catch (err) {
+            console.error('Error applying Paystack credits:', err);
+            setFetchError("Payment succeeded but credits failed to apply. Please contact support.");
+          }
+        };
+
+        const onCloseModal = () => {
+          setLoading(false);
+        };
+
+        // Initialize inline Paystack
+        initializePaystack({
+          onSuccess,
+          onClose: onCloseModal
+        });
+        
+        return; // wait for callback
+      }
+
+      // 2. Fetch payment intent from Supabase Edge Function (STRIPE)
       const { data, error: fnError } = await supabase.functions.invoke('create-payment-intent', {
         body: { 
           plan: planTitle, 
-          price: planPrice,
+          price: formattedFinalPrice,
           billingInfo // pass billing details cleanly
         }
       });
 
       if (fnError) throw fnError;
+
+      // Store applied coupon ID so the Stripe confirm block can use it
+      if (appliedCoupon) {
+        localStorage.setItem('applied_coupon_id', appliedCoupon.id);
+      }
 
       setClientSecret(data.clientSecret);
       setStep('payment');
@@ -287,7 +455,9 @@ export const StripeCheckoutModal = ({ isOpen, onClose, planTitle, planPrice, pla
       console.error('Billing / payment step error:', err);
       setFetchError(err.message || 'Unable to connect to payment service. Please try again.');
     } finally {
-      setLoading(false);
+      if (paymentGateway !== 'paystack') {
+        setLoading(false);
+      }
     }
   };
 
@@ -537,8 +707,78 @@ export const StripeCheckoutModal = ({ isOpen, onClose, planTitle, planPrice, pla
                 />
               </div>
 
-              <Button type="submit" style={{ width: '100%', marginTop: '8px' }}>
-                Proceed to Payment Step 2
+              <div style={{ marginTop: '8px' }}>
+                <label style={billingLabelStyle}>Payment Method *</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+                  <div 
+                    onClick={() => setPaymentGateway('stripe')}
+                    style={{ 
+                      padding: '12px', borderRadius: '8px', cursor: 'pointer', textAlign: 'center',
+                      border: `1px solid ${paymentGateway === 'stripe' ? '#f59e0b' : 'rgba(255,255,255,0.08)'}`,
+                      backgroundColor: paymentGateway === 'stripe' ? 'rgba(245,158,11,0.1)' : '#1e293b',
+                      color: paymentGateway === 'stripe' ? '#f59e0b' : '#94a3b8',
+                      fontWeight: 600, fontSize: '0.875rem', transition: 'all 0.2s'
+                    }}>
+                    Stripe (Global)
+                  </div>
+                  <div 
+                    onClick={() => setPaymentGateway('paystack')}
+                    style={{ 
+                      padding: '12px', borderRadius: '8px', cursor: 'pointer', textAlign: 'center',
+                      border: `1px solid ${paymentGateway === 'paystack' ? '#0ea5e9' : 'rgba(255,255,255,0.08)'}`,
+                      backgroundColor: paymentGateway === 'paystack' ? 'rgba(14,165,233,0.1)' : '#1e293b',
+                      color: paymentGateway === 'paystack' ? '#0ea5e9' : '#94a3b8',
+                      fontWeight: 600, fontSize: '0.875rem', transition: 'all 0.2s'
+                    }}>
+                    Paystack (Africa)
+                  </div>
+                </div>
+              </div>
+
+              {/* Coupon Section */}
+              <div style={{ marginTop: '12px', padding: '16px', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)' }}>
+                <label style={billingLabelStyle}>Have a discount code?</label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <input 
+                    type="text" 
+                    value={couponCodeInput} 
+                    onChange={(e) => setCouponCodeInput(e.target.value)} 
+                    style={{ ...billingInputStyle, flex: 1, textTransform: 'uppercase' }} 
+                    placeholder="Enter code here"
+                    disabled={appliedCoupon !== null}
+                  />
+                  <Button 
+                    type="button" 
+                    variant={appliedCoupon ? 'outline' : 'primary'}
+                    onClick={appliedCoupon ? () => { setAppliedCoupon(null); setCouponCodeInput(''); } : handleValidateCoupon}
+                    disabled={validatingCoupon}
+                    style={{ padding: '10px 16px' }}
+                  >
+                    {validatingCoupon ? 'Wait...' : appliedCoupon ? 'Remove' : 'Apply'}
+                  </Button>
+                </div>
+                
+                {couponError && (
+                  <p style={{ color: '#f87171', fontSize: '0.8125rem', marginTop: '8px', margin: '8px 0 0 0' }}>{couponError}</p>
+                )}
+                
+                {appliedCoupon && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginTop: '8px', color: '#10b981', fontSize: '0.8125rem' }}>
+                    <CheckCircle2 size={14} />
+                    <span>Coupon applied! {appliedCoupon.discount_type === 'percentage' ? `${appliedCoupon.discount_value}% OFF` : `£${appliedCoupon.discount_value} OFF`}</span>
+                  </div>
+                )}
+                
+                <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <span style={{ color: '#94a3b8', fontSize: '0.875rem' }}>Total to pay:</span>
+                  <span style={{ fontSize: '1.25rem', fontWeight: 700, color: '#f59e0b' }}>
+                    {formattedFinalPrice}
+                  </span>
+                </div>
+              </div>
+
+              <Button type="submit" style={{ width: '100%', marginTop: '4px' }} disabled={validatingCoupon}>
+                Proceed to Payment
               </Button>
             </form>
           ) : clientSecret ? (

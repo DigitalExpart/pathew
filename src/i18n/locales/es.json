@@ -573,7 +573,7 @@
       "keyStrengths": "Fortalezas Clave",
       "contextGaps": "Brechas Identificadas",
       "fallbackStrength": "Coincidencia en habilidades técnicas básicas.",
-      "fallbackGap": "No se encontraron estadísticas de liderazgo de equipo o escalamiento."
+      "fallbackGap": "La IA no ha identificado lagunas críticas. Su perfil se alinea bien con los requisitos."
     },
     "panel": {
       "targetedTailoring": "Adaptación Dirigida Activada",
