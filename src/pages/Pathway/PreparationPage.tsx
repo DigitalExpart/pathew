@@ -747,8 +747,8 @@ export const PreparationPage: React.FC = () => {
                       onBlur={(e) => updateOpportunityTitle(opp.id, e.target.value)}
                       onClick={(e) => e.stopPropagation()}
                       style={{ ...projectTitleStyle, background: 'transparent', border: 'none', borderBottom: '1px dashed transparent', outline: 'none', width: '100%', cursor: 'text' }}
-                      onFocus={(e) => e.target.style.borderBottom = '1px dashed var(--accent-primary)'}
-                      onMouseLeave={(e) => { if(document.activeElement !== e.target) e.target.style.borderBottom = '1px dashed transparent'; }}
+                      onFocus={(e) => e.currentTarget.style.borderBottom = '1px dashed var(--accent-primary)'}
+                      onMouseLeave={(e) => { if(document.activeElement !== e.currentTarget) e.currentTarget.style.borderBottom = '1px dashed transparent'; }}
                       className="truncate"
                       title={t('common.editTitle', 'Edit Title')}
                     />
@@ -783,7 +783,6 @@ export const PreparationPage: React.FC = () => {
 
           {orphanedRoadmaps.map(roadmap => {
             const roadmapProgress = Math.round(((roadmap.completedWeeks?.length || 0) / (roadmap.weeks?.length || 1)) * 100);
-            const displayTitle = roadmap.title?.replace('Roadmap: ', '').replace(/^\d+-day\s*/i, '').trim() || t('preparation.title');
             
             return (
               <Card 
@@ -803,8 +802,8 @@ export const PreparationPage: React.FC = () => {
                       onBlur={(e) => updateRoadmapTitle(roadmap.dbId, e.target.value)}
                       onClick={(e) => e.stopPropagation()}
                       style={{ ...projectTitleStyle, background: 'transparent', border: 'none', borderBottom: '1px dashed transparent', outline: 'none', width: '100%', cursor: 'text' }}
-                      onFocus={(e) => e.target.style.borderBottom = '1px dashed var(--accent-primary)'}
-                      onMouseLeave={(e) => { if(document.activeElement !== e.target) e.target.style.borderBottom = '1px dashed transparent'; }}
+                      onFocus={(e) => e.currentTarget.style.borderBottom = '1px dashed var(--accent-primary)'}
+                      onMouseLeave={(e) => { if(document.activeElement !== e.currentTarget) e.currentTarget.style.borderBottom = '1px dashed transparent'; }}
                       className="truncate"
                       title={t('common.editTitle', 'Edit Title')}
                     />
