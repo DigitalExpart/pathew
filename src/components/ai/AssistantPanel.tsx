@@ -56,7 +56,15 @@ export const AssistantPanel: React.FC = () => {
           const deadlineStr = fullContextData?.deadline 
             ? ` (Application Deadline: ${new Date(fullContextData.deadline).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })})` 
             : '';
-          handleSend(`Generate a ${fullContextData.duration} preparation plan starting from ${currentDateStr}${deadlineStr}. Ensure the timeline strictly respects these dates and does not backdate.`);
+          
+          let formatInstruction = "Generate a week-by-week plan. Start each week with 'Week X:'";
+          if (fullContextData.duration.includes('180')) {
+            formatInstruction = "Generate a month-by-month plan. Start each month with 'Month X:'";
+          } else if (fullContextData.duration.includes('360') || fullContextData.duration.includes('365') || fullContextData.duration.includes('year')) {
+            formatInstruction = "Generate a plan using Quarterly sprints followed by Monthly goals. Start each period with 'Quarter X:' or 'Month X:'";
+          }
+          
+          handleSend(`${formatInstruction} for a ${fullContextData.duration} preparation starting from ${currentDateStr}${deadlineStr}. Ensure the timeline strictly respects these dates and does not backdate. Use short, complete sentences for tasks.`);
         } else if (fullContextData?.autoTrigger) {
           handleSend(fullContextData.autoTrigger);
         }

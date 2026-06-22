@@ -23,6 +23,8 @@ import { useAuth } from '../../context/AuthContext';
 import { useAssistant } from '../../context/AssistantContext';
 import { supabase } from '../../lib/supabase';
 import { useTranslation } from 'react-i18next';
+import { generateDocxBlob } from '../../utils/docxExport';
+import { Download } from 'lucide-react';
 
 export const PreparationPage: React.FC = () => {
   const [searchParams] = useSearchParams();
@@ -317,68 +319,48 @@ export const PreparationPage: React.FC = () => {
   };
 
   const parsePlanToJSON = (text: string) => {
-    const weekRegex = /Week\s*(\d+)/gi;
-    const weeks: any[] = [];
-    const parts = text.split(/Week\s*\d+[:\s-]*/i);
-    const matches = text.match(weekRegex);
-    
-    if (!matches || parts.length <= 1) {
-      console.warn('Regex split failed to find weeks');
-      return [];
-    }
+    const lines = text.split('\n');
+    const periods: any[] = [];
+    let currentPeriod: any = null;
 
-    for (let i = 0; i < matches.length; i++) {
-      const weekMatch = matches[i].match(/Week\s*(\d+)/i);
-      if (!weekMatch) continue;
-      
-      const weekNum = parseInt(weekMatch[1]);
-      const content = parts[i + 1] || '';
-      const subParts = content.split(/\n|(?=\s*[\-*•])|(?=\s*\d+\.\s+)/);
-      
-      let title = t('preparation.focusArea');
-      const tasks: any[] = [];
-      
-      subParts.forEach((part, idx) => {
-        const trimmed = part.trim().replace(/^[:\-*•\d.\s]+/, '').trim();
-        if (!trimmed || trimmed.length < 3) return;
-        
-        if (idx === 0 && !part.startsWith('-') && !part.startsWith('*') && !part.includes('•')) {
-          title = trimmed.split('\n')[0].substring(0, 50);
-        } else {
-          if (trimmed.includes(' - ')) {
-            const multiTasks = trimmed.split(' - ');
-            multiTasks.forEach(t => {
-              const cleaned = t.trim();
-              if (cleaned.length > 3) {
-                tasks.push({
-                  id: Math.random().toString(36).substr(2, 9),
-                  text: cleaned,
-                  status: 'Not Started',
-                  notes: ''
-                });
-              }
-            });
-          } else {
-            tasks.push({
-              id: Math.random().toString(36).substr(2, 9),
-              text: trimmed,
-              status: 'Not Started',
-              notes: ''
-            });
-          }
+    lines.forEach((line) => {
+      const trimmed = line.trim();
+      if (!trimmed) return;
+
+      // Match period headers like "Week 1: Focus", "Month 2: Goal", "Quarter 3: Sprint"
+      const periodMatch = trimmed.match(/^(?:###\s*)?(Week|Month|Quarter|Sprint)\s*(\d+)[:\s-]*(.*)/i);
+      if (periodMatch) {
+        if (currentPeriod && currentPeriod.tasks.length > 0) {
+          periods.push(currentPeriod);
         }
-      });
-
-      if (tasks.length > 0) {
-        weeks.push({
-          number: weekNum,
-          title: title,
-          tasks: tasks.slice(0, 10)
-        });
+        currentPeriod = {
+          number: parseInt(periodMatch[2]),
+          periodType: periodMatch[1],
+          title: periodMatch[3].trim() || t('preparation.focusArea'),
+          tasks: []
+        };
+        return;
       }
+
+      if (currentPeriod) {
+        // Assume anything else is a task if it's long enough and not just a header
+        const cleaned = trimmed.replace(/^[:\-*•\d.\s]+/, '').trim();
+        if (cleaned.length > 3 && !cleaned.toLowerCase().startsWith('objective:')) {
+          currentPeriod.tasks.push({
+            id: Math.random().toString(36).substr(2, 9),
+            text: cleaned,
+            status: 'Not Started',
+            notes: ''
+          });
+        }
+      }
+    });
+
+    if (currentPeriod && currentPeriod.tasks.length > 0) {
+      periods.push(currentPeriod);
     }
     
-    return weeks.sort((a, b) => a.number - b.number);
+    return periods;
   };
 
   const savePlanToDB = async (updatedPlan: any) => {
@@ -463,6 +445,44 @@ export const PreparationPage: React.FC = () => {
     return totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
   };
   const progress = calculateProgress();
+
+  const updateTitle = (weekIndex: number, newTitle: string) => {
+    if (!plan) return;
+    const updated = { ...plan };
+    updated.weeks[weekIndex].title = newTitle;
+    setPlan(updated);
+  };
+
+  const handleDownloadDocx = async () => {
+    if (!plan || !plan.weeks) return;
+    
+    let markdown = `# Preparation Roadmap: ${planType.toUpperCase()}\n\n`;
+    plan.weeks.forEach((period: any) => {
+      const type = period.periodType || 'Week';
+      markdown += `## ${type} ${period.number}: ${period.title}\n`;
+      period.tasks.forEach((task: any) => {
+        markdown += `- ${task.text} (Status: ${task.status})\n`;
+        if (task.notes) {
+          markdown += `  Notes: ${task.notes}\n`;
+        }
+      });
+      markdown += `\n`;
+    });
+
+    try {
+      const blob = await generateDocxBlob(markdown, "D69E2E", "Preparation Roadmap");
+      const url = URL.createObjectURL(blob);
+      const element = document.createElement("a");
+      element.href = url;
+      element.download = `Roadmap_${planType}.docx`;
+      document.body.appendChild(element);
+      element.click();
+      URL.revokeObjectURL(url);
+    } catch (e) {
+      console.error('Error generating docx:', e);
+      alert('Failed to generate DOCX file.');
+    }
+  };
 
   // Responsive Styles
   const containerStyle: React.CSSProperties = {
@@ -849,10 +869,16 @@ export const PreparationPage: React.FC = () => {
               <Layout size={20} color="var(--accent-primary)" style={{ flexShrink: 0 }} />
               <h2 style={sectionTitleStyle}>{t('preparation.weeklyRoadmap')}</h2>
             </div>
-            <Button variant="outline" size="sm" onClick={generateNewPlan} disabled={loading} style={{ justifyContent: 'center' }}>
-              {loading ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />} 
-              {t('preparation.regeneratePlan')}
-            </Button>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <Button variant="outline" size="sm" onClick={handleDownloadDocx} disabled={loading || !plan} style={{ justifyContent: 'center' }}>
+                <Download size={14} style={{ marginRight: '6px' }} /> 
+                Download Word (DOCX)
+              </Button>
+              <Button variant="outline" size="sm" onClick={generateNewPlan} disabled={loading} style={{ justifyContent: 'center' }}>
+                {loading ? <Loader2 size={14} className="animate-spin" /> : <Zap size={14} />} 
+                {t('preparation.regeneratePlan')}
+              </Button>
+            </div>
           </div>
 
           <div style={weeksListStyle}>
@@ -870,16 +896,54 @@ export const PreparationPage: React.FC = () => {
             ) : plan?.weeks?.map((week: any, weekIndex: number) => (
               <div key={week.number} style={{ marginBottom: '32px', backgroundColor: 'var(--bg-secondary)', borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--border-color)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', backgroundColor: 'rgba(0,0,0,0.2)', borderBottom: '1px solid var(--border-color)' }}>
-                  <div>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: 700 }}>Week {week.number}: {week.title}</h3>
+                  <div style={{ flex: 1, marginRight: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <span style={{ fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                        {week.periodType || 'Week'} {week.number}:
+                      </span>
+                      <input 
+                        type="text" 
+                        value={week.title || ''} 
+                        onChange={(e) => updateTitle(weekIndex, e.target.value)}
+                        onBlur={() => commitTaskUpdate(plan)}
+                        placeholder="Focus Area"
+                        style={{ 
+                          fontSize: '1.25rem', 
+                          fontWeight: 700, 
+                          background: 'transparent', 
+                          border: 'none', 
+                          color: 'var(--text-primary)', 
+                          outline: 'none', 
+                          flex: 1,
+                          borderBottom: '1px dashed transparent',
+                          transition: 'border-color 0.2s'
+                        }}
+                        onFocus={(e) => e.target.style.borderBottom = '1px dashed var(--accent-primary)'}
+                      />
+                    </div>
                     <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginTop: '4px' }}>
                       {(() => {
                         const startDateStr = plan.startDate || plan.created_at || new Date().toISOString();
                         const start = new Date(startDateStr);
-                        start.setDate(start.getDate() + (week.number - 1) * 7);
-                        const end = new Date(start);
-                        end.setDate(end.getDate() + 6);
-                        return `${start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`;
+                        
+                        if (week.periodType === 'Month') {
+                          start.setMonth(start.getMonth() + (week.number - 1));
+                          const end = new Date(start);
+                          end.setMonth(end.getMonth() + 1);
+                          end.setDate(end.getDate() - 1);
+                          return `${start.toLocaleDateString(undefined, { month: 'short', year: 'numeric' })} - ${end.toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}`;
+                        } else if (week.periodType === 'Quarter') {
+                          start.setMonth(start.getMonth() + (week.number - 1) * 3);
+                          const end = new Date(start);
+                          end.setMonth(end.getMonth() + 3);
+                          end.setDate(end.getDate() - 1);
+                          return `${start.toLocaleDateString(undefined, { month: 'short', year: 'numeric' })} - ${end.toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}`;
+                        } else {
+                          start.setDate(start.getDate() + (week.number - 1) * 7);
+                          const end = new Date(start);
+                          end.setDate(end.getDate() + 6);
+                          return `${start.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })} - ${end.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}`;
+                        }
                       })()}
                     </p>
                   </div>
