@@ -707,7 +707,25 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
 
       // Update states
       setMatchSummary(result.matchSummary || { strongMatches: [], gaps: [], priorityPoints: [] });
-      setMissingFields(result.missingFields || []);
+      let mf = result.missingFields || [];
+      if (forceAction === 'gaps' && mf.length === 0) {
+        if (result.matchSummary?.gaps && result.matchSummary.gaps.length > 0) {
+          mf = result.matchSummary.gaps.map((gap: string, i: number) => ({
+            key: `gap_auto_${i}`,
+            label: `Address Gap: ${gap.substring(0, 30)}...`,
+            type: 'textarea',
+            description: gap
+          }));
+        } else {
+          mf = [{
+            key: 'additional_context',
+            label: 'Additional Qualifications & Context',
+            type: 'textarea',
+            description: 'We did not find any critical gaps! However, you can manually provide any additional unlisted experience, metrics, or notes here to strengthen the final draft.'
+          }];
+        }
+      }
+      setMissingFields(mf);
       setSessionId(result.sessionId);
       
       await BuilderService.updateBuilderRequestStatus(requestLog.id, 'success');

@@ -146,8 +146,8 @@ export const ContextSummary: React.FC<ContextSummaryProps> = ({
               ))
             ) : (
               <div style={listItemStyle}>
-                <span style={orangeBulletStyle}></span>
-                <p style={itemTextStyle}>{t('builders.context.fallbackGap', 'No matching team leadership or scaling statistics found.')}</p>
+                <span style={greenBulletStyle}></span>
+                <p style={itemTextStyle}>{t('builders.context.fallbackGap', 'No critical gaps identified by the AI. Your profile aligns well with the requirements.')}</p>
               </div>
             )}
           </div>
