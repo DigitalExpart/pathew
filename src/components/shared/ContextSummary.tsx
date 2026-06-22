@@ -9,6 +9,7 @@ interface ContextSummaryProps {
     strongMatches: string[];
     gaps: string[];
     priorityPoints: string[];
+    matchScore?: number;
   };
   confidence?: 'high' | 'medium' | 'low';
 }
