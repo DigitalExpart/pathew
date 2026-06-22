@@ -17,11 +17,20 @@ export const AdminUsersPage: React.FC = () => {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const { data, error } = await supabase.from('profiles').select('id, full_name, email, avatar_url, subscription_plan, credits, role, created_at, last_active_at').order('created_at', { ascending: false });
-      if (error) console.error('Supabase error fetching users:', error);
-      setUsers(data || []);
-      setFiltered(data || []);
-      setLoading(false);
+      try {
+        const { data, error } = await supabase.functions.invoke('admin-get-users', {
+          body: { action: 'get_all_users' }
+        });
+        
+        if (error) throw error;
+        
+        setUsers(data?.users || []);
+        setFiltered(data?.users || []);
+      } catch (err) {
+        console.error('Error fetching users:', err);
+      } finally {
+        setLoading(false);
+      }
     };
     fetchUsers();
   }, []);
@@ -35,18 +44,33 @@ export const AdminUsersPage: React.FC = () => {
 
   const handleSaveEdit = async () => {
     if (!editingUser) return;
-    await supabase.from('profiles').update({ 
-      credits: parseInt(editCredits) || 0, 
-      subscription_plan: editPlan,
-      role: editRole 
-    }).eq('id', editingUser.id);
-    setUsers(prev => prev.map(u => u.id === editingUser.id ? { 
-      ...u, 
-      credits: parseInt(editCredits) || 0, 
-      subscription_plan: editPlan,
-      role: editRole 
-    } : u));
-    setEditingUser(null);
+    
+    try {
+      const { error } = await supabase.functions.invoke('admin-get-users', {
+        body: { 
+          action: 'update_user',
+          userId: editingUser.id,
+          updateData: {
+            credits: parseInt(editCredits) || 0, 
+            subscription_plan: editPlan,
+            role: editRole 
+          }
+        }
+      });
+      
+      if (error) throw error;
+      
+      setUsers(prev => prev.map(u => u.id === editingUser.id ? { 
+        ...u, 
+        credits: parseInt(editCredits) || 0, 
+        subscription_plan: editPlan,
+        role: editRole 
+      } : u));
+    } catch (err) {
+      console.error('Error updating user:', err);
+    } finally {
+      setEditingUser(null);
+    }
   };
 
   return (
