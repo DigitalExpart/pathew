@@ -61,6 +61,17 @@ export const SavedOpportunities: React.FC = () => {
     }
   };
 
+  const handlePrepareClick = async (opp: any) => {
+    navigate(`/opportunities/${opp.id}`);
+    try {
+      const { data } = await supabase.from('opportunities').select('click_count').eq('id', opp.id).single();
+      const currentClicks = data?.click_count || 0;
+      await supabase.from('opportunities').update({ click_count: currentClicks + 1 }).eq('id', opp.id);
+    } catch (e) {
+      console.error('Failed to update click count:', e);
+    }
+  };
+
   // Dynamic Responsive Styles
   const containerStyle: React.CSSProperties = {
     maxWidth: '1200px',
@@ -259,7 +270,7 @@ export const SavedOpportunities: React.FC = () => {
                 </Button>
                 <Button 
                   style={{ flex: 1, gap: '4px', fontSize: isMobile ? '0.8125rem' : '0.875rem' }}
-                  onClick={() => navigate(`/opportunities/${opp.id}`)}
+                  onClick={() => handlePrepareClick(opp)}
                 >
                   {opp.type === 'grant' ? 'Build Grant' : t('opportunities.prepare')} <ChevronRight size={16} />
                 </Button>

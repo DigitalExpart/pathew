@@ -113,6 +113,17 @@ export const OpportunityList: React.FC = () => {
     }
   };
 
+  const handlePrepareClick = async (opp: any) => {
+    navigate(`/opportunities/${opp.id}`);
+    try {
+      const { data } = await supabase.from('opportunities').select('click_count').eq('id', opp.id).single();
+      const currentClicks = data?.click_count || 0;
+      await supabase.from('opportunities').update({ click_count: currentClicks + 1 }).eq('id', opp.id);
+    } catch (e) {
+      console.error('Failed to update click count:', e);
+    }
+  };
+
   const processedOpps = React.useMemo(() => {
     return opportunities.map(opp => ({
       ...opp,
@@ -341,7 +352,7 @@ export const OpportunityList: React.FC = () => {
               </Button>
               <Button 
                 style={{ flex: 1, gap: '4px' }}
-                onClick={() => navigate(`/opportunities/${opp.id}`)}
+                onClick={() => handlePrepareClick(opp)}
               >
                 {opp.type === 'grant' ? 'Build Grant' : t('opportunities.prepare')} <ChevronRight size={16} />
               </Button>

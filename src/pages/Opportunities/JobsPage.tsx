@@ -43,6 +43,17 @@ export const JobsPage: React.FC = () => {
     fetchJobs();
   }, []);
 
+  const handlePrepareClick = async (job: any) => {
+    navigate(`/opportunities/${job.id}`);
+    try {
+      const { data } = await supabase.from('opportunities').select('click_count').eq('id', job.id).single();
+      const currentClicks = data?.click_count || 0;
+      await supabase.from('opportunities').update({ click_count: currentClicks + 1 }).eq('id', job.id);
+    } catch (e) {
+      console.error('Failed to update click count:', e);
+    }
+  };
+
   return (
     <div style={{ ...containerStyle, padding: isMobile ? '0' : '0' }}>
       <header style={{ ...headerStyle, textAlign: isMobile ? 'center' : 'left' }}>
@@ -116,7 +127,7 @@ export const JobsPage: React.FC = () => {
                 </Button>
                 <Button 
                   style={{ flex: 1, gap: '4px' }}
-                  onClick={() => navigate(`/opportunities/${job.id}`)}
+                  onClick={() => handlePrepareClick(job)}
                 >
                   {t('opportunities.prepare')}
                 </Button>
