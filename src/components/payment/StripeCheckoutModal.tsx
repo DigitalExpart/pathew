@@ -37,6 +37,43 @@ const CheckoutForm = ({ planTitle, planPrice, planCredits, onSuccess, onCancel }
       setError(submitError.message || 'Payment failed. Please try again.');
       setProcessing(false);
     } else {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          const { data: profile } = await supabase.from('profiles').select('credits').eq('id', session.user.id).single();
+          
+          let addedCredits = 0;
+          if (typeof planCredits === 'string') {
+             const match = planCredits.match(/\d+/);
+             if (match) addedCredits = parseInt(match[0], 10);
+          } else if (typeof planCredits === 'number') {
+             addedCredits = planCredits;
+          }
+          if (!addedCredits) {
+             const planCreditsMap: Record<string, number> = {
+               'Starter': 150,
+               'Growth': 300,
+               'Power User': 600
+             };
+             addedCredits = planCreditsMap[planTitle] || 50;
+          }
+
+          const newCredits = (profile?.credits || 0) + addedCredits;
+          await supabase.from('profiles').update({
+             credits: newCredits,
+             subscription_plan: planTitle
+          }).eq('id', session.user.id);
+
+          await supabase.from('transactions').insert({
+            user_id: session.user.id,
+            type: 'credit',
+            amount: addedCredits,
+            description: `Upgraded to ${planTitle} Plan`
+          });
+        }
+      } catch (err) {
+        console.error('Error updating profile after payment:', err);
+      }
       onSuccess();
     }
   };

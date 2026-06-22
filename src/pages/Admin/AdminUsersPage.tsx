@@ -172,7 +172,23 @@ export const AdminUsersPage: React.FC = () => {
                   </td>
                   <td style={tdStyle}><span style={{ fontWeight: 700, color: '#e2e8f0' }}>{u.credits ?? 0}</span></td>
                   <td style={tdStyle}><span style={{ color: '#64748b', fontSize: '0.8125rem' }}>{new Date(u.created_at).toLocaleDateString()}</span></td>
-                  <td style={tdStyle}><span style={{ color: '#64748b', fontSize: '0.8125rem' }}>{u.last_active_at ? new Date(u.last_active_at).toLocaleDateString() : 'Never'}</span></td>
+                  <td style={tdStyle}>
+                    <span style={{ color: '#64748b', fontSize: '0.8125rem', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      {(() => {
+                        if (!u.last_active_at) return 'Never';
+                        const lastActive = new Date(u.last_active_at);
+                        const diffMins = Math.floor((new Date().getTime() - lastActive.getTime()) / 60000);
+                        if (diffMins < 5) {
+                          return <><span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: '#22c55e' }}></span> <span style={{ color: '#22c55e' }}>Online</span></>;
+                        }
+                        if (diffMins < 60) return `Offline (${diffMins}m ago)`;
+                        const diffHours = Math.floor(diffMins / 60);
+                        if (diffHours < 24) return `Offline (${diffHours}h ago)`;
+                        const diffDays = Math.floor(diffHours / 24);
+                        return `Offline (${diffDays}d ago)`;
+                      })()}
+                    </span>
+                  </td>
                   <td style={tdStyle}>
                     <button onClick={() => { setEditingUser(u); setEditCredits(String(u.credits || 0)); setEditPlan(u.subscription_plan || 'Free'); setEditRole(u.role || 'user'); }} style={actionBtnStyle}>
                       <Edit3 size={14} /> Edit

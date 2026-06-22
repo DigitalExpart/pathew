@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   subscription_plan TEXT DEFAULT 'Free',
   role TEXT DEFAULT 'user' CHECK (role IN ('user', 'sub_admin')),
   renewal_date TIMESTAMPTZ,
+  last_active_at TIMESTAMPTZ,
   payment_method JSONB DEFAULT '{}',
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now()
@@ -84,12 +85,23 @@ CREATE TABLE IF NOT EXISTS notifications (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- 4.5 Transactions
+CREATE TABLE IF NOT EXISTS transactions (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  type TEXT CHECK (type IN ('credit', 'debit')) NOT NULL,
+  amount INTEGER NOT NULL,
+  description TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
 -- Enable RLS
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE assistant_sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE assistant_messages ENABLE ROW LEVEL SECURITY;
 ALTER TABLE assistant_drafts ENABLE ROW LEVEL SECURITY;
 ALTER TABLE notifications ENABLE ROW LEVEL SECURITY;
+ALTER TABLE transactions ENABLE ROW LEVEL SECURITY;
 
 -- Policies for profiles
 DROP POLICY IF EXISTS "Users can manage their own profile" ON profiles;
@@ -127,6 +139,14 @@ CREATE POLICY "Users can manage their own assistant drafts"
 DROP POLICY IF EXISTS "Users can manage their own notifications" ON notifications;
 CREATE POLICY "Users can manage their own notifications"
   ON notifications FOR ALL
+  TO authenticated
+  USING (auth.uid() = user_id)
+  WITH CHECK (auth.uid() = user_id);
+
+-- Policies for transactions
+DROP POLICY IF EXISTS "Users can manage their own transactions" ON transactions;
+CREATE POLICY "Users can manage their own transactions"
+  ON transactions FOR ALL
   TO authenticated
   USING (auth.uid() = user_id)
   WITH CHECK (auth.uid() = user_id);

@@ -90,11 +90,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   useEffect(() => {
+    let activeInterval: ReturnType<typeof setInterval>;
+
     // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
         fetchProfile(session.user.id, session.user.email);
+        
+        // Start pinging active status
+        activeInterval = setInterval(() => {
+          supabase.from('profiles').update({
+            last_active_at: new Date().toISOString()
+          }).eq('id', session.user.id).then();
+        }, 3 * 60 * 1000); // Every 3 mins
       }
       setLoading(false);
     });
@@ -102,8 +111,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Listen for changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      if (activeInterval) clearInterval(activeInterval);
+
       if (session?.user) {
         fetchProfile(session.user.id, session.user.email);
+        
+        activeInterval = setInterval(() => {
+          supabase.from('profiles').update({
+            last_active_at: new Date().toISOString()
+          }).eq('id', session.user.id).then();
+        }, 3 * 60 * 1000);
       } else {
         setProfile(null);
       }
@@ -111,6 +128,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     return () => {
+      if (activeInterval) clearInterval(activeInterval);
       subscription.unsubscribe();
     };
   }, []);
