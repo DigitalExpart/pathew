@@ -461,10 +461,12 @@ export const PreparationPage: React.FC = () => {
       const type = period.periodType || 'Week';
       markdown += `## ${type} ${period.number}: ${period.title}\n`;
       period.tasks.forEach((task: any) => {
-        markdown += `- ${task.text} (Status: ${task.status})\n`;
-        if (task.notes) {
-          markdown += `  Notes: ${task.notes}\n`;
-        }
+        markdown += `- **${task.text}**\n`;
+        markdown += `  - Status: ${task.status}\n`;
+        if (task.assignTo) markdown += `  - Assign To: ${task.assignTo}\n`;
+        if (task.deadline) markdown += `  - Deadline: ${task.deadline}\n`;
+        if (task.priority) markdown += `  - Priority: ${task.priority}\n`;
+        if (task.notes) markdown += `  - Notes: ${task.notes}\n`;
       });
       markdown += `\n`;
     });
@@ -956,9 +958,12 @@ export const PreparationPage: React.FC = () => {
                   <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
                     <thead>
                       <tr style={{ borderBottom: '1px solid var(--border-color)', textAlign: 'left', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-                        <th style={{ padding: '0 12px 12px', width: '40%', fontWeight: 600 }}>Task</th>
-                        <th style={{ padding: '0 12px 12px', width: '20%', fontWeight: 600 }}>Status</th>
-                        <th style={{ padding: '0 12px 12px', width: '35%', fontWeight: 600 }}>Notes</th>
+                        <th style={{ padding: '0 12px 12px', width: '30%', fontWeight: 600 }}>Task</th>
+                        <th style={{ padding: '0 12px 12px', width: '15%', fontWeight: 600 }}>Assign To</th>
+                        <th style={{ padding: '0 12px 12px', width: '10%', fontWeight: 600 }}>Deadline</th>
+                        <th style={{ padding: '0 12px 12px', width: '10%', fontWeight: 600 }}>Priority</th>
+                        <th style={{ padding: '0 12px 12px', width: '15%', fontWeight: 600 }}>Status</th>
+                        <th style={{ padding: '0 12px 12px', width: '15%', fontWeight: 600 }}>Notes</th>
                         <th style={{ padding: '0 12px 12px', width: '5%' }}></th>
                       </tr>
                     </thead>
@@ -973,6 +978,44 @@ export const PreparationPage: React.FC = () => {
                               onBlur={() => commitTaskUpdate(plan)}
                               style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--border-color)', borderRadius: '6px', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.9375rem' }}
                             />
+                          </td>
+                          <td style={{ padding: '12px' }}>
+                            <input 
+                              type="text" 
+                              value={task.assignTo || ''} 
+                              onChange={(e) => updateTask(weekIndex, taskIndex, 'assignTo', e.target.value)}
+                              onBlur={() => commitTaskUpdate(plan)}
+                              placeholder="Assignee"
+                              style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--border-color)', borderRadius: '6px', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.9375rem' }}
+                            />
+                          </td>
+                          <td style={{ padding: '12px' }}>
+                            <input 
+                              type="date" 
+                              value={task.deadline || ''} 
+                              onChange={(e) => updateTask(weekIndex, taskIndex, 'deadline', e.target.value)}
+                              onBlur={() => commitTaskUpdate(plan)}
+                              style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--border-color)', borderRadius: '6px', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.9375rem' }}
+                            />
+                          </td>
+                          <td style={{ padding: '12px' }}>
+                            <select 
+                              value={task.priority || 'Medium'} 
+                              onChange={(e) => updateTask(weekIndex, taskIndex, 'priority', e.target.value)}
+                              onBlur={() => commitTaskUpdate(plan)}
+                              style={{ 
+                                width: '100%', padding: '10px 12px', border: '1px solid var(--border-color)', borderRadius: '6px', 
+                                background: task.priority === 'High' ? 'rgba(239, 68, 68, 0.1)' : 
+                                            task.priority === 'Low' ? 'rgba(34, 197, 94, 0.1)' : 'var(--bg-primary)', 
+                                color: task.priority === 'High' ? '#ef4444' : 
+                                       task.priority === 'Low' ? '#22c55e' : 'var(--text-primary)', 
+                                fontSize: '0.9375rem', fontWeight: 600
+                              }}
+                            >
+                              <option value="High">High</option>
+                              <option value="Medium">Medium</option>
+                              <option value="Low">Low</option>
+                            </select>
                           </td>
                           <td style={{ padding: '12px' }}>
                             <select 
@@ -1019,7 +1062,7 @@ export const PreparationPage: React.FC = () => {
                       ))}
                       {(!week.tasks || week.tasks.length === 0) && (
                         <tr>
-                          <td colSpan={4} style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)' }}>
+                          <td colSpan={7} style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)' }}>
                             No tasks for this week. Click 'Add Task' to create one.
                           </td>
                         </tr>
