@@ -17,7 +17,7 @@ export const AdminUsersPage: React.FC = () => {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+      const { data, error } = await supabase.from('profiles').select('id, full_name, email, avatar_url, subscription_plan, credits, role, created_at, last_active_at').order('created_at', { ascending: false });
       if (error) console.error('Supabase error fetching users:', error);
       setUsers(data || []);
       setFiltered(data || []);
@@ -106,7 +106,7 @@ export const AdminUsersPage: React.FC = () => {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                {['User', 'Role', 'Plan', 'Credits', 'Joined', 'Actions'].map(h => (
+                {['User', 'Role', 'Plan', 'Credits', 'Joined', 'Last Active', 'Actions'].map(h => (
                   <th key={h} style={thStyle}>{h}</th>
                 ))}
               </tr>
@@ -148,6 +148,7 @@ export const AdminUsersPage: React.FC = () => {
                   </td>
                   <td style={tdStyle}><span style={{ fontWeight: 700, color: '#e2e8f0' }}>{u.credits ?? 0}</span></td>
                   <td style={tdStyle}><span style={{ color: '#64748b', fontSize: '0.8125rem' }}>{new Date(u.created_at).toLocaleDateString()}</span></td>
+                  <td style={tdStyle}><span style={{ color: '#64748b', fontSize: '0.8125rem' }}>{u.last_active_at ? new Date(u.last_active_at).toLocaleDateString() : 'Never'}</span></td>
                   <td style={tdStyle}>
                     <button onClick={() => { setEditingUser(u); setEditCredits(String(u.credits || 0)); setEditPlan(u.subscription_plan || 'Free'); setEditRole(u.role || 'user'); }} style={actionBtnStyle}>
                       <Edit3 size={14} /> Edit

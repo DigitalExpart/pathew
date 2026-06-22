@@ -66,7 +66,7 @@ export const SubAdminDashboard: React.FC = () => {
       // Fetch safe customer details: name, email (from profile metadata or id), credits, plan, date joined, role
       const { data, error } = await supabase
         .from('profiles')
-        .select('id, full_name, avatar_url, subscription_plan, credits, role, created_at')
+        .select('id, full_name, email, avatar_url, subscription_plan, credits, role, created_at, last_active_at')
         .order('created_at', { ascending: false });
       
       if (error) throw error;
@@ -398,6 +398,7 @@ export const SubAdminDashboard: React.FC = () => {
                     <th style={thStyle}>Plan</th>
                     <th style={thStyle}>Credits</th>
                     <th style={thStyle}>Joined</th>
+                    <th style={thStyle}>Last Active</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -414,7 +415,7 @@ export const SubAdminDashboard: React.FC = () => {
                           </div>
                           <div>
                             <p style={{ fontWeight: 600, fontSize: '0.875rem', color: 'var(--text-primary)' }}>{cust.full_name || 'Unnamed User'}</p>
-                            <p style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>{cust.id}</p>
+                            <p style={{ fontSize: '0.6875rem', color: 'var(--text-muted)' }}>{cust.email || cust.id.slice(0, 8) + '...'}</p>
                           </div>
                         </div>
                       </td>
@@ -454,6 +455,11 @@ export const SubAdminDashboard: React.FC = () => {
                       <td style={tdStyle}>
                         <span style={{ color: 'var(--text-secondary)', fontSize: '0.8125rem' }}>
                           {cust.created_at ? new Date(cust.created_at).toLocaleDateString() : 'N/A'}
+                        </span>
+                      </td>
+                      <td style={tdStyle}>
+                        <span style={{ color: 'var(--text-secondary)', fontSize: '0.8125rem' }}>
+                          {cust.last_active_at ? new Date(cust.last_active_at).toLocaleDateString() : 'Never'}
                         </span>
                       </td>
                     </tr>
