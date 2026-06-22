@@ -18,7 +18,9 @@ import {
   Compass, 
   CheckCircle,
   Briefcase,
-  AlertCircle
+  AlertCircle,
+  ChevronDown,
+  FileSearch
 } from 'lucide-react';
 
 interface DocumentBuilderProps {
@@ -37,6 +39,29 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const oppIdParam = searchParams.get('oppId');
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const handleGenerateDirectly = () => {
+    setIsDropdownOpen(false);
+    builder.startExtraction('generate');
+  };
+
+  const handleSeeGaps = () => {
+    setIsDropdownOpen(false);
+    builder.startExtraction('gaps');
+  };
 
   // Map builder type keys
   const getBuilderTypeKey = () => {
@@ -724,21 +749,119 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
               {builder.error && (
                 <p style={{ color: '#ef4444', fontSize: '0.875rem', margin: 0 }}>{builder.error}</p>
               )}
-              <Button 
-                onClick={builder.startExtraction} 
-                disabled={isFormInvalid()}
-                style={{ 
-                  gap: '8px',
-                  boxShadow: '0 4px 15px var(--accent-glow)',
-                  width: isMobile ? '100%' : 'auto',
-                  padding: isMobile ? '14px 20px' : '12px 24px',
-                  fontSize: isMobile ? '0.9rem' : '0.875rem',
-                  justifyContent: 'center'
-                }}
-              >
-                {t('builders.style.analyseBtn', 'Analysing Suitability')}
-                <ArrowRight size={16} />
-              </Button>
+              
+              <div ref={dropdownRef} style={{ position: 'relative', width: isMobile ? '100%' : 'auto' }}>
+                <div style={{ display: 'flex', width: '100%', boxShadow: '0 4px 15px var(--accent-glow)', borderRadius: 'var(--radius-md)' }}>
+                  <Button 
+                    onClick={handleGenerateDirectly} 
+                    disabled={isFormInvalid() || builder.isExtracting}
+                    style={{ 
+                      flex: 1,
+                      gap: '8px',
+                      padding: isMobile ? '14px 20px' : '12px 24px',
+                      fontSize: isMobile ? '0.9rem' : '0.875rem',
+                      justifyContent: 'center',
+                      borderTopRightRadius: 0,
+                      borderBottomRightRadius: 0,
+                      boxShadow: 'none'
+                    }}
+                  >
+                    {t('builders.style.generateBtn', `Generate ${type}`)}
+                    <ArrowRight size={16} />
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      if (!isFormInvalid()) {
+                        setIsDropdownOpen(!isDropdownOpen);
+                      }
+                    }}
+                    disabled={isFormInvalid() || builder.isExtracting}
+                    style={{
+                      padding: '0 12px',
+                      borderLeft: '1px solid rgba(255,255,255,0.2)',
+                      borderTopLeftRadius: 0,
+                      borderBottomLeftRadius: 0,
+                      boxShadow: 'none',
+                      backgroundColor: 'var(--accent-primary)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <ChevronDown size={18} />
+                  </Button>
+                </div>
+
+                {/* React State dropdown menu */}
+                {isDropdownOpen && (
+                  <div 
+                    style={{
+                      position: 'absolute',
+                      top: '100%',
+                      right: 0,
+                      marginTop: '8px',
+                      backgroundColor: 'var(--bg-primary)',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 20px rgba(0,0,0,0.15)',
+                      zIndex: 50,
+                      width: '100%',
+                      minWidth: '220px',
+                      overflow: 'hidden'
+                    }}
+                  >
+                    <button
+                      type="button"
+                      onClick={handleSeeGaps}
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        textAlign: 'left',
+                        backgroundColor: 'transparent',
+                        border: 'none',
+                        borderBottom: '1px solid var(--border-color)',
+                        color: 'var(--text-primary)',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        transition: 'background-color 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                    >
+                      <FileSearch size={16} color="var(--accent-primary)" />
+                      {t('builders.style.seeGapsBtn', 'See Progressive Gaps')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleGenerateDirectly}
+                      style={{
+                        width: '100%',
+                        padding: '12px 16px',
+                        textAlign: 'left',
+                        backgroundColor: 'transparent',
+                        border: 'none',
+                        color: 'var(--text-primary)',
+                        fontSize: '0.875rem',
+                        fontWeight: 600,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                        transition: 'background-color 0.2s'
+                      }}
+                      onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--bg-secondary)'}
+                      onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+                    >
+                      <ArrowRight size={16} color="var(--accent-primary)" />
+                      {t('builders.style.generateDirectBtn', `Generate ${type} directly`)}
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}

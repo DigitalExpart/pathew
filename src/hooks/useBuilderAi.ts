@@ -548,7 +548,7 @@ OUTPUT:
   };
 
   // Helper: Build robust prompt instructions locally to avoid needing edge function changes
-  const buildEnhancedContext = (isGeneration: boolean = false) => {
+  const buildEnhancedContext = (isGeneration: boolean = false, forceGaps: boolean = false) => {
     const { cvTypeRules, experienceLevelMap, pagesMap, toneMap, languageMap, formattingRules } = buildSystemPromptMaps();
     let ctx = '';
     
@@ -596,6 +596,10 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
       ctx += `\nUSER ADDITIONAL CONTEXT:\n${manualNotes.additionalContext}\n`;
     }
     
+    if (forceGaps) {
+      ctx += `\nCRITICAL INSTRUCTION: The user explicitly requested to see progressive gaps. You MUST identify at least 3 critical gaps, weaknesses, or missing qualifications in their profile compared to the target opportunity. Be strict and demanding. Return these as 'missingFields'.\n`;
+    }
+    
     if (isGeneration) {
       ctx += "\n\nCRITICAL FORMATTING INSTRUCTION: The very first lines of your generated draft MUST be the header in EXACTLY this markdown format:\n# [User's Full Name]\n## [Professional Title]\n### [Email] • [Phone] • [Location]\nDo not put anything before the # [User's Name]. Do not include any other markdown before it. Use exactly one # for the name, two ## for the title, and three ### for the contact info.";
     }
@@ -604,7 +608,7 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
   };
 
   // 1. EXTRACT CONTEXT & GAP ANALYSIS
-  const startExtraction = async () => {
+  const startExtraction = async (forceAction?: 'gaps' | 'generate') => {
     if (!user) {
       setError('You must be signed in to perform this action.');
       return;
@@ -623,7 +627,7 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
       // 1. Create a Builder Request Log
       const requestLog = await BuilderService.createBuilderRequest({
         builder_type: builderType,
-        task: `Gap Analysis for ${documentType}`,
+        task: forceAction === 'generate' ? `Direct Generation for ${documentType}` : `Gap Analysis for ${documentType}`,
         document_type: documentType,
         opportunity_id: opportunityId || undefined,
         source_ids: selectedSourceIds.filter(id => id !== 'pathew-profile'),
@@ -672,7 +676,7 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
           useProfile: selectedSourceIds.includes('pathew-profile'),
           manualNotes: {
             ...manualNotes,
-            additionalContext: buildEnhancedContext(false)
+            additionalContext: buildEnhancedContext(false, forceAction === 'gaps')
           },
           pageCount,
           wordLimit,
@@ -708,11 +712,15 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
       
       await BuilderService.updateBuilderRequestStatus(requestLog.id, 'success');
 
-      // Move stage
-      if (result.missingFields && result.missingFields.length > 0) {
+      // Move stage based on user choice
+      if (forceAction === 'generate') {
+        // User explicitly asked to skip gaps and generate
+        await generateTailoredDraft(result.sessionId, {});
+      } else if (forceAction === 'gaps' || (result.missingFields && result.missingFields.length > 0)) {
+        // Show the missing/gap analysis page
         setStage('missing');
       } else {
-        // No missing fields - generate draft directly!
+        // No missing fields and no forced action - generate directly
         await generateTailoredDraft(result.sessionId, {});
       }
 
