@@ -26,6 +26,7 @@ export interface AssistantResponseData {
   confidence: 'high' | 'medium' | 'low';
   sessionId: string;
   error?: string;
+  matchScore?: number;
   missingFields?: {
     key: string;
     label: string;
