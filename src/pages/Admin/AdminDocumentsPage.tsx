@@ -10,7 +10,7 @@ export const AdminDocumentsPage: React.FC = () => {
 
   useEffect(() => {
     const fetch = async () => {
-      const { data } = await supabase.from('assistant_drafts').select('id, user_id, document_type, title, version, created_at').order('created_at', { ascending: false }).limit(100);
+      const { data } = await supabase.from('generated_documents').select('id, user_id, document_type, title, version, created_at').order('created_at', { ascending: false }).limit(100);
       setDocs(data || []);
       setLoading(false);
     };
