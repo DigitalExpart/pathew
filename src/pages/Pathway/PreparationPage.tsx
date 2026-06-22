@@ -273,6 +273,7 @@ export const PreparationPage: React.FC = () => {
             pages: planPages,
             opportunity: opportunity?.title,
             opportunityId: oppId !== 'general' ? oppId : undefined,
+            deadline: opportunity?.deadline,
             requestId: Date.now() 
           });
         }
@@ -287,6 +288,7 @@ export const PreparationPage: React.FC = () => {
           pages: planPages,
           opportunity: opportunity?.title,
           opportunityId: oppId !== 'general' ? oppId : undefined,
+          deadline: opportunity?.deadline,
           requestId: Date.now()
         });
       }
@@ -309,6 +311,7 @@ export const PreparationPage: React.FC = () => {
       pages: planPages,
       opportunity: opportunity?.title,
       opportunityId: oppId !== 'general' ? oppId : undefined,
+      deadline: opportunity?.deadline,
       requestId: Date.now()
     });
   };

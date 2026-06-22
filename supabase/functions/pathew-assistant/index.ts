@@ -540,6 +540,7 @@ Core Principles:
 - Be conversational, helpful, and concise.
 - Answer any question the user asks. If they ask for recommendations, actively suggest 2-3 matching opportunities from the list below and explain why they fit.
 - DO NOT generate a full CV, resume, or cover letter unless explicitly requested. Just answer the user's question or provide strategic advice.
+- IF the user asks you to generate a preparation plan, a roadmap, or a strategy, DO NOT assume which project they mean based on their profile. You MUST always ask them clarifying questions first to confirm WHICH project or specific goal they are developing a plan for before generating any plan.
 ${oppsContext}
 
 CRITICAL: You MUST output your response in two distinct XML blocks: <draft> and <metadata>.
@@ -675,7 +676,7 @@ Output the analytical metadata inside <metadata>...</metadata> as a raw JSON str
   "confidence": "high" | "medium" | "low"
 }
 
-If the user asks for a Roadmap or Preparation Plan, format the draft with clear "Week X:" headings on new lines.`;
+If the user asks for a Roadmap or Preparation Plan, DO NOT assume which project they mean. Ask them to specify the project or goal first. Once specified, format the draft with clear "Week X:" headings on new lines.`;
     }
 
     // Layer 2: Context Prompt (compiles user profile, sources, target opportunity, and filled answers)
@@ -704,7 +705,7 @@ Additional Context: ${manualNotes.additionalContext || 'N/A'}
     }
     if (sources.length > 0) {
       backgroundContextText += `--- USER BACKGROUND DOCUMENTS ---\n`
-      sources.forEach((src, idx) => {
+      sources.forEach((src: any, idx: number) => {
         backgroundContextText += `Source [${idx + 1}] (${src.source_type} - ${src.file_name || 'Note'}):\n${src.raw_text || ''}\n`
       })
     }
@@ -969,7 +970,11 @@ ${taskPrompt}
         console.log(`[FAIL] ${model}: ${claudeResponse.status} - ${errBody}`)
 
       } catch (fetchErr) {
-        console.log(`[ERROR] ${model}: ${fetchErr.message}`)
+        console.error("Fetch error:", fetchErr)
+        return new Response(JSON.stringify({ error: 'Failed to communicate with AI provider', details: (fetchErr as Error)?.message }), { 
+          status: 500,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        })
       }
     }
 
@@ -983,9 +988,11 @@ ${taskPrompt}
       status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     })
 
-  } catch (error) {
-    console.error('[FATAL]', error.message)
-    return new Response(JSON.stringify({
+  } catch (error: any) {
+    console.error("Unhandled error:", error)
+    return new Response(JSON.stringify({ 
+      error: 'Internal Server Error', 
+      details: error.message,
       draft: "Sorry, something went wrong. No credits were deducted.",
       matchSummary: { strongMatches: [], gaps: [], priorityPoints: [] },
       missingFields: [],

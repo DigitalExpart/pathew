@@ -76,7 +76,7 @@ export const OpportunityDetail: React.FC = () => {
       title: opp.title,
       company: opp.company,
       requestId: Date.now(),
-      autoTrigger: `Analyze my fit for this ${opp.type || 'opportunity'}. Keep your response to a maximum of 250 words.`
+      autoTrigger: `Analyze my fit for this ${opp.type || 'opportunity'}. Do NOT write a proposal. Your response should simply state my strengths, my gaps, and then ask: "Do you want me to recommend other opportunities?".`
     });
   };
 

@@ -48,6 +48,13 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
   const [saveTitle, setSaveTitle] = useState('');
   const [savingVersion, setSavingVersion] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  React.useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Predefined professional gradient accents for section headers
   const ACCENT_COLORS = useMemo(() => [
@@ -134,43 +141,48 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
   const validCurrentPage = Math.min(currentPage, pages.length - 1);
   const pageContent = pages[validCurrentPage];
 
+
+  const headerActions = (
+    <div style={{...headerStyle, ...(isMobile ? { marginBottom: '24px' } : {})}}>
+      <div style={versionBadgeRowStyle}>
+        <History size={16} color="var(--text-secondary)" />
+        <span style={{ fontSize: '0.875rem', fontWeight: 650 }}>{t('builders.editor.versionHistory', 'Version History')}</span>
+        <select 
+          value={currentVersionNumber}
+          onChange={(e) => {
+            const selectedVer = savedVersions.find(v => v.version === Number(e.target.value));
+            if (selectedVer) onSelectVersion(selectedVer);
+          }}
+          style={versionSelectStyle}
+        >
+          {savedVersions.length > 0 ? (
+            savedVersions.map((v) => (
+              <option key={v.id} value={v.version}>
+                Version {v.version} ({v.title})
+              </option>
+            ))
+          ) : (
+            <option value="1">Version 1 (Active)</option>
+          )}
+        </select>
+      </div>
+
+      <div style={actionRowStyle}>
+        <Button variant="outline" size="sm" onClick={handleCopy} style={{ gap: '8px' }}>
+          {copied ? <Check size={16} color="#10b981" /> : <Copy size={16} />}
+          {copied ? 'Copied!' : 'Copy Text'}
+        </Button>
+        <Button size="sm" onClick={() => setIsExportOpen(true)} style={{ gap: '8px' }}>
+          <Download size={16} /> Export Document
+        </Button>
+      </div>
+    </div>
+  );
+
   return (
     <div style={containerStyle}>
-      {/* Dynamic Header actions */}
-      <div style={headerStyle}>
-        <div style={versionBadgeRowStyle}>
-          <History size={16} color="var(--text-secondary)" />
-          <span style={{ fontSize: '0.875rem', fontWeight: 650 }}>{t('builders.editor.versionHistory', 'Version History')}</span>
-          <select 
-            value={currentVersionNumber}
-            onChange={(e) => {
-              const selectedVer = savedVersions.find(v => v.version === Number(e.target.value));
-              if (selectedVer) onSelectVersion(selectedVer);
-            }}
-            style={versionSelectStyle}
-          >
-            {savedVersions.length > 0 ? (
-              savedVersions.map((v) => (
-                <option key={v.id} value={v.version}>
-                  Version {v.version} ({v.title})
-                </option>
-              ))
-            ) : (
-              <option value="1">Version 1 (Active)</option>
-            )}
-          </select>
-        </div>
-
-        <div style={actionRowStyle}>
-          <Button variant="outline" size="sm" onClick={handleCopy} style={{ gap: '8px' }}>
-            {copied ? <Check size={16} color="#10b981" /> : <Copy size={16} />}
-            {copied ? 'Copied!' : 'Copy Text'}
-          </Button>
-          <Button size="sm" onClick={() => setIsExportOpen(true)} style={{ gap: '8px' }}>
-            <Download size={16} /> Export Document
-          </Button>
-        </div>
-      </div>
+      {/* Render header at top on desktop */}
+      {!isMobile && headerActions}
 
       {/* Main Split Layout */}
       <div style={workspaceGridStyle}>
@@ -237,6 +249,9 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
             </div>
           </Card>
         </div>
+
+        {/* Render header after editor on mobile */}
+        {isMobile && headerActions}
 
         {/* Right Side: Professional A4 Print Preview */}
         <div style={previewColumnStyle}>

@@ -52,7 +52,11 @@ export const AssistantPanel: React.FC = () => {
       if (currentRequestId && currentRequestId !== lastRequestIdRef.current) {
         lastRequestIdRef.current = currentRequestId;
         if (fullContextData?.duration) {
-          handleSend(`Generate a ${fullContextData.duration} preparation plan`);
+          const currentDateStr = new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+          const deadlineStr = fullContextData?.deadline 
+            ? ` (Application Deadline: ${new Date(fullContextData.deadline).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })})` 
+            : '';
+          handleSend(`Generate a ${fullContextData.duration} preparation plan starting from ${currentDateStr}${deadlineStr}. Ensure the timeline strictly respects these dates and does not backdate.`);
         } else if (fullContextData?.autoTrigger) {
           handleSend(fullContextData.autoTrigger);
         }
@@ -622,8 +626,9 @@ const drawerStyle: React.CSSProperties = {
   position: 'fixed',
   top: 0,
   right: 0,
-  width: '400px',
-  height: '100vh',
+  width: '100%',
+  maxWidth: '400px',
+  height: '100dvh',
   backgroundColor: 'var(--bg-secondary)',
   borderLeft: '1px solid var(--border-color)',
   display: 'flex',
@@ -775,6 +780,7 @@ const AssistantActionStyle: React.CSSProperties = {
 
 const footerStyle: React.CSSProperties = {
   padding: '20px',
+  paddingBottom: 'calc(20px + env(safe-area-inset-bottom))',
   borderTop: '1px solid var(--border-color)',
   backgroundColor: 'rgba(0,0,0,0.2)',
 };
