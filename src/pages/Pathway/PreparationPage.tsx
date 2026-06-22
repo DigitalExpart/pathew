@@ -29,7 +29,7 @@ import { Download } from 'lucide-react';
 export const PreparationPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { openAssistant } = useAssistant();
   const { t } = useTranslation();
   
