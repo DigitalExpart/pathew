@@ -25,6 +25,21 @@ const CheckoutForm = ({ planTitle, planPrice, planCredits, onSuccess, onCancel }
     setProcessing(true);
     setError(null);
 
+    let addedCredits = 0;
+    if (typeof planCredits === 'string') {
+       const match = planCredits.match(/\d+/);
+       if (match) addedCredits = parseInt(match[0], 10);
+    } else if (typeof planCredits === 'number') {
+       addedCredits = planCredits;
+    }
+    if (!addedCredits) {
+       const planCreditsMap: Record<string, number> = { 'Starter': 150, 'Growth': 300, 'Power User': 600 };
+       addedCredits = planCreditsMap[planTitle] || 50;
+    }
+
+    localStorage.setItem('pending_plan', planTitle);
+    localStorage.setItem('pending_credits', addedCredits.toString());
+
     const { error: submitError } = await stripe.confirmPayment({
       elements,
       confirmParams: {
@@ -34,6 +49,8 @@ const CheckoutForm = ({ planTitle, planPrice, planCredits, onSuccess, onCancel }
     });
 
     if (submitError) {
+      localStorage.removeItem('pending_plan');
+      localStorage.removeItem('pending_credits');
       setError(submitError.message || 'Payment failed. Please try again.');
       setProcessing(false);
     } else {
@@ -41,24 +58,8 @@ const CheckoutForm = ({ planTitle, planPrice, planCredits, onSuccess, onCancel }
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
           const { data: profile } = await supabase.from('profiles').select('credits').eq('id', session.user.id).single();
-          
-          let addedCredits = 0;
-          if (typeof planCredits === 'string') {
-             const match = planCredits.match(/\d+/);
-             if (match) addedCredits = parseInt(match[0], 10);
-          } else if (typeof planCredits === 'number') {
-             addedCredits = planCredits;
-          }
-          if (!addedCredits) {
-             const planCreditsMap: Record<string, number> = {
-               'Starter': 150,
-               'Growth': 300,
-               'Power User': 600
-             };
-             addedCredits = planCreditsMap[planTitle] || 50;
-          }
-
           const newCredits = (profile?.credits || 0) + addedCredits;
+          
           await supabase.from('profiles').update({
              credits: newCredits,
              subscription_plan: planTitle
@@ -70,6 +71,9 @@ const CheckoutForm = ({ planTitle, planPrice, planCredits, onSuccess, onCancel }
             amount: addedCredits,
             description: `Upgraded to ${planTitle} Plan`
           });
+          
+          localStorage.removeItem('pending_plan');
+          localStorage.removeItem('pending_credits');
         }
       } catch (err) {
         console.error('Error updating profile after payment:', err);

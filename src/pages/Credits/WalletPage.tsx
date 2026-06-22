@@ -43,6 +43,56 @@ export const WalletPage: React.FC = () => {
     fetchWalletData();
   }, [user]);
 
+  React.useEffect(() => {
+    const checkPaymentRedirect = async () => {
+      if (!user) return;
+      const urlParams = new URLSearchParams(window.location.search);
+      const redirectStatus = urlParams.get('redirect_status');
+      
+      if (redirectStatus === 'succeeded') {
+        const pendingPlan = localStorage.getItem('pending_plan');
+        const pendingCreditsStr = localStorage.getItem('pending_credits');
+        
+        if (pendingPlan && pendingCreditsStr) {
+          const addedCredits = parseInt(pendingCreditsStr, 10);
+          
+          try {
+            // Check if transaction already exists for this payment intent to prevent double-charging
+            // We'll just rely on the local storage clear for now as a simple barrier
+            
+            const { data: currentProfile } = await supabase.from('profiles').select('credits').eq('id', user.id).single();
+            const newCredits = (currentProfile?.credits || 0) + addedCredits;
+            
+            await supabase.from('profiles').update({
+              credits: newCredits,
+              subscription_plan: pendingPlan
+            }).eq('id', user.id);
+
+            await supabase.from('transactions').insert({
+              user_id: user.id,
+              type: 'credit',
+              amount: addedCredits,
+              description: `Upgraded to ${pendingPlan} Plan`
+            });
+            
+            // Clear local storage so it doesn't double apply
+            localStorage.removeItem('pending_plan');
+            localStorage.removeItem('pending_credits');
+            
+            // Clean URL
+            window.history.replaceState({}, '', '/wallet');
+            
+            // Refresh data
+            window.location.reload(); // Quickest way to refresh all context state
+          } catch (err) {
+            console.error('Error applying redirected payment:', err);
+          }
+        }
+      }
+    };
+    checkPaymentRedirect();
+  }, [user]);
+
   // Dynamic Responsive Styles
   const containerStyle: React.CSSProperties = {
     maxWidth: '1000px',
