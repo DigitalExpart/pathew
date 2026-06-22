@@ -37,7 +37,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isCollapsed }
       title: 'PATHWAY',
       items: [
         { icon: LayoutDashboard, label: t('nav.dashboard'), path: '/dashboard' },
-        { icon: Clock, label: t('nav.applicationTracker'), path: '/preparation' },
+        ...((profile?.role === 'admin' || profile?.role === 'sub_admin') ? [
+          { icon: Clock, label: t('nav.applicationTracker'), path: '/preparation' }
+        ] : []),
         { icon: Briefcase, label: t('nav.opportunities'), path: '/opportunities' },
         { icon: Briefcase, label: t('nav.jobs'), path: '/jobs' },
         { icon: Bookmark, label: t('nav.savedItems'), path: '/saved' },

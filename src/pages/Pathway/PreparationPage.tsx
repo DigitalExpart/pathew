@@ -55,6 +55,12 @@ export const PreparationPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    if (profile && profile.role !== 'admin' && profile.role !== 'sub_admin') {
+      navigate('/dashboard');
+    }
+  }, [profile, navigate]);
+
+  useEffect(() => {
     const init = async () => {
       if (oppId) {
         setViewingSpecific(true);

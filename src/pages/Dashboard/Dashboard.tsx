@@ -185,24 +185,26 @@ export const Dashboard: React.FC = () => {
           {/* Preparation Plan */}
           <div>
             <div style={sectionHeaderStyle}>
-              <h2 style={sectionTitleStyle}>{t('dashboard.prepPlan')}</h2>
-              <div className="desktop-only" style={horizonSelectorStyle}>
-                {['Quick', '90-day', '180-day', '365-day'].map(horizon => (
-                   <button 
-                    key={horizon} 
-                    style={{
-                      ...horizonButtonStyle,
-                      ...(prepHorizon === horizon ? horizonButtonActiveStyle : {})
-                    }}
-                    onClick={() => {
-                      setPrepHorizon(horizon);
-                      navigate(`/preparation?type=${horizon.toLowerCase()}`);
-                    }}
-                  >
-                    {t(`dashboard.horizons.${horizon.toLowerCase()}`)}
-                  </button>
-                ))}
-              </div>
+              <h2 style={sectionTitleStyle}>{(profile?.role === 'admin' || profile?.role === 'sub_admin') ? t('dashboard.prepPlan') : t('dashboard.profileOverview', 'Profile Overview')}</h2>
+              {(profile?.role === 'admin' || profile?.role === 'sub_admin') && (
+                <div className="desktop-only" style={horizonSelectorStyle}>
+                  {['Quick', '90-day', '180-day', '365-day'].map(horizon => (
+                     <button 
+                      key={horizon} 
+                      style={{
+                        ...horizonButtonStyle,
+                        ...(prepHorizon === horizon ? horizonButtonActiveStyle : {})
+                      }}
+                      onClick={() => {
+                        setPrepHorizon(horizon);
+                        navigate(`/preparation?type=${horizon.toLowerCase()}`);
+                      }}
+                    >
+                      {t(`dashboard.horizons.${horizon.toLowerCase()}`)}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             
             <div className="stack-on-mobile" style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
@@ -327,24 +329,26 @@ export const Dashboard: React.FC = () => {
               </Card>
             </div>
 
-            <Card title={t('dashboard.nextSteps')} icon={Target}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {profile?.projects?.slice(0, 3).map((proj: any) => (
-                  <div key={proj.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', gap: '12px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2px solid var(--accent-primary)', flexShrink: 0 }} />
-                      <span style={{ fontWeight: 500, fontSize: '0.9375rem' }}>{t('dashboard.refine', { title: proj.title })}</span>
+            {(profile?.role === 'admin' || profile?.role === 'sub_admin') && (
+              <Card title={t('dashboard.nextSteps')} icon={Target}>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {profile?.projects?.slice(0, 3).map((proj: any) => (
+                    <div key={proj.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', gap: '12px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2px solid var(--accent-primary)', flexShrink: 0 }} />
+                        <span style={{ fontWeight: 500, fontSize: '0.9375rem' }}>{t('dashboard.refine', { title: proj.title })}</span>
+                      </div>
+                      <Badge variant="outline">{t('dashboard.nextUp')}</Badge>
                     </div>
-                    <Badge variant="outline">{t('dashboard.nextUp')}</Badge>
-                  </div>
-                ))}
-                {!profile?.projects?.length && (
-                  <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px' }}>
-                    {t('dashboard.completeProfileToSeeSteps')}
-                  </p>
-                )}
-              </div>
-            </Card>
+                  ))}
+                  {!profile?.projects?.length && (
+                    <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px' }}>
+                      {t('dashboard.completeProfileToSeeSteps')}
+                    </p>
+                  )}
+                </div>
+              </Card>
+            )}
           </div>
 
           {/* Recent Matches */}

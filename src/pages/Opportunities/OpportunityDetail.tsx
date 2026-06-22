@@ -255,28 +255,30 @@ export const OpportunityDetail: React.FC = () => {
               })}
             </div>
 
-            <Card title={t('opportunities.getPreparationPlan')} icon={Target} style={{ backgroundColor: 'rgba(245, 158, 11, 0.03)', borderColor: 'var(--accent-glow)', marginTop: '32px' }}>
-              <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>
-                {t('opportunities.preparationPlanDesc')}
-              </p>
-              <Button 
-                variant="outline" 
-                onClick={() => setIsPlanModalOpen(true)}
-                style={{ 
-                  width: '100%',
-                  justifyContent: 'center',
-                  fontSize: '0.875rem', 
-                  fontWeight: 600,
-                  gap: '8px',
-                  padding: '12px',
-                  color: 'var(--accent-primary)',
-                  borderColor: 'rgba(245, 158, 11, 0.3)'
-                }}
-              >
-                <Target size={16} />
-                {t('planSelection.title', 'Choose Your Preparation Plan')}
-              </Button>
-            </Card>
+            {(profile?.role === 'admin' || profile?.role === 'sub_admin') && (
+              <Card title={t('opportunities.getPreparationPlan')} icon={Target} style={{ backgroundColor: 'rgba(245, 158, 11, 0.03)', borderColor: 'var(--accent-glow)', marginTop: '32px' }}>
+                <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>
+                  {t('opportunities.preparationPlanDesc')}
+                </p>
+                <Button 
+                  variant="outline" 
+                  onClick={() => setIsPlanModalOpen(true)}
+                  style={{ 
+                    width: '100%',
+                    justifyContent: 'center',
+                    fontSize: '0.875rem', 
+                    fontWeight: 600,
+                    gap: '8px',
+                    padding: '12px',
+                    color: 'var(--accent-primary)',
+                    borderColor: 'rgba(245, 158, 11, 0.3)'
+                  }}
+                >
+                  <Target size={16} />
+                  {t('planSelection.title', 'Choose Your Preparation Plan')}
+                </Button>
+              </Card>
+            )}
           </Card>
 
           <Card title={t('opportunities.prepareApplication')}>
