@@ -3,7 +3,6 @@ import { supabase } from '../../lib/supabase';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Plus, Trash2, Edit2, CheckCircle, XCircle } from 'lucide-react';
-import { useTranslation } from 'react-i18next';
 
 interface Coupon {
   id: string;
@@ -18,7 +17,6 @@ interface Coupon {
 }
 
 export const AdminCouponsPage: React.FC = () => {
-  const { t } = useTranslation();
   const [coupons, setCoupons] = useState<Coupon[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
