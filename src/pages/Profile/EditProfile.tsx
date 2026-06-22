@@ -468,5 +468,6 @@ const countries = [
 const allLanguages = [
   "English", "French", "Spanish", "German", "Chinese", "Arabic", "Portuguese", "Russian", "Japanese", "Hindi", 
   "Yoruba", "Hausa", "Igbo", "Swahili", "Zulu", "Amharic", "Oromo", "Somali", "Twi", "Wolof", 
-  "Italian", "Korean", "Turkish", "Dutch", "Polish", "Swedish", "Greek", "Hebrew", "Thai", "Vietnamese"
+  "Italian", "Korean", "Turkish", "Dutch", "Polish", "Swedish", "Greek", "Hebrew", "Thai", "Vietnamese",
+  "Welsh", "Scottish"
 ];

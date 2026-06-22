@@ -273,7 +273,7 @@
   },
   "opportunities": {
     "title": "Explore Opportunities",
-    "subtitle": "Found {{count}} opportunities matching your profile.",
+    "subtitle": "Found {{count}} opportunities for you!!",
     "search": "Search by role, company, or keywords...",
     "filters": "Filters",
     "sortNewest": "Sort by: Newest",
@@ -339,7 +339,7 @@
     "noApplications": "No roles found yet",
     "noApplicationsSubtitle": "Explore job opportunities that match your profile.",
     "browseOpps": "Browse Opportunities",
-    "foundRoles": "Found {{count}} roles matching your profile."
+    "foundRoles": "Found {{count}} opportunities for you!!"
   },
   "savedItems": {
     "title": "Saved Items",
@@ -983,7 +983,7 @@
     "fullName": "Full Name",
     "primaryOrg": "Primary Organisation",
     "personalDetails": "Personal Details",
-    "dob": "Date of Birth",
+    "dob": "Year of Birth",
     "maritalStatus": "Marital Status",
     "selectStatus": "Select Status",
     "single": "Single",
