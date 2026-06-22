@@ -120,10 +120,16 @@ export const JobsPage: React.FC = () => {
               <div style={cardFooterStyle}>
                 <Button 
                   variant="outline" 
-                  style={{ flex: 1 }}
+                  style={{ flex: 1, display: 'flex', flexDirection: 'column', height: 'auto', padding: '8px 4px' }}
                   onClick={() => window.open(job.apply_link, '_blank')}
+                  title="This link will take you to the Extraordinary Woman Blog to apply"
                 >
-                  {t('opportunities.apply')} <ExternalLink size={14} style={{ marginLeft: '4px' }} />
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    {t('opportunities.apply')} <ExternalLink size={14} style={{ marginLeft: '4px' }} />
+                  </div>
+                  <span style={{ fontSize: '0.55rem', fontWeight: 400, color: 'var(--text-muted)', marginTop: '2px', textTransform: 'none' }}>
+                    via Extraordinary Woman Blog
+                  </span>
                 </Button>
                 <Button 
                   style={{ flex: 1, gap: '4px' }}
