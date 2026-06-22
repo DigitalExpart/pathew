@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   full_name TEXT,
   avatar_url TEXT,
-  credits INTEGER DEFAULT 100,
+  credits INTEGER DEFAULT 1,
   story TEXT,
   education JSONB DEFAULT '[]',
   experience JSONB DEFAULT '[]',
@@ -179,8 +179,12 @@ FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-    INSERT INTO public.profiles (id, full_name, avatar_url)
-    VALUES (NEW.id, NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'avatar_url');
+    INSERT INTO public.profiles (id, full_name, avatar_url, credits)
+    VALUES (NEW.id, NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'avatar_url', 1);
+
+    INSERT INTO public.transactions (user_id, type, amount, description)
+    VALUES (NEW.id, 'credit', 1, 'Welcome Bonus: Account Creation');
+
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
