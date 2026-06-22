@@ -114,12 +114,14 @@ export const generateDocxBlob = async (markdownText: string, accentColorHex: str
     
     // H2 (Professional Title or Section Header)
     if (line.startsWith('## ')) {
-      // If it's all caps and short and doesn't contain a pipe, it's a Section Title
-      if (cleanHeader === cleanHeader.toUpperCase() && cleanHeader.length < 50 && !cleanHeader.includes('|')) {
+      // If it's all caps and short and doesn't contain a pipe, it's a CV Section Title
+      // For grants, we treat all ## as Section Titles to get the colored line
+      const isGrant = normalizedType.includes('grant') || normalizedType.includes('proposal') || normalizedType.includes('roadmap') || normalizedType.includes('general');
+      if (isGrant || (cleanHeader === cleanHeader.toUpperCase() && cleanHeader.length < 50 && !cleanHeader.includes('|'))) {
         isHeaderArea = false;
         children.push(
           new Paragraph({
-            children: [new TextRun({ text: cleanHeader, bold: true, size: 26 })],
+            children: [new TextRun({ text: cleanHeader.toUpperCase(), bold: true, size: 26 })],
             alignment: AlignmentType.LEFT,
             spacing: { before: 240, after: 120 },
             border: { bottom: { color: accentColorHex, space: 4, style: BorderStyle.SINGLE, size: 12 } }
@@ -138,15 +140,26 @@ export const generateDocxBlob = async (markdownText: string, accentColorHex: str
       continue;
     }
     
-    // H3 (Contact Info)
+    // H3 (Contact Info or Sub-header)
     if (line.startsWith('### ')) {
-      children.push(
-        new Paragraph({
-          children: [new TextRun({ text: cleanHeader, bold: false, size: 20 })],
-          alignment: AlignmentType.CENTER,
-          spacing: { after: 120 },
-        })
-      );
+      const isGrant = normalizedType.includes('grant') || normalizedType.includes('proposal') || normalizedType.includes('roadmap') || normalizedType.includes('general');
+      if (isGrant) {
+        children.push(
+          new Paragraph({
+            children: [new TextRun({ text: cleanHeader, bold: true, size: 22 })],
+            alignment: AlignmentType.LEFT,
+            spacing: { before: 180, after: 120 },
+          })
+        );
+      } else {
+        children.push(
+          new Paragraph({
+            children: [new TextRun({ text: cleanHeader, bold: false, size: 20 })],
+            alignment: AlignmentType.CENTER,
+            spacing: { after: 120 },
+          })
+        );
+      }
       continue;
     }
 
