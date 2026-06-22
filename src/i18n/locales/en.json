@@ -1018,7 +1018,7 @@
     "profileWizardDesc": "To update your Bio, Skills, Education, or Work Experience, please use our interactive Profile Wizard.",
     "launchWizard": "Launch Profile Wizard",
     "privacyNote": "Privacy Note",
-    "privacyNoteDesc": "Your personal details like Date of Birth and Marital Status are used to improve Assistant matching and are never shared publicly without your consent."
+    "privacyNoteDesc": "Your personal details like Year of birth is used to improve our AI matching platform for opportunities and are never shared publicly or with third parties without your consent"
   },
   "setup": {
     "steps": {
