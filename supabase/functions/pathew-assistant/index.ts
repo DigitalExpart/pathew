@@ -617,6 +617,7 @@ ABSOLUTE RULES — never break these:
     if (isGrantDocument) {
       builderSpecificRules += `3) GRANT BUILDER SPECIFIC RULES:
 ${getPageInstructions(pageCount || 3)}
+- OPENING STATEMENT FLEXIBILITY: Do NOT start the proposal with a repetitive or formulaic statement (e.g., "This application seeks [Amount]..."). Instead, vary the opening significantly. Start with a compelling hook, a brief story, a strong statement of the problem being solved, or the core impact of the project. Every proposal MUST open uniquely and creatively.
 - Funder values alignment: Ensure the tone is natural and authentic. Align generally with these funder values: "${funderValues}". Do NOT over-tailor or force keywords unnaturally. Focus heavily on the user's actual project logic.
 - Previous Application History:
   * If previousAppHistory.applied_before is true, read the feedback: "${previousAppHistory?.feedback}". Specifically call out in the narrative how the project has evolved and direct steps taken to address that feedback, ensuring we do not repeat past failed patterns.
