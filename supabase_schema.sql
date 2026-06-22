@@ -185,6 +185,9 @@ BEGIN
     INSERT INTO public.transactions (user_id, type, amount, description)
     VALUES (NEW.id, 'credit', 1, 'Welcome Bonus: Account Creation');
 
+    INSERT INTO public.notifications (user_id, title, description, type)
+    VALUES (NEW.id, 'Welcome to PATHEW!', 'Welcome aboard! We have gifted you 1 free credit to help you get started on your journey.', 'system');
+
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
