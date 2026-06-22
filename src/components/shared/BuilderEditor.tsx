@@ -549,8 +549,10 @@ const paginateMarkdown = (content: string, maxPages: number): string[] => {
     
     // If adding this section would exceed the page target and we have content,
     // AND we haven't reached the last page yet, start a new page
+    // Ensure we don't strand a tiny header on a page by itself by requiring the page to be at least 50% full.
     if (currentPageLines + sectionLines > targetLinesPerPage * 1.15 
         && currentPageSections.length > 0 
+        && currentPageLines > targetLinesPerPage * 0.5 
         && pages.length < maxPages - 1) {
       pages.push(currentPageSections.flat().join('\n'));
       currentPageSections = [section];
