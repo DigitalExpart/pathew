@@ -586,6 +586,8 @@ ${cvTypeBlock}
 
 ${experienceLevelMap[experienceLevel || 'Mid Career'] || experienceLevelMap['Mid Career']}
 
+${cvType === 'Teaching / Academic CV' ? `\nCRITICAL OVERRIDE: Because this is an Academic CV, you MUST completely IGNORE any instructions from the Experience Level or Tone section that suggest adding bullet points, achievements, or descriptions to the Work Experience section. Work Experience MUST ONLY have titles and dates. You MUST strictly adhere to the rigid Academic CV structure above.` : ''}
+
 ${getPageInstructions(pageCount || 2)}
 
 - Career Gap positive reframing:
