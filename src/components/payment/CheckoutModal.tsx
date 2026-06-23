@@ -58,20 +58,20 @@ const CheckoutForm = ({ planTitle, planPrice, planCredits, onSuccess, onCancel }
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (session) {
-          const { data: profile } = await supabase.from('profiles').select('credits').eq('id', session.user.id).single();
-          const newCredits = (profile?.credits || 0) + addedCredits;
-          
-          await supabase.from('profiles').update({
-             credits: newCredits,
-             subscription_plan: planTitle
-          }).eq('id', session.user.id);
-
-          await supabase.from('transactions').insert({
-            user_id: session.user.id,
-            type: 'credit',
-            amount: addedCredits,
-            description: `Upgraded to ${planTitle} Plan`
+          // SECURITY: Server-side credit verification
+          const { error: verifyError } = await supabase.functions.invoke('verify-payment', {
+            body: { 
+              paymentIntentId: (await stripe.retrievePaymentIntent(clientSecret!)).paymentIntent?.id,
+              plan: planTitle,
+              paymentGateway: 'stripe'
+            }
           });
+          
+          if (verifyError) {
+             console.error('Payment verified but credits failed:', verifyError);
+          }
+
+          // Transactions are now logged securely on the backend
           
           const appliedCouponId = localStorage.getItem('applied_coupon_id');
           if (appliedCouponId) {
@@ -390,20 +390,18 @@ export const CheckoutModal = ({ isOpen, onClose, planTitle, planPrice, planCredi
                addedCredits = planCreditsMap[planTitle] || 25;
             }
             
-            const { data: profile } = await supabase.from('profiles').select('credits').eq('id', session.user.id).single();
-            const newCredits = (profile?.credits || 0) + addedCredits;
-            
-            await supabase.from('profiles').update({
-               credits: newCredits,
-               subscription_plan: planTitle
-            }).eq('id', session.user.id);
-
-            await supabase.from('transactions').insert({
-              user_id: session.user.id,
-              type: 'credit',
-              amount: addedCredits,
-              description: `Upgraded to ${planTitle} Plan (via Paystack)`
+            // SECURITY: Server-side credit verification for Paystack
+            const { error: verifyError } = await supabase.functions.invoke('verify-payment', {
+              body: { 
+                paymentIntentId: response.reference,
+                plan: planTitle,
+                paymentGateway: 'paystack'
+              }
             });
+            
+            if (verifyError) {
+               console.error('Paystack verified but credits failed:', verifyError);
+            }
             
             // Increment coupon usage if one was applied
             if (appliedCoupon) {

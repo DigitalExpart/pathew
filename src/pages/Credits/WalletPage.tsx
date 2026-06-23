@@ -60,20 +60,17 @@ export const WalletPage: React.FC = () => {
             // Check if transaction already exists for this payment intent to prevent double-charging
             // We'll just rely on the local storage clear for now as a simple barrier
             
-            const { data: currentProfile } = await supabase.from('profiles').select('credits').eq('id', user.id).single();
-            const newCredits = (currentProfile?.credits || 0) + addedCredits;
-            
-            await supabase.from('profiles').update({
-              credits: newCredits,
-              subscription_plan: pendingPlan
-            }).eq('id', user.id);
-
-            await supabase.from('transactions').insert({
-              user_id: user.id,
-              type: 'credit',
-              amount: addedCredits,
-              description: `Upgraded to ${pendingPlan} Plan`
-            });
+            // SECURITY: Server-side credit verification via Edge Function
+            const paymentIntentId = urlParams.get('payment_intent');
+            if (paymentIntentId) {
+              await supabase.functions.invoke('verify-payment', {
+                body: { 
+                  paymentIntentId,
+                  plan: pendingPlan,
+                  paymentGateway: 'stripe'
+                }
+              });
+            }
             
             // Clear local storage so it doesn't double apply
             localStorage.removeItem('pending_plan');
