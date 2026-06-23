@@ -251,13 +251,18 @@ export const CheckoutModal = ({ isOpen, onClose, planTitle, planPrice, planCredi
     setAppliedCoupon(null);
     
     try {
-      const { data, error } = await supabase
+      // Fetch coupons that might match (using ilike to handle accidental leading/trailing spaces in DB)
+      const { data: potentialCoupons, error } = await supabase
         .from('coupons')
         .select('*')
-        .eq('code', couponCodeInput.toUpperCase())
-        .maybeSingle();
+        .ilike('code', `%${couponCodeInput.trim()}%`);
         
       if (error) throw error;
+      
+      // Find exact match after trimming both sides
+      const data = potentialCoupons?.find(
+        (c) => c.code.trim().toUpperCase() === couponCodeInput.trim().toUpperCase()
+      );
       
       if (!data) {
         setCouponError('Invalid coupon code.');
