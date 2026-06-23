@@ -19,12 +19,18 @@ export const ContextSummary: React.FC<ContextSummaryProps> = ({
   confidence = 'medium',
 }) => {
   const { t } = useTranslation();
-  const { strongMatches = [], gaps = [], priorityPoints = [] } = matchSummary;
+  
+  // Defensive check: if AI accidentally returns an array instead of an object, treat it as gaps
+  const normalizedSummary = Array.isArray(matchSummary) 
+    ? { strongMatches: [], gaps: matchSummary, priorityPoints: [] }
+    : (matchSummary || {});
+
+  const { strongMatches = [], gaps = [], priorityPoints = [] } = normalizedSummary as any;
 
   // Use explicit AI matchScore if provided, otherwise fallback to generic math
   const totalItems = strongMatches.length + gaps.length;
-  const matchScore = matchSummary.matchScore !== undefined 
-    ? matchSummary.matchScore 
+  const matchScore = (normalizedSummary as any).matchScore !== undefined 
+    ? (normalizedSummary as any).matchScore 
     : (totalItems > 0 ? Math.round((strongMatches.length / totalItems) * 100) : 75);
 
   return (
