@@ -13,6 +13,8 @@ export const AdminLogin: React.FC = () => {
   const [password, setPassword] = useState('');
   const [step, setStep] = useState<1 | 2>(1);
   const [securityCode, setSecurityCode] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
   const hasAttemptedLogin = React.useRef(false);
 
   React.useEffect(() => {

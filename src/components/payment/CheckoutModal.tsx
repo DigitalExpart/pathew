@@ -41,7 +41,7 @@ const CheckoutForm = ({ planTitle, planPrice, planCredits, onSuccess, onCancel }
     localStorage.setItem('pending_plan', planTitle);
     localStorage.setItem('pending_credits', addedCredits.toString());
 
-    const { error: submitError } = await stripe.confirmPayment({
+    const { error: submitError, paymentIntent } = await stripe.confirmPayment({
       elements,
       confirmParams: {
         return_url: window.location.origin + '/wallet',
@@ -57,11 +57,11 @@ const CheckoutForm = ({ planTitle, planPrice, planCredits, onSuccess, onCancel }
     } else {
       try {
         const { data: { session } } = await supabase.auth.getSession();
-        if (session) {
+        if (session && paymentIntent) {
           // SECURITY: Server-side credit verification
           const { error: verifyError } = await supabase.functions.invoke('verify-payment', {
             body: { 
-              paymentIntentId: (await stripe.retrievePaymentIntent(clientSecret!)).paymentIntent?.id,
+              paymentIntentId: paymentIntent.id,
               plan: planTitle,
               paymentGateway: 'stripe'
             }
@@ -376,7 +376,7 @@ export const CheckoutModal = ({ isOpen, onClose, planTitle, planPrice, planCredi
           throw new Error("Paystack is not configured. Please use Stripe.");
         }
 
-        const onSuccess = async () => {
+        const onSuccess = async (response: any) => {
           try {
             let addedCredits = 0;
             if (typeof planCredits === 'string') {

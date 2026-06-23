@@ -54,8 +54,6 @@ export const WalletPage: React.FC = () => {
         const pendingCreditsStr = localStorage.getItem('pending_credits');
         
         if (pendingPlan && pendingCreditsStr) {
-          const addedCredits = parseInt(pendingCreditsStr, 10);
-          
           try {
             // Check if transaction already exists for this payment intent to prevent double-charging
             // We'll just rely on the local storage clear for now as a simple barrier
