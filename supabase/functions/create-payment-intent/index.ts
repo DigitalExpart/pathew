@@ -70,9 +70,9 @@ Deno.serve(async (req) => {
         .eq('id', couponId)
         .single()
 
-      if (!couponError && coupon && coupon.active) {
+      if (!couponError && coupon && coupon.is_active) {
         // Check usage limits
-        const withinLimit = !coupon.max_uses || (coupon.times_used || 0) < coupon.max_uses
+        const withinLimit = !coupon.max_uses || (coupon.current_uses || 0) < coupon.max_uses
         // Check expiry
         const notExpired = !coupon.expires_at || new Date(coupon.expires_at) > new Date()
 
