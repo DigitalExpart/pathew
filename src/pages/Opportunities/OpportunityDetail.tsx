@@ -172,17 +172,11 @@ export const OpportunityDetail: React.FC = () => {
             {saving ? t('common.saving') : t('common.save')}
           </Button>
           <Button 
-            style={{ display: 'flex', flexDirection: 'column', height: 'auto', padding: '10px 16px', gap: '2px', flex: isMobile ? 1 : 'none', justifyContent: 'center', alignItems: 'center' }}
+            style={{ flex: isMobile ? 1 : 'none', justifyContent: 'center', gap: '8px' }}
             onClick={handleApply}
             disabled={applying}
-            title="This link will take you to the Extraordinary Woman Blog to apply"
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-              {applying ? t('common.loading') : t('opportunities.applyNow', 'Apply Now')} <ExternalLink size={16} />
-            </div>
-            <span style={{ fontSize: '0.65rem', fontWeight: 400, color: 'rgba(255,255,255,0.85)', textTransform: 'none' }}>
-              via Extraordinary Woman Blog
-            </span>
+            {applying ? t('common.loading') : t('opportunities.applyNow', 'Apply Now')} <ExternalLink size={16} />
           </Button>
         </div>
       </div>

@@ -391,10 +391,10 @@ export const Dashboard: React.FC = () => {
         <section style={{ flex: 1, minWidth: 0 }}>
           <Card title={t('dashboard.quickActions')} style={{ marginBottom: '24px' }}>
             <div style={actionListStyle}>
-              <ActionButton label={t('dashboard.buildCV')} />
-              <ActionButton label={t('nav.coverLetter')} />
-              <ActionButton label={t('nav.grantBuilder')} />
-              <ActionButton label={t('nav.editProfile')} variant="secondary" />
+              <ActionButton label={t('dashboard.buildCV')} onClick={() => navigate('/cv-builder')} />
+              <ActionButton label={t('nav.coverLetter')} onClick={() => navigate('/cover-letter')} />
+              <ActionButton label={t('nav.grantBuilder')} onClick={() => navigate('/grant-builder')} />
+              <ActionButton label={t('nav.editProfile')} variant="secondary" onClick={() => navigate('/profile')} />
             </div>
           </Card>
 
@@ -444,8 +444,8 @@ const StatCard = ({ icon: Icon, label, value, trend, onClick }: any) => (
   </Card>
 );
 
-const ActionButton = ({ label, variant = 'primary' }: any) => (
-  <Button variant={variant} style={{ width: '100%', justifyContent: 'flex-start', marginBottom: '8px' }}>
+const ActionButton = ({ label, variant = 'primary', onClick }: any) => (
+  <Button variant={variant} onClick={onClick} style={{ width: '100%', justifyContent: 'flex-start', marginBottom: '8px' }}>
     {label}
   </Button>
 );

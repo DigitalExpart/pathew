@@ -25,7 +25,9 @@ export const ContextSummary: React.FC<ContextSummaryProps> = ({
     ? { strongMatches: [], gaps: matchSummary, priorityPoints: [] }
     : (matchSummary || {});
 
-  const { strongMatches = [], gaps = [], priorityPoints = [] } = normalizedSummary as any;
+  const strongMatches: any[] = (normalizedSummary as any).strongMatches || [];
+  const gaps: any[] = (normalizedSummary as any).gaps || [];
+  const priorityPoints: any[] = (normalizedSummary as any).priorityPoints || [];
 
   // Use explicit AI matchScore if provided, otherwise fallback to generic math
   const totalItems = strongMatches.length + gaps.length;

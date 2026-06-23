@@ -187,14 +187,12 @@ export const JobsPage: React.FC = () => {
                 >
                   {savingId === job.id ? t('opportunities.saving') : job.status === 'Saved' ? t('opportunities.saved') : t('opportunities.save')}
                 </Button>
-                {(profile?.role === 'admin' || profile?.role === 'sub_admin') && (
-                  <Button 
-                    style={{ flex: 1, gap: '4px' }}
-                    onClick={() => handlePrepareClick(job)}
-                  >
-                    {t('opportunities.prepare')}
-                  </Button>
-                )}
+                <Button 
+                  style={{ flex: 1, gap: '4px' }}
+                  onClick={() => handlePrepareClick(job)}
+                >
+                  {t('opportunities.prepare')}
+                </Button>
               </div>
             </Card>
           ))
