@@ -3,7 +3,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.105.4'
 import { parse } from 'https://deno.land/x/xml@2.1.0/mod.ts' // Note: Use Deno's XML parser or similar. xml@2.1.0 is commonly used for basic feeds
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': 'https://pathew.vercel.app',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 

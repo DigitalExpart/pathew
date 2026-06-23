@@ -1,11 +1,11 @@
+// @ts-nocheck
 import { createClient } from "npm:@supabase/supabase-js@2.45.0"
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': 'https://pathew.vercel.app',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-// @ts-ignore
 Deno.serve(async (req: Request) => {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -13,15 +13,48 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const { action, updateData, userId } = await req.json()
+    // SECURITY: Verify the caller is authenticated and is an admin
+    const authHeader = req.headers.get('Authorization')
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: 'No authorization header' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
+    }
 
-    // Create admin client bypassing RLS
-    const supabaseAdmin = createClient(
-      // @ts-ignore
+    // Create a user-context client to verify identity
+    const supabaseUser = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      // @ts-ignore
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      { global: { headers: { Authorization: authHeader } } }
+    )
+
+    const { data: { user }, error: authError } = await supabaseUser.auth.getUser()
+    if (authError || !user) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
+    }
+
+    // Create admin client for privileged operations
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     )
+
+    // SECURITY: Verify the user has admin/sub_admin role
+    const { data: callerProfile, error: profileError } = await supabaseAdmin
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single()
+
+    if (profileError || !callerProfile || !['admin', 'sub_admin'].includes(callerProfile.role)) {
+      return new Response(JSON.stringify({ error: 'Forbidden: Admin access required' }), {
+        status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+      })
+    }
+
+    const { action, updateData, userId } = await req.json()
 
     if (action === 'get_all_users') {
       const { data, error } = await supabaseAdmin
@@ -38,6 +71,13 @@ Deno.serve(async (req: Request) => {
     }
     
     if (action === 'update_user' && userId && updateData) {
+      // SECURITY: Prevent role escalation — sub_admins cannot create other admins
+      if (updateData.role && callerProfile.role !== 'admin') {
+        return new Response(JSON.stringify({ error: 'Only full admins can change user roles' }), {
+          status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        })
+      }
+
       const { error } = await supabaseAdmin
         .from('profiles')
         .update(updateData)

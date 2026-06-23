@@ -18,19 +18,22 @@ export const AdminLogin: React.FC = () => {
     if (isAdmin) navigate('/admin/dashboard');
   }, [isAdmin, navigate]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    setTimeout(() => {
-      const success = adminLogin(email, password);
+    try {
+      const success = await adminLogin(email, password);
       if (success) {
         navigate('/admin/dashboard');
       } else {
-        setError('Invalid admin credentials');
+        setError('Invalid admin credentials or insufficient permissions');
       }
+    } catch (err: any) {
+      setError(err.message || 'Authentication failed');
+    } finally {
       setLoading(false);
-    }, 600);
+    }
   };
 
   return (
