@@ -605,9 +605,40 @@ export const CheckoutModal = ({ isOpen, onClose, planTitle, planPrice, planCredi
             </div>
           ) : step === 'billing' ? (
             <form onSubmit={handleSaveBillingAndProceed} style={billingFormContainerStyle}>
+              {/* Payment Method Section at the Top */}
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{...billingLabelStyle, fontSize: '0.95rem', color: '#fff', marginBottom: '12px'}}>Select Payment Gateway *</label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div 
+                    onClick={() => setPaymentGateway('stripe')}
+                    style={{ 
+                      padding: '20px', borderRadius: '12px', cursor: 'pointer', textAlign: 'center',
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+                      border: `2px solid ${paymentGateway === 'stripe' ? '#635BFF' : 'rgba(255,255,255,0.08)'}`,
+                      backgroundColor: paymentGateway === 'stripe' ? 'rgba(99,91,255,0.05)' : '#1e293b',
+                      transition: 'all 0.2s'
+                    }}>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" style={{ height: '26px', objectFit: 'contain', filter: paymentGateway === 'stripe' ? 'none' : 'grayscale(100%) opacity(0.7)' }} />
+                    <span style={{ color: paymentGateway === 'stripe' ? '#635BFF' : '#94a3b8', fontWeight: 600, fontSize: '0.875rem' }}>Global</span>
+                  </div>
+                  <div 
+                    onClick={() => setPaymentGateway('paystack')}
+                    style={{ 
+                      padding: '20px', borderRadius: '12px', cursor: 'pointer', textAlign: 'center',
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+                      border: `2px solid ${paymentGateway === 'paystack' ? '#0ea5e9' : 'rgba(255,255,255,0.08)'}`,
+                      backgroundColor: paymentGateway === 'paystack' ? 'rgba(14,165,233,0.05)' : '#1e293b',
+                      transition: 'all 0.2s'
+                    }}>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Paystack_Logo.png" alt="Paystack" style={{ height: '26px', objectFit: 'contain', filter: paymentGateway === 'paystack' ? 'none' : 'grayscale(100%) opacity(0.7)' }} />
+                    <span style={{ color: paymentGateway === 'paystack' ? '#0ea5e9' : '#94a3b8', fontWeight: 600, fontSize: '0.875rem' }}>Africa</span>
+                  </div>
+                </div>
+              </div>
+
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px', borderBottom: '1px solid rgba(255,255,255,0.06)', paddingBottom: '12px' }}>
                 <CheckCircle2 size={16} color="#f59e0b" />
-                <span style={{ fontSize: '0.8125rem', color: '#94a3b8', fontWeight: 600 }}>Step 1 of 2: Compulsory Billing Details</span>
+                <span style={{ fontSize: '0.8125rem', color: '#94a3b8', fontWeight: 600 }}>Billing Details</span>
               </div>
 
               <div>
@@ -705,34 +736,6 @@ export const CheckoutModal = ({ isOpen, onClose, planTitle, planPrice, planCredi
                   placeholder="e.g. United Kingdom"
                   required 
                 />
-              </div>
-
-              <div style={{ marginTop: '8px' }}>
-                <label style={billingLabelStyle}>Payment Method *</label>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-                  <div 
-                    onClick={() => setPaymentGateway('stripe')}
-                    style={{ 
-                      padding: '12px', borderRadius: '8px', cursor: 'pointer', textAlign: 'center',
-                      border: `1px solid ${paymentGateway === 'stripe' ? '#f59e0b' : 'rgba(255,255,255,0.08)'}`,
-                      backgroundColor: paymentGateway === 'stripe' ? 'rgba(245,158,11,0.1)' : '#1e293b',
-                      color: paymentGateway === 'stripe' ? '#f59e0b' : '#94a3b8',
-                      fontWeight: 600, fontSize: '0.875rem', transition: 'all 0.2s'
-                    }}>
-                    Stripe (Global)
-                  </div>
-                  <div 
-                    onClick={() => setPaymentGateway('paystack')}
-                    style={{ 
-                      padding: '12px', borderRadius: '8px', cursor: 'pointer', textAlign: 'center',
-                      border: `1px solid ${paymentGateway === 'paystack' ? '#0ea5e9' : 'rgba(255,255,255,0.08)'}`,
-                      backgroundColor: paymentGateway === 'paystack' ? 'rgba(14,165,233,0.1)' : '#1e293b',
-                      color: paymentGateway === 'paystack' ? '#0ea5e9' : '#94a3b8',
-                      fontWeight: 600, fontSize: '0.875rem', transition: 'all 0.2s'
-                    }}>
-                    Paystack (Africa)
-                  </div>
-                </div>
               </div>
 
               {/* Coupon Section */}
