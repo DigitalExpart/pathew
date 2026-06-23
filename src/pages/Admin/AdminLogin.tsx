@@ -55,7 +55,7 @@ export const AdminLogin: React.FC = () => {
               <label style={labelStyle}>Email</label>
               <div style={inputBoxStyle}>
                 <Mail size={16} color="#64748b" />
-                <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="admin@pathew.com" required style={inputStyle} />
+                <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="example@gmail.com" required style={inputStyle} />
               </div>
             </div>
             <div>
