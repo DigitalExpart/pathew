@@ -1,5 +1,5 @@
 -- ============================================================
--- PATHEW Security Fixes — Run in Supabase SQL Editor
+-- PATHEW Security Fixes & Updates — Run in Supabase SQL Editor
 -- ============================================================
 
 -- FIX H1: Add 'admin' to the profiles role CHECK constraint
@@ -15,6 +15,33 @@ DROP POLICY IF EXISTS "Anyone can read published opportunities" ON opportunities
 CREATE POLICY "Anyone can read published opportunities" ON opportunities
   FOR SELECT TO authenticated 
   USING (status = 'published' OR user_id = auth.uid() OR created_by = auth.uid());
+
+
+-- FEATURE: 1 Free Credit & Welcome Notification for New Users
+-- This updates the trigger that runs when a user signs up.
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Create profile with 1 free credit
+    INSERT INTO public.profiles (id, full_name, avatar_url, credits)
+    VALUES (NEW.id, NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'avatar_url', 1);
+
+    -- Log transaction
+    INSERT INTO public.transactions (user_id, type, amount, description)
+    VALUES (NEW.id, 'credit', 1, 'Welcome Bonus: Account Creation');
+
+    -- Create notification
+    INSERT INTO public.notifications (user_id, title, description, type)
+    VALUES (NEW.id, 'Welcome to PATHEW!', 'Welcome aboard! We have gifted you 1 free credit to help you get started on your journey.', 'system');
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
 
 -- Verify: List all tables with RLS status
 -- SELECT schemaname, tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public';

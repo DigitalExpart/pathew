@@ -437,7 +437,7 @@ export const CheckoutModal = ({ isOpen, onClose, planTitle, planPrice, planCredi
       const { data, error: fnError } = await supabase.functions.invoke('create-payment-intent', {
         body: { 
           plan: planTitle, 
-          price: formattedFinalPrice,
+          couponId: appliedCoupon ? appliedCoupon.id : undefined,
           billingInfo // pass billing details cleanly
         }
       });
@@ -612,26 +612,28 @@ export const CheckoutModal = ({ isOpen, onClose, planTitle, planPrice, planCredi
                   <div 
                     onClick={() => setPaymentGateway('stripe')}
                     style={{ 
-                      padding: '20px', borderRadius: '12px', cursor: 'pointer', textAlign: 'center',
-                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
+                      padding: '24px', borderRadius: '16px', cursor: 'pointer', textAlign: 'center',
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px',
                       border: `2px solid ${paymentGateway === 'stripe' ? '#635BFF' : 'rgba(255,255,255,0.08)'}`,
                       backgroundColor: paymentGateway === 'stripe' ? 'rgba(99,91,255,0.05)' : '#1e293b',
-                      transition: 'all 0.2s'
+                      transition: 'all 0.2s',
+                      boxShadow: paymentGateway === 'stripe' ? '0 4px 14px rgba(99,91,255,0.15)' : 'none'
                     }}>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" style={{ height: '26px', objectFit: 'contain', filter: paymentGateway === 'stripe' ? 'none' : 'grayscale(100%) opacity(0.7)' }} />
-                    <span style={{ color: paymentGateway === 'stripe' ? '#635BFF' : '#94a3b8', fontWeight: 600, fontSize: '0.875rem' }}>Global</span>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" style={{ height: '36px', objectFit: 'contain', filter: paymentGateway === 'stripe' ? 'none' : 'grayscale(100%) opacity(0.5)' }} />
+                    <span style={{ color: paymentGateway === 'stripe' ? '#635BFF' : '#94a3b8', fontWeight: 600, fontSize: '0.95rem' }}>Global</span>
                   </div>
                   <div 
                     onClick={() => setPaymentGateway('paystack')}
                     style={{ 
-                      padding: '20px', borderRadius: '12px', cursor: 'pointer', textAlign: 'center',
-                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px',
-                      border: `2px solid ${paymentGateway === 'paystack' ? '#0ea5e9' : 'rgba(255,255,255,0.08)'}`,
-                      backgroundColor: paymentGateway === 'paystack' ? 'rgba(14,165,233,0.05)' : '#1e293b',
-                      transition: 'all 0.2s'
+                      padding: '24px', borderRadius: '16px', cursor: 'pointer', textAlign: 'center',
+                      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px',
+                      border: `2px solid ${paymentGateway === 'paystack' ? '#00C3F7' : 'rgba(255,255,255,0.08)'}`,
+                      backgroundColor: paymentGateway === 'paystack' ? 'rgba(0,195,247,0.05)' : '#1e293b',
+                      transition: 'all 0.2s',
+                      boxShadow: paymentGateway === 'paystack' ? '0 4px 14px rgba(0,195,247,0.15)' : 'none'
                     }}>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Paystack_Logo.png" alt="Paystack" style={{ height: '26px', objectFit: 'contain', filter: paymentGateway === 'paystack' ? 'brightness(0) invert(1)' : 'brightness(0) invert(1) opacity(0.4)' }} />
-                    <span style={{ color: paymentGateway === 'paystack' ? '#fff' : '#94a3b8', fontWeight: 600, fontSize: '0.875rem' }}>Africa</span>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Paystack_Logo.png" alt="Paystack" style={{ height: '36px', objectFit: 'contain', filter: paymentGateway === 'paystack' ? 'brightness(0) invert(1)' : 'brightness(0) invert(1) opacity(0.4)' }} />
+                    <span style={{ color: paymentGateway === 'paystack' ? '#00C3F7' : '#94a3b8', fontWeight: 600, fontSize: '0.95rem' }}>Africa</span>
                   </div>
                 </div>
               </div>
