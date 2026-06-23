@@ -192,7 +192,7 @@ export const AdminRssSourcesPage: React.FC = () => {
                 <tr key={source.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                   <td style={tdStyle}>
                     <p style={{ fontWeight: 600, fontSize: '0.875rem' }}>{source.name}</p>
-                    <a href={source.website_url} target="_blank" rel="noreferrer" style={{ fontSize: '0.75rem', color: '#3b82f6', textDecoration: 'none' }}>Visit Website</a>
+                    <a href={source.website_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.75rem', color: '#3b82f6', textDecoration: 'none' }}>Visit Website</a>
                   </td>
                   <td style={tdStyle}>
                     <span style={{ fontSize: '0.8125rem', color: '#94a3b8', fontFamily: 'monospace' }}>{source.feed_url}</span>

@@ -917,8 +917,11 @@ ${taskPrompt}
                 }
               }
 
-              const newCredits = Math.max(0, currentCredits - creditCost)
-              const { error: creditError } = await supabaseAdmin.from('profiles').update({ credits: newCredits }).eq('id', user.id)
+              // H2: Use RPC for atomic credit deduction
+              const { data: newCredits, error: creditError } = await supabaseAdmin.rpc('decrement_credits', {
+                user_id: user.id,
+                amount: creditCost
+              });
               if (creditError) console.error(`[CREDIT ERROR] ${creditError.message}`)
               else console.log(`[CREDITS] ${currentCredits} -> ${newCredits} (Cost: ${creditCost}) for user ${user.id}`)
 

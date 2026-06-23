@@ -43,5 +43,25 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
 
+-- FIX H2: Credit deduction atomicity
+-- Use an RPC to decrement credits so it's safe against race conditions.
+CREATE OR REPLACE FUNCTION public.decrement_credits(user_id UUID, amount INTEGER)
+RETURNS INTEGER AS $$
+DECLARE
+  current_credits INTEGER;
+BEGIN
+  -- Row-level lock to prevent concurrent modifications
+  SELECT credits INTO current_credits FROM public.profiles WHERE id = user_id FOR UPDATE;
+
+  IF current_credits < amount THEN
+    RAISE EXCEPTION 'Insufficient credits';
+  END IF;
+
+  UPDATE public.profiles SET credits = credits - amount WHERE id = user_id;
+  
+  RETURN current_credits - amount;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
 -- Verify: List all tables with RLS status
 -- SELECT schemaname, tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public';

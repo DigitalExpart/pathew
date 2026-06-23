@@ -161,9 +161,9 @@ export const SettingsPage: React.FC = () => {
       setPasswordError('New passwords do not match');
       return;
     }
-    if (passwordData.newPassword.length < 6) {
+    if (passwordData.newPassword.length < 8) {
       setPasswordStatus('error');
-      setPasswordError('Password must be at least 6 characters');
+      setPasswordError(t('settings.passwordMinLength'));
       return;
     }
 
