@@ -630,8 +630,8 @@ export const CheckoutModal = ({ isOpen, onClose, planTitle, planPrice, planCredi
                       backgroundColor: paymentGateway === 'paystack' ? 'rgba(14,165,233,0.05)' : '#1e293b',
                       transition: 'all 0.2s'
                     }}>
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Paystack_Logo.png" alt="Paystack" style={{ height: '26px', objectFit: 'contain', filter: paymentGateway === 'paystack' ? 'none' : 'grayscale(100%) opacity(0.7)' }} />
-                    <span style={{ color: paymentGateway === 'paystack' ? '#0ea5e9' : '#94a3b8', fontWeight: 600, fontSize: '0.875rem' }}>Africa</span>
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/0/0b/Paystack_Logo.png" alt="Paystack" style={{ height: '26px', objectFit: 'contain', filter: paymentGateway === 'paystack' ? 'brightness(0) invert(1)' : 'brightness(0) invert(1) opacity(0.4)' }} />
+                    <span style={{ color: paymentGateway === 'paystack' ? '#fff' : '#94a3b8', fontWeight: 600, fontSize: '0.875rem' }}>Africa</span>
                   </div>
                 </div>
               </div>
