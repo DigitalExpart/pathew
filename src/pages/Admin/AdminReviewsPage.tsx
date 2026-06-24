@@ -138,7 +138,7 @@ export const AdminReviewsPage: React.FC = () => {
     <div style={{ width: '100%', maxWidth: '1200px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '4px' }}>Verified Customers Review</h1>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '4px' }}>Trustpilot Reviews</h1>
           <p style={{ color: '#64748b', fontSize: '0.875rem' }}>Manage social proof displayed on the homepage</p>
         </div>
         <Button onClick={() => { resetForm(); setEditingReview(null); setIsModalOpen(true); }} style={{ gap: '8px' }}>
