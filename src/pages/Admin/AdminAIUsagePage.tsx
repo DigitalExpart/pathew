@@ -159,7 +159,7 @@ export const AdminAIUsagePage: React.FC = () => {
                     onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
                     style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#e2e8f0', borderRadius: '6px', padding: '4px 8px', fontSize: '0.8125rem', outline: 'none' }}
                   >
-                    {[25, 50, 100, 150, 200].map(size => <option key={size} value={size}>{size}</option>)}
+                    {[25, 50, 100, 150, 200].map(size => <option key={size} value={size} style={{ backgroundColor: '#0f172a', color: '#e2e8f0' }}>{size}</option>)}
                   </select>
                   <span style={{ fontSize: '0.8125rem', color: '#64748b' }}>entries</span>
                 </div>
