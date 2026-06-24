@@ -122,7 +122,7 @@ Deno.serve(async (req: Request) => {
       })
     }
 
-    const preferredModel = Deno.env.get('CLAUDE_MODEL') || 'claude-sonnet-4-5'
+    const preferredModel = Deno.env.get('CLAUDE_MODEL') || 'claude-3-5-sonnet-20241022'
     const sid = sessionId || crypto.randomUUID()
 
     // Layer 1: System Prompt (defines the AI assistant's role and rules)

@@ -31,6 +31,7 @@ export const NotificationsPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [searchQuery, setSearchQuery] = useState('');
+  const [markedReadSession, setMarkedReadSession] = useState<Set<string>>(new Set());
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -86,16 +87,18 @@ export const NotificationsPage: React.FC = () => {
   }, [user]);
 
   const markAllAsRead = async () => {
-    if (!user) return;
     try {
       const { error } = await supabase
         .from('notifications')
         .update({ is_read: true })
-        .eq('user_id', user.id)
+        .eq('user_id', user?.id)
         .eq('is_read', false);
 
       if (error) throw error;
+      
+      const unreadIds = notifications.filter(n => !n.is_read).map(n => n.id);
       setNotifications(notifications.map(n => ({ ...n, is_read: true })));
+      setMarkedReadSession(prev => new Set([...prev, ...unreadIds]));
     } catch (err) {
       console.error('Error marking all as read:', err);
     }
@@ -124,13 +127,14 @@ export const NotificationsPage: React.FC = () => {
 
       if (error) throw error;
       setNotifications(notifications.map(n => n.id === id ? { ...n, is_read: true } : n));
+      setMarkedReadSession(prev => new Set(prev).add(id));
     } catch (err) {
       console.error('Error marking notification as read:', err);
     }
   };
 
   const filteredNotifications = notifications
-    .filter(n => filter === 'unread' ? !n.is_read : true)
+    .filter(n => filter === 'unread' ? (!n.is_read || markedReadSession.has(n.id)) : true)
     .filter(n => 
       n.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
       n.description.toLowerCase().includes(searchQuery.toLowerCase())
