@@ -185,7 +185,7 @@ export const LandingPage: React.FC = () => {
             <img 
               src="/hero.png" 
               alt="Platform Dashboard" 
-              style={{ width: '100%', height: '700px', objectFit: 'cover', objectPosition: 'left top', display: 'block', borderRadius: 'inherit' }} 
+              style={{ width: '100%', height: '850px', objectFit: 'cover', objectPosition: 'right top', display: 'block', borderRadius: 'inherit' }} 
             />
             <div style={heroImageOverlayStyle}>
               <motion.div 
