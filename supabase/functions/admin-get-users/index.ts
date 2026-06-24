@@ -108,6 +108,21 @@ Deno.serve(async (req: Request) => {
       })
     }
 
+    if (action === 'get_all_transactions') {
+      const { data, error } = await supabaseAdmin
+        .from('transactions')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(500)
+
+      if (error) throw error
+
+      return new Response(JSON.stringify({ transactions: data }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 200,
+      })
+    }
+
     throw new Error('Invalid action')
 
   } catch (error: any) {

@@ -9,9 +9,18 @@ export const AdminTransactionsPage: React.FC = () => {
 
   useEffect(() => {
     const fetch = async () => {
-      const { data } = await supabase.from('transactions').select('*').order('created_at', { ascending: false }).limit(100);
-      setTransactions(data || []);
-      setLoading(false);
+      try {
+        const { data, error } = await supabase.functions.invoke('admin-get-users', {
+          body: { action: 'get_all_transactions' }
+        });
+        if (error) throw error;
+        setTransactions(data?.transactions || []);
+      } catch (err) {
+        console.error('Error fetching transactions:', err);
+        setTransactions([]);
+      } finally {
+        setLoading(false);
+      }
     };
     fetch();
   }, []);
