@@ -4,12 +4,13 @@ import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Badge as UIBadge } from '../../components/ui/Badge';
 import { Navbar } from '../../components/layout/Navbar';
-import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap, Plus, Star, ChevronDown } from 'lucide-react';
+import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap, Plus, Star, ChevronDown, X } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { Link } from 'react-router-dom';
 import { CheckoutModal } from '../../components/payment/CheckoutModal';
 import { useTranslation } from 'react-i18next';
 import logo from '../../assets/images/logo.png';
+import howItWorksVideo from '../../assets/images/how-it-works.mp4';
 import { useAuth } from '../../context/AuthContext';
 
 
@@ -26,6 +27,7 @@ export const LandingPage: React.FC = () => {
   const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
   const [isTablet, setIsTablet] = React.useState(window.innerWidth <= 1024 && window.innerWidth > 768);
   const [showAllFaqs, setShowAllFaqs] = React.useState(false);
+  const [showVideo, setShowVideo] = React.useState(false);
 
   React.useEffect(() => {
     const handleResize = () => {
@@ -409,11 +411,9 @@ export const LandingPage: React.FC = () => {
           transition={{ delay: 0.6 }}
           style={{ textAlign: 'center', marginTop: '64px' }}
         >
-          <Link to="/signup">
-            <Button variant="outline" style={{ gap: '10px', padding: '16px 40px' }}>
-              {t('landing.learnMore')} <ArrowRight size={18} />
-            </Button>
-          </Link>
+          <Button variant="outline" style={{ gap: '10px', padding: '16px 40px' }} onClick={() => setShowVideo(true)}>
+            {t('landing.learnMore')} <ArrowRight size={18} />
+          </Button>
         </motion.div>
       </section>
 
@@ -627,6 +627,69 @@ export const LandingPage: React.FC = () => {
           zIndex: 0,
         }}></div>
       </footer>
+      
+      <AnimatePresence>
+        {showVideo && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: 'fixed',
+              top: 0, left: 0, right: 0, bottom: 0,
+              backgroundColor: 'rgba(0,0,0,0.8)',
+              backdropFilter: 'blur(10px)',
+              zIndex: 9999,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: '20px'
+            }}
+            onClick={() => setShowVideo(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              style={{
+                position: 'relative',
+                width: '100%',
+                maxWidth: '900px',
+                aspectRatio: '16/9',
+                backgroundColor: '#000',
+                borderRadius: '16px',
+                overflow: 'hidden',
+                boxShadow: '0 25px 50px -12px rgba(0,0,0,0.5)'
+              }}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button 
+                onClick={() => setShowVideo(false)}
+                style={{
+                  position: 'absolute',
+                  top: '16px', right: '16px',
+                  zIndex: 10,
+                  background: 'rgba(0,0,0,0.5)',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '40px', height: '40px',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: 'white',
+                  cursor: 'pointer'
+                }}
+              >
+                <X size={24} />
+              </button>
+              <video 
+                src={howItWorksVideo} 
+                controls 
+                autoPlay 
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }} 
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
