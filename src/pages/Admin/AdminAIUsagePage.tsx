@@ -10,40 +10,48 @@ export const AdminAIUsagePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetch = async () => {
-      const [sessRes, msgRes, msgRes2] = await Promise.all([
-        supabase.from('assistant_sessions').select('id', { count: 'exact', head: true }),
-        supabase.from('assistant_messages').select('tokens_in, tokens_out, user_id'),
-        supabase.from('assistant_messages').select('id, created_at, role, content, user_id').order('created_at', { ascending: false }).limit(50),
-      ]);
+    const fetchUsage = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('admin-get-users', {
+          body: { action: 'get_ai_usage' }
+        });
+        
+        if (error) throw error;
+        
+        const sessionsCount = data.sessionsCount || 0;
+        const messages = data.messages || [];
+        const recentMessages = data.recent || [];
 
-      const messages = msgRes.data || [];
-      const tokensIn = messages.reduce((s, m) => s + (m.tokens_in || 0), 0);
-      const tokensOut = messages.reduce((s, m) => s + (m.tokens_out || 0), 0);
+      const tokensIn = messages.reduce((s: any, m: any) => s + (m.tokens_in || 0), 0);
+      const tokensOut = messages.reduce((s: any, m: any) => s + (m.tokens_out || 0), 0);
 
       // Top users by message count
       const userCounts: Record<string, number> = {};
-      messages.forEach(m => { userCounts[m.user_id] = (userCounts[m.user_id] || 0) + 1; });
+      messages.forEach((m: any) => { userCounts[m.user_id] = (userCounts[m.user_id] || 0) + 1; });
       const sorted = Object.entries(userCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
 
       // Fetch names for top users
       // Fetch names for top users and recent activities
-      const userIds = Array.from(new Set([...sorted.map(s => s[0]), ...(msgRes2.data || []).map(m => m.user_id)]));
+      const userIds = Array.from(new Set([...sorted.map(s => s[0]), ...recentMessages.map((m: any) => m.user_id)]));
       const { data: profiles } = await supabase.from('profiles').select('id, full_name').in('id', userIds);
       const nameMap: Record<string, string> = {};
       (profiles || []).forEach(p => { nameMap[p.id] = p.full_name || 'Unnamed'; });
 
-      setStats({ sessions: sessRes.count || 0, messages: messages.length, tokensIn, tokensOut });
+      setStats({ sessions: sessionsCount, messages: messages.length, tokensIn, tokensOut });
       setTopUsers(sorted.map(([id, count]) => ({ id, name: nameMap[id] || id.slice(0, 8), count })));
       
-      const activities = (msgRes2.data || []).map(m => ({
+      const activities = recentMessages.map((m: any) => ({
         ...m,
         user_name: nameMap[m.user_id] || m.user_id?.slice(0, 8) || 'System',
       }));
       setRecentActivities(activities);
       setLoading(false);
+      } catch (err) {
+        console.error('Error fetching AI usage:', err);
+        setLoading(false);
+      }
     };
-    fetch();
+    fetchUsage();
   }, []);
 
   const kpis = [
