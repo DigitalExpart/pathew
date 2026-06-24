@@ -7,6 +7,7 @@ import { usePaystackPayment } from 'react-paystack';
 import { Button } from '../ui/Button';
 import { supabase } from '../../lib/supabase';
 import { useTheme } from '../../context/ThemeContext';
+import { COUNTRIES } from '../../utils/countries';
 
 // Stripe publishable key from environment variables
 const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '';
@@ -733,14 +734,17 @@ export const CheckoutModal = ({ isOpen, onClose, planTitle, planPrice, planCredi
 
               <div>
                 <label style={billingLabelStyle}>Country *</label>
-                <input 
-                  type="text" 
+                <select 
                   value={billingInfo.country} 
                   onChange={(e) => setBillingInfo({ ...billingInfo, country: e.target.value })} 
-                  style={billingInputStyle} 
-                  placeholder="e.g. United Kingdom"
+                  style={{...billingInputStyle, appearance: 'auto'}} 
                   required 
-                />
+                >
+                  <option value="" disabled>Select a country...</option>
+                  {COUNTRIES.map(country => (
+                    <option key={country} value={country}>{country}</option>
+                  ))}
+                </select>
               </div>
 
               {/* Coupon Section */}
