@@ -136,6 +136,14 @@ export const SignUpPage: React.FC = () => {
   const [authError, setAuthError] = React.useState<string | null>(null);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
 
+  const { user, loading: authLoading } = useAuth();
+
+  React.useEffect(() => {
+    if (user && !authLoading) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [user, authLoading, navigate]);
+
   const validate = () => {
     const newErrors: Record<string, string> = {};
     if (formData.password !== formData.confirmPassword) {
@@ -161,7 +169,7 @@ export const SignUpPage: React.FC = () => {
       setAuthError(null);
       
       try {
-        const { error } = await supabase.auth.signUp({
+        const { data, error } = await supabase.auth.signUp({
           email: formData.email,
           password: formData.password,
           options: {
@@ -172,7 +180,12 @@ export const SignUpPage: React.FC = () => {
         });
 
         if (error) throw error;
-        setIsSubmitted(true);
+        
+        if (data.session) {
+          navigate('/dashboard', { replace: true });
+        } else {
+          setIsSubmitted(true);
+        }
       } catch (err: any) {
         setAuthError(err.message || t('auth.errors.failedSignUp'));
       } finally {
@@ -180,6 +193,14 @@ export const SignUpPage: React.FC = () => {
       }
     }
   };
+
+  if (authLoading || (user && !authLoading)) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: 'var(--bg-primary)' }}>
+        <div style={{ color: 'var(--accent-primary)', fontSize: '1.2rem', fontWeight: 600 }}>Loading Pathew...</div>
+      </div>
+    );
+  }
 
   if (isSubmitted) {
     return (
