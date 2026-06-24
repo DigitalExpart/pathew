@@ -590,9 +590,9 @@ export const LandingPage: React.FC = () => {
           </div>
           
           <div className="grid-responsive" style={{ flex: 3, gap: '40px' }}>
-            <FooterCol title={t('landing.footerCols.product')} links={t('landing.footerCols.productLinks', { returnObjects: true }) as string[]} />
-            <FooterCol title={t('landing.footerCols.company')} links={t('landing.footerCols.companyLinks', { returnObjects: true }) as string[]} />
-            <FooterCol title={t('landing.footerCols.legal')} links={t('landing.footerCols.legalLinks', { returnObjects: true }) as string[]} />
+            <FooterCol title={t('landing.footerCols.product')} links={t('landing.footerCols.productLinks', { returnObjects: true }) as string[]} hrefs={['/features', '/how-it-works', '/pricing', '/api']} />
+            <FooterCol title={t('landing.footerCols.company')} links={t('landing.footerCols.companyLinks', { returnObjects: true }) as string[]} hrefs={['/about', '/careers', '/blog', '/contact']} />
+            <FooterCol title={t('landing.footerCols.legal')} links={t('landing.footerCols.legalLinks', { returnObjects: true }) as string[]} hrefs={['/privacy-policy', '/terms', '/security', '/cookies']} />
           </div>
         </div>
         
@@ -983,13 +983,17 @@ const TikTokIcon = ({ size = 20 }: { size?: number }) => (
   </svg>
 );
 
-const FooterCol = ({ title, links }: { title: string, links: string[] }) => (
+const FooterCol = ({ title, links, hrefs }: { title: string, links: string[], hrefs?: string[] }) => (
   <div style={footerColStyle}>
     <h4 style={{ color: 'var(--text-primary)', marginBottom: '20px', fontSize: '1rem', fontWeight: 700 }}>{title}</h4>
     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-      {links.map(l => (
-        <a key={l} href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.875rem' }}>{l}</a>
-      ))}
+      {links.map((l, i) => {
+        const href = hrefs && hrefs[i] ? hrefs[i] : '#';
+        if (href.startsWith('http')) {
+          return <a key={l} href={href} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.875rem' }}>{l}</a>;
+        }
+        return <Link key={l} to={href} style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.875rem' }}>{l}</Link>;
+      })}
     </div>
   </div>
 );
