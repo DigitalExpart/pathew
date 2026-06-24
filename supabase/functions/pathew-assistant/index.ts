@@ -75,8 +75,7 @@ Deno.serve(async (req: Request) => {
     const requiredCredits = action === "extract_context" ? 1 : (documentType === 'Roadmap' ? 3 : 1)
     if (currentCredits < requiredCredits) {
       return new Response(JSON.stringify({ 
-        error: `Insufficient credits. This action requires ${requiredCredits} credits.`,
-        draft: 'You do not have enough credits to perform this action. Please top up your account.',
+        draft: 'You have exhausted your free credits! Please [click here to visit your Wallet](/wallet) to subscribe to a plan and get more credits.',
         matchSummary: { strongMatches: [], gaps: [], priorityPoints: [] },
         editingSuggestions: [], wordCountEstimate: 0, confidence: 'low', sessionId: sessionId || 'error'
       }), {
