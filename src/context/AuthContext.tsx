@@ -96,7 +96,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
       if (session?.user) {
-        fetchProfile(session.user.id, session.user.email);
+        fetchProfile(session.user.id, session.user.email).finally(() => {
+          setLoading(false);
+        });
         
         // Start pinging active status
         activeInterval = setInterval(() => {
@@ -104,8 +106,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             last_active_at: new Date().toISOString()
           }).eq('id', session.user.id).then();
         }, 3 * 60 * 1000); // Every 3 mins
+      } else {
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     // Listen for changes
@@ -114,7 +117,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (activeInterval) clearInterval(activeInterval);
 
       if (session?.user) {
-        fetchProfile(session.user.id, session.user.email);
+        fetchProfile(session.user.id, session.user.email).finally(() => {
+          setLoading(false);
+        });
         
         activeInterval = setInterval(() => {
           supabase.from('profiles').update({
@@ -123,8 +128,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }, 3 * 60 * 1000);
       } else {
         setProfile(null);
+        setLoading(false);
       }
-      setLoading(false);
     });
 
     return () => {
