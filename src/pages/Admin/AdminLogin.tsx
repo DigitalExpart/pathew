@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdmin } from '../../context/AdminContext';
+import { useAuth } from '../../context/AuthContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Shield, Mail, Lock, AlertCircle } from 'lucide-react';
@@ -8,6 +9,7 @@ import logo from '../../assets/images/logo.png';
 
 export const AdminLogin: React.FC = () => {
   const { adminLogin, isAdmin } = useAdmin();
+  const { loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,9 +21,18 @@ export const AdminLogin: React.FC = () => {
 
   React.useEffect(() => {
     if (isAdmin && !hasAttemptedLogin.current) {
-      navigate('/admin/dashboard');
+      navigate('/admin/dashboard', { replace: true });
     }
   }, [isAdmin, navigate]);
+
+  if (authLoading || (isAdmin && !hasAttemptedLogin.current)) {
+    return (
+      <div style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: '#020617' }}>
+        <div style={{ color: '#f59e0b', fontSize: '1.2rem', fontWeight: 600 }}>Loading Admin Portal...</div>
+      </div>
+    );
+  }
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
