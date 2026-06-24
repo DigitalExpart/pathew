@@ -1217,9 +1217,10 @@
     "noNotificationsDesc": "We'll notify you when something important happens."
   },
   "cookieBanner": {
-    "text": "We use cookies to improve your experience and analyze platform usage. By clicking \"Accept\", you agree to our use of cookies as described in our Privacy Policy.",
-    "accept": "Accept",
-    "deny": "Decline",
-    "privacyPolicy": "Privacy Policy"
+    "text": "By clicking \"Accept all cookies\", you agree to the storing of cookies on your device and the use of similar technologies to enhance site navigation, analyze site usage, personalize advertising, and assist in our marketing efforts. View our",
+    "accept": "Accept all cookies",
+    "deny": "Reject all",
+    "settings": "Cookies settings",
+    "privacyPolicy": "Cookie Policy"
   }
 }

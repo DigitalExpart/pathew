@@ -24,6 +24,7 @@ import { DocumentsPage } from './pages/Documents/DocumentsPage';
 import { SettingsPage } from './pages/Settings/SettingsPage';
 import { TermsPage as PublicTermsPage } from './pages/Legal/TermsPage';
 import { PrivacyPage as PublicPrivacyPage } from './pages/Legal/PrivacyPage';
+import { CookiesPage as PublicCookiesPage } from './pages/Legal/CookiesPage';
 import { ContactPage } from './pages/Support/ContactPage';
 import { HowItWorksPage } from './pages/Support/HowItWorksPage';
 import { NotificationsPage } from './pages/Notifications/NotificationsPage';
@@ -65,6 +66,7 @@ function App() {
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/terms" element={<PublicTermsPage />} />
             <Route path="/privacy-policy" element={<PublicPrivacyPage />} />
+            <Route path="/cookies" element={<PublicCookiesPage />} />
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/how-it-works" element={<HowItWorksPage />} />
             <Route path="/profile-setup" element={<RequireAuth><Shell><ProfileSetup /></Shell></RequireAuth>} />

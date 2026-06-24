@@ -23,15 +23,23 @@ export const CookieBanner: React.FC = () => {
     setIsVisible(false);
   };
 
+  const handleSettings = () => {
+    // Open settings modal or redirect, for now just close banner as mock
+    setIsVisible(false);
+  };
+
   if (!isVisible) return null;
 
   return (
     <div style={bannerStyle}>
       <div style={containerStyle}>
         <p style={textStyle}>
-          {t('cookieBanner.text')} <Link to="/privacy-policy" style={linkStyle}>{t('cookieBanner.privacyPolicy')}</Link>
+          {t('cookieBanner.text')} <Link to="/cookies" style={linkStyle}>{t('cookieBanner.privacyPolicy')}</Link>.
         </p>
         <div style={buttonContainerStyle}>
+          <button style={settingsButtonStyle} onClick={handleSettings}>
+            {t('cookieBanner.settings')}
+          </button>
           <button style={denyButtonStyle} onClick={handleDeny}>
             {t('cookieBanner.deny')}
           </button>
@@ -49,11 +57,12 @@ const bannerStyle: React.CSSProperties = {
   bottom: 0,
   left: 0,
   right: 0,
-  backgroundColor: 'var(--bg-secondary, #1f2937)',
-  color: 'var(--text-primary, #f9fafb)',
-  padding: '16px',
+  backgroundColor: '#ffffff',
+  color: '#333333',
+  padding: '16px 24px',
   zIndex: 9999,
-  boxShadow: '0 -4px 6px -1px rgba(0, 0, 0, 0.1), 0 -2px 4px -1px rgba(0, 0, 0, 0.06)',
+  boxShadow: '0 -4px 12px rgba(0, 0, 0, 0.05)',
+  borderTop: '1px solid #e5e7eb',
 };
 
 const containerStyle: React.CSSProperties = {
@@ -63,7 +72,7 @@ const containerStyle: React.CSSProperties = {
   flexDirection: 'row',
   alignItems: 'center',
   justifyContent: 'space-between',
-  gap: '16px',
+  gap: '24px',
   flexWrap: 'wrap',
 };
 
@@ -71,40 +80,57 @@ const textStyle: React.CSSProperties = {
   margin: 0,
   fontSize: '0.875rem',
   lineHeight: 1.5,
-  flex: '1 1 300px',
+  flex: '1 1 500px',
+  color: '#4b5563',
 };
 
 const linkStyle: React.CSSProperties = {
-  color: 'var(--accent-primary, #3b82f6)',
+  color: '#111827',
   textDecoration: 'underline',
+  fontWeight: 600,
 };
 
 const buttonContainerStyle: React.CSSProperties = {
   display: 'flex',
+  alignItems: 'center',
   gap: '12px',
   flexShrink: 0,
+  flexWrap: 'wrap',
 };
 
-const acceptButtonStyle: React.CSSProperties = {
-  backgroundColor: 'var(--accent-primary, #3b82f6)',
-  color: '#ffffff',
+const settingsButtonStyle: React.CSSProperties = {
+  backgroundColor: 'transparent',
+  color: '#4b5563',
   border: 'none',
-  padding: '8px 16px',
-  borderRadius: '6px',
+  padding: '8px 12px',
   cursor: 'pointer',
   fontSize: '0.875rem',
   fontWeight: 600,
-  transition: 'background-color 0.2s',
+  textDecoration: 'underline',
 };
 
 const denyButtonStyle: React.CSSProperties = {
-  backgroundColor: 'transparent',
-  color: 'var(--text-secondary, #9ca3af)',
-  border: '1px solid var(--border-color, #4b5563)',
-  padding: '8px 16px',
-  borderRadius: '6px',
+  backgroundColor: '#ffffff',
+  color: '#374151',
+  border: '1px solid #d1d5db',
+  padding: '10px 20px',
+  borderRadius: '8px',
   cursor: 'pointer',
   fontSize: '0.875rem',
   fontWeight: 600,
   transition: 'all 0.2s',
+  boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
+};
+
+const acceptButtonStyle: React.CSSProperties = {
+  backgroundColor: '#10b981',
+  color: '#ffffff',
+  border: 'none',
+  padding: '10px 20px',
+  borderRadius: '8px',
+  cursor: 'pointer',
+  fontSize: '0.875rem',
+  fontWeight: 600,
+  transition: 'background-color 0.2s',
+  boxShadow: '0 1px 2px rgba(0, 0, 0, 0.05)',
 };
