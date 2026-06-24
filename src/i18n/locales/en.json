@@ -923,54 +923,174 @@
   "legal": {
     "backToSignup": "Back to Sign Up",
     "privacy": {
-      "title": "Privacy Policy",
-      "subtitle": "Version 1.0.0 • Last updated: May 12, 2024",
+      "title": "Privacy and Cookies Policy",
+      "subtitle": "Last updated: 23 June 2026",
       "sections": [
         {
-          "title": "1. Information We Collect",
-          "p": "We collect your name and email address when you create an account. For your profile, we may collect professional history, skills, and goals to provide better matching services."
+          "title": "1. Introduction",
+          "p": "This Privacy Policy describes how Extraordinary Woman Blog, Pathew (the \"Platform\"), a service of A-aston Technologies Limited (the \"Company\", \"we\", \"us\", \"our\"), collects, uses, and protects personal information. The platform is powered by Pathew AI assistant"
         },
         {
-          "title": "2. How We Use Data",
-          "p": "Your data is used to calculate match scores with global opportunities and to communicate relevant updates. We do not sell your personal information to third parties."
+          "title": "2. Who we are;",
+          "p": "A-aston Technologies Limited (registered office 124-128 City Road, London, England, EC1V 2NX) is the controller for the personal data processed through Extraordinary Woman Blog (the \"Platform\"). Contact: privacy@extraordinarywomanblog.com"
         },
         {
-          "title": "3. Data Protection",
-          "p": "We implement industry-standard security measures, including data encryption and secure server protocols, to protect your personal information from unauthorized access."
+          "title": "3. Scope",
+          "p": "This Policy covers personal data processed via the Platform, including our CV Builder, Cover Letter/Proposal Builder, Grant Builder, and Opportunity Matching features, all powered by our AI assistant, Pathew."
         },
         {
-          "title": "4. Your Rights",
-          "p": "You have the right to access, correct, or delete your personal data at any time. You can manage these settings directly through your profile dashboard."
+          "title": "4. Data we collect",
+          "p": "Account & contact data: name, email, country, preferences. Profile data: year of birth, education, skills, work history, and other information you provide to build your CV, cover letter, proposal, or grant application.\nUsage data: device/browser information, IP address, and event logs related to your use of the Platform.\nJob-search materials: CVs/résumés, cover letters, job descriptions, role preferences, prompts\nMarketing preferences: brand-level opt-ins, unsubscribes."
         },
         {
-          "title": "5. Cookies",
-          "p": "We use essential cookies to maintain your login session and improve platform performance. Non-essential cookies are only used with your explicit consent."
+          "title": "5. How we use data",
+          "p": "Provide services and improve the Platform: to build, edit, and generate your CV, cover letter, proposal, or grant application.\nOpportunity matching: we use your profile information, including year of birth, solely to match you with opportunities that specify year of birth or age as a criterion. We do not use your year of birth for any other purpose.\nCommunicate with you: to send administrative messages relevant to your use of the Platform."
+        },
+        {
+          "title": "6. AI processing",
+          "p": "Our platform is powered by an AI API. When you use Pathew to generate content (such as a CV or cover letter), we send the minimum necessary information to API providers to generate your response. Your data and responses are not used to train the model of our provider or any other AI model."
+        },
+        {
+          "title": "7. Sharing Personal Data",
+          "p": "We do not sell or rent your personal data. We may share personal data with service providers who support our operations, such as hosting providers, analytics providers, and email delivery services, partners who act on our instructions and are bound by appropriate data protection terms. We otherwise do not share your personal data with third parties, except where required by law or to protect the rights, safety, or security of our users or the Platform."
+        },
+        {
+          "title": "8. Cookies & similar technologies",
+          "p": "We use cookies and similar technologies to run the Platform and improve your experience. These fall into a few categories:\nEssential cookies: necessary to operate the Platform, such as keeping you signed in and maintaining your session.\nPreference cookies: remember choices you make, such as language or display settings.\nAnalytics cookies: help us understand how the Platform is used so that we can improve it.\nYou can manage your preferences through our cookie banner or your browser settings. Please note that disabling certain cookies may affect how parts of the Platform function."
+        },
+        {
+          "title": "9. Marketing Purposes",
+          "p": "We only send marketing communications to users who have opted in. You may withdraw consent at any time by using the unsubscribe link in any marketing message, or by emailing privacy@extraordinarywomanblog.com."
+        },
+        {
+          "title": "10. Data retention",
+          "p": "We retain your account and profile data for as long as your account remains active, or as needed to provide services in the Platform. You may request deletion of your data at any time. We also follow UK GDPR policies regarding data deletion and consent."
+        },
+        {
+          "title": "11. Your rights",
+          "p": "You may request access, correction, deletion, restriction, or portability of your personal data, and withdraw consent at any time, by emailing privacy@extraordinarywomanblog.com. You may also lodge a complaint with your local data protection authority. In the United Kingdom, this is the Information Commissioner's Office (ICO)."
+        },
+        {
+          "title": "12. Security",
+          "p": "We implement technical and organisational measures, including access controls and encryption, to protect your personal data. We continuously review and update these measures in line with industry standards and evolving security practices. We also encourage users to safeguard their own account credentials and report any suspected unauthorized access promptly."
+        },
+        {
+          "title": "13. Children",
+          "p": "The Platform is not directed at children under 13. If you believe a child has provided us with personal data, please contact privacy@extraordinarywomanblog.com so we can remove it."
+        },
+        {
+          "title": "14. Changes to this Policy",
+          "p": "We may update this Policy from time to time. Changes will be posted here with a new \"Last updated\" date."
+        },
+        {
+          "title": "15. Contact us",
+          "p": "A-aston Technologies Limited\n124-128 City Road London, England, EC1V 2NX (Proprietary letters only, please email instead)\nEmail: privacy@extraordinarywomanblog.com"
         }
       ]
     },
     "terms": {
-      "title": "Terms & Conditions",
-      "subtitle": "Last updated: May 12, 2024",
+      "title": "Terms of Service",
+      "subtitle": "Last updated: 24 June 2026",
       "sections": [
         {
-          "title": "1. Acceptance of Terms",
-          "p": "By accessing and using PATHEW Assistant, you agree to be bound by these Terms and Conditions. If you do not agree with any part of these terms, you must not use our services."
+          "title": "1. Who we are",
+          "p": "In these Terms, \"Extraordinary Woman Blog/Pathew (Platform\", \"the Platform\", \"we\", \"our\" and \"us\" ) refer to A-aston Technologies Limited, a company registered in England and Wales, with its registered office at 124-128 City Road, London, England, EC1V 2NX.\nGeneral enquiries: hello@extraordinarywomanblog.com\nData enquiries: privacy@extraordinarywomanblog.com"
         },
         {
-          "title": "2. Account Registration",
-          "p": "To access certain features, you must create an account. You are responsible for maintaining the confidentiality of your account credentials and for all activities that occur under your account."
+          "title": "2. The Services these Terms cover",
+          "p": "These Terms apply to everything we offer through the Platform, including:\n• our website and any subdomains;\n• the platform web and mobile applications;\n• our CV Builder, Cover Letter and Proposal Builder, Grant Builder, and Opportunity Matching features; and\n• All related content and functionality, including our AI assistant.\nWe refer to all of the above together as the \"Services\"."
         },
         {
-          "title": "3. Use of Services",
-          "p": "Our services are intended for professional opportunity matching. You agree not to use the platform for any unlawful purposes or in any way that could damage or disable our infrastructure."
+          "title": "3. The words we use",
+          "p": "Content: any text, graphics, or other material found within the Services, including AI Output.\nUser Content: anything you upload or give us, such as your CV, work history, education details, and prompts.\nPaid Services: features you access through a paid subscription, which provides credits used to generate content within the Platform.\nCredits: the units allocated to your account on subscription, which you spend to generate CVs, cover letters, proposals, grant applications, or other Platform output.\nAI Output: any CV, cover letter, proposal, or grant application that Pathew generates for you."
         },
         {
-          "title": "4. Data & Privacy",
-          "p": "Your use of PATHEW is also governed by our Privacy Policy. Please review it to understand how we collect and process your information."
+          "title": "4. Agreeing to these Terms",
+          "p": "When you use any part of the Services, you are agreeing both to these Terms and to our Privacy Policy. If either of them does not sit well with you, please do not use the Services. Carrying on with them tells us you accept both."
         },
         {
-          "title": "5. Termination",
-          "p": "We reserve the right to suspend or terminate your account at our discretion if we believe you have violated these terms."
+          "title": "5. Eligibility & accounts",
+          "p": "To use the Services, you must be old enough to give valid digital consent where you live. If you are under 18, a parent or guardian must agree to these Terms on your behalf. We do not knowingly accept data from children under 13 (U.S.) or under 16 (UK/EU). When you register, the details you give us should be true and current, and looking after your login credentials is your responsibility. Anything done through your account is treated as done by you, so please tell us straight away if you notice activity you did not authorise."
+        },
+        {
+          "title": "6. How you may and may not use the Platform",
+          "p": "You must not: infringe anyone's intellectual property or privacy rights; harass others or promote hateful or illegal content; introduce malware; scrape data at scale; reverse engineer the Services; or misrepresent your identity, qualifications, or eligibility in any CV, proposal, or grant application you generate or submit.\nFair use\nTo keep the Platform stable and reliable for everyone, we may queue, limit, or temporarily restrict certain requests or features at our discretion."
+        },
+        {
+          "title": "7. Privacy",
+          "p": "Our Privacy Policy sets out how we collect, use, and protect your personal data. It covers how your year of birth is used only for opportunity matching, and how AI processing through the our API works. The Privacy Policy forms part of these Terms."
+        },
+        {
+          "title": "8. Your content; feedback",
+          "p": "You grant us a worldwide, non-exclusive, royalty-free licence to host, store, process, and adapt your User Content, solely so we can run, secure, and improve the Services. Every other right in your content stays with you. If you send us feedback, you give us a perpetual, irrevocable licence to use it freely.\nConfidentiality\nEach of us will keep the other's non-public information confidential and use it only to provide or receive the Services. This does not cover information that is already public, developed independently, or obtained lawfully from someone else. We may disclose information where the law requires it."
+        },
+        {
+          "title": "9. Our intellectual property",
+          "p": "Everything within the Services apart from your User Content belongs to us or to those who license it to us, and is protected by intellectual property law. You may not copy, change, distribute, or build derivative works from our Content without first getting our written permission."
+        },
+        {
+          "title": "10. AI Output and accuracy",
+          "p": "Pathew, powered by an API, produces CVs, cover letters, proposals, and grant applications from the information you give it. AI Output can be wrong, incomplete, or out of date. We provide it for general information only; it is not professional career, legal, or grant-writing advice. Before you send any AI Output to an employer, funder, or other third party, the responsibility for checking that it is accurate and suitable rests with you."
+        },
+        {
+          "title": "11. Pricing, credits, renewals & refunds",
+          "p": "All prices include VAT unless otherwise stated. The Platform runs on credits: when you subscribe, your account is allocated a set number of credits, which you spend each time you generate content such as a CV, cover letter, proposal, or grant application.\nYour subscription, and the credits that come with it, does not renew automatically at the price then in effect. Users are to top up their credit when it’s exhausted.\nWhen you purchase credits, you expressly request immediate access to the services associated with those credits. If you are a consumer in the UK or another jurisdiction that provides a statutory cooling-off period, you acknowledge that once credits have been added to your account and access to the services has begun, your right to cancel may be reduced or lost to the extent permitted by applicable law.\nCredits are generally non-refundable once they have been used. Unused credits may be refunded only where required by law or where we determine, at our discretion, that exceptional circumstances apply, such as a technical fault that prevented the services from being provided.\nWe reserve the right to suspend or terminate access to the Platform where payment is reversed, disputed, fraudulent, or otherwise remains unpaid.\nAny refund approved by us will be returned to the original payment method where possible or otherwise stated and agreed by the customer and us.\n\nTalk to us first. Reach out to support and give us a fair chance to put things right before asking for your money back.\nSomething's broken. If a genuine, repeatable fault stops you from using your credits as intended, we may refund you. Sharing the details that let us see the problem for ourselves screenshots, error text, the steps that triggered it helps us act on it.\nBought by mistake. If you tell us within 30 minutes of being charged that a purchase was accidental, and you have not spent any meaningful number of credits in that window, we may refund it.\nOn renewal. We generally do not refund a subscription once it has renewed, unless the law requires it or one of the fault situations above applies."
+        },
+        {
+          "title": "12. Communications & marketing",
+          "p": "We may send you service-related and transactional messages, such as account notices and billing confirmations, without separate consent, since these are part of providing the Services. Any marketing communications, however, only go to people who have opted in. You can unsubscribe from marketing whenever you like, using the link in any marketing email or your account settings."
+        },
+        {
+          "title": "13. Other platforms we connect to",
+          "p": "The Services may link to third-party platforms such as job boards, grant portals, and application systems. We do not control their content, availability, or practices, so using them is at your own risk and subject to their own terms."
+        },
+        {
+          "title": "14. Security & beta features",
+          "p": "We put technical and organisational measures in place, including access controls and encryption, to protect the Services, and we keep reviewing and updating them. From time to time we may also offer beta or experimental features on an as-is basis, and these may change or be withdrawn at any time."
+        },
+        {
+          "title": "15. No guarantees of outcome",
+          "p": "We provide software tools to help you prepare applications. We are not an employment agency, a recruitment business, or a grant-making body, and we do not guarantee interviews, offers, funding, or any particular result."
+        },
+        {
+          "title": "16. Warranties; “as is”",
+          "p": "We offer the Services in the state they are in and as they happen to be available at any given moment. So far as the law allows, we make no promises about them whether spelled out, implied, or arising by statute including any assurance that they are fit for a particular purpose, free of errors, or suited to what you have in mind. You take them as you find them."
+        },
+        {
+          "title": "17. Limitation of liability",
+          "p": "Some kinds of loss sit outside what we will cover: knock-on or indirect losses, and things like lost profits, lost data, or business you miss out on, including anything traceable to an error in AI Output. This holds whether a claim is framed as breach of contract, negligence, or anything else.\nNone of this touches the things the law says we cannot sign away, such as liability for death or personal injury resulting from negligence."
+        },
+        {
+          "title": "18. Indemnity",
+          "p": "You agree to defend us and cover our losses and costs (including reasonable legal fees) where they arise from: your use of the Services; your User Content or any AI Output you choose to rely on or submit; your breach of these Terms or of the law; or any misrepresentation in an application you submit."
+        },
+        {
+          "title": "19. Events beyond our control",
+          "p": "Neither of us is responsible for delays or failures caused by things outside our reasonable control, such as outages, cyberattacks, government action, or changes made by third-party platforms."
+        },
+        {
+          "title": "20. Suspension & termination",
+          "p": "We may suspend or end your access at any time for breach of these Terms, risk, or non-payment, and you may delete your account whenever you wish. Any provisions that are meant to outlast the agreement including Sections 8 to 10 and 16 to 24 will continue to apply."
+        },
+        {
+          "title": "21. Changes to the Services",
+          "p": "We may change, pause, or withdraw any part of the Services. If we significantly cut back the core functionality of a Paid Service, we will give you at least 30 days' notice and offer a pro-rata refund of prepaid fees if you cancel before the change takes effect."
+        },
+        {
+          "title": "22. Transferring these Terms",
+          "p": "We may pass these Terms on to an affiliate or a successor. You may not transfer them to anyone else without our written permission."
+        },
+        {
+          "title": "23. Governing law & jurisdiction",
+          "p": "English law governs these Terms. The courts of England and Wales have exclusive jurisdiction, subject to any mandatory consumer rights that let you bring proceedings in your local courts."
+        },
+        {
+          "title": "24. The agreement as a whole",
+          "p": "These Terms and our Privacy Policy make up the entire agreement between us. If any part of them turns out to be unenforceable, the rest stays in force. Headings are there for convenience and do not affect how the Terms are read."
+        },
+        {
+          "title": "25. Notices & contact",
+          "p": "We may send notices to the email address linked to your account. If you have questions about these Terms, contact us at privacy@extraordinarywomanblog.com."
         }
       ]
     }
@@ -1095,5 +1215,11 @@
     "filter": "Filter notifications...",
     "noNotifications": "No notifications found",
     "noNotificationsDesc": "We'll notify you when something important happens."
+  },
+  "cookieBanner": {
+    "text": "We use cookies to improve your experience and analyze platform usage. By clicking \"Accept\", you agree to our use of cookies as described in our Privacy Policy.",
+    "accept": "Accept",
+    "deny": "Decline",
+    "privacyPolicy": "Privacy Policy"
   }
 }

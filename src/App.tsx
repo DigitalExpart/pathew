@@ -28,6 +28,7 @@ import { ContactPage } from './pages/Support/ContactPage';
 import { HowItWorksPage } from './pages/Support/HowItWorksPage';
 import { NotificationsPage } from './pages/Notifications/NotificationsPage';
 import { PreparationPage } from './pages/Pathway/PreparationPage';
+import { CookieBanner } from './components/shared/CookieBanner';
 
 // Admin Pages
 import { AdminLogin } from './pages/Admin/AdminLogin';
@@ -116,6 +117,7 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
             <AssistantPanel />
+            <CookieBanner />
         </Router>
         </AssistantProvider>
         </AdminProvider>
