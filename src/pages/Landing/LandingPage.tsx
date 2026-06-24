@@ -653,9 +653,9 @@ export const LandingPage: React.FC = () => {
               exit={{ scale: 0.9, y: 20 }}
               style={{
                 position: 'relative',
-                width: '100%',
-                maxWidth: '900px',
-                aspectRatio: '16/9',
+                height: '90vh',
+                maxWidth: '90vw',
+                aspectRatio: '9/16',
                 backgroundColor: '#000',
                 borderRadius: '16px',
                 overflow: 'hidden',
