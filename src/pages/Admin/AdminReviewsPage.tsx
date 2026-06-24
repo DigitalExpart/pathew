@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { Edit3, Trash2, Plus, Star, Upload, Camera, Loader2 } from 'lucide-react';
+import { Edit3, Trash2, Plus, Star, Upload, Camera, Loader2, EyeOff, Eye } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 
 export const AdminReviewsPage: React.FC = () => {
@@ -16,7 +16,8 @@ export const AdminReviewsPage: React.FC = () => {
     location_code: '',
     rating: 5,
     content: '',
-    review_date: new Date().toISOString().split('T')[0]
+    review_date: new Date().toISOString().split('T')[0],
+    published: true
   });
 
   const [uploading, setUploading] = useState(false);
@@ -64,6 +65,20 @@ export const AdminReviewsPage: React.FC = () => {
     fetchReviews();
   };
 
+  const handleTogglePublish = async (id: string, currentStatus: boolean) => {
+    try {
+      const { error } = await supabase
+        .from('reviews')
+        .update({ published: !currentStatus })
+        .eq('id', id);
+      if (error) throw error;
+      fetchReviews();
+    } catch (error) {
+      console.error('Error toggling publish status:', error);
+      alert('Failed to update publish status');
+    }
+  };
+
   const resetForm = () => {
     setFormData({
       user_name: '',
@@ -71,7 +86,8 @@ export const AdminReviewsPage: React.FC = () => {
       location_code: '',
       rating: 5,
       content: '',
-      review_date: new Date().toISOString().split('T')[0]
+      review_date: new Date().toISOString().split('T')[0],
+      published: true
     });
   };
 
@@ -83,7 +99,8 @@ export const AdminReviewsPage: React.FC = () => {
       location_code: review.location_code || '',
       rating: review.rating,
       content: review.content,
-      review_date: review.review_date
+      review_date: review.review_date,
+      published: review.published ?? true
     });
     setIsModalOpen(true);
   };
@@ -118,10 +135,10 @@ export const AdminReviewsPage: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: '1200px' }}>
+    <div style={{ width: '100%', maxWidth: '1200px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '4px' }}>Trustpilot Reviews</h1>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '4px' }}>Verified Customers Review</h1>
           <p style={{ color: '#64748b', fontSize: '0.875rem' }}>Manage social proof displayed on the homepage</p>
         </div>
         <Button onClick={() => { resetForm(); setEditingReview(null); setIsModalOpen(true); }} style={{ gap: '8px' }}>
@@ -134,16 +151,16 @@ export const AdminReviewsPage: React.FC = () => {
           <table style={{ width: '100%', borderCollapse: 'collapse' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                {['User', 'Rating', 'Content', 'Date', 'Actions'].map(h => (
+                {['User', 'Rating', 'Content', 'Date', 'Status', 'Actions'].map(h => (
                   <th key={h} style={thStyle}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={5} style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>Loading reviews...</td></tr>
+                <tr><td colSpan={6} style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>Loading reviews...</td></tr>
               ) : reviews.length === 0 ? (
-                <tr><td colSpan={5} style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>No reviews found. Add your first one!</td></tr>
+                <tr><td colSpan={6} style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>No reviews found. Add your first one!</td></tr>
               ) : reviews.map(r => (
                 <tr key={r.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                   <td style={tdStyle}>
@@ -175,9 +192,19 @@ export const AdminReviewsPage: React.FC = () => {
                     <span style={{ color: '#64748b', fontSize: '0.8125rem' }}>{new Date(r.review_date).toLocaleDateString()}</span>
                   </td>
                   <td style={tdStyle}>
+                    {r.published !== false ? (
+                      <span style={{ backgroundColor: 'rgba(34,197,94,0.1)', color: '#22c55e', padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>Published</span>
+                    ) : (
+                      <span style={{ backgroundColor: 'rgba(239,68,68,0.1)', color: '#ef4444', padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', fontWeight: 600 }}>Unpublished</span>
+                    )}
+                  </td>
+                  <td style={tdStyle}>
                     <div style={{ display: 'flex', gap: '8px' }}>
-                      <button onClick={() => openEdit(r)} style={actionBtnStyle}><Edit3 size={14} /></button>
-                      <button onClick={() => handleDelete(r.id)} style={{ ...actionBtnStyle, color: '#ef4444' }}><Trash2 size={14} /></button>
+                      <button onClick={() => handleTogglePublish(r.id, r.published !== false)} style={actionBtnStyle} title={r.published !== false ? "Unpublish Review" : "Publish Review"}>
+                        {r.published !== false ? <EyeOff size={14} /> : <Eye size={14} />}
+                      </button>
+                      <button onClick={() => openEdit(r)} style={actionBtnStyle} title="Edit Review"><Edit3 size={14} /></button>
+                      <button onClick={() => handleDelete(r.id)} style={{ ...actionBtnStyle, color: '#ef4444' }} title="Delete Review"><Trash2 size={14} /></button>
                     </div>
                   </td>
                 </tr>

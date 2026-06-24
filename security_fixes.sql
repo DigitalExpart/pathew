@@ -65,3 +65,6 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 
 -- Verify: List all tables with RLS status
 -- SELECT schemaname, tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public';
+
+-- FEATURE: Add published column to reviews for unpublish functionality
+ALTER TABLE public.reviews ADD COLUMN IF NOT EXISTS published BOOLEAN DEFAULT true;

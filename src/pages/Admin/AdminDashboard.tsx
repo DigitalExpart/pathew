@@ -43,7 +43,7 @@ export const AdminDashboard: React.FC = () => {
   ];
 
   return (
-    <div style={{ maxWidth: '1200px' }}>
+    <div style={{ width: '100%', maxWidth: '1200px' }}>
       <div style={{ marginBottom: '32px' }}>
         <h1 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '4px' }}>Dashboard Overview</h1>
         <p style={{ color: '#64748b', fontSize: '0.875rem' }}>Platform analytics and management</p>
@@ -68,7 +68,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           {/* Plan Distribution + Recent Users */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
             <Card style={{ padding: '24px', backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.06)' }}>
               <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '20px' }}>Plan Distribution</h3>
               {[

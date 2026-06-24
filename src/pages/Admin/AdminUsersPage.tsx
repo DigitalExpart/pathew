@@ -74,7 +74,7 @@ export const AdminUsersPage: React.FC = () => {
   };
 
   return (
-    <div style={{ maxWidth: '1200px' }}>
+    <div style={{ width: '100%', maxWidth: '1200px' }}>
       <div style={{ marginBottom: '32px' }}>
         <h1 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '4px' }}>User Management</h1>
         <p style={{ color: '#64748b', fontSize: '0.875rem' }}>{users.length} registered users</p>

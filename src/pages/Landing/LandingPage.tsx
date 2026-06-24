@@ -519,7 +519,7 @@ export const LandingPage: React.FC = () => {
         >
           <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
              <Star size={24} fill="#00b67a" color="#00b67a" />
-             <span style={{ fontWeight: 800, fontSize: '1.25rem', color: '#00b67a' }}>Trustpilot</span>
+             <span style={{ fontWeight: 800, fontSize: '1.25rem', color: '#00b67a' }}>Verified Customers Review</span>
           </div>
           <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>{t('landing.trustpilot')}</h2>
         </motion.div>
@@ -667,7 +667,7 @@ const ReviewsCarousel = () => {
 
   React.useEffect(() => {
     const fetchReviews = async () => {
-      const { data } = await supabase.from('reviews').select('*').order('review_date', { ascending: false });
+      const { data } = await supabase.from('reviews').select('*').eq('published', true).order('review_date', { ascending: false });
       if (data && data.length > 0) {
         setReviews(data);
       } else {
