@@ -6,13 +6,15 @@ import { supabase } from '../../lib/supabase';
 export const AdminAIUsagePage: React.FC = () => {
   const [stats, setStats] = useState({ sessions: 0, messages: 0, tokensIn: 0, tokensOut: 0 });
   const [topUsers, setTopUsers] = useState<any[]>([]);
+  const [recentActivities, setRecentActivities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetch = async () => {
-      const [sessRes, msgRes] = await Promise.all([
+      const [sessRes, msgRes, msgRes2] = await Promise.all([
         supabase.from('assistant_sessions').select('id', { count: 'exact', head: true }),
         supabase.from('assistant_messages').select('tokens_in, tokens_out, user_id'),
+        supabase.from('assistant_messages').select('id, created_at, role, content, user_id').order('created_at', { ascending: false }).limit(50),
       ]);
 
       const messages = msgRes.data || [];
@@ -25,13 +27,20 @@ export const AdminAIUsagePage: React.FC = () => {
       const sorted = Object.entries(userCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
 
       // Fetch names for top users
-      const userIds = sorted.map(s => s[0]);
+      // Fetch names for top users and recent activities
+      const userIds = Array.from(new Set([...sorted.map(s => s[0]), ...(msgRes2.data || []).map(m => m.user_id)]));
       const { data: profiles } = await supabase.from('profiles').select('id, full_name').in('id', userIds);
       const nameMap: Record<string, string> = {};
       (profiles || []).forEach(p => { nameMap[p.id] = p.full_name || 'Unnamed'; });
 
       setStats({ sessions: sessRes.count || 0, messages: messages.length, tokensIn, tokensOut });
       setTopUsers(sorted.map(([id, count]) => ({ id, name: nameMap[id] || id.slice(0, 8), count })));
+      
+      const activities = (msgRes2.data || []).map(m => ({
+        ...m,
+        user_name: nameMap[m.user_id] || m.user_id?.slice(0, 8) || 'System',
+      }));
+      setRecentActivities(activities);
       setLoading(false);
     };
     fetch();
@@ -83,6 +92,54 @@ export const AdminAIUsagePage: React.FC = () => {
                 </div>
               ))}
             </div>
+          </Card>
+
+          {/* Recent Activities */}
+          <Card style={{ padding: '24px', backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.06)', marginTop: '32px', overflowX: 'auto' }}>
+            <h3 style={{ fontWeight: 700, marginBottom: '20px' }}>Recent AI Activity</h3>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '800px' }}>
+              <thead>
+                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.1)', color: '#64748b', fontSize: '0.75rem', textTransform: 'uppercase' }}>
+                  <th style={{ padding: '12px 16px', fontWeight: 600 }}>Time</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 600 }}>User</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 600 }}>Role</th>
+                  <th style={{ padding: '12px 16px', fontWeight: 600 }}>Message Snippet</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentActivities.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} style={{ color: '#475569', textAlign: 'center', padding: '20px' }}>No recent activity found.</td>
+                  </tr>
+                ) : recentActivities.map((act) => (
+                  <tr key={act.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                    <td style={{ padding: '16px', fontSize: '0.8125rem', color: '#94a3b8', whiteSpace: 'nowrap' }}>
+                      {new Date(act.created_at).toLocaleString()}
+                    </td>
+                    <td style={{ padding: '16px', fontSize: '0.875rem', fontWeight: 600 }}>
+                      {act.user_name}
+                    </td>
+                    <td style={{ padding: '16px' }}>
+                      <span style={{ 
+                        display: 'inline-block', 
+                        padding: '4px 8px', 
+                        borderRadius: '4px', 
+                        fontSize: '0.6875rem', 
+                        fontWeight: 700, 
+                        textTransform: 'uppercase',
+                        backgroundColor: act.role === 'user' ? 'rgba(59, 130, 246, 0.1)' : 'rgba(34, 197, 94, 0.1)',
+                        color: act.role === 'user' ? '#3b82f6' : '#22c55e'
+                      }}>
+                        {act.role}
+                      </span>
+                    </td>
+                    <td style={{ padding: '16px', fontSize: '0.875rem', color: '#cbd5e1', maxWidth: '400px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {act.content}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </Card>
         </>
       )}
