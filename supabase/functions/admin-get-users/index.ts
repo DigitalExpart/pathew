@@ -109,7 +109,7 @@ Deno.serve(async (req: Request) => {
     }
 
     if (action === 'get_all_transactions') {
-      const { data, error } = await supabaseAdmin
+      const { data: txData, error } = await supabaseAdmin
         .from('transactions')
         .select('*')
         .order('created_at', { ascending: false })
@@ -117,7 +117,22 @@ Deno.serve(async (req: Request) => {
 
       if (error) throw error
 
-      return new Response(JSON.stringify({ transactions: data }), {
+      const userIds = [...new Set(txData?.map(tx => tx.user_id) || [])]
+      
+      const { data: profiles } = await supabaseAdmin
+        .from('profiles')
+        .select('id, full_name')
+        .in('id', userIds)
+
+      const transactions = txData?.map(tx => {
+        const profile = profiles?.find(p => p.id === tx.user_id)
+        return {
+          ...tx,
+          user_name: profile?.full_name || 'Unknown User'
+        }
+      }) || []
+
+      return new Response(JSON.stringify({ transactions }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,
       })

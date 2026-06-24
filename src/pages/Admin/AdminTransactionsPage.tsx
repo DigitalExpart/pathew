@@ -36,7 +36,7 @@ export const AdminTransactionsPage: React.FC = () => {
         <table style={{ width: '100%', borderCollapse: 'collapse' }}>
           <thead>
             <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-              {['Type', 'Description', 'Amount', 'User ID', 'Date'].map(h => (
+              {['Type', 'Description', 'Amount', 'User', 'Date'].map(h => (
                 <th key={h} style={{ padding: '14px 20px', textAlign: 'left', fontSize: '0.6875rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
               ))}
             </tr>
@@ -58,7 +58,7 @@ export const AdminTransactionsPage: React.FC = () => {
                 </td>
                 <td style={{ padding: '14px 20px', fontSize: '0.8125rem' }}>{tx.description || '—'}</td>
                 <td style={{ padding: '14px 20px', fontWeight: 700, fontSize: '0.8125rem', color: tx.type === 'credit' ? '#22c55e' : '#e2e8f0' }}>{tx.type === 'credit' ? '+' : ''}{tx.amount}</td>
-                <td style={{ padding: '14px 20px', fontSize: '0.75rem', color: '#64748b', fontFamily: 'monospace' }}>{tx.user_id?.slice(0, 8)}...</td>
+                <td style={{ padding: '14px 20px', fontWeight: 600, fontSize: '0.8125rem', color: '#e2e8f0' }}>{tx.user_name}</td>
                 <td style={{ padding: '14px 20px', fontSize: '0.8125rem', color: '#64748b' }}>{new Date(tx.created_at).toLocaleString()}</td>
               </tr>
             ))}
