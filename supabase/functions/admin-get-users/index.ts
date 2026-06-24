@@ -95,7 +95,7 @@ Deno.serve(async (req: Request) => {
       const [sessRes, msgRes, recentRes] = await Promise.all([
         supabaseAdmin.from('assistant_sessions').select('id', { count: 'exact', head: true }),
         supabaseAdmin.from('assistant_messages').select('tokens_in, tokens_out, user_id'),
-        supabaseAdmin.from('assistant_messages').select('id, created_at, role, content, user_id').order('created_at', { ascending: false }).limit(50)
+        supabaseAdmin.from('assistant_messages').select('id, created_at, role, content, user_id').order('created_at', { ascending: false }).limit(500)
       ])
 
       return new Response(JSON.stringify({ 

@@ -6,6 +6,8 @@ import { supabase } from '../../lib/supabase';
 export const AdminTransactionsPage: React.FC = () => {
   const [transactions, setTransactions] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(50);
 
   useEffect(() => {
     const fetch = async () => {
@@ -46,7 +48,7 @@ export const AdminTransactionsPage: React.FC = () => {
               <tr><td colSpan={5} style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>Loading transactions...</td></tr>
             ) : transactions.length === 0 ? (
               <tr><td colSpan={5} style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>No transactions recorded yet.</td></tr>
-            ) : transactions.map(tx => (
+            ) : transactions.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map(tx => (
               <tr key={tx.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                 <td style={{ padding: '14px 20px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -64,6 +66,40 @@ export const AdminTransactionsPage: React.FC = () => {
             ))}
           </tbody>
         </table>
+        {transactions.length > 0 && (
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px 20px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ fontSize: '0.8125rem', color: '#64748b' }}>Show</span>
+              <select 
+                value={itemsPerPage} 
+                onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+                style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#e2e8f0', borderRadius: '6px', padding: '4px 8px', fontSize: '0.8125rem', outline: 'none' }}
+              >
+                {[25, 50, 100, 150, 200].map(size => <option key={size} value={size}>{size}</option>)}
+              </select>
+              <span style={{ fontSize: '0.8125rem', color: '#64748b' }}>entries</span>
+            </div>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button 
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                style={{ padding: '6px 12px', fontSize: '0.8125rem', backgroundColor: currentPage === 1 ? 'transparent' : 'rgba(255,255,255,0.05)', color: currentPage === 1 ? '#475569' : '#e2e8f0', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
+              >
+                Previous
+              </button>
+              <span style={{ fontSize: '0.8125rem', color: '#64748b', display: 'flex', alignItems: 'center' }}>
+                Page {currentPage} of {Math.ceil(transactions.length / itemsPerPage)}
+              </span>
+              <button 
+                disabled={currentPage === Math.ceil(transactions.length / itemsPerPage)}
+                onClick={() => setCurrentPage(prev => Math.min(Math.ceil(transactions.length / itemsPerPage), prev + 1))}
+                style={{ padding: '6px 12px', fontSize: '0.8125rem', backgroundColor: currentPage === Math.ceil(transactions.length / itemsPerPage) ? 'transparent' : 'rgba(255,255,255,0.05)', color: currentPage === Math.ceil(transactions.length / itemsPerPage) ? '#475569' : '#e2e8f0', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', cursor: currentPage === Math.ceil(transactions.length / itemsPerPage) ? 'not-allowed' : 'pointer' }}
+              >
+                Next
+              </button>
+            </div>
+          </div>
+        )}
       </Card>
     </div>
   );

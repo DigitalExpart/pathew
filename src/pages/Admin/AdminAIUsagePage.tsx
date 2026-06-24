@@ -8,6 +8,8 @@ export const AdminAIUsagePage: React.FC = () => {
   const [topUsers, setTopUsers] = useState<any[]>([]);
   const [recentActivities, setRecentActivities] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(50);
 
   useEffect(() => {
     const fetchUsage = async () => {
@@ -119,7 +121,7 @@ export const AdminAIUsagePage: React.FC = () => {
                   <tr>
                     <td colSpan={4} style={{ color: '#475569', textAlign: 'center', padding: '20px' }}>No recent activity found.</td>
                   </tr>
-                ) : recentActivities.map((act) => (
+                ) : recentActivities.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage).map((act) => (
                   <tr key={act.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
                     <td style={{ padding: '16px', fontSize: '0.8125rem', color: '#94a3b8', whiteSpace: 'nowrap' }}>
                       {new Date(act.created_at).toLocaleString()}
@@ -148,6 +150,40 @@ export const AdminAIUsagePage: React.FC = () => {
                 ))}
               </tbody>
             </table>
+            {recentActivities.length > 0 && (
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px', padding: '10px 0', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ fontSize: '0.8125rem', color: '#64748b' }}>Show</span>
+                  <select 
+                    value={itemsPerPage} 
+                    onChange={(e) => { setItemsPerPage(Number(e.target.value)); setCurrentPage(1); }}
+                    style={{ backgroundColor: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', color: '#e2e8f0', borderRadius: '6px', padding: '4px 8px', fontSize: '0.8125rem', outline: 'none' }}
+                  >
+                    {[25, 50, 100, 150, 200].map(size => <option key={size} value={size}>{size}</option>)}
+                  </select>
+                  <span style={{ fontSize: '0.8125rem', color: '#64748b' }}>entries</span>
+                </div>
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button 
+                    disabled={currentPage === 1}
+                    onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+                    style={{ padding: '6px 12px', fontSize: '0.8125rem', backgroundColor: currentPage === 1 ? 'transparent' : 'rgba(255,255,255,0.05)', color: currentPage === 1 ? '#475569' : '#e2e8f0', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', cursor: currentPage === 1 ? 'not-allowed' : 'pointer' }}
+                  >
+                    Previous
+                  </button>
+                  <span style={{ fontSize: '0.8125rem', color: '#64748b', display: 'flex', alignItems: 'center' }}>
+                    Page {currentPage} of {Math.ceil(recentActivities.length / itemsPerPage)}
+                  </span>
+                  <button 
+                    disabled={currentPage === Math.ceil(recentActivities.length / itemsPerPage)}
+                    onClick={() => setCurrentPage(prev => Math.min(Math.ceil(recentActivities.length / itemsPerPage), prev + 1))}
+                    style={{ padding: '6px 12px', fontSize: '0.8125rem', backgroundColor: currentPage === Math.ceil(recentActivities.length / itemsPerPage) ? 'transparent' : 'rgba(255,255,255,0.05)', color: currentPage === Math.ceil(recentActivities.length / itemsPerPage) ? '#475569' : '#e2e8f0', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '6px', cursor: currentPage === Math.ceil(recentActivities.length / itemsPerPage) ? 'not-allowed' : 'pointer' }}
+                  >
+                    Next
+                  </button>
+                </div>
+              </div>
+            )}
           </Card>
         </>
       )}
