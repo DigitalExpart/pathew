@@ -11,10 +11,10 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 }
 
-const PLAN_CONFIG = {
-  'Starter':    { credits: 5 },
-  'Growth':     { credits: 15 },
-  'Power User': { credits: 40 },
+const PLAN_CONFIG: Record<string, { credits: number }> = {
+  'Starter':    { credits: 25 },
+  'Growth':     { credits: 60 },
+  'Power User': { credits: 120 },
 }
 
 Deno.serve(async (req) => {

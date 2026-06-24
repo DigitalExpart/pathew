@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { Mail, Lock, ArrowLeft } from 'lucide-react';
+import { Mail, Lock, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.png';
 import { supabase } from '../../lib/supabase';
@@ -14,6 +14,7 @@ export const LoginPage: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
+  const [showPassword, setShowPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -89,16 +90,23 @@ export const LoginPage: React.FC = () => {
 
             <div style={inputGroupStyle}>
               <label style={labelStyle}>{t('auth.password')}</label>
-              <div style={inputWrapperStyle}>
+              <div style={{...inputWrapperStyle, paddingRight: '12px'}}>
                 <Lock size={18} color="var(--text-muted)" />
                 <input 
-                  type="password" 
+                  type={showPassword ? "text" : "password"} 
                   placeholder="••••••••" 
                   style={inputStyle} 
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required 
                 />
+                <button 
+                  type="button" 
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                >
+                  {showPassword ? <EyeOff size={18} color="var(--text-muted)" /> : <Eye size={18} color="var(--text-muted)" />}
+                </button>
               </div>
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '2px' }}>
                 <Link to="/forgot-password" style={forgotLinkStyle}>{t('auth.forgotPassword')}</Link>
@@ -132,6 +140,8 @@ export const SignUpPage: React.FC = () => {
     termsAccepted: false,
     privacyAccepted: false,
   });
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [authError, setAuthError] = React.useState<string | null>(null);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
@@ -271,28 +281,46 @@ export const SignUpPage: React.FC = () => {
 
             <div style={inputGroupStyle}>
               <label style={labelStyle}>{t('auth.password')}</label>
-              <input 
-                type="password" 
-                placeholder={t('auth.placeholders.password')} 
-                style={baseInputStyle} 
-                value={formData.password}
-                onChange={(e) => setFormData({...formData, password: e.target.value})}
-                required 
-              />
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  placeholder={t('auth.placeholders.password')} 
+                  style={{...baseInputStyle, width: '100%', paddingRight: '40px'}} 
+                  value={formData.password}
+                  onChange={(e) => setFormData({...formData, password: e.target.value})}
+                  required 
+                />
+                <button 
+                  type="button" 
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ position: 'absolute', right: '12px', background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                >
+                  {showPassword ? <EyeOff size={18} color="var(--text-muted)" /> : <Eye size={18} color="var(--text-muted)" />}
+                </button>
+              </div>
               <p style={helperTextStyle}>{t('auth.passwordHint')}</p>
               {errors.password && <p style={errorTextStyle}>{errors.password}</p>}
             </div>
 
             <div style={inputGroupStyle}>
               <label style={labelStyle}>{t('auth.confirmPassword')}</label>
-              <input 
-                type="password" 
-                placeholder={t('auth.placeholders.repeatPassword')} 
-                style={baseInputStyle} 
-                value={formData.confirmPassword}
-                onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
-                required 
-              />
+              <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                <input 
+                  type={showConfirmPassword ? "text" : "password"} 
+                  placeholder={t('auth.placeholders.repeatPassword')} 
+                  style={{...baseInputStyle, width: '100%', paddingRight: '40px'}} 
+                  value={formData.confirmPassword}
+                  onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
+                  required 
+                />
+                <button 
+                  type="button" 
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  style={{ position: 'absolute', right: '12px', background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                >
+                  {showConfirmPassword ? <EyeOff size={18} color="var(--text-muted)" /> : <Eye size={18} color="var(--text-muted)" />}
+                </button>
+              </div>
               {errors.confirmPassword && <p style={errorTextStyle}>{errors.confirmPassword}</p>}
             </div>
 
@@ -602,11 +630,18 @@ export const ForgotPasswordPage: React.FC = () => {
 export const ResetPasswordPage: React.FC = () => {
   const navigate = useNavigate();
   const [password, setPassword] = React.useState('');
+  const [confirmPassword, setConfirmPassword] = React.useState('');
+  const [showPassword, setShowPassword] = React.useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
   const handleUpdatePassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      setError("Passwords do not match.");
+      return;
+    }
     setLoading(true);
     setError(null);
 
@@ -639,10 +674,10 @@ export const ResetPasswordPage: React.FC = () => {
           <form onSubmit={handleUpdatePassword} style={formStyle}>
             <div style={inputGroupStyle}>
               <label style={labelStyle}>New Password</label>
-              <div style={inputWrapperStyle}>
+              <div style={{...inputWrapperStyle, paddingRight: '12px'}}>
                 <Lock size={18} color="var(--text-muted)" />
                 <input 
-                  type="password" 
+                  type={showPassword ? "text" : "password"} 
                   placeholder="••••••••" 
                   style={inputStyle} 
                   value={password}
@@ -650,6 +685,36 @@ export const ResetPasswordPage: React.FC = () => {
                   required 
                   minLength={8}
                 />
+                <button 
+                  type="button" 
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                >
+                  {showPassword ? <EyeOff size={18} color="var(--text-muted)" /> : <Eye size={18} color="var(--text-muted)" />}
+                </button>
+              </div>
+            </div>
+
+            <div style={inputGroupStyle}>
+              <label style={labelStyle}>Confirm New Password</label>
+              <div style={{...inputWrapperStyle, paddingRight: '12px'}}>
+                <Lock size={18} color="var(--text-muted)" />
+                <input 
+                  type={showConfirmPassword ? "text" : "password"} 
+                  placeholder="••••••••" 
+                  style={inputStyle} 
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  required 
+                  minLength={8}
+                />
+                <button 
+                  type="button" 
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                >
+                  {showConfirmPassword ? <EyeOff size={18} color="var(--text-muted)" /> : <Eye size={18} color="var(--text-muted)" />}
+                </button>
               </div>
             </div>
 
