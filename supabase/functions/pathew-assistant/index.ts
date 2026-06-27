@@ -815,22 +815,27 @@ ${taskPrompt}
     const modelsToTry = [
       preferredModel, "claude-3-5-sonnet-20241022", "claude-3-5-sonnet-20240620",
       "claude-3-opus-20240229", "claude-3-haiku-20240307"
-    ]
+    ].filter(Boolean)
     const uniqueModels = [...new Set(modelsToTry)]
 
+    let lastErrorBody = "";
     for (const model of uniqueModels) {
       console.log(`[TRY] Model: ${model}`)
-      const isSonnet = model.includes('sonnet');
+      const isSonnet = model ? model.includes('sonnet') : false;
       const maxTokens = isSonnet ? 8000 : 4096;
       try {
+        const headers: Record<string, string> = {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+        };
+        if (isSonnet) {
+          headers['anthropic-beta'] = 'max-tokens-3-5-sonnet-2024-07-15';
+        }
+
         const claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': apiKey,
-            'anthropic-version': '2023-06-01',
-            'anthropic-beta': 'max-tokens-3-5-sonnet-2024-07-15',
-          },
+          headers,
           body: JSON.stringify({
             model, max_tokens: maxTokens, system: systemPrompt,
             stream: true,
@@ -976,6 +981,7 @@ ${taskPrompt}
 
         const errBody = await claudeResponse.text()
         console.log(`[FAIL] ${model}: ${claudeResponse.status} - ${errBody}`)
+        lastErrorBody += `[${model}]: ${claudeResponse.status} - ${errBody} | `
 
       } catch (fetchErr) {
         console.error("Fetch error:", fetchErr)
@@ -988,7 +994,7 @@ ${taskPrompt}
 
     console.error('[FAILED] No models available')
     return new Response(JSON.stringify({
-      draft: "AI service is temporarily unavailable. No credits were deducted.",
+      draft: `AI service is temporarily unavailable. No credits were deducted. Debug: ${lastErrorBody}`,
       matchSummary: { strongMatches: [], gaps: [], priorityPoints: [] },
       missingFields: [],
       editingSuggestions: [], wordCountEstimate: 0, confidence: 'low', sessionId: sid
