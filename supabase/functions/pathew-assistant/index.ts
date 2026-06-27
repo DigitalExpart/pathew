@@ -813,25 +813,22 @@ ${taskPrompt}
 `
 
     const modelsToTry = [
-      preferredModel, "claude-3-5-sonnet-20241022", "claude-3-5-sonnet-20240620",
-      "claude-3-opus-20240229", "claude-3-haiku-20240307"
+      preferredModel, "claude-fable-5", "claude-opus-4-8",
+      "claude-sonnet-4-6", "claude-haiku-4-5"
     ].filter(Boolean)
     const uniqueModels = [...new Set(modelsToTry)]
 
     let lastErrorBody = "";
     for (const model of uniqueModels) {
       console.log(`[TRY] Model: ${model}`)
-      const isSonnet = model ? model.includes('sonnet') : false;
-      const maxTokens = isSonnet ? 8000 : 4096;
+      const isHaiku = model ? model.includes('haiku') : false;
+      const maxTokens = isHaiku ? 4096 : 8000;
       try {
         const headers: Record<string, string> = {
           'Content-Type': 'application/json',
           'x-api-key': apiKey,
           'anthropic-version': '2023-06-01',
         };
-        if (isSonnet) {
-          headers['anthropic-beta'] = 'max-tokens-3-5-sonnet-2024-07-15';
-        }
 
         const claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
