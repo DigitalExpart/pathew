@@ -10,7 +10,6 @@ import {
   Sparkles,
   CreditCard,
   Globe,
-  ShieldCheck,
   Mail,
   Smartphone,
   Shield,
@@ -330,18 +329,7 @@ export const SettingsPage: React.FC = () => {
     gap: '12px'
   };
 
-  const securityBannerStyle: React.CSSProperties = {
-    display: 'flex',
-    flexDirection: isMobile ? 'column' : 'row',
-    alignItems: isMobile ? 'flex-start' : 'center',
-    gap: '16px',
-    padding: '20px',
-    backgroundColor: 'rgba(245, 158, 11, 0.05)',
-    border: '1px solid rgba(245, 158, 11, 0.2)',
-    borderRadius: 'var(--radius-lg)',
-    marginTop: '24px',
-    width: '100%'
-  };
+
 
   const planCardStyle: React.CSSProperties = {
     display: 'flex',
