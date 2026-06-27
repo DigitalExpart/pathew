@@ -13,7 +13,7 @@ export interface UseBuilderAiProps {
 }
 
 export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportunityId }: UseBuilderAiProps) => {
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
   
   // Builder configuration states
   const [stage, setStage] = useState<BuilderStage>('sources');
