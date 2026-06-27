@@ -516,16 +516,6 @@ OUTPUT:
 - No special styling characters
 - Section headers in ALL CAPS or **Bold**`;
 
-    let resolvedTone = tone;
-    if (!resolvedTone || resolvedTone === "N/A" || resolvedTone === "Select Tone") {
-      resolvedTone = profile?.assistant_settings?.tone || 'Professional (formal)';
-    }
-    
-    let resolvedLanguage = language;
-    if (!resolvedLanguage || resolvedLanguage === "N/A" || resolvedLanguage === "Select Language" || resolvedLanguage === "English") {
-      resolvedLanguage = profile?.assistant_settings?.language || 'English (UK)';
-    }
-
     const cvTypeBlock = cvTypeRules[cvType || "Work CV"] || cvTypeRules["Work CV"];
 
     let systemPrompt = '';
@@ -542,8 +532,8 @@ OUTPUT:
       systemPrompt = `You are Pathew Assistant, a premium AI assistant for the PATHEW platform.
 Your objective is to help the user navigate the platform, understand their profile, provide career advice, and strongly recommend matching opportunities from the database below based on their skills and background.
 
-${toneMap[resolvedTone] || toneMap['Professional (formal)']}
-${languageMap[resolvedLanguage] || languageMap['English (UK)']}
+${toneMap[tone || profile?.assistant_settings?.tone || 'Professional (formal)'] || toneMap['Professional (formal)']}
+${languageMap[language || 'English (UK)'] || languageMap['English (UK)']}
 
 Core Principles:
 - You will receive the user's profile as context. Match their skills and experience against the Available Opportunities Database.
@@ -647,9 +637,9 @@ ${getPageInstructions(pageCount || 3)}
     systemPrompt = `You are a premium career coach and grant proposal writer for the PATHEW platform (rebranded as Pathew Assistant).
 Your objective is to help the user prepare highly polished, custom, high-converting documents (CVs, Resumes, Cover Letters, or Grant/Fellowship Proposals).
 
-${toneMap[resolvedTone] || toneMap['Professional (formal)']}
+${toneMap[tone || profile?.assistant_settings?.tone || 'Professional (formal)'] || toneMap['Professional (formal)']}
 
-${languageMap[resolvedLanguage] || languageMap['English (UK)']}
+${languageMap[language || 'English (UK)'] || languageMap['English (UK)']}
 
 ${formattingRules}
 
@@ -783,7 +773,7 @@ Current Draft: ${currentDraft || '(No current draft)'}
 Instructions:
 1. Respond directly to the user's prompt or question: "${action}"
 2. Use the [USER BACKGROUND MATERIAL] and [OPPORTUNITY REQUIREMENTS] if they provide helpful context to answer the question.
-3. Provide a friendly, conversational, and concise response in the selected tone: ${resolvedTone} and the target language: ${resolvedLanguage}.
+3. Provide a friendly, conversational, and concise response in the selected tone: ${tone || 'Professional & Academic'} and the target language: ${language || 'English (UK)'}.
 4. Write your response directly inside the '<draft>...</draft>' tags. DO NOT output JSON for the draft.
 5. Provide any relevant metadata inside the '<metadata>' block.`
     } else if (action === "extract_context") {
@@ -801,7 +791,7 @@ Instructions:
 1. Revise and rewrite the [Current Draft] according to the following user rewrite instructions: "${instructions}".
 2. You must strictly apply the requested modification (for example, if asked to remove a contact field like LinkedIn, do not include it anywhere in the header or text of the updated draft).
 3. Do not invent any untruths. Maintain the overall structure of the ${documentType || 'CV'} unless requested otherwise.
-4. Keep the writing in the selected tone: ${resolvedTone} and the target language: ${resolvedLanguage}.
+4. Keep the writing in the selected tone: ${tone || 'Professional & Academic'} and the target language: ${language || 'English (UK)'}.
 5. Write the full updated document text directly inside the '<draft>...</draft>' tags. DO NOT output JSON for the draft.
 6. Provide specific "editingSuggestions" based on the rewrite inside the '<metadata>' block.`
     } else {
@@ -810,7 +800,7 @@ Instructions:
 1. Write a complete, high-quality, tailored draft for the document type: ${documentType || 'CV'}.
 2. Use all [USER BACKGROUND MATERIAL] (including all manual notes, achievements, and project notes) and incorporate the [USER ANSWERS TO GAPS / MISSING INFO] directly into the writing.
 3. Tailor the content to match the [OPPORTUNITY REQUIREMENTS], but DO NOT OVER-TAILOR. Keep it natural, authentic, and realistic. Do not force keywords where they don't belong (especially for grant proposals).
-4. Keep the writing in the selected tone: ${resolvedTone} and the target language: ${resolvedLanguage}.
+4. Keep the writing in the selected tone: ${tone || 'Professional & Academic'} and the target language: ${language || 'English (UK)'}.
 5. ${constraintsInstruction} Ensure the draft fits perfectly within these target limits. If the target page limit is >1 page, you MUST write extensively by elaborating on methodologies, background context, and detailed achievements to reach the required length. Do NOT summarize or stop early.
 6. Write the full text directly inside the '<draft>...</draft>' tags. DO NOT output JSON for the draft.
 7. Provide specific "editingSuggestions" for improving the document further inside the '<metadata>' block.`
@@ -823,30 +813,24 @@ ${taskPrompt}
 `
 
     const modelsToTry = [
-      "claude-3-5-sonnet-20241022", "claude-3-5-sonnet-20240620",
+      preferredModel, "claude-3-5-sonnet-20241022", "claude-3-5-sonnet-20240620",
       "claude-3-opus-20240229", "claude-3-haiku-20240307"
     ]
+    const uniqueModels = [...new Set(modelsToTry)]
 
-    let lastErrorBody = "";
-
-    for (const model of modelsToTry) {
+    for (const model of uniqueModels) {
       console.log(`[TRY] Model: ${model}`)
       const isSonnet = model.includes('sonnet');
       const maxTokens = isSonnet ? 8000 : 4096;
       try {
-        const headers: Record<string, string> = {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKey,
-          'anthropic-version': '2023-06-01',
-        };
-
-        if (isSonnet) {
-          headers['anthropic-beta'] = 'max-tokens-3-5-sonnet-2024-07-15';
-        }
-
         const claudeResponse = await fetch('https://api.anthropic.com/v1/messages', {
           method: 'POST',
-          headers,
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': apiKey,
+            'anthropic-version': '2023-06-01',
+            'anthropic-beta': 'max-tokens-3-5-sonnet-2024-07-15',
+          },
           body: JSON.stringify({
             model, max_tokens: maxTokens, system: systemPrompt,
             stream: true,
@@ -992,7 +976,6 @@ ${taskPrompt}
 
         const errBody = await claudeResponse.text()
         console.log(`[FAIL] ${model}: ${claudeResponse.status} - ${errBody}`)
-        lastErrorBody += `[${model}]: ${claudeResponse.status} - ${errBody} | `
 
       } catch (fetchErr) {
         console.error("Fetch error:", fetchErr)
@@ -1005,7 +988,7 @@ ${taskPrompt}
 
     console.error('[FAILED] No models available')
     return new Response(JSON.stringify({
-      draft: `AI service is temporarily unavailable. No credits were deducted. Debug: ${lastErrorBody}`,
+      draft: "AI service is temporarily unavailable. No credits were deducted.",
       matchSummary: { strongMatches: [], gaps: [], priorityPoints: [] },
       missingFields: [],
       editingSuggestions: [], wordCountEstimate: 0, confidence: 'low', sessionId: sid

@@ -124,12 +124,6 @@ Deno.serve(async (req) => {
 
     if (paymentMethodId) {
       paymentIntentParams.payment_method = paymentMethodId;
-      paymentIntentParams.confirm = true; // Attempt to confirm immediately if using saved method
-      paymentIntentParams.automatic_payment_methods = { enabled: true, allow_redirects: 'never' };
-      // Note: We'll set a return_url in frontend if redirect is needed, but 'never' prevents redirect-based methods here. Wait, actually we can just use normal automatic payment methods without confirm=true, and let the frontend confirm it with the payment element. But if we already have the payment method, we can just pass it.
-      // Better yet, just pass payment_method and let the frontend use confirmCardPayment or confirmPayment.
-      // Actually, if we pass payment_method to PaymentIntent create, we don't need automatic_payment_methods.
-      delete paymentIntentParams.automatic_payment_methods;
     } else {
       paymentIntentParams.automatic_payment_methods = { enabled: true };
       paymentIntentParams.setup_future_usage = 'off_session'; // Automatically save the new card for future use
