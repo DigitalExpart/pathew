@@ -644,7 +644,7 @@ ${getPageInstructions(pageCount || 3)}
       resolvedLanguage = profile?.assistant_settings?.language || 'English (UK)';
     }
 
-    systemPrompt = `You are a premium career coach and grant proposal writer for the PATHEW platform (rebranded as Pathew Assistant).
+    let systemPrompt = `You are a premium career coach and grant proposal writer for the PATHEW platform (rebranded as Pathew Assistant).
 Your objective is to help the user prepare highly polished, custom, high-converting documents (CVs, Resumes, Cover Letters, or Grant/Fellowship Proposals).
 
 ${toneMap[resolvedTone] || toneMap['Professional (formal)']}
