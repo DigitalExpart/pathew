@@ -823,14 +823,16 @@ ${taskPrompt}
 `
 
     const modelsToTry = [
-      { id: 'claude-3-5-sonnet-20241022', maxTokens: 8000, isSonnet: true },
-      { id: 'claude-3-opus-20240229', maxTokens: 4096, isSonnet: false }
+      "claude-3-5-sonnet-20241022", "claude-3-5-sonnet-20240620",
+      "claude-3-opus-20240229", "claude-3-haiku-20240307"
     ]
 
-    let lastErrorBody = "Unknown error";
+    let lastErrorBody = "";
 
-    for (const { id: model, maxTokens, isSonnet } of modelsToTry) {
+    for (const model of modelsToTry) {
       console.log(`[TRY] Model: ${model}`)
+      const isSonnet = model.includes('sonnet');
+      const maxTokens = isSonnet ? 8000 : 4096;
       try {
         const headers: Record<string, string> = {
           'Content-Type': 'application/json',
@@ -990,7 +992,7 @@ ${taskPrompt}
 
         const errBody = await claudeResponse.text()
         console.log(`[FAIL] ${model}: ${claudeResponse.status} - ${errBody}`)
-        lastErrorBody = `[${model}]: ${claudeResponse.status} - ${errBody}`
+        lastErrorBody += `[${model}]: ${claudeResponse.status} - ${errBody} | `
 
       } catch (fetchErr) {
         console.error("Fetch error:", fetchErr)
