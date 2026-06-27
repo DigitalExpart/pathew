@@ -556,26 +556,7 @@ export const SettingsPage: React.FC = () => {
                   </div>
                 )}
 
-                <div style={securityBannerStyle}>
-                  <ShieldCheck size={20} color="var(--accent-primary)" style={{ flexShrink: 0 }} />
-                  <div>
-                    <p style={{ fontWeight: 600, fontSize: isMobile ? '0.875rem' : '1rem' }}>{t('settings.security.twoFactor')}</p>
-                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('settings.security.twoFactorDesc')}</p>
-                  </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    type="button" 
-                    style={{ 
-                      marginLeft: isMobile ? '0' : 'auto',
-                      width: isMobile ? '100%' : 'auto',
-                      marginTop: isMobile ? '8px' : '0',
-                      justifyContent: 'center'
-                    }}
-                  >
-                    {t('settings.security.enable')}
-                  </Button>
-                </div>
+
                 <Button 
                   style={{ marginTop: '24px', minWidth: '160px', width: isMobile ? '100%' : 'auto', justifyContent: 'center' }} 
                   disabled={passwordLoading}
