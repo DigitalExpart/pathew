@@ -634,12 +634,22 @@ ${getPageInstructions(pageCount || 3)}
       builderSpecificRules += `No specific builder rules matched for document type: ${documentType}\n\n`;
     }
 
+    let resolvedTone = tone;
+    if (!resolvedTone || resolvedTone === "N/A" || resolvedTone === "Select Tone") {
+      resolvedTone = profile?.assistant_settings?.tone || 'Professional (formal)';
+    }
+    
+    let resolvedLanguage = language;
+    if (!resolvedLanguage || resolvedLanguage === "N/A" || resolvedLanguage === "Select Language") {
+      resolvedLanguage = profile?.assistant_settings?.language || 'English (UK)';
+    }
+
     systemPrompt = `You are a premium career coach and grant proposal writer for the PATHEW platform (rebranded as Pathew Assistant).
 Your objective is to help the user prepare highly polished, custom, high-converting documents (CVs, Resumes, Cover Letters, or Grant/Fellowship Proposals).
 
-${toneMap[tone || profile?.assistant_settings?.tone || 'Professional (formal)'] || toneMap['Professional (formal)']}
+${toneMap[resolvedTone] || toneMap['Professional (formal)']}
 
-${languageMap[language || 'English (UK)'] || languageMap['English (UK)']}
+${languageMap[resolvedLanguage] || languageMap['English (UK)']}
 
 ${formattingRules}
 
