@@ -993,8 +993,9 @@ ${taskPrompt}
     }
 
     console.error('[FAILED] No models available')
+    const maskedKey = apiKey ? `${apiKey.substring(0, 7)}...${apiKey.substring(apiKey.length - 4)}` : 'MISSING_KEY';
     return new Response(JSON.stringify({
-      draft: `AI service is temporarily unavailable. No credits were deducted. Debug: ${lastErrorBody}`,
+      draft: `AI service is temporarily unavailable. No credits were deducted. Debug (Key: ${maskedKey}): ${lastErrorBody}`,
       matchSummary: { strongMatches: [], gaps: [], priorityPoints: [] },
       missingFields: [],
       editingSuggestions: [], wordCountEstimate: 0, confidence: 'low', sessionId: sid
