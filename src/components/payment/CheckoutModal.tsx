@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Lock, CheckCircle2, Shield, Zap } from 'lucide-react';
+import { X, Lock, CheckCircle2, Shield, Zap, CreditCard, Plus } from 'lucide-react';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { usePaystackPayment } from 'react-paystack';
@@ -200,6 +200,10 @@ export const CheckoutModal = ({ isOpen, onClose, planTitle, planPrice, planCredi
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
   const [couponError, setCouponError] = useState<string | null>(null);
   const [validatingCoupon, setValidatingCoupon] = useState(false);
+
+  // Saved payment methods
+  const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string | null>(null);
   
   const [billingInfo, setBillingInfo] = useState({
     company_name: '',
@@ -335,6 +339,20 @@ export const CheckoutModal = ({ isOpen, onClose, planTitle, planPrice, planCredi
             phone_number: info.phone_number || '',
           });
         }
+        
+        // Fetch saved payment methods
+        const pmResponse = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-customer`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session.access_token}`
+          },
+          body: JSON.stringify({ action: 'get_methods' })
+        });
+        const pmData = await pmResponse.json();
+        if (pmResponse.ok && pmData.paymentMethods) {
+          setPaymentMethods(pmData.paymentMethods);
+        }
       } catch (err) {
         console.error('Error fetching billing details prefill:', err);
       } finally {
@@ -442,7 +460,8 @@ export const CheckoutModal = ({ isOpen, onClose, planTitle, planPrice, planCredi
         body: { 
           plan: planTitle, 
           couponId: appliedCoupon ? appliedCoupon.id : undefined,
-          billingInfo // pass billing details cleanly
+          billingInfo,
+          paymentMethodId: selectedPaymentMethod || undefined
         }
       });
 
@@ -453,8 +472,21 @@ export const CheckoutModal = ({ isOpen, onClose, planTitle, planPrice, planCredi
         localStorage.setItem('applied_coupon_id', appliedCoupon.id);
       }
 
-      setClientSecret(data.clientSecret);
-      setStep('payment');
+      if (data.status === 'succeeded') {
+        // Automatically verified since payment method was pre-authorized and confirmed
+        const { error: verifyError } = await supabase.functions.invoke('verify-payment', {
+          body: { 
+            paymentIntentId: data.clientSecret.split('_secret_')[0], // Extract intent ID
+            plan: planTitle,
+            paymentGateway: 'stripe'
+          }
+        });
+        if (verifyError) console.error('Verification failed:', verifyError);
+        setSuccess(true);
+      } else {
+        setClientSecret(data.clientSecret);
+        setStep('payment');
+      }
     } catch (err: any) {
       console.error('Billing / payment step error:', err);
       setFetchError(err.message || 'Unable to connect to payment service. Please try again.');
@@ -746,6 +778,52 @@ export const CheckoutModal = ({ isOpen, onClose, planTitle, planPrice, planCredi
                   ))}
                 </select>
               </div>
+
+              {/* Saved Payment Methods Selection */}
+              {paymentGateway === 'stripe' && paymentMethods.length > 0 && (
+                <div style={{ marginTop: '24px', paddingTop: '20px', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+                  <label style={billingLabelStyle}>Select Payment Method</label>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    {paymentMethods.map(pm => (
+                      <div 
+                        key={pm.id} 
+                        onClick={() => setSelectedPaymentMethod(pm.id)}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px',
+                          borderRadius: '8px', border: `2px solid ${selectedPaymentMethod === pm.id ? '#f59e0b' : 'rgba(255,255,255,0.1)'}`,
+                          backgroundColor: selectedPaymentMethod === pm.id ? 'rgba(245,158,11,0.05)' : 'transparent',
+                          cursor: 'pointer', transition: 'all 0.2s'
+                        }}
+                      >
+                        <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: `2px solid ${selectedPaymentMethod === pm.id ? '#f59e0b' : '#64748b'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                          {selectedPaymentMethod === pm.id && <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#f59e0b' }} />}
+                        </div>
+                        <CreditCard size={18} color={selectedPaymentMethod === pm.id ? '#f59e0b' : '#94a3b8'} />
+                        <span style={{ fontSize: '0.95rem', fontWeight: 500, color: selectedPaymentMethod === pm.id ? '#fff' : '#94a3b8', textTransform: 'capitalize' }}>
+                          {pm.card.brand} ending in {pm.card.last4}
+                        </span>
+                      </div>
+                    ))}
+                    <div 
+                      onClick={() => setSelectedPaymentMethod(null)}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px',
+                        borderRadius: '8px', border: `2px solid ${selectedPaymentMethod === null ? '#f59e0b' : 'rgba(255,255,255,0.1)'}`,
+                        backgroundColor: selectedPaymentMethod === null ? 'rgba(245,158,11,0.05)' : 'transparent',
+                        cursor: 'pointer', transition: 'all 0.2s'
+                      }}
+                    >
+                      <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: `2px solid ${selectedPaymentMethod === null ? '#f59e0b' : '#64748b'}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {selectedPaymentMethod === null && <div style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#f59e0b' }} />}
+                      </div>
+                      <Plus size={18} color={selectedPaymentMethod === null ? '#f59e0b' : '#94a3b8'} />
+                      <span style={{ fontSize: '0.95rem', fontWeight: 500, color: selectedPaymentMethod === null ? '#fff' : '#94a3b8' }}>
+                        Add new card
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Coupon Section */}
               <div style={{ marginTop: '12px', padding: '16px', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: '12px', border: '1px solid rgba(255,255,255,0.06)' }}>

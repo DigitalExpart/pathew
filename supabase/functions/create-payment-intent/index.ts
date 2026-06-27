@@ -45,9 +45,7 @@ Deno.serve(async (req) => {
       })
     }
 
-    const { plan, couponId } = await req.json()
-
-    // SECURITY: Only accept plan name — look up amount server-side
+    const { plan, couponId, paymentMethodId } = await req.json()
     const planConfig = PLAN_CONFIG[plan]
     if (!planConfig) {
       return new Response(JSON.stringify({ error: `Invalid plan: ${plan}` }), {
@@ -89,19 +87,61 @@ Deno.serve(async (req) => {
     // Ensure minimum charge
     if (amount < 50) amount = 50 // Stripe minimum is 50 pence/cents
 
-    const paymentIntent = await stripe.paymentIntents.create({
+    // Fetch stripe customer id to attach
+    const { data: profile } = await supabaseAdmin
+      .from('profiles')
+      .select('stripe_customer_id, full_name')
+      .eq('id', user.id)
+      .single()
+
+    let customerId = profile?.stripe_customer_id
+
+    // If no customer, create one
+    if (!customerId) {
+      const customer = await stripe.customers.create({
+        email: user.email,
+        name: profile?.full_name || '',
+        metadata: { supabase_user_id: user.id }
+      })
+      customerId = customer.id
+      
+      await supabaseAdmin
+        .from('profiles')
+        .update({ stripe_customer_id: customerId })
+        .eq('id', user.id)
+    }
+
+    const paymentIntentParams: any = {
       amount,
       currency: 'gbp',
-      automatic_payment_methods: { enabled: true },
+      customer: customerId,
       metadata: {
         plan,
         user_id: user.id,
         credits: planConfig.credits.toString(),
       },
-    })
+    };
+
+    if (paymentMethodId) {
+      paymentIntentParams.payment_method = paymentMethodId;
+      paymentIntentParams.confirm = true; // Attempt to confirm immediately if using saved method
+      paymentIntentParams.automatic_payment_methods = { enabled: true, allow_redirects: 'never' };
+      // Note: We'll set a return_url in frontend if redirect is needed, but 'never' prevents redirect-based methods here. Wait, actually we can just use normal automatic payment methods without confirm=true, and let the frontend confirm it with the payment element. But if we already have the payment method, we can just pass it.
+      // Better yet, just pass payment_method and let the frontend use confirmCardPayment or confirmPayment.
+      // Actually, if we pass payment_method to PaymentIntent create, we don't need automatic_payment_methods.
+      delete paymentIntentParams.automatic_payment_methods;
+    } else {
+      paymentIntentParams.automatic_payment_methods = { enabled: true };
+      paymentIntentParams.setup_future_usage = 'off_session'; // Automatically save the new card for future use
+    }
+
+    const paymentIntent = await stripe.paymentIntents.create(paymentIntentParams)
 
     return new Response(
-      JSON.stringify({ clientSecret: paymentIntent.client_secret }),
+      JSON.stringify({ 
+        clientSecret: paymentIntent.client_secret,
+        status: paymentIntent.status // Could be 'succeeded' or 'requires_action' if confirm=true
+      }),
       {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200,

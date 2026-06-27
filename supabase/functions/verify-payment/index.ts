@@ -61,6 +61,8 @@ Deno.serve(async (req) => {
     }
 
     let isSuccess = false;
+    let paymentAmount = 0;
+    let paymentCurrency = 'gbp';
 
     // Verify with Stripe
     if (paymentGateway === 'stripe') {
@@ -68,6 +70,8 @@ Deno.serve(async (req) => {
         const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
         if (paymentIntent.status === 'succeeded') {
           isSuccess = true;
+          paymentAmount = paymentIntent.amount;
+          paymentCurrency = paymentIntent.currency;
         } else {
           return new Response(JSON.stringify({ error: 'Payment not successful yet' }), { status: 400, headers: corsHeaders })
         }
@@ -86,6 +90,8 @@ Deno.serve(async (req) => {
          const data = await resp.json();
          if (data.status && data.data.status === 'success') {
             isSuccess = true;
+            paymentAmount = data.data.amount;
+            paymentCurrency = data.data.currency || 'ngn';
          } else {
             return new Response(JSON.stringify({ error: 'Paystack payment not successful' }), { status: 400, headers: corsHeaders })
          }
@@ -109,6 +115,16 @@ Deno.serve(async (req) => {
       if (txError) {
         return new Response(JSON.stringify({ error: 'Could not log transaction' }), { status: 500, headers: corsHeaders })
       }
+
+      // Log into billing history
+      await supabaseAdmin.from('billing_history').insert({
+        user_id: user.id,
+        amount: paymentAmount,
+        currency: paymentCurrency,
+        status: 'succeeded',
+        description: `Subscription: ${plan}`,
+        stripe_payment_intent_id: paymentIntentId
+      });
 
       // 2. Add credits
       const { data: profile } = await supabaseAdmin.from('profiles').select('credits').eq('id', user.id).single();

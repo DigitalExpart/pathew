@@ -21,6 +21,7 @@ import {
   XCircle
 } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { AddPaymentMethodModal } from '../../components/payment/AddPaymentMethodModal';
 
 export const SettingsPage: React.FC = () => {
   const { t } = useTranslation();
@@ -43,6 +44,9 @@ export const SettingsPage: React.FC = () => {
   });
   const [billingHistory, setBillingHistory] = useState<any[]>([]);
   const [billingLoading, setBillingLoading] = useState(false);
+  const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
+  const [paymentMethodsLoading, setPaymentMethodsLoading] = useState(false);
+  const [isAddPaymentModalOpen, setIsAddPaymentModalOpen] = useState(false);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -63,7 +67,60 @@ export const SettingsPage: React.FC = () => {
       setMarketingPrefs(profile.marketing_preferences);
     }
     fetchBillingHistory();
+    fetchPaymentMethods();
   }, [profile]);
+
+  const fetchPaymentMethods = async () => {
+    if (!user) return;
+    setPaymentMethodsLoading(true);
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-customer`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify({ action: 'get_methods' })
+      });
+      const data = await response.json();
+      if (response.ok && data.paymentMethods) {
+        setPaymentMethods(data.paymentMethods);
+      }
+    } catch (error) {
+      console.error('Error fetching payment methods:', error);
+    } finally {
+      setPaymentMethodsLoading(false);
+    }
+  };
+
+  const deletePaymentMethod = async (paymentMethodId: string) => {
+    if (!user || !window.confirm('Are you sure you want to remove this payment method?')) return;
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return;
+      
+      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/stripe-customer`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify({ action: 'delete_payment_method', paymentMethodId })
+      });
+      
+      if (response.ok) {
+        fetchPaymentMethods();
+      } else {
+        const data = await response.json();
+        alert(data.error || 'Failed to remove payment method');
+      }
+    } catch (error) {
+      console.error('Error deleting payment method:', error);
+    }
+  };
 
   const fetchBillingHistory = async () => {
     if (!user) return;
@@ -73,7 +130,7 @@ export const SettingsPage: React.FC = () => {
         .from('billing_history')
         .select('*')
         .eq('user_id', user.id)
-        .order('date', { ascending: false });
+        .order('created_at', { ascending: false });
       
       if (error) throw error;
       setBillingHistory(data || []);
@@ -644,25 +701,51 @@ export const SettingsPage: React.FC = () => {
               </div>
               
               <div style={{ marginTop: '32px' }}>
-                <h4 style={{ marginBottom: '16px', fontSize: '1rem', fontWeight: 600 }}>{t('settings.billing.paymentMethod')}</h4>
-                <div style={paymentMethodStyle}>
-                  <CreditCard size={20} color="var(--text-secondary)" style={{ flexShrink: 0 }} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontWeight: 600, fontSize: isMobile ? '0.875rem' : '1rem' }} className="truncate">{profile?.payment_method ? `${profile.payment_method.brand} ending in ${profile.payment_method.last4}` : t('settings.billing.noPaymentMethod')}</p>
-                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{profile?.payment_method ? `Expires ${profile.payment_method.expiry}` : t('settings.billing.addPaymentMethod')}</p>
-                  </div>
-                  <Button 
-                    variant="ghost" 
-                    size="sm"
-                    style={{
-                      width: isMobile ? '100%' : 'auto',
-                      justifyContent: 'center',
-                      marginTop: isMobile ? '8px' : '0'
-                    }}
-                  >
-                    Edit
-                  </Button>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <h4 style={{ fontSize: '1rem', fontWeight: 600 }}>{t('settings.billing.paymentMethod', 'Payment Methods')}</h4>
+                  <Button size="sm" onClick={() => setIsAddPaymentModalOpen(true)}>Add New</Button>
                 </div>
+                
+                {paymentMethodsLoading ? (
+                  <div style={{ textAlign: 'center', padding: '20px' }}><Loader2 size={24} className="animate-spin text-accent-primary" /></div>
+                ) : paymentMethods.length > 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {paymentMethods.map(pm => (
+                      <div key={pm.id} style={paymentMethodStyle}>
+                        <CreditCard size={20} color="var(--text-secondary)" style={{ flexShrink: 0 }} />
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ fontWeight: 600, fontSize: isMobile ? '0.875rem' : '1rem' }} className="truncate">
+                            <span style={{ textTransform: 'capitalize' }}>{pm.card.brand}</span> ending in {pm.card.last4}
+                          </p>
+                          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                            Expires {pm.card.exp_month}/{pm.card.exp_year}
+                          </p>
+                        </div>
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => deletePaymentMethod(pm.id)}
+                          style={{
+                            width: isMobile ? '100%' : 'auto',
+                            justifyContent: 'center',
+                            marginTop: isMobile ? '8px' : '0',
+                            color: '#ef4444'
+                          }}
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div style={paymentMethodStyle}>
+                    <CreditCard size={20} color="var(--text-secondary)" style={{ flexShrink: 0 }} />
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontWeight: 600, fontSize: isMobile ? '0.875rem' : '1rem' }} className="truncate">{t('settings.billing.noPaymentMethod')}</p>
+                      <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{t('settings.billing.addPaymentMethod')}</p>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div style={{ marginTop: '32px' }}>
@@ -687,9 +770,9 @@ export const SettingsPage: React.FC = () => {
                       ) : billingHistory.length > 0 ? (
                         billingHistory.map((item) => (
                           <tr key={item.id}>
-                            <td style={tdStyle}>{item.date}</td>
-                            <td style={tdStyle}>#{item.invoice_no}</td>
-                            <td style={tdStyle}>${item.amount.toFixed(2)}</td>
+                            <td style={tdStyle}>{new Date(item.created_at).toLocaleDateString()}</td>
+                            <td style={tdStyle}>#{item.stripe_payment_intent_id?.slice(-8) || item.id.slice(0, 8)}</td>
+                            <td style={tdStyle}>{item.currency === 'gbp' ? '£' : '$'}{(item.amount / 100).toFixed(2)}</td>
                             <td style={tdStyle}>
                               <span style={{ 
                                 ...statusBadgeStyle,
@@ -850,6 +933,15 @@ export const SettingsPage: React.FC = () => {
           )}
         </div>
       </div>
+
+      <AddPaymentMethodModal 
+        isOpen={isAddPaymentModalOpen} 
+        onClose={() => setIsAddPaymentModalOpen(false)} 
+        onSuccess={() => {
+          setIsAddPaymentModalOpen(false);
+          fetchPaymentMethods();
+        }} 
+      />
     </div>
   );
 };
