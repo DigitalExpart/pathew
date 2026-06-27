@@ -72,6 +72,7 @@ interface AddPaymentMethodModalProps {
 export const AddPaymentMethodModal: React.FC<AddPaymentMethodModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const [clientSecret, setClientSecret] = useState('');
   const [loading, setLoading] = useState(true);
+  const [fetchError, setFetchError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -100,8 +101,9 @@ export const AddPaymentMethodModal: React.FC<AddPaymentMethodModalProps> = ({ is
       if (!response.ok) throw new Error(data.error || 'Failed to initialize setup');
 
       setClientSecret(data.clientSecret);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error fetching setup intent:', error);
+      setFetchError(error.message);
     } finally {
       setLoading(false);
     }
@@ -138,6 +140,8 @@ export const AddPaymentMethodModal: React.FC<AddPaymentMethodModalProps> = ({ is
             <div style={{ display: 'flex', justifyContent: 'center', padding: '40px 0' }}>
               <Loader2 size={32} className="animate-spin text-accent-primary" />
             </div>
+          ) : fetchError ? (
+            <div style={{ color: '#ef4444', textAlign: 'center' }}>Error: {fetchError}</div>
           ) : clientSecret ? (
             <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'night' } }}>
               <SetupForm onSuccess={() => { onClose(); onSuccess(); }} onCancel={onClose} />
