@@ -21,7 +21,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
   const [opportunityId, setOpportunityId] = useState<string | null>(initialOpportunityId || null);
   const [opportunityText, setOpportunityText] = useState<string>('');
   const [selectedSourceIds, setSelectedSourceIds] = useState<string[]>([]);
-  const [tone, setTone] = useState<string>(profile?.assistant_settings?.tone || 'Professional (formal)');
+  const [tone, setTone] = useState<string>('Professional (formal)');
   const [language, setLanguage] = useState<string>('English (UK)');
   
   // Limits with intelligent defaults based on document type
@@ -91,13 +91,6 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
   // Document history states
   const [savedVersions, setSavedVersions] = useState<GeneratedDocument[]>([]);
   const [currentVersionNumber, setCurrentVersionNumber] = useState<number>(1);
-
-  // Sync settings from profile on load
-  useEffect(() => {
-    if (profile?.assistant_settings?.tone) {
-      setTone(profile.assistant_settings.tone);
-    }
-  }, [profile]);
 
   // Load user profile sources
   const loadSources = async () => {

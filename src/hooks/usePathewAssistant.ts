@@ -36,7 +36,7 @@ export const usePathewAssistant = () => {
         ...payload,
         sessionId,
         tone: profile.assistant_settings?.tone || 'Professional (formal)',
-        language: aiLanguage, // Use current UI language for AI responses
+        language: profile.assistant_settings?.language || aiLanguage, // Use user preferred language or fallback to UI language
       };
 
       const data = await PathewAssistantService.streamResponse(fullPayload);
