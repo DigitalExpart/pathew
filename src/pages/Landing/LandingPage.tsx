@@ -204,6 +204,39 @@ export const LandingPage: React.FC = () => {
         </motion.div>
       </header>
 
+      {/* Showcase Gallery 1 (Before Opportunities) */}
+      <section className="section-padding" style={{ backgroundColor: 'var(--bg-primary)' }}>
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '24px',
+            maxWidth: '1200px',
+            margin: '0 auto',
+          }}
+        >
+          {[1, 2, 3].map((num) => (
+            <div key={num} style={{ 
+              borderRadius: '24px', 
+              overflow: 'hidden', 
+              border: '1px solid var(--border-color)',
+              boxShadow: '0 20px 40px -10px rgba(0,0,0,0.3)',
+              backgroundColor: 'var(--bg-secondary)',
+              aspectRatio: '16/9'
+            }}>
+              <img 
+                src={`/showcase-${num}.png`} 
+                alt={`Platform Showcase ${num}`} 
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            </div>
+          ))}
+        </motion.div>
+      </section>
+
       {/* Opportunities Section */}
       <section id="opportunities" className="section-padding" style={{ backgroundColor: 'var(--bg-secondary)' }}>
         <motion.div 
@@ -255,13 +288,44 @@ export const LandingPage: React.FC = () => {
           ))}
         </div>
         
-        <div style={{ textAlign: 'center', marginTop: '48px' }}>
+        <div style={{ textAlign: 'center', margin: '48px 0' }}>
           <Link to={user ? "/opportunities" : "/login"}>
             <Button variant="outline" style={{ gap: '10px' }}>
               View More Opportunities <ArrowRight size={18} />
             </Button>
           </Link>
         </div>
+
+        {/* Showcase Gallery 2 (After Opportunities) */}
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '24px',
+            maxWidth: '1200px',
+            margin: '0 auto',
+          }}
+        >
+          {[3, 1, 2].map((num) => (
+            <div key={`after-${num}`} style={{ 
+              borderRadius: '24px', 
+              overflow: 'hidden', 
+              border: '1px solid var(--border-color)',
+              boxShadow: '0 20px 40px -10px rgba(0,0,0,0.3)',
+              backgroundColor: 'var(--bg-secondary)',
+              aspectRatio: '16/9'
+            }}>
+              <img 
+                src={`/showcase-${num}.png`} 
+                alt={`Platform Showcase ${num}`} 
+                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+              />
+            </div>
+          ))}
+        </motion.div>
       </section>
 
       {/* Features Section */}
@@ -518,7 +582,7 @@ export const LandingPage: React.FC = () => {
              <Star size={24} fill="#00b67a" color="#00b67a" />
              <span style={{ fontWeight: 800, fontSize: '1.25rem', color: '#00b67a' }}>Verified Customers Review</span>
           </div>
-          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>{t('landing.trustpilot')}</h2>
+          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem', fontWeight: 600 }}>{t('landing.trustpilot')}</h2>
         </motion.div>
         
         <ReviewsCarousel />
