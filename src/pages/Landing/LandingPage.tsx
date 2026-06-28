@@ -6,9 +6,8 @@ import { Badge as UIBadge } from '../../components/ui/Badge';
 import { Navbar } from '../../components/layout/Navbar';
 import { Footer } from '../../components/layout/Footer';
 import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap, Plus, Star, ChevronDown, X } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
 import { Link } from 'react-router-dom';
-import { CheckoutModal } from '../../components/payment/CheckoutModal';
+import { supabase } from '../../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import howItWorksVideo from '../../assets/images/how-it-works.mp4';
 import { useAuth } from '../../context/AuthContext';
@@ -39,16 +38,10 @@ export const LandingPage: React.FC = () => {
   }, []);
 
   const isSmallDevice = isMobile || isTablet;
-  const [pricingTiers, setPricingTiers] = React.useState<any[]>([]);
   const [dbOpportunities, setDbOpportunities] = React.useState<any[]>([]);
 
   React.useEffect(() => {
     const fetchDynamicSettings = async () => {
-      const { data } = await supabase.from('app_settings').select('*');
-      if (data) {
-        const p = data.find(s => s.id === 'pricing_tiers')?.value || [];
-        setPricingTiers(p);
-      }
       
       const { data: oppData } = await supabase
         .from('opportunities')
@@ -80,10 +73,6 @@ export const LandingPage: React.FC = () => {
     };
   }, []);
 
-  const getPlanInfo = (name: string, fallback: any) => {
-    const found = pricingTiers.find(p => p.name === name);
-    return found ? { ...fallback, price: found.price, credits: `${found.credits} credits / month` } : fallback;
-  };
 
   return (
     <div style={landingStyle}>
@@ -380,74 +369,7 @@ export const LandingPage: React.FC = () => {
         )}
       </section>
 
-      {/* Pricing Section */}
-      <section id="pricing" className="section-padding" style={{...pricingSectionStyle, backgroundColor: 'var(--bg-secondary)'}}>
-        <motion.div 
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          style={sectionHeaderStyle}
-        >
-          <h2 style={{ ...sectionTitleStyle, fontSize: isMobile ? '2rem' : '3.5rem' }}>{t('landing.pricingTitle')}</h2>
-          <p style={sectionSubtitleStyle}>{t('landing.pricingSubtitle')}</p>
-        </motion.div>
-        
-        <div className="grid-responsive" style={{ alignItems: 'stretch' }}>
-          <PricingCard 
-            {...getPlanInfo('Starter', {
-              title: t('pricing.plans.starter.title'),
-              price: "£11.99",
-              credits: t('pricing.plans.starter.credits'),
-              subtitle: t('pricing.plans.starter.subtitle'),
-              generatesUpTo: [
-                { label: t('pricing.labels.coverLetters'), count: '25×' },
-                { label: t('pricing.labels.cvs'), count: '25×' },
-                { label: t('pricing.labels.proposals'), count: '25×' },
-                { label: t('pricing.labels.grants'), count: '8×' },
-                { label: t('pricing.labels.rewrites'), count: '100×' }
-              ]
-            })}
-            includedFeatures={t('pricing.features', { returnObjects: true }) as string[]}
-          />
-          <PricingCard 
-            {...getPlanInfo('Growth', {
-              title: t('pricing.plans.growth.title'),
-              price: "£25.00",
-              credits: t('pricing.plans.growth.credits'),
-              subtitle: t('pricing.plans.growth.subtitle'),
-              badge: t('pricing.plans.growth.badge'),
-              generatesUpTo: [
-                { label: t('pricing.labels.coverLetters'), count: '60×' },
-                { label: t('pricing.labels.cvs'), count: '60×' },
-                { label: t('pricing.labels.proposals'), count: '60×' },
-                { label: t('pricing.labels.grants'), count: '20×' },
-                { label: t('pricing.labels.rewrites'), count: '240×' }
-              ]
-            })}
-            includedFeatures={t('pricing.features', { returnObjects: true }) as string[]}
-          />
-          <PricingCard 
-            {...getPlanInfo('Power User', {
-              title: t('pricing.plans.power.title'),
-              price: "£48.00",
-              credits: t('pricing.plans.power.credits'),
-              subtitle: t('pricing.plans.power.subtitle'),
-              badge: t('pricing.plans.power.badge'),
-              badgeColor: "#3b82f6",
-              generatesUpTo: [
-                { label: t('pricing.labels.coverLetters'), count: '120×' },
-                { label: t('pricing.labels.cvs'), count: '120×' },
-                { label: t('pricing.labels.proposals'), count: '120×' },
-                { label: t('pricing.labels.grants'), count: '40×' },
-                { label: t('pricing.labels.rewrites'), count: '480×' }
-              ]
-            })}
-            includedFeatures={t('pricing.features', { returnObjects: true }) as string[]}
-          />
-        </div>
 
-
-      </section>
 
       {/* How It Works */}
       <section id="how-it-works" className="section-padding" style={howItWorksSectionStyle}>
@@ -480,59 +402,6 @@ export const LandingPage: React.FC = () => {
         </motion.div>
       </section>
 
-      {/* Problem/Solution Narrative */}
-      <section className="section-padding" style={problemSectionStyle}>
-        <div style={{
-          ...problemContentStyle,
-          flexDirection: isSmallDevice ? 'column' : 'row',
-          gap: isSmallDevice ? '40px' : '80px',
-        }}>
-          <motion.div 
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            style={{ flex: 1 }}
-          >
-            <h2 style={{ 
-              fontSize: isMobile ? '2rem' : '3rem', 
-              fontWeight: 800, 
-              marginBottom: '24px', 
-              lineHeight: 1.2 
-            }}>
-              {t('landing.problem.title1')}<span style={{ color: 'var(--accent-primary)' }}>{t('landing.problem.title2')}</span>.
-            </h2>
-            <p style={{ fontSize: '1.125rem', color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: 1.6 }}>
-              {t('landing.problem.subtitle')}
-            </p>
-            <div style={benefitListStyle}>
-              <BenefitItem text={t('landing.problem.b1')} />
-              <BenefitItem text={t('landing.problem.b2')} />
-              <BenefitItem text={t('landing.problem.b3')} />
-            </div>
-          </motion.div>
-          <motion.div 
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            style={{
-              ...problemImageStyle,
-              marginTop: isMobile ? '32px' : '0',
-            }}
-          >
-            <Card className="card-padding" style={{ border: '1px solid rgba(239, 68, 68, 0.2)', backgroundColor: 'rgba(239, 68, 68, 0.02)' }}>
-              <h4 style={{ color: '#ef4444', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Shield size={18} /> {t('landing.problem.oldWay')}
-              </h4>
-              <ul style={{ listStyle: 'none', padding: 0, color: 'var(--text-muted)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                <li>{t('landing.problem.o1')}</li>
-                <li>{t('landing.problem.o2')}</li>
-                <li>{t('landing.problem.o3')}</li>
-                <li>{t('landing.problem.o4')}</li>
-              </ul>
-            </Card>
-          </motion.div>
-        </div>
-      </section>
 
       {/* Comparison Section */}
       <section className="section-padding" style={comparisonSectionStyle}>
@@ -827,89 +696,7 @@ const StepItem = ({ number, title, description }: { number: string, title: strin
   </motion.div>
 );
 
-const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedFeatures, badge, badgeColor = 'var(--accent-primary)' }: any) => {
-  const { t } = useTranslation();
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
-  const handleSubscribe = (e: any) => {
-    e.preventDefault();
-    setIsModalOpen(true);
-  };
-
-  return (
-    <>
-      <motion.div 
-    initial={{ opacity: 0, y: 30 }}
-    whileInView={{ opacity: 1, y: 0 }}
-    viewport={{ once: true }}
-    whileHover={{ y: -10 }}
-    className="card-padding"
-    style={{
-      ...pricingCardStyle,
-      borderColor: badge ? badgeColor : 'var(--border-color)',
-      boxShadow: badge ? `0 30px 60px -15px ${badgeColor}33` : 'none',
-      zIndex: badge ? 1 : 0,
-      display: 'flex',
-      flexDirection: 'column'
-    }}
-  >
-    {badge && <div style={{...popularBadgeStyle, backgroundColor: badgeColor, color: '#000'}}>{badge}</div>}
-    <h3 style={{ fontSize: '1.5rem', marginBottom: '8px', fontWeight: 700 }}>{title}</h3>
-    <div style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '8px' }}>
-      {price}<span style={{ fontSize: '1rem', fontWeight: 400, color: 'var(--text-muted)' }}>/mo</span>
-    </div>
-    <div style={{ fontSize: '1.125rem', fontWeight: 600, color: 'var(--accent-primary)', marginBottom: '8px' }}>
-      {credits}
-    </div>
-    <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '24px', lineHeight: 1.5, minHeight: '42px' }}>
-      {subtitle}
-    </p>
-
-    <div style={{ marginBottom: '24px' }}>
-      <div style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: '12px' }}>
-        {t('landing.generatesUpTo')}
-      </div>
-      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-        {generatesUpTo.map((g: any) => (
-          <li key={g.label} style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', fontSize: '0.9375rem', color: 'var(--text-primary)' }}>
-            <span>{g.label}</span>
-            <span style={{ fontWeight: 600 }}>{g.count}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-
-    <div style={{ flex: 1, marginBottom: '32px' }}>
-      <div style={{ fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.05em', color: 'var(--text-muted)', marginBottom: '12px', textTransform: 'uppercase' }}>
-        {t('landing.includedInEveryPlan')}
-      </div>
-      <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-        {includedFeatures.map((f: string) => (
-          <li key={f} style={{ display: 'flex', alignItems: 'flex-start', gap: '8px', marginBottom: '12px', color: 'var(--text-secondary)', fontSize: '0.875rem', lineHeight: 1.4 }}>
-            <CheckCircle size={16} color="var(--accent-primary)" style={{ flexShrink: 0, marginTop: '2px' }} /> 
-            <span>{f}</span>
-          </li>
-        ))}
-      </ul>
-    </div>
-
-    <div style={{ marginTop: 'auto' }}>
-      <Button onClick={handleSubscribe} variant={badge === t('pricing.plans.growth.badge') ? 'primary' : 'outline'} style={{ width: '100%' }}>
-        {t('landing.pricingChoose')} {title}
-      </Button>
-    </div>
-  </motion.div>
-
-  <CheckoutModal 
-    isOpen={isModalOpen} 
-    onClose={() => setIsModalOpen(false)} 
-    planTitle={title} 
-    planPrice={price}
-    planCredits={credits}
-  />
-  </>
-  );
-};
 const FAQItem = ({ question, answer }: { question: string, answer: string }) => {
   const [isOpen, setIsOpen] = React.useState(false);
   
@@ -1029,14 +816,7 @@ const ComparisonColumn = ({ title, items, highlight }: any) => {
 
 
 
-const BenefitItem = ({ text }: { text: string }) => (
-  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '16px' }}>
-    <div style={{ width: '24px', height: '24px', backgroundColor: 'rgba(245, 158, 11, 0.2)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-      <CheckCircle size={14} color="var(--accent-primary)" />
-    </div>
-    <span style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>{text}</span>
-  </div>
-);
+
 
 // Styles
 const landingStyle: React.CSSProperties = {
@@ -1198,35 +978,6 @@ const stepNumberStyle: React.CSSProperties = {
   right: '30px',
 };
 
-const pricingSectionStyle: React.CSSProperties = {
-  backgroundColor: 'var(--bg-secondary)',
-};
-
-
-
-const pricingCardStyle: React.CSSProperties = {
-  backgroundColor: 'var(--bg-primary)',
-  borderRadius: '32px',
-  border: '2px solid var(--border-color)',
-  display: 'flex',
-  flexDirection: 'column',
-  position: 'relative',
-  transition: 'all 0.3s ease',
-};
-
-const popularBadgeStyle: React.CSSProperties = {
-  position: 'absolute',
-  top: '-16px',
-  left: '50%',
-  transform: 'translateX(-50%)',
-  backgroundColor: 'var(--accent-primary)',
-  color: '#000',
-  padding: '6px 16px',
-  borderRadius: '20px',
-  fontSize: '0.875rem',
-  fontWeight: 700,
-};
-
 
 const sectionHeaderStyle: React.CSSProperties = {
   textAlign: 'center',
@@ -1341,28 +1092,6 @@ const heroLogoPlaceholderStyle: React.CSSProperties = {
   fontSize: '0.875rem',
   fontWeight: 700,
   letterSpacing: '0.05em',
-};
-
-const problemSectionStyle: React.CSSProperties = {
-  backgroundColor: 'var(--bg-primary)',
-};
-
-const problemContentStyle: React.CSSProperties = {
-  maxWidth: '1200px',
-  margin: '0 auto',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '80px',
-};
-
-const benefitListStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-  marginTop: '40px',
-};
-
-const problemImageStyle: React.CSSProperties = {
-  flex: 0.8,
 };
 
 const comparisonSectionStyle: React.CSSProperties = {
@@ -1494,7 +1223,7 @@ const matchLabelStyle: React.CSSProperties = {
 
 const opportunitiesGridStyle: React.CSSProperties = {
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+  gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 450px), 1fr))',
   gap: '24px',
   maxWidth: '1200px',
   margin: '0 auto',

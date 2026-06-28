@@ -692,12 +692,12 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
               </div>
             </Card>
 
-            {/* 4. DYNAMIC MANUAL NOTES & PROPOSAL CONTEXT */}
+            {/* 4. PROPOSAL CONTEXT */}
             {type === 'Proposal' && (
               <Card style={settingsCardStyle}>
                 <h3 style={{ fontSize: isMobile ? '0.95rem' : '1.05rem', fontWeight: 700, marginBottom: '16px', display: 'flex', gap: '8px', alignItems: 'center' }}>
                   <Sparkles size={18} color="var(--accent-primary)" />
-                  {t('builders.grant.step4Title', '4. Dynamic Manual Notes & Proposal Context')}
+                  {t('builders.grant.step4Title', '4. Proposal Context')}
                 </h3>
                 <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>
                   {t('builders.grant.step4Desc', "Provide specific background details below to enrich Pathew Assistant's context and ensure maximum alignment.")}

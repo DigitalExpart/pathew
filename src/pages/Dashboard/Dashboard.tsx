@@ -172,8 +172,8 @@ export const Dashboard: React.FC = () => {
         </Button>
       </header>      {/* Stats Grid */}
       <div className="grid-responsive" style={{ marginBottom: '32px' }}>
-        <StatCard icon={Users} label={t('nav.opportunities')} value={stats.opps.toString()} trend="+0" onClick={() => navigate('/opportunities')} />
-        <StatCard icon={Briefcase} label={t('nav.jobs')} value={stats.jobs.toString()} trend="+0" onClick={() => navigate('/jobs')} />
+        <StatCard icon={Users} label={t('nav.opportunities')} value={stats.opps.toString()} trend="+0" onClick={() => navigate('/saved')} />
+        <StatCard icon={Briefcase} label={t('nav.jobs')} value={stats.jobs.toString()} trend="+0" onClick={() => navigate('/saved')} />
         <StatCard icon={FileCheck} label={t('dashboard.docsGenerated')} value={stats.docs.toString()} trend="+0" onClick={() => navigate('/documents')} />
         <StatCard icon={Clock} label={t('dashboard.pendingReviews')} value={stats.reviews.toString()} />
       </div>

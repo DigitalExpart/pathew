@@ -634,7 +634,7 @@
       "questionPlaceholder": "e.g. Describe your organization's capacity to deliver this program.",
       "wordLimit": "Word limit:",
       "addQuestionBtn": "Add Custom Funder Question",
-      "step4Title": "4. Dynamic Manual Notes & Proposal Context",
+      "step4Title": "4. Proposal Context",
       "step4Desc": "Provide specific background details below to enrich Pathew Assistant's context and ensure maximum alignment.",
       "customQuestionNotes": "Custom Question Notes",
       "customQuestionNotesPlaceholder": "Specific prompts, requirements, or funder questions you need answered...",
