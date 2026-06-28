@@ -809,32 +809,9 @@ const ReviewsCarousel = () => {
     fetchReviews();
   }, []);
 
-  const row1 = [...reviews, ...reviews];
-  const row2 = [...reviews.slice().reverse(), ...reviews.slice().reverse()];
-
   return (
-    <div style={{ position: 'relative', width: '100%', overflow: 'hidden', padding: '24px 0', display: 'flex', flexDirection: 'column', gap: '32px' }}>
-      {/* Row 1: Scrolling Left */}
-      <div style={{ position: 'relative', width: '100%', overflow: 'hidden' }}>
-        <motion.div 
-          animate={{ x: [0, -3000] }}
-          transition={{ duration: 100, repeat: Infinity, ease: "linear" }}
-          style={{ display: 'flex', gap: '24px', width: 'max-content' }}
-        >
-          {row1.map((r, i) => <ReviewCard key={`r1-${i}`} review={r} />)}
-        </motion.div>
-      </div>
-
-      {/* Row 2: Scrolling Right */}
-      <div style={{ position: 'relative', width: '100%', overflow: 'hidden' }}>
-        <motion.div 
-          animate={{ x: [-3000, 0] }}
-          transition={{ duration: 100, repeat: Infinity, ease: "linear" }}
-          style={{ display: 'flex', gap: '24px', width: 'max-content' }}
-        >
-          {row2.map((r, i) => <ReviewCard key={`r2-${i}`} review={r} />)}
-        </motion.div>
-      </div>
+    <div style={{ padding: '24px 0', display: 'flex', flexWrap: 'wrap', gap: '24px', justifyContent: 'center', maxWidth: '1400px', margin: '0 auto' }}>
+      {reviews.slice(0, 5).map((r, i) => <ReviewCard key={`r-${i}`} review={r} />)}
     </div>
   );
 };
