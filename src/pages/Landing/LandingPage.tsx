@@ -107,7 +107,7 @@ export const LandingPage: React.FC = () => {
           </div>
           <h1 style={{
             ...heroTitleStyle,
-            fontSize: isMobile ? '2.25rem' : '5rem',
+            fontSize: isMobile ? '2.25rem' : '4rem',
             lineHeight: isMobile ? 1.3 : 1.2,
           }}>
             {t('landing.heroTitle')} <span style={{ color: 'var(--accent-primary)' }}>{t('landing.heroTitleHighlight')}</span>{t('landing.heroTitleEnd', '')}
@@ -130,9 +130,6 @@ export const LandingPage: React.FC = () => {
                 </Button>
               </motion.div>
             </Link>
-            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-              <Button size="lg" variant="outline" style={{ padding: '16px 32px', width: '100%' }}>{t('landing.watchDemo')}</Button>
-            </motion.div>
           </div>
 
           {!isMobile && (
@@ -150,8 +147,8 @@ export const LandingPage: React.FC = () => {
               }}>
                 <span style={heroLogoPlaceholderStyle}>UNDP</span>
                 <span style={heroLogoPlaceholderStyle}>WHO</span>
-                <span style={heroLogoPlaceholderStyle}>UNESCO</span>
-                <span style={heroLogoPlaceholderStyle}>WORLD BANK</span>
+                <span style={heroLogoPlaceholderStyle}>AMAZON</span>
+                <span style={heroLogoPlaceholderStyle}>GOOGLE</span>
               </div>
             </motion.div>
           )}
@@ -166,9 +163,9 @@ export const LandingPage: React.FC = () => {
               gap: isMobile ? '24px' : '48px',
             }}
           >
-            <StatItem count="50k+" label={t('landing.stats.opportunities')} />
+            <StatItem count="1K PLUS" label={t('landing.stats.opportunities')} />
             <StatItem count="98%" label={t('landing.stats.matchAccuracy')} />
-            <StatItem count="120+" label={t('landing.stats.countries')} />
+            <StatItem count="50+" label={t('landing.stats.countries')} />
           </motion.div>
         </motion.div>
         
@@ -585,7 +582,7 @@ export const LandingPage: React.FC = () => {
               maxWidth: isSmallDevice ? '100%' : '300px',
               margin: isSmallDevice ? '20px auto 0' : '20px 0 0'
             }}>
-              {t('landing.footer.tagline')}
+              Your AI-powered career and opportunity platform.
             </p>
           </div>
           
