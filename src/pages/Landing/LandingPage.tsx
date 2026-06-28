@@ -629,7 +629,8 @@ export const LandingPage: React.FC = () => {
         <div className="flex-responsive" style={{ 
           ...footerMainStyle, 
           gap: isSmallDevice ? '40px' : '80px',
-          textAlign: isSmallDevice ? 'center' : 'left'
+          textAlign: isSmallDevice ? 'center' : 'left',
+          flexDirection: isSmallDevice ? 'column' : 'row'
         }}>
           <div style={{ 
             ...footerBrandColStyle, 
@@ -650,10 +651,10 @@ export const LandingPage: React.FC = () => {
             </div>
           </div>
           
-          <div className="grid-responsive" style={{ flex: 3, gap: '40px' }}>
-            <FooterCol title={t('landing.footerCols.product')} links={t('landing.footerCols.productLinks', { returnObjects: true }) as string[]} hrefs={['/features', '/how-it-works', '/pricing', '/api']} />
-            <FooterCol title={t('landing.footerCols.company')} links={t('landing.footerCols.companyLinks', { returnObjects: true }) as string[]} hrefs={['/about', '/careers', '/blog', '/contact']} />
-            <FooterCol title={t('landing.footerCols.legal')} links={t('landing.footerCols.legalLinks', { returnObjects: true }) as string[]} hrefs={['/privacy-policy', '/terms', '/security', '/cookies']} />
+          <div className="grid-responsive" style={{ flex: 3, gap: '40px', display: 'flex', flexDirection: isSmallDevice ? 'column' : 'row', justifyContent: 'space-between' }}>
+            <FooterCol title={t('landing.footerCols.product')} links={t('landing.footerCols.productLinks', { returnObjects: true }) as string[]} hrefs={['#features', '#how-it-works', '#pricing', '#']} />
+            <FooterCol title={t('landing.footerCols.company')} links={t('landing.footerCols.companyLinks', { returnObjects: true }) as string[]} hrefs={['#', '#', '#', '#']} />
+            <FooterCol title={t('landing.footerCols.legal')} links={t('landing.footerCols.legalLinks', { returnObjects: true }) as string[]} hrefs={['#', '#', '#', '#']} />
           </div>
         </div>
         
@@ -1040,8 +1041,8 @@ const FooterCol = ({ title, links, hrefs }: { title: string, links: string[], hr
     <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
       {links.map((l, i) => {
         const href = hrefs && hrefs[i] ? hrefs[i] : '#';
-        if (href.startsWith('http')) {
-          return <a key={l} href={href} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.875rem' }}>{l}</a>;
+        if (href.startsWith('http') || href.startsWith('#')) {
+          return <a key={l} href={href} target={href.startsWith('http') ? "_blank" : undefined} rel={href.startsWith('http') ? "noopener noreferrer" : undefined} style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.875rem' }}>{l}</a>;
         }
         return <Link key={l} to={href} style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.875rem' }}>{l}</Link>;
       })}

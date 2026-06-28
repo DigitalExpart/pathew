@@ -928,21 +928,29 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                 <p>{t('builders.loading.generatingDraft', 'Pathew AI is generating documentation')}</p>
               </Card>
             ) : (
-              <BuilderEditor 
-                draftContent={builder.draftContent}
-                onChangeContent={builder.setDraftContent}
-                onRegenerate={builder.regenerateDraft}
-                onSaveVersion={builder.saveDraftToDb}
-                savedVersions={builder.savedVersions}
-                currentVersionNumber={builder.currentVersionNumber}
-                onSelectVersion={(v) => {
-                  builder.setDraftContent(v.content);
-                  builder.setCurrentVersionNumber(v.version);
-                }}
-                isLoading={builder.isGenerating}
-                documentType={builder.documentType}
-                estimatedPages={builder.estimatedPages}
-              />
+              <>
+                <BuilderEditor 
+                  draftContent={builder.draftContent}
+                  onChangeContent={builder.setDraftContent}
+                  onRegenerate={builder.regenerateDraft}
+                  onSaveVersion={builder.saveDraftToDb}
+                  savedVersions={builder.savedVersions}
+                  currentVersionNumber={builder.currentVersionNumber}
+                  onSelectVersion={(v) => {
+                    builder.setDraftContent(v.content);
+                    builder.setCurrentVersionNumber(v.version);
+                  }}
+                  isLoading={builder.isGenerating}
+                  documentType={builder.documentType}
+                  estimatedPages={builder.estimatedPages}
+                />
+                <div style={{ marginTop: '16px', padding: '12px 16px', backgroundColor: 'rgba(245, 158, 11, 0.05)', borderRadius: '8px', border: '1px solid rgba(245, 158, 11, 0.2)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <AlertCircle size={18} color="#f59e0b" />
+                  <span style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                    {t('builders.common.aiDisclaimer', 'Beware that documents are AI generated and may be incorrect. Please review carefully before using.')}
+                  </span>
+                </div>
+              </>
             )}
           </div>
         )}
