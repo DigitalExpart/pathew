@@ -639,15 +639,15 @@ export const LandingPage: React.FC = () => {
             <Link to="/" style={{ ...logoStyle, justifyContent: isSmallDevice ? 'center' : 'flex-start' }}>
               <img src={logo} alt="PATHEW Logo" style={{ height: '32px', objectFit: 'contain' }} />
             </Link>
-            <p style={{ 
+            <div style={{
               color: 'var(--text-secondary)', 
-              marginTop: '20px', 
               lineHeight: 1.6, 
               maxWidth: isSmallDevice ? '100%' : '300px',
               margin: isSmallDevice ? '20px auto 0' : '20px 0 0'
             }}>
-              Your AI-powered career and opportunity platform.
-            </p>
+              <p style={{ marginBottom: '12px' }}>Your AI-powered career and opportunity platform.</p>
+              <p>Build winning CVs, write tailored cover letters, discover grants and global opportunities, and let Pathew Assistant help you succeed.</p>
+            </div>
           </div>
           
           <div className="grid-responsive" style={{ flex: 3, gap: '40px' }}>
