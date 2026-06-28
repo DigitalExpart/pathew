@@ -652,9 +652,21 @@ export const LandingPage: React.FC = () => {
           </div>
           
           <div className="grid-responsive" style={{ flex: 3, gap: '40px', display: 'flex', flexDirection: isSmallDevice ? 'column' : 'row', justifyContent: 'space-between' }}>
-            <FooterCol title={t('landing.footerCols.product')} links={t('landing.footerCols.productLinks', { returnObjects: true }) as string[]} hrefs={['#features', '#how-it-works', '#pricing', '#']} />
-            <FooterCol title={t('landing.footerCols.company')} links={t('landing.footerCols.companyLinks', { returnObjects: true }) as string[]} hrefs={['#', '#', '#', '#']} />
-            <FooterCol title={t('landing.footerCols.legal')} links={t('landing.footerCols.legalLinks', { returnObjects: true }) as string[]} hrefs={['#', '#', '#', '#']} />
+            <FooterCol 
+              title={t('landing.footerCols.product', 'Product')} 
+              links={[t('nav.features', 'Features'), t('nav.howItWorks', 'How it works'), t('nav.pricing', 'Pricing')]} 
+              hrefs={['#features', '#how-it-works', '#pricing']} 
+            />
+            <FooterCol 
+              title={t('landing.footerCols.company', 'Company')} 
+              links={[t('nav.contact', 'Contact')]} 
+              hrefs={['/contact']} 
+            />
+            <FooterCol 
+              title={t('landing.footerCols.legal', 'Legal')} 
+              links={[t('nav.privacy', 'Privacy Policy'), t('nav.terms', 'Terms of Service'), t('nav.cookies', 'Cookies Policy')]} 
+              hrefs={['/privacy-policy', '/terms', '/cookies']} 
+            />
           </div>
         </div>
         
