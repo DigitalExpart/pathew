@@ -809,9 +809,22 @@ const ReviewsCarousel = () => {
     fetchReviews();
   }, []);
 
+  // Use exactly 5 unique reviews
+  const fiveReviews = reviews.slice(0, 5);
+  // Duplicate for smooth infinite scrolling loop
+  const scrollingRow = [...fiveReviews, ...fiveReviews, ...fiveReviews];
+
   return (
-    <div style={{ padding: '24px 0', display: 'flex', flexWrap: 'wrap', gap: '24px', justifyContent: 'center', maxWidth: '1400px', margin: '0 auto' }}>
-      {reviews.slice(0, 5).map((r, i) => <ReviewCard key={`r-${i}`} review={r} />)}
+    <div style={{ position: 'relative', width: '100%', overflow: 'hidden', padding: '24px 0' }}>
+      <div style={{ position: 'relative', width: '100%', overflow: 'hidden' }}>
+        <motion.div 
+          animate={{ x: [0, -3000] }}
+          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+          style={{ display: 'flex', gap: '24px', width: 'max-content' }}
+        >
+          {scrollingRow.map((r, i) => <ReviewCard key={`r-${i}`} review={r} />)}
+        </motion.div>
+      </div>
     </div>
   );
 };
