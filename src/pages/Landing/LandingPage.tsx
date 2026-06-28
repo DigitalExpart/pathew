@@ -107,7 +107,7 @@ export const LandingPage: React.FC = () => {
           </div>
           <h1 style={{
             ...heroTitleStyle,
-            fontSize: isMobile ? '2.25rem' : '4rem',
+            fontSize: isMobile ? '2rem' : '3rem',
             lineHeight: isMobile ? 1.3 : 1.2,
           }}>
             {t('landing.heroTitle')} <span style={{ color: 'var(--accent-primary)' }}>{t('landing.heroTitleHighlight')}</span>{t('landing.heroTitleEnd', '')}
