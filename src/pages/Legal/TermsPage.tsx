@@ -3,63 +3,69 @@ import { Card } from '../../components/ui/Card';
 import { ArrowLeft, Shield } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Navbar } from '../../components/layout/Navbar';
+import { Footer } from '../../components/layout/Footer';
 
 export const TermsPage: React.FC = () => {
   const { t } = useTranslation();
   return (
-    <div style={pageWrapperStyle}>
-      <div style={containerStyle}>
-        <Link to="/signup" style={backLinkStyle}>
-          <ArrowLeft size={20} /> {t('legal.backToSignup')}
-        </Link>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <Navbar />
+      <div style={pageWrapperStyle}>
+        <div style={containerStyle}>
+          <Link to="/signup" style={backLinkStyle}>
+            <ArrowLeft size={20} /> {t('legal.backToSignup')}
+          </Link>
 
-        <Card style={{ padding: '64px', marginTop: '40px' }}>
-          <div style={headerStyle}>
-            <div style={iconBoxStyle}>
-              <Shield size={32} color="var(--accent-primary)" />
+          <Card style={{ padding: '64px', marginTop: '40px' }}>
+            <div style={headerStyle}>
+              <div style={iconBoxStyle}>
+                <Shield size={32} color="var(--accent-primary)" />
+              </div>
+              <h1 style={titleStyle}>{t('legal.terms.title')}</h1>
+              <p style={subtitleStyle}>{t('legal.terms.subtitle')}</p>
             </div>
-            <h1 style={titleStyle}>{t('legal.terms.title')}</h1>
-            <p style={subtitleStyle}>{t('legal.terms.subtitle')}</p>
-          </div>
 
-          <div style={contentStyle}>
-            <section style={sectionStyle}>
-              <h2 style={sectionTitleStyle}>{t('legal.terms.sections.0.title')}</h2>
-              <p style={paragraphStyle}>
-                {t('legal.terms.sections.0.p')}
-              </p>
-            </section>
+            <div style={contentStyle}>
+              <section style={sectionStyle}>
+                <h2 style={sectionTitleStyle}>{t('legal.terms.sections.0.title')}</h2>
+                <p style={paragraphStyle}>
+                  {t('legal.terms.sections.0.p')}
+                </p>
+              </section>
 
-            <section style={sectionStyle}>
-              <h2 style={sectionTitleStyle}>{t('legal.terms.sections.1.title')}</h2>
-              <p style={paragraphStyle}>
-                {t('legal.terms.sections.1.p')}
-              </p>
-            </section>
+              <section style={sectionStyle}>
+                <h2 style={sectionTitleStyle}>{t('legal.terms.sections.1.title')}</h2>
+                <p style={paragraphStyle}>
+                  {t('legal.terms.sections.1.p')}
+                </p>
+              </section>
 
-            <section style={sectionStyle}>
-              <h2 style={sectionTitleStyle}>{t('legal.terms.sections.2.title')}</h2>
-              <p style={paragraphStyle}>
-                {t('legal.terms.sections.2.p')}
-              </p>
-            </section>
+              <section style={sectionStyle}>
+                <h2 style={sectionTitleStyle}>{t('legal.terms.sections.2.title')}</h2>
+                <p style={paragraphStyle}>
+                  {t('legal.terms.sections.2.p')}
+                </p>
+              </section>
 
-            <section style={sectionStyle}>
-              <h2 style={sectionTitleStyle}>{t('legal.terms.sections.3.title')}</h2>
-              <p style={paragraphStyle}>
-                {t('legal.terms.sections.3.p')}
-              </p>
-            </section>
+              <section style={sectionStyle}>
+                <h2 style={sectionTitleStyle}>{t('legal.terms.sections.3.title')}</h2>
+                <p style={paragraphStyle}>
+                  {t('legal.terms.sections.3.p')}
+                </p>
+              </section>
 
-            <section style={sectionStyle}>
-              <h2 style={sectionTitleStyle}>{t('legal.terms.sections.4.title')}</h2>
-              <p style={paragraphStyle}>
-                {t('legal.terms.sections.4.p')}
-              </p>
-            </section>
-          </div>
-        </Card>
+              <section style={sectionStyle}>
+                <h2 style={sectionTitleStyle}>{t('legal.terms.sections.4.title')}</h2>
+                <p style={paragraphStyle}>
+                  {t('legal.terms.sections.4.p')}
+                </p>
+              </section>
+            </div>
+          </Card>
+        </div>
       </div>
+      <Footer />
     </div>
   );
 };

@@ -2,16 +2,20 @@ import React from 'react';
 import { Card } from '../../components/ui/Card';
 import { ArrowLeft, Cookie } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Navbar } from '../../components/layout/Navbar';
+import { Footer } from '../../components/layout/Footer';
 
 export const CookiesPage: React.FC = () => {
   return (
-    <div style={pageWrapperStyle}>
-      <div style={containerStyle}>
-        <Link to="/" style={backLinkStyle}>
-          <ArrowLeft size={20} /> Back to Home
-        </Link>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+      <Navbar />
+      <div style={pageWrapperStyle}>
+        <div style={containerStyle}>
+          <Link to="/" style={backLinkStyle}>
+            <ArrowLeft size={20} /> Back to Home
+          </Link>
 
-        <Card style={{ padding: '64px', marginTop: '40px' }}>
+          <Card style={{ padding: '64px', marginTop: '40px' }}>
           <div style={headerStyle}>
             <div style={iconBoxStyle}>
               <Cookie size={32} color="var(--accent-primary)" />
@@ -62,6 +66,8 @@ export const CookiesPage: React.FC = () => {
           </div>
         </Card>
       </div>
+      </div>
+      <Footer />
     </div>
   );
 };

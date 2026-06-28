@@ -11,7 +11,7 @@ import {
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Navbar } from '../../components/layout/Navbar';
-import logo from '../../assets/images/logo.png';
+import { Footer } from '../../components/layout/Footer';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -155,106 +155,10 @@ export const HowItWorksPage: React.FC = () => {
         </Card>
       </section>
 
-      {/* Footer */}
-      <footer style={footerStyle}>
-        <div style={footerMainStyle}>
-          <div style={footerBrandColStyle}>
-            <Link to="/" style={logoStyle}>
-              <img src={logo} alt="PATHEW Logo" style={{ height: '32px', objectFit: 'contain' }} />
-            </Link>
-            <p style={{ color: 'var(--text-secondary)', marginTop: '20px', lineHeight: 1.6 }}>
-              The premium platform for global opportunity matching. Empowering professionals with Pathew Assistant.
-            </p>
-          </div>
-          
-          <div style={footerLinksGridStyle}>
-            <FooterCol title="Product" links={['Features', 'How it works', 'Pricing', 'API']} />
-            <FooterCol title="Company" links={['About', 'Careers', 'Blog', 'Contact']} />
-            <FooterCol title="Legal" links={['Privacy', 'Terms', 'Security', 'Cookies']} />
-          </div>
-        </div>
-        
-        <div style={footerBottomStyle}>
-          <p>© 2024 PATHEW. All rights reserved.</p>
-          <div style={socialLinksStyle}>
-            <FooterSocialIcon icon={FacebookIcon} label="Facebook" />
-            <FooterSocialIcon icon={InstagramIcon} label="Instagram" />
-            <FooterSocialIcon icon={TikTokIcon} label="TikTok" />
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
-
-const FooterCol = ({ title, links }: { title: string, links: string[] }) => (
-  <div style={footerColStyle}>
-    <h4 style={{ color: 'var(--text-primary)', marginBottom: '20px', fontSize: '1rem', fontWeight: 700 }}>{title}</h4>
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-      {links.map(l => (
-        <a key={l} href="#" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.875rem' }}>{l}</a>
-      ))}
-    </div>
-  </div>
-);
-
-const FooterSocialIcon = ({ icon: Icon, label }: { icon: any, label: string }) => (
-  <motion.a 
-    href="#"
-    whileHover={{ color: 'var(--accent-primary)', y: -2 }}
-    style={{ color: 'var(--text-muted)', transition: 'color 0.2s ease', display: 'flex', alignItems: 'center' }}
-    aria-label={label}
-  >
-    <Icon size={20} />
-  </motion.a>
-);
-
-const FacebookIcon = ({ size = 20 }: { size?: number }) => (
-  <svg 
-    width={size} 
-    height={size} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round"
-  >
-    <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" />
-  </svg>
-);
-
-const InstagramIcon = ({ size = 20 }: { size?: number }) => (
-  <svg 
-    width={size} 
-    height={size} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round"
-  >
-    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
-    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
-    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
-  </svg>
-);
-
-const TikTokIcon = ({ size = 20 }: { size?: number }) => (
-  <svg 
-    width={size} 
-    height={size} 
-    viewBox="0 0 24 24" 
-    fill="none" 
-    stroke="currentColor" 
-    strokeWidth="2" 
-    strokeLinecap="round" 
-    strokeLinejoin="round"
-  >
-    <path d="M9 12a4 4 0 1 0 4 4V4a5 5 0 0 0 5 5" />
-  </svg>
-);
 
 const VideoSlider = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -442,13 +346,7 @@ const pageStyle: React.CSSProperties = {
 };
 
 
-const logoStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '12px',
-  fontSize: '1.5rem',
-  fontWeight: 800,
-};
+
 
 
 
@@ -701,51 +599,4 @@ const ctaCardStyle: React.CSSProperties = {
   margin: '0 auto',
 };
 
-const footerStyle: React.CSSProperties = {
-  padding: '100px 80px 40px',
-  backgroundColor: 'var(--bg-primary)',
-  borderTop: '1px solid var(--border-color)',
-};
 
-const footerMainStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  gap: '80px',
-  marginBottom: '80px',
-  maxWidth: '1200px',
-  margin: '0 auto 80px',
-};
-
-const footerBrandColStyle: React.CSSProperties = {
-  flex: 1.5,
-  maxWidth: '400px',
-};
-
-const footerLinksGridStyle: React.CSSProperties = {
-  flex: 2,
-  display: 'grid',
-  gridTemplateColumns: 'repeat(3, 1fr)',
-  gap: '40px',
-};
-
-const footerColStyle: React.CSSProperties = {
-  display: 'flex',
-  flexDirection: 'column',
-};
-
-const footerBottomStyle: React.CSSProperties = {
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  paddingTop: '40px',
-  borderTop: '1px solid var(--border-color)',
-  color: 'var(--text-muted)',
-  fontSize: '0.875rem',
-  maxWidth: '1200px',
-  margin: '0 auto',
-};
-
-const socialLinksStyle: React.CSSProperties = {
-  display: 'flex',
-  gap: '24px',
-};
