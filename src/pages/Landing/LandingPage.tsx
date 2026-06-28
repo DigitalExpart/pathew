@@ -163,7 +163,7 @@ export const LandingPage: React.FC = () => {
               gap: isMobile ? '24px' : '48px',
             }}
           >
-            <StatItem count="1K PLUS" label={t('landing.stats.opportunities')} />
+            <StatItem count="1K+" label={t('landing.stats.opportunities')} />
             <StatItem count="98%" label={t('landing.stats.matchAccuracy')} />
             <StatItem count="50+" label={t('landing.stats.countries')} />
           </motion.div>
