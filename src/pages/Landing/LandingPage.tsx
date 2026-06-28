@@ -50,7 +50,7 @@ export const LandingPage: React.FC = () => {
         .neq('type', 'job')
         .order('featured', { ascending: false })
         .order('created_at', { ascending: false })
-        .limit(5);
+        .limit(2);
         
       if (oppData && oppData.length > 0) {
         // Ensure no duplicates by ID
