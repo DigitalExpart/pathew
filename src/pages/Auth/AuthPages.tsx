@@ -340,33 +340,19 @@ export const SignUpPage: React.FC = () => {
               <div style={checkboxRowStyle}>
                 <input 
                   type="checkbox" 
-                  id="terms"
-                  checked={formData.termsAccepted}
-                  onChange={(e) => setFormData({...formData, termsAccepted: e.target.checked})}
+                  id="terms-privacy"
+                  checked={formData.termsAccepted && formData.privacyAccepted}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setFormData({...formData, termsAccepted: checked, privacyAccepted: checked});
+                  }}
                   required
                 />
-                <label htmlFor="terms" style={checkboxLabelStyle}>
-                  {t('auth.agreeTo')} <Link to="/terms" style={linkStyle}>{t('auth.terms')}</Link>
+                <label htmlFor="terms-privacy" style={checkboxLabelStyle}>
+                  I have read and agreed to <Link to="/terms" style={linkStyle}>Terms</Link> and <Link to="/privacy-policy" style={linkStyle}>Privacy policy</Link>
                 </label>
               </div>
-              {errors.terms && <p style={errorTextStyle}>{errors.terms}</p>}
-
-              <div style={checkboxRowStyle}>
-                <input 
-                  type="checkbox" 
-                  id="privacy"
-                  checked={formData.privacyAccepted}
-                  onChange={(e) => setFormData({...formData, privacyAccepted: e.target.checked})}
-                  required
-                />
-                <label htmlFor="privacy" style={checkboxLabelStyle}>
-                  {t('auth.agreeTo')} <Link to="/privacy-policy" style={linkStyle}>{t('auth.privacy')}</Link>
-                </label>
-              </div>
-              <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginLeft: '28px' }}>
-                Version 1.0.0 (Effective May 2024)
-              </p>
-              {errors.privacy && <p style={errorTextStyle}>{errors.privacy}</p>}
+              {(errors.terms || errors.privacy) && <p style={errorTextStyle}>{errors.terms || errors.privacy}</p>}
             </div>
 
             {authError && <p style={errorTextStyle}>{authError}</p>}
