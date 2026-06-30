@@ -76,8 +76,8 @@ const FooterCol = ({ title, links, hrefs }: { title: string, links: string[], hr
   </div>
 );
 
-const SocialIcon = ({ icon: Icon, label }: { icon: any, label: string }) => (
-  <a href="#" aria-label={label} style={{
+const SocialIcon = ({ icon: Icon, label, href = "#" }: { icon: any, label: string, href?: string }) => (
+  <a href={href} target={href !== "#" ? "_blank" : undefined} rel={href !== "#" ? "noopener noreferrer" : undefined} aria-label={label} style={{
     color: 'var(--text-secondary)',
     transition: 'all 0.2s',
     display: 'flex',
@@ -169,8 +169,8 @@ export const Footer: React.FC = () => {
       }}>
         <p>© {new Date().getFullYear()} PATHEW. {t('landing.footer.rights', 'All rights reserved.')}</p>
         <div style={{ ...socialLinksStyle, justifyContent: 'center' }}>
-          <SocialIcon icon={FacebookIcon} label={t('common.facebook', 'Facebook')} />
-          <SocialIcon icon={InstagramIcon} label={t('common.instagram', 'Instagram')} />
+          <SocialIcon icon={FacebookIcon} label={t('common.facebook', 'Facebook')} href="https://www.facebook.com/share/1LukwTioKk/?mibextid=wwXIfr" />
+          <SocialIcon icon={InstagramIcon} label={t('common.instagram', 'Instagram')} href="https://www.instagram.com/extraordinary_woman_blog?igsh=MXZkdDB1Y21iZHJ5Zw%3D%3D&utm_source=qr" />
           <SocialIcon icon={TikTokIcon} label={t('common.tiktok', 'TikTok')} />
         </div>
       </div>
