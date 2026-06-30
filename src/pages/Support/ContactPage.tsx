@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Mail, Phone, MapPin, Send, MessageSquare, Globe } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, MessageSquare, Globe, Instagram, Facebook, Linkedin } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
 import { Navbar } from '../../components/layout/Navbar';
@@ -148,27 +148,16 @@ export const ContactPage: React.FC = () => {
               <ContactInfoItem 
                 icon={Mail} 
                 title={t('contact.info.emailTitle')} 
-                detail="support@pathew.com" 
+                detail="support@extraordinarywomanblog.com" 
                 sub={t('contact.info.emailSub')}
-              />
-              <ContactInfoItem 
-                icon={Phone} 
-                title={t('contact.info.callTitle')} 
-                detail="+1 (555) 123-4567" 
-                sub={t('contact.info.callSub')}
-              />
-              <ContactInfoItem 
-                icon={MapPin} 
-                title={t('contact.info.visitTitle')} 
-                detail="123 Innovation Way" 
-                sub={t('contact.info.visitSub')}
               />
               
               <div style={socialSectionStyle}>
                 <h4 style={{ marginBottom: '16px', fontSize: '0.875rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text-muted)' }}>{t('contact.info.followTitle')}</h4>
                 <div style={{ display: 'flex', gap: '16px' }}>
-                  <SocialLink icon={Globe} />
-                  <SocialLink icon={MessageSquare} />
+                  <SocialLink icon={Instagram} href="https://www.instagram.com/extraordinary_woman_blog?igsh=MXZkdDB1Y21iZHJ5Zw%3D%3D&utm_source=qr" />
+                  <SocialLink icon={Facebook} href="https://www.facebook.com/share/1LukwTioKk/?mibextid=wwXIfr" />
+                  <SocialLink icon={Linkedin} href="https://www.linkedin.com/company/extraordinary-woman-blog-ewb/" />
                 </div>
               </div>
             </motion.div>
@@ -194,13 +183,16 @@ const ContactInfoItem = ({ icon: Icon, title, detail, sub }: any) => (
   </div>
 );
 
-const SocialLink = ({ icon: Icon }: any) => (
-  <motion.div 
+const SocialLink = ({ icon: Icon, href }: any) => (
+  <motion.a 
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
     whileHover={{ scale: 1.1, backgroundColor: 'rgba(245, 158, 11, 0.2)' }}
-    style={socialLinkStyle}
+    style={{ ...socialLinkStyle, display: 'inline-flex' }}
   >
     <Icon size={18} color="var(--accent-primary)" />
-  </motion.div>
+  </motion.a>
 );
 
 // Styles
