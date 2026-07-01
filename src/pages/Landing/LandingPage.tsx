@@ -209,7 +209,7 @@ export const LandingPage: React.FC = () => {
             margin: '0 auto',
           }}
         >
-          {[1, 2, 3].map((num) => (
+          {[1, 2].map((num) => (
             <div key={num} style={{ 
               borderRadius: '24px', 
               overflow: 'hidden', 
@@ -300,7 +300,7 @@ export const LandingPage: React.FC = () => {
             margin: '0 auto',
           }}
         >
-          {[3, 1, 2].map((num) => (
+          {[3, 4].map((num) => (
             <div key={`after-${num}`} style={{ 
               borderRadius: '24px', 
               overflow: 'hidden', 
