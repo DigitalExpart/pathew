@@ -2,7 +2,7 @@ import React from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { useAdmin } from '../../context/AdminContext';
 import { LayoutDashboard, Users, CreditCard, ArrowLeftRight, FileText, Bot, Settings, LogOut, ArrowLeft, Megaphone, Star, Rss, Ticket, X } from 'lucide-react';
-import logo from '../../assets/images/logo.png';
+import logo from '../../assets/images/logo.svg';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Overview', path: '/admin/dashboard' },

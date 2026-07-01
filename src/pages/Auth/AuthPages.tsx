@@ -3,7 +3,7 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Mail, Lock, ArrowLeft, Eye, EyeOff } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
-import logo from '../../assets/images/logo.png';
+import logo from '../../assets/images/logo.svg';
 import { supabase } from '../../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';

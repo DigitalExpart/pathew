@@ -6,7 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { Button } from '../ui/Button';
 import { useTranslation } from 'react-i18next';
-import logo from '../../assets/images/logo.png';
+import logo from '../../assets/images/logo.svg';
 
 interface NavbarProps {
   activePage?: string;

@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Shield, Mail, Lock, AlertCircle } from 'lucide-react';
-import logo from '../../assets/images/logo.png';
+import logo from '../../assets/images/logo.svg';
 
 export const AdminLogin: React.FC = () => {
   const { adminLogin, isAdmin } = useAdmin();
