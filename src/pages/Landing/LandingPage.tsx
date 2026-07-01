@@ -776,45 +776,6 @@ const statItemStyle: React.CSSProperties = {
   gap: '4px',
 };
 
-const heroImageContainerStyle: React.CSSProperties = {
-  flex: 1.8,
-  position: 'relative',
-  transform: 'scale(1.05)',
-  transformOrigin: 'center right',
-};
-
-const heroImagePlaceholderStyle: React.CSSProperties = {
-  width: '100%',
-  backgroundColor: 'var(--bg-secondary)',
-  borderRadius: '16px',
-  border: '1px solid var(--border-color)',
-  position: 'relative',
-  boxShadow: '0 40px 80px -20px rgba(0, 0, 0, 0.6)',
-};
-
-const heroImageOverlayStyle: React.CSSProperties = {
-  position: 'absolute',
-  inset: 0,
-  background: 'linear-gradient(to top, var(--bg-primary), transparent)',
-  borderRadius: 'inherit',
-  pointerEvents: 'none',
-};
-
-const floatingCardStyle: React.CSSProperties = {
-  position: 'absolute',
-  top: '40px',
-  left: '-40px',
-  backgroundColor: 'var(--bg-secondary)',
-  padding: '24px',
-  borderRadius: '20px',
-  border: '1px solid rgba(245, 158, 11, 0.3)',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '16px',
-  boxShadow: 'var(--shadow-lg)',
-  backdropFilter: 'blur(10px)',
-};
-
 const badgeStyle: React.CSSProperties = {
   display: 'inline-flex',
   alignItems: 'center',
