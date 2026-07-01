@@ -160,39 +160,7 @@ export const LandingPage: React.FC = () => {
           </motion.div>
         </motion.div>
         
-        <motion.div 
-          initial={{ opacity: 0, scale: 0.9, x: 50 }}
-          animate={{ opacity: 1, scale: 1, x: 0 }}
-          transition={{ duration: 1, delay: 0.2, type: 'spring' }}
-          style={{
-            ...heroImageContainerStyle,
-            display: isMobile ? 'none' : 'block',
-          }}
-        >
-          <div style={heroImagePlaceholderStyle}>
-            <img 
-              src="/hero.png" 
-              alt="Platform Dashboard" 
-              style={{ width: '100%', height: '850px', objectFit: 'cover', objectPosition: 'left top', display: 'block', borderRadius: 'inherit' }} 
-            />
-            <div style={heroImageOverlayStyle}>
-              <motion.div 
-                animate={{ 
-                  y: [0, -15, 0],
-                  rotate: [0, 1, 0]
-                }}
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                style={floatingCardStyle}
-              >
-                <Zap size={24} color="var(--accent-primary)" />
-                <div>
-                  <div style={{ fontWeight: 700 }}>98% Match</div>
-                  <div style={{ fontSize: '0.75rem', opacity: 0.7 }}>Senior Architect</div>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </motion.div>
+
       </header>
 
       {/* Showcase Gallery 1 (Before Opportunities) */}
