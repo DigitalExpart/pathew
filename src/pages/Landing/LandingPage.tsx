@@ -415,31 +415,26 @@ export const LandingPage: React.FC = () => {
           <p style={sectionSubtitleStyle}>{t('landing.compare.subtitle')}</p>
         </motion.div>
 
-        <div className="comparison-grid" style={{ 
-          maxWidth: '1200px', 
-          margin: '0 auto',
-          gridTemplateColumns: isSmallDevice ? '1fr' : '1fr 1fr' 
-        }}>
-          <ComparisonColumn 
-            title={t('landing.compare.generic')} 
-            items={[
-              t('landing.compare.g1'),
-              t('landing.compare.g2'),
-              t('landing.compare.g3'),
-              t('landing.compare.g4')
-            ]} 
+        <motion.div 
+          initial={{ opacity: 0, y: 40 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          style={{
+            maxWidth: '1200px',
+            margin: '40px auto 0',
+            borderRadius: '24px', 
+            overflow: 'hidden', 
+            border: '1px solid var(--border-color)',
+            boxShadow: '0 20px 40px -10px rgba(0,0,0,0.3)',
+            backgroundColor: 'var(--bg-secondary)',
+          }}
+        >
+          <img 
+            src="/showcase-6.png" 
+            alt="Dashboard Showcase" 
+            style={{ width: '100%', height: 'auto', display: 'block' }}
           />
-          <ComparisonColumn 
-            title={t('landing.compare.pathew')} 
-            highlight 
-            items={[
-              t('landing.compare.p1'),
-              t('landing.compare.p2'),
-              t('landing.compare.p3'),
-              t('landing.compare.p4')
-            ]} 
-          />
-        </div>
+        </motion.div>
       </section>
 
       {/* Social Proof Section (Trustpilot Reviews) */}
