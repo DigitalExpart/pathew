@@ -27,40 +27,15 @@ export const PrivacyPage: React.FC = () => {
             </div>
 
             <div style={contentStyle}>
-              <section style={sectionStyle}>
-                <h2 style={sectionTitleStyle}>{t('legal.privacy.sections.0.title')}</h2>
-                <p style={paragraphStyle}>
-                  {t('legal.privacy.sections.0.p')}
-                </p>
-              </section>
-
-              <section style={sectionStyle}>
-                <h2 style={sectionTitleStyle}>{t('legal.privacy.sections.1.title')}</h2>
-                <p style={paragraphStyle}>
-                  {t('legal.privacy.sections.1.p')}
-                </p>
-              </section>
-
-              <section style={sectionStyle}>
-                <h2 style={sectionTitleStyle}>{t('legal.privacy.sections.2.title')}</h2>
-                <p style={paragraphStyle}>
-                  {t('legal.privacy.sections.2.p')}
-                </p>
-              </section>
-
-              <section style={sectionStyle}>
-                <h2 style={sectionTitleStyle}>{t('legal.privacy.sections.3.title')}</h2>
-                <p style={paragraphStyle}>
-                  {t('legal.privacy.sections.3.p')}
-                </p>
-              </section>
-
-              <section style={sectionStyle}>
-                <h2 style={sectionTitleStyle}>{t('legal.privacy.sections.4.title')}</h2>
-                <p style={paragraphStyle}>
-                  {t('legal.privacy.sections.4.p')}
-                </p>
-              </section>
+              {Array.isArray(t('legal.privacy.sections', { returnObjects: true })) && 
+                (t('legal.privacy.sections', { returnObjects: true }) as Array<{title: string, p: string}>).map((section, idx) => (
+                <section key={idx} style={sectionStyle}>
+                  <h2 style={sectionTitleStyle}>{section.title}</h2>
+                  <p style={paragraphStyle}>
+                    {section.p}
+                  </p>
+                </section>
+              ))}
             </div>
           </Card>
         </div>
@@ -140,4 +115,5 @@ const paragraphStyle: React.CSSProperties = {
   color: 'var(--text-secondary)',
   lineHeight: 1.8,
   fontSize: '1rem',
+  whiteSpace: 'pre-wrap',
 };
