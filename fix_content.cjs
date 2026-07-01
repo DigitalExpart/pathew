@@ -11,7 +11,7 @@ const patches = {
       heroTitle: "Apply for Your Next ",
       heroTitleHighlight: "Opportunity",
       heroTitleEnd: " with Precision.",
-      heroSubtitle: "The ultimate platform for professionals to find, match, and apply for high-impact opportunities worldwide. Stop searching, start matching with Pathew Assistant.",
+      heroSubtitle: "Build a professional CV, generate tailored cover letters and create winning proposals in minutes",
       footer: {
         tagline: "Assistant-powered career guidance for ambitious professionals."
       }
