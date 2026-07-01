@@ -300,7 +300,7 @@ export const LandingPage: React.FC = () => {
             margin: '0 auto',
           }}
         >
-          {[3, 4].map((num) => (
+          {[3, 4, 5].map((num) => (
             <div key={`after-${num}`} style={{ 
               borderRadius: '24px', 
               overflow: 'hidden', 
