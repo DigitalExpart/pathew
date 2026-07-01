@@ -142,8 +142,8 @@ export const Footer: React.FC = () => {
         <div className="grid-responsive" style={{ flex: 3, gap: '40px', display: 'flex', flexDirection: isSmallDevice ? 'column' : 'row', justifyContent: 'space-between' }}>
           <FooterCol 
             title={t('landing.footerCols.product', 'Product')} 
-            links={[t('nav.features', 'Features'), t('nav.howItWorks', 'How it works'), t('nav.pricing', 'Pricing')]} 
-            hrefs={['/#features', '/#how-it-works', '/#pricing']} 
+            links={[t('nav.howItWorks', 'How it works'), t('nav.pricing', 'Pricing')]} 
+            hrefs={['/#how-it-works', '/#pricing']} 
           />
           <FooterCol 
             title={t('landing.footerCols.company', 'Company')} 
