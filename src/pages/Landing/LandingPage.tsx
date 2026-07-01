@@ -5,7 +5,7 @@ import { Card } from '../../components/ui/Card';
 import { Badge as UIBadge } from '../../components/ui/Badge';
 import { Navbar } from '../../components/layout/Navbar';
 import { Footer } from '../../components/layout/Footer';
-import { Sparkles, ArrowRight, CheckCircle, Globe, Shield, Zap, Plus, Star, ChevronDown, X } from 'lucide-react';
+import { ArrowRight, CheckCircle, Globe, Shield, Zap, Plus, Star, ChevronDown, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useTranslation } from 'react-i18next';
@@ -1017,11 +1017,7 @@ const comparisonSectionStyle: React.CSSProperties = {
 
 
 
-const comparisonColStyle: React.CSSProperties = {
-  borderRadius: '32px',
-  border: '2px solid var(--border-color)',
-  transition: 'all 0.3s ease',
-};
+
 
 const socialProofSectionStyle: React.CSSProperties = {
   backgroundColor: 'var(--bg-primary)',
@@ -1031,52 +1027,7 @@ const socialProofSectionStyle: React.CSSProperties = {
 
 
 
-const comparisonBadgeStyle: React.CSSProperties = {
-  position: 'absolute',
-  top: '24px',
-  right: '24px',
-  backgroundColor: 'var(--accent-primary)',
-  color: 'black',
-  padding: '6px 12px',
-  borderRadius: '20px',
-  fontSize: '0.65rem',
-  fontWeight: 800,
-  letterSpacing: '0.1em',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '6px',
-};
 
-const checkCircleBoxStyle: React.CSSProperties = {
-  width: '32px',
-  height: '32px',
-  backgroundColor: 'rgba(245, 158, 11, 0.15)',
-  borderRadius: '10px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-};
-
-const xCircleBoxStyle: React.CSSProperties = {
-  width: '32px',
-  height: '32px',
-  backgroundColor: 'var(--bg-tertiary)',
-  borderRadius: '10px',
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  color: 'var(--text-muted)',
-};
-
-const columnGlowStyle: React.CSSProperties = {
-  position: 'absolute',
-  bottom: '-50px',
-  right: '-50px',
-  width: '200px',
-  height: '200px',
-  background: 'radial-gradient(circle, rgba(245, 158, 11, 0.1) 0%, transparent 70%)',
-  zIndex: 0,
-};
 
 
 const oppCardContentStyle: React.CSSProperties = {
