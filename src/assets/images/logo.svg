@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" width="400" height="100">
+  <defs>
+    <linearGradient id="iconGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#E8B84B"/>
+      <stop offset="100%" style="stop-color:#C9963A"/>
+    </linearGradient>
+    <filter id="shadow">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#00000020"/>
+    </filter>
+  </defs>
+
+  <!-- Icon mark -->
+  <rect x="4" y="4" width="92" height="92" rx="20" fill="url(#iconGrad)" filter="url(#shadow)"/>
+  <rect x="24" y="22" width="15" height="56" rx="4" fill="#ffffff"/>
+  <path d="M39 22 Q72 22 72 44 Q72 66 39 66" stroke="#ffffff" stroke-width="15" fill="none" stroke-linecap="round"/>
+
+  <!-- Wordmark: full teal, wider canvas -->
+  <text x="114" y="66"
+        font-family="'Arial Black','Arial',sans-serif"
+        font-size="50" font-weight="900" letter-spacing="2"
+        fill="#455559">PATHEW</text>
+</svg>
