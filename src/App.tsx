@@ -16,7 +16,8 @@ import { ProfilePage } from './pages/Profile/ProfilePage';
 import { EditProfile } from './pages/Profile/EditProfile';
 import { CVBuilderPage, CoverLetterPage, ProposalPage } from './pages/Builders/Pages';
 import { WalletPage } from './pages/Credits/WalletPage';
-import { PricingPage } from './pages/Credits/PricingPage';
+
+import { PricingRouteHandler } from './pages/Landing/PricingRouteHandler';
 import { SavedOpportunities } from './pages/Opportunities/SavedOpportunities';
 import { JobsPage } from './pages/Opportunities/JobsPage';
 import { GrantBuilderPage } from './pages/Builders/GrantBuilderPage';
@@ -86,7 +87,7 @@ function App() {
             
             {/* New Routes */}
             <Route path="/wallet" element={<RequireAuth><Shell><WalletPage /></Shell></RequireAuth>} />
-            <Route path="/pricing" element={<RequireAuth><Shell><PricingPage /></Shell></RequireAuth>} />
+            <Route path="/pricing" element={<PricingRouteHandler />} />
             <Route path="/saved" element={<RequireAuth><Shell><SavedOpportunities /></Shell></RequireAuth>} />
             <Route path="/grant-builder" element={<RequireAuth><Shell><GrantBuilderPage /></Shell></RequireAuth>} />
             <Route path="/documents" element={<RequireAuth><Shell><DocumentsPage /></Shell></RequireAuth>} />

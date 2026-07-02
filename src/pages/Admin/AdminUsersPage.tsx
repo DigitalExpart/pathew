@@ -46,19 +46,20 @@ export const AdminUsersPage: React.FC = () => {
     if (!editingUser) return;
     
     try {
-      const { error } = await supabase.functions.invoke('admin-get-users', {
+      const { data, error } = await supabase.functions.invoke('admin-get-users', {
         body: { 
           action: 'update_user',
           userId: editingUser.id,
           updateData: {
             credits: parseInt(editCredits) || 0, 
             subscription_plan: editPlan,
-            role: editRole 
+            ...(editRole !== editingUser.role ? { role: editRole } : {})
           }
         }
       });
       
       if (error) throw error;
+      if (data?.error) throw new Error(data.error);
       
       setUsers(prev => prev.map(u => u.id === editingUser.id ? { 
         ...u, 
@@ -66,8 +67,9 @@ export const AdminUsersPage: React.FC = () => {
         subscription_plan: editPlan,
         role: editRole 
       } : u));
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error updating user:', err);
+      alert(err.message || 'Failed to update user');
     } finally {
       setEditingUser(null);
     }

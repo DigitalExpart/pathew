@@ -3,13 +3,21 @@ import { Button } from '../../components/ui/Button';
 import { CheckCircle } from 'lucide-react';
 import { CheckoutModal } from '../../components/payment/CheckoutModal';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const PricingCard = ({ title, price, credits, subtitle, generatesUpTo, includedFeatures, badge, badgeColor = 'var(--accent-primary)', isMobile }: any) => {
   const { t } = useTranslation();
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubscribe = (e: any) => {
     e.preventDefault();
+    if (!user) {
+      navigate('/signup');
+      return;
+    }
     setIsModalOpen(true);
   };
 

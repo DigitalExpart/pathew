@@ -143,7 +143,7 @@ export const Footer: React.FC = () => {
           <FooterCol 
             title={t('landing.footerCols.product', 'Product')} 
             links={[t('nav.howItWorks', 'How it works'), t('nav.pricing', 'Pricing')]} 
-            hrefs={['/#how-it-works', '/#pricing']} 
+            hrefs={['/#how-it-works', '/pricing']} 
           />
           <FooterCol 
             title={t('landing.footerCols.company', 'Company')} 
