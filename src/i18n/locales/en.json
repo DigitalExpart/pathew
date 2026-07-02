@@ -756,13 +756,13 @@
       },
       "growth": {
         "title": "Growth",
-        "credits": "60 credits / month",
+        "credits": "65 credits / month",
         "subtitle": "For freelancers and active job seekers applying across multiple roles.",
         "badge": "★ MOST POPULAR ★"
       },
       "power": {
         "title": "Power User",
-        "credits": "120 credits / month",
+        "credits": "160 credits / month",
         "subtitle": "For agencies, consultants and power users generating at scale.",
         "badge": "★ BEST VALUE ★"
       }

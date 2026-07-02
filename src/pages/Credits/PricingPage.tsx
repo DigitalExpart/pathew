@@ -206,7 +206,7 @@ export const PricingPage: React.FC = () => {
           isMobile={isMobile}
           generatesUpTo={[
             { label: t('pricing.services.coverLetter'), count: '25×' },
-            { label: t('pricing.services.cv'), count: '25×' },
+            { label: t('pricing.services.cv'), count: '12×' },
             { label: t('pricing.services.proposal'), count: '25×' },
             { label: t('pricing.services.grant'), count: '8×' },
             { label: t('pricing.services.rewrite'), count: '100×' }
@@ -225,11 +225,11 @@ export const PricingPage: React.FC = () => {
           badge={t('pricing.plans.growth.badge', '★ MOST POPULAR ★')}
           isMobile={isMobile}
           generatesUpTo={[
-            { label: t('pricing.services.coverLetter'), count: '60×' },
-            { label: t('pricing.services.cv'), count: '60×' },
-            { label: t('pricing.services.proposal'), count: '60×' },
-            { label: t('pricing.services.grant'), count: '20×' },
-            { label: t('pricing.services.rewrite'), count: '240×' }
+            { label: t('pricing.services.coverLetter'), count: '65×' },
+            { label: t('pricing.services.cv'), count: '32×' },
+            { label: t('pricing.services.proposal'), count: '65×' },
+            { label: t('pricing.services.grant'), count: '21×' },
+            { label: t('pricing.services.rewrite'), count: '260×' }
           ]}
           includedFeatures={[
             t('pricing.features.0', 'View live job & grant opportunities'),
@@ -246,11 +246,11 @@ export const PricingPage: React.FC = () => {
           badgeColor="#3b82f6"
           isMobile={isMobile}
           generatesUpTo={[
-            { label: t('pricing.services.coverLetter'), count: '120×' },
-            { label: t('pricing.services.cv'), count: '120×' },
-            { label: t('pricing.services.proposal'), count: '120×' },
-            { label: t('pricing.services.grant'), count: '40×' },
-            { label: t('pricing.services.rewrite'), count: '480×' }
+            { label: t('pricing.services.coverLetter'), count: '160×' },
+            { label: t('pricing.services.cv'), count: '80×' },
+            { label: t('pricing.services.proposal'), count: '160×' },
+            { label: t('pricing.services.grant'), count: '53×' },
+            { label: t('pricing.services.rewrite'), count: '640×' }
           ]}
           includedFeatures={[
             t('pricing.features.0', 'View live job & grant opportunities'),
