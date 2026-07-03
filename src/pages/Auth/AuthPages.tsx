@@ -56,7 +56,7 @@ export const LoginPage: React.FC = () => {
   return (
     <div style={authWrapperStyle}>
       <Link to="/" style={backButtonStyle}>
-        <ArrowLeft size={20} /> {t('common.backToHome')}
+        <ArrowLeft size={20} />
       </Link>
       
       <div style={authContentStyle}>
@@ -240,7 +240,7 @@ export const SignUpPage: React.FC = () => {
   return (
     <div style={authWrapperStyle}>
       <Link to="/" style={backButtonStyle}>
-        <ArrowLeft size={20} /> {t('common.backToHome')}
+        <ArrowLeft size={20} />
       </Link>
       
       <div style={authContentStyle}>
@@ -571,7 +571,7 @@ export const ForgotPasswordPage: React.FC = () => {
   return (
     <div style={authWrapperStyle}>
       <Link to="/login" style={backButtonStyle}>
-        <ArrowLeft size={20} /> Back to Login
+        <ArrowLeft size={20} />
       </Link>
       
       <div style={authContentStyle}>
