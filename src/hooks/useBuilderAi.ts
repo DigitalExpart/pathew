@@ -285,7 +285,7 @@ STRICT RULES:
     const experienceLevelMap: Record<string, string> = {
       "Graduate": `
 EXPERIENCE LEVEL: Graduate
-- Place Education immediately after Contact Header
+- Place Professional Summary immediately after Contact Header, followed by Education
 - Highlight dissertation, final year projects, academic prizes
 - Include all internships, part-time roles, society positions, volunteering
 - Show degree classification prominently
