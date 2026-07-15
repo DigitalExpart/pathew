@@ -214,6 +214,10 @@ export const Navbar: React.FC<NavbarProps> = ({ activePage }) => {
               </div>
 
               <div style={{ marginTop: '32px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <button onClick={toggleTheme} style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)', fontWeight: 600, background: 'none', border: 'none', cursor: 'pointer', padding: '8px 0', fontSize: '1.125rem' }}>
+                  {theme === 'light' ? <Moon size={24} /> : <Sun size={24} />}
+                  {theme === 'light' ? t('nav.darkMode', 'Dark Mode') : t('nav.lightMode', 'Light Mode')}
+                </button>
                 {user ? (
                   <>
                     <Link to="/dashboard" onClick={() => setIsMobileMenuOpen(false)}>

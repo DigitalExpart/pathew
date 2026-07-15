@@ -72,7 +72,7 @@ Deno.serve(async (req: Request) => {
 
     // Credit check
     const currentCredits = profile?.credits ?? 0
-    const requiredCredits = action === "extract_context" ? 1 : (documentType === 'Roadmap' ? 3 : 1)
+    const requiredCredits = action === "extract_context" ? 0 : (documentType === 'Roadmap' ? 3 : 1)
     if (currentCredits < requiredCredits) {
       return new Response(JSON.stringify({ 
         draft: 'You have exhausted your free credits! Please [click here to visit your Wallet](/wallet) to subscribe to a plan and get more credits.',
@@ -894,8 +894,6 @@ ${taskPrompt}
               let parsedMetadata: any = {
                 matchSummary: { strongMatches: [], gaps: [], priorityPoints: [] },
                 missingFields: [], editingSuggestions: [], wordCountEstimate: draftContent.split(' ').length, confidence: 'low'
-              }
-              
               if (metaMatch) {
                 try {
                   parsedMetadata = JSON.parse(metaMatch[1].trim())
@@ -908,15 +906,18 @@ ${taskPrompt}
 
               // === DEDUCT CREDIT ===
               let creditCost = requiredCredits
-              if (sessionId && documentType !== 'Roadmap') {
+              if (sessionId && documentType !== 'Roadmap' && action !== "extract_context") {
                 const { count } = await supabaseAdmin
                   .from('assistant_messages')
                   .select('*', { count: 'exact', head: true })
                   .eq('session_id', sid)
                   .eq('role', 'user')
+                  .like('content', 'Draft Generation%')
                 
-                if (count && count >= 3) {
-                  creditCost = 0.25
+                if (count && count >= 1 && count < 3) {
+                  creditCost = 0
+                } else if (count && count >= 3) {
+                  creditCost = 1
                 }
               }
 

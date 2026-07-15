@@ -5,6 +5,13 @@ import { Link } from 'react-router-dom';
 export const CookieBanner: React.FC = () => {
   const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth <= 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const cookieConsent = localStorage.getItem('cookieConsent');
@@ -32,11 +39,11 @@ export const CookieBanner: React.FC = () => {
 
   return (
     <div style={bannerStyle}>
-      <div style={containerStyle}>
-        <p style={textStyle}>
+      <div style={{ ...containerStyle, flexDirection: isMobile ? 'column' : 'row' }}>
+        <p style={{ ...textStyle, textAlign: isMobile ? 'center' : 'left', flex: isMobile ? 'none' : '1 1 500px', marginBottom: isMobile ? '12px' : '0' }}>
           {t('cookieBanner.text')} <Link to="/cookies" style={linkStyle}>{t('cookieBanner.privacyPolicy')}</Link>.
         </p>
-        <div style={buttonContainerStyle}>
+        <div style={{ ...buttonContainerStyle, width: isMobile ? '100%' : 'auto', justifyContent: isMobile ? 'center' : 'flex-end' }}>
           <button style={settingsButtonStyle} onClick={handleSettings}>
             {t('cookieBanner.settings')}
           </button>
