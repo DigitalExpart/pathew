@@ -70,14 +70,50 @@ Deno.serve(async (req: Request) => {
     const { data: profile } = await supabaseClient
       .from('profiles').select('*').eq('id', user.id).maybeSingle()
 
+    const sid = sessionId || crypto.randomUUID()
+
     // Credit check
     const currentCredits = profile?.credits ?? 0
-    const requiredCredits = action === "extract_context" ? 0 : (documentType === 'Roadmap' ? 3 : 1)
+    let requiredCredits = 0;
+    const isRegenerate = action && action.startsWith("regenerate:");
+
+    if (action === "extract_context") {
+      requiredCredits = 0;
+    } else if (isRegenerate) {
+      if (sessionId) {
+        const { count } = await supabaseAdmin
+          .from('assistant_messages')
+          .select('*', { count: 'exact', head: true })
+          .eq('session_id', sid)
+          .eq('role', 'user')
+          .like('content', 'Draft Generation%');
+          
+        const previousGenerations = count || 0;
+        // previousGenerations == 1 (initial), 2 (1st rewrite), 3 (2nd rewrite), 4 (3rd rewrite)
+        // User gets 3 rewrites free. So if previousGenerations >= 4, it's the 4th rewrite and costs 1 credit.
+        if (previousGenerations >= 4) {
+          requiredCredits = 1;
+        } else {
+          requiredCredits = 0;
+        }
+      } else {
+        requiredCredits = 1;
+      }
+    } else {
+      if (documentType === 'Roadmap') {
+        requiredCredits = 3;
+      } else if (documentType === 'Cover Letter' || documentType === 'Cover letter') {
+        requiredCredits = 1;
+      } else {
+        requiredCredits = 0;
+      }
+    }
+
     if (currentCredits < requiredCredits) {
       return new Response(JSON.stringify({ 
         draft: 'You have exhausted your free credits! Please [click here to visit your Wallet](/wallet) to subscribe to a plan and get more credits.',
         matchSummary: { strongMatches: [], gaps: [], priorityPoints: [] },
-        editingSuggestions: [], wordCountEstimate: 0, confidence: 'low', sessionId: sessionId || 'error'
+        editingSuggestions: [], wordCountEstimate: 0, confidence: 'low', sessionId: sid
       }), {
         status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })
@@ -123,7 +159,6 @@ Deno.serve(async (req: Request) => {
     }
 
     const preferredModel = Deno.env.get('CLAUDE_MODEL') || 'claude-3-5-sonnet-20241022'
-    const sid = sessionId || crypto.randomUUID()
 
     // Layer 1: System Prompt (defines the AI assistant's role and rules)
     const cvTypeRules: Record<string, string> = {
@@ -905,21 +940,7 @@ ${taskPrompt}
               parsedMetadata.sessionId = sid
 
               // === DEDUCT CREDIT ===
-              let creditCost = requiredCredits
-              if (sessionId && documentType !== 'Roadmap' && action !== "extract_context") {
-                const { count } = await supabaseAdmin
-                  .from('assistant_messages')
-                  .select('*', { count: 'exact', head: true })
-                  .eq('session_id', sid)
-                  .eq('role', 'user')
-                  .like('content', 'Draft Generation%')
-                
-                if (count && count >= 1 && count < 3) {
-                  creditCost = 0
-                } else if (count && count >= 3) {
-                  creditCost = 1
-                }
-              }
+              let creditCost = requiredCredits;
 
               // H2: Use RPC for atomic credit deduction
               const { data: newCredits, error: creditError } = await supabaseAdmin.rpc('decrement_credits', {
