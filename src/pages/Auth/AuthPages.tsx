@@ -185,6 +185,7 @@ export const SignUpPage: React.FC = () => {
           options: {
             data: {
               full_name: formData.fullName,
+              marketing_consent: formData.marketingConsent,
             }
           }
         });

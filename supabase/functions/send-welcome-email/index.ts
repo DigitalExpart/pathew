@@ -13,6 +13,11 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    const BREVO_API_KEY = Deno.env.get('BREVO_API_KEY');
+    if (!BREVO_API_KEY) {
+      throw new Error('BREVO_API_KEY is not set in edge function environment variables');
+    }
+
     const RESEND_API_KEY = Deno.env.get('RESEND_API_KEY');
     if (!RESEND_API_KEY) {
       throw new Error('RESEND_API_KEY is not set in edge function environment variables');
@@ -29,7 +34,7 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    const { email, full_name } = payload.record;
+    const { id: userId, email, full_name } = payload.record;
     
     if (!email) {
       return new Response(JSON.stringify({ message: 'No email found in record, ignoring' }), {
@@ -38,7 +43,48 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    // Use full_name or fallback to just "there" if not provided
+    // Initialize Supabase Admin Client to fetch user metadata from auth.users
+    const supabaseAdmin = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
+    );
+
+    // Fetch the auth.users record to get marketing_consent
+    const { data: { user }, error: userError } = await supabaseAdmin.auth.admin.getUserById(userId);
+    const marketingConsent = user?.user_metadata?.marketing_consent === true;
+
+    // 1. If marketingConsent is true, add to Brevo Contact List
+    if (marketingConsent) {
+      const BREVO_LIST_ID = Deno.env.get('BREVO_LIST_ID'); 
+      if (BREVO_LIST_ID) {
+        const listIds = [parseInt(BREVO_LIST_ID)];
+        try {
+          const contactRes = await fetch('https://api.brevo.com/v3/contacts', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'api-key': BREVO_API_KEY,
+            },
+            body: JSON.stringify({
+              email: email,
+              attributes: {
+                FIRSTNAME: full_name ? full_name.split(' ')[0] : '',
+                LASTNAME: full_name ? full_name.split(' ').slice(1).join(' ') : ''
+              },
+              listIds: listIds,
+              updateEnabled: true
+            }),
+          });
+          if (!contactRes.ok) {
+            console.error('Failed to add contact to Brevo list:', await contactRes.text());
+          }
+        } catch (contactErr) {
+          console.error('Error adding contact to Brevo:', contactErr);
+        }
+      }
+    }
+
+    // 2. Send the Welcome Email
     const firstName = full_name ? full_name.split(' ')[0] : 'there';
 
     const htmlContent = `
@@ -90,15 +136,15 @@ Deno.serve(async (req: Request) => {
 
     const data = await res.json();
 
-    if (res.ok) {
-      return new Response(JSON.stringify({ success: true, data }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
-      });
-    } else {
+    if (!res.ok) {
       console.error('Error sending email:', data);
       throw new Error(`Resend API returned error: ${JSON.stringify(data)}`);
     }
+
+    return new Response(JSON.stringify({ success: true, data }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200,
+    });
 
   } catch (error: any) {
     console.error('Error in send-welcome-email:', error.message);
