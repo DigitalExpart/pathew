@@ -156,6 +156,7 @@ export const LandingPage: React.FC = () => {
           >
             <StatItem count="1K+" label={t('landing.stats.opportunities')} />
             <StatItem count="50+" label={t('landing.stats.countries')} />
+            <StatItem count="RAG-Powered" label="Grounded AI Responses" />
           </motion.div>
         </motion.div>
         
