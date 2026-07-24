@@ -145,6 +145,8 @@ export const SignUpPage: React.FC = () => {
   const [loading, setLoading] = React.useState(false);
   const [authError, setAuthError] = React.useState<string | null>(null);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
+  const [resending, setResending] = React.useState(false);
+  const [resendMessage, setResendMessage] = React.useState<string | null>(null);
 
   const { user, loading: authLoading } = useAuth();
 
@@ -172,6 +174,28 @@ export const SignUpPage: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
+  const handleResendEmail = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (resending) return;
+    setResending(true);
+    setResendMessage(null);
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: formData.email,
+        options: {
+          emailRedirectTo: window.location.origin + '/dashboard',
+        }
+      });
+      if (error) throw error;
+      setResendMessage(t('auth.resendSuccess') || 'Verification email resent successfully.');
+    } catch (err: any) {
+      setResendMessage(err.message || 'Failed to resend email.');
+    } finally {
+      setResending(false);
+    }
+  };
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
@@ -183,6 +207,7 @@ export const SignUpPage: React.FC = () => {
           email: formData.email,
           password: formData.password,
           options: {
+            emailRedirectTo: window.location.origin + '/dashboard',
             data: {
               full_name: formData.fullName,
               marketing_consent: formData.marketingConsent,
@@ -230,8 +255,20 @@ export const SignUpPage: React.FC = () => {
               {t('auth.backToLogin')}
             </Button>
             <p style={{ marginTop: '24px', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-              {t('auth.didntReceiveEmail')} <a href="#" style={linkStyle}>{t('auth.resendLink')}</a>
+              {t('auth.didntReceiveEmail')}{' '}
+              <a 
+                href="#" 
+                onClick={handleResendEmail} 
+                style={{...linkStyle, opacity: resending ? 0.5 : 1, pointerEvents: resending ? 'none' : 'auto'}}
+              >
+                {resending ? 'Resending...' : t('auth.resendLink')}
+              </a>
             </p>
+            {resendMessage && (
+              <p style={{ marginTop: '12px', fontSize: '0.875rem', color: resendMessage.includes('Failed') ? '#ef4444' : '#10b981', fontWeight: 500 }}>
+                {resendMessage}
+              </p>
+            )}
           </Card>
         </div>
       </div>

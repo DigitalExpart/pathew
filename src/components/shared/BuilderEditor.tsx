@@ -15,6 +15,7 @@ import remarkBreaks from 'remark-breaks';
 import { useTranslation } from 'react-i18next';
 import { ExportModal } from '../ui/ExportModal';
 import { generateDocxBlob } from '../../utils/docxExport';
+import { generatePdfBlob } from '../../utils/pdfExport';
 
 interface BuilderEditorProps {
   draftContent: string;
@@ -111,25 +112,28 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
 
   const handleDownload = async (format: string) => {
     try {
-      if (format === 'docx') {
-        const blob = await generateDocxBlob(draftContent, accentColor.border, documentType);
-        const element = document.createElement('a');
-        element.href = URL.createObjectURL(blob);
-        element.download = `${documentType.replace(/\s+/g, '_')}_Version_${currentVersionNumber}.docx`;
-        document.body.appendChild(element);
-        element.click();
-        document.body.removeChild(element);
-        setIsExportOpen(false);
-        return;
+      let blob: Blob;
+      let extension = format;
+
+      if (format === 'pdf') {
+        blob = await generatePdfBlob(draftContent, accentColor.border, documentType);
+        extension = 'pdf';
+      } else if (format === 'docx') {
+        blob = await generateDocxBlob(draftContent, accentColor.border, documentType);
+        extension = 'docx';
+      } else {
+        blob = new Blob([draftContent], { type: 'text/plain' });
+        extension = 'txt';
       }
-      // Generate simulated download for pdf/txt fallback
+
+      const url = URL.createObjectURL(blob);
       const element = document.createElement('a');
-      const file = new Blob([draftContent], { type: 'text/plain' });
-      element.href = URL.createObjectURL(file);
-      element.download = `${documentType.replace(/\s+/g, '_')}_Version_${currentVersionNumber}.${format === 'pdf' ? 'txt' : 'docx'}`;
+      element.href = url;
+      element.download = `${documentType.replace(/\s+/g, '_')}_Version_${currentVersionNumber}.${extension}`;
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);
+      URL.revokeObjectURL(url);
       setIsExportOpen(false);
     } catch (err) {
       console.error('Error generating document:', err);

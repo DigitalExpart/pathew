@@ -138,6 +138,41 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
+  useEffect(() => {
+    let inactivityTimeout: ReturnType<typeof setTimeout>;
+
+    const resetInactivityTimeout = () => {
+      if (inactivityTimeout) clearTimeout(inactivityTimeout);
+      // 30 minutes = 30 * 60 * 1000 ms
+      inactivityTimeout = setTimeout(() => {
+        supabase.auth.signOut();
+      }, 30 * 60 * 1000);
+    };
+
+    const handleUserActivity = () => {
+      // Throttle or debounce could be added here if performance becomes an issue,
+      // but typical browser handling of these events with a simple clearTimeout is usually fine.
+      resetInactivityTimeout();
+    };
+
+    if (user) {
+      const activityEvents = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart'];
+      
+      activityEvents.forEach(eventName => {
+        window.addEventListener(eventName, handleUserActivity, { passive: true });
+      });
+
+      resetInactivityTimeout();
+
+      return () => {
+        if (inactivityTimeout) clearTimeout(inactivityTimeout);
+        activityEvents.forEach(eventName => {
+          window.removeEventListener(eventName, handleUserActivity);
+        });
+      };
+    }
+  }, [user]);
+
   const signOut = async () => {
     await supabase.auth.signOut();
   };

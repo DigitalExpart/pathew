@@ -1,0 +1,260 @@
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+
+function sanitizeText(text: string): string {
+  if (!text) return '';
+  return text.replace(/[^\x09\x0A\x0D\x20-\uD7FF\uE000-\uFFFD\u10000-\u10FFFF]/g, '');
+}
+
+function inlineMarkdownToHtml(text: string): string {
+  if (!text) return '';
+  let html = text
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  // Bold **text**
+  html = html.replace(/\*\*(.*?)\*\*/g, '<strong style="font-weight: 700; color: #0f172a;">$1</strong>');
+  // Italic *text* or _text_
+  html = html.replace(/\*(.*?)\*/g, '<em style="font-style: italic; color: #475569;">$1</em>');
+  html = html.replace(/_(.*?)_/g, '<em style="font-style: italic; color: #475569;">$1</em>');
+
+  return html;
+}
+
+export const generatePdfBlob = async (
+  markdownText: string,
+  accentColorHex: string = 'D69E2E',
+  documentType: string = 'cv'
+): Promise<Blob> => {
+  const sanitizedText = sanitizeText(markdownText);
+  const cleanHex = accentColorHex.startsWith('#') ? accentColorHex.slice(1) : accentColorHex;
+  const accentColor = `#${cleanHex}`;
+  const normalizedType = documentType.toLowerCase().replace(/[\s-]/g, '_');
+
+  // Create temporary container offscreen
+  const container = document.createElement('div');
+  container.style.position = 'absolute';
+  container.style.left = '-9999px';
+  container.style.top = '0';
+  container.style.width = '794px'; // ~A4 width at 96 DPI
+  container.style.backgroundColor = '#ffffff';
+  container.style.color = '#1e293b';
+  container.style.padding = '48px 56px';
+  container.style.boxSizing = 'border-box';
+  container.style.fontFamily = "'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
+  container.style.fontSize = '13.5px';
+  container.style.lineHeight = '1.6';
+  container.style.webkitFontSmoothing = 'antialiased';
+
+  const lines = sanitizedText.split('\n');
+  let htmlContent = '';
+  let inList = false;
+  let isHeaderArea = normalizedType.includes('cv') || normalizedType.includes('resume');
+  let emptyLineCount = 0;
+
+  const dateRegex = /((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{4})\s*[-–—]\s*((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{4}|Present|Current)/i;
+
+  const closeList = () => {
+    if (inList) {
+      htmlContent += '</ul>';
+      inList = false;
+    }
+  };
+
+  for (let i = 0; i < lines.length; i++) {
+    const originalLine = lines[i];
+    const line = originalLine.replace(/\u00A0/g, ' ').trim();
+
+    // Ignore decorative horizontal lines
+    if (line.match(/^[-=_*]{3,}$/)) {
+      closeList();
+      isHeaderArea = false;
+      continue;
+    }
+
+    if (!line) {
+      closeList();
+      emptyLineCount++;
+      if (emptyLineCount >= 2 && isHeaderArea) {
+        isHeaderArea = false;
+      }
+      continue;
+    }
+    emptyLineCount = 0;
+
+    const cleanHeader = line.replace(/^[#]+ /, '').replace(/\*/g, '').trim();
+
+    // H1 (Name or Big Title)
+    if (line.startsWith('# ')) {
+      closeList();
+      if (cleanHeader.includes('|') || cleanHeader.length > 50) {
+        htmlContent += `<h2 style="font-size: 16px; font-weight: 700; text-align: center; color: ${accentColor}; margin: 0 0 12px 0;">${inlineMarkdownToHtml(cleanHeader)}</h2>`;
+      } else {
+        htmlContent += `<h1 style="font-size: 26px; font-weight: 800; text-align: center; text-transform: uppercase; color: #0f172a; margin: 0 0 8px 0; letter-spacing: 0.5px;">${inlineMarkdownToHtml(cleanHeader)}</h1>`;
+      }
+      continue;
+    }
+
+    // H2 (Professional Subtitle OR Section Header)
+    if (line.startsWith('## ')) {
+      closeList();
+      const isGrant = normalizedType.includes('grant') || normalizedType.includes('proposal') || normalizedType.includes('roadmap') || normalizedType.includes('general');
+      if (isGrant || (cleanHeader === cleanHeader.toUpperCase() && cleanHeader.length < 50 && !cleanHeader.includes('|'))) {
+        isHeaderArea = false;
+        htmlContent += `
+          <div style="margin-top: 22px; margin-bottom: 10px;">
+            <h2 style="font-size: 15px; font-weight: 700; text-transform: uppercase; color: #0f172a; margin: 0 0 4px 0; letter-spacing: 0.5px;">${inlineMarkdownToHtml(cleanHeader)}</h2>
+            <div style="height: 2px; background-color: ${accentColor}; width: 100%;"></div>
+          </div>
+        `;
+      } else {
+        htmlContent += `<h2 style="font-size: 15px; font-weight: 600; text-align: center; color: ${accentColor}; margin: 0 0 12px 0;">${inlineMarkdownToHtml(cleanHeader)}</h2>`;
+      }
+      continue;
+    }
+
+    // H3 (Contact info line or Sub-header)
+    if (line.startsWith('### ')) {
+      closeList();
+      const isGrant = normalizedType.includes('grant') || normalizedType.includes('proposal') || normalizedType.includes('roadmap') || normalizedType.includes('general');
+      if (isGrant) {
+        htmlContent += `<h3 style="font-size: 14px; font-weight: 700; color: #1e293b; margin: 16px 0 8px 0;">${inlineMarkdownToHtml(cleanHeader)}</h3>`;
+      } else {
+        htmlContent += `<h3 style="font-size: 12px; font-weight: 500; text-align: center; color: #475569; margin: 0 0 16px 0;">${inlineMarkdownToHtml(cleanHeader)}</h3>`;
+      }
+      continue;
+    }
+
+    // H4 (Section Header)
+    if (line.startsWith('#### ')) {
+      closeList();
+      isHeaderArea = false;
+      htmlContent += `
+        <div style="margin-top: 22px; margin-bottom: 10px;">
+          <h4 style="font-size: 15px; font-weight: 700; text-transform: uppercase; color: #0f172a; margin: 0 0 4px 0; letter-spacing: 0.5px;">${inlineMarkdownToHtml(cleanHeader)}</h4>
+          <div style="height: 2px; background-color: ${accentColor}; width: 100%;"></div>
+        </div>
+      `;
+      continue;
+    }
+
+    // Uppercase Section Header Fallback
+    const isUppercaseHeader = cleanHeader.length > 0 && cleanHeader.length < 60 && cleanHeader === cleanHeader.toUpperCase() && !cleanHeader.includes('|') && !cleanHeader.match(/\d{4}/);
+    if (isUppercaseHeader && (!isHeaderArea || cleanHeader === 'PROFESSIONAL SUMMARY' || cleanHeader === 'EDUCATION' || cleanHeader === 'WORK EXPERIENCE')) {
+      closeList();
+      isHeaderArea = false;
+      htmlContent += `
+        <div style="margin-top: 22px; margin-bottom: 10px;">
+          <h4 style="font-size: 15px; font-weight: 700; text-transform: uppercase; color: #0f172a; margin: 0 0 4px 0; letter-spacing: 0.5px;">${inlineMarkdownToHtml(cleanHeader)}</h4>
+          <div style="height: 2px; background-color: ${accentColor}; width: 100%;"></div>
+        </div>
+      `;
+      continue;
+    }
+
+    // Experience Row Detection (Title | Company | Date)
+    const isListMatch = line.match(/^[\p{Pd}*+•]\s+/u);
+    const isList = !!isListMatch;
+    const hasPipe = line.includes('|');
+
+    if (!isHeaderArea && hasPipe && dateRegex.test(line)) {
+      closeList();
+      let cleanLine = line.replace(/^\*\*/, '').replace(/\*\*$/, '');
+      if (isListMatch) {
+        cleanLine = cleanLine.substring(isListMatch[0].length);
+      }
+
+      const parts = cleanLine.split('|').map(p => p.trim());
+      if (parts.length >= 2) {
+        const leftPart = parts.slice(0, parts.length - 1).join(' | ');
+        let rightPart = parts[parts.length - 1];
+        let descriptionPart = '';
+
+        const dateMatch = rightPart.match(dateRegex);
+        if (dateMatch) {
+          const dateEndIndex = dateMatch.index! + dateMatch[0].length;
+          const afterDate = rightPart.substring(dateEndIndex).trim();
+          if (afterDate) {
+            descriptionPart = afterDate.replace(/^[:\-–—.,;]\s*/, '').trim();
+            rightPart = rightPart.substring(0, dateEndIndex).trim();
+          }
+        }
+
+        htmlContent += `
+          <div style="display: flex; justify-content: space-between; align-items: baseline; margin-top: 10px; margin-bottom: 4px;">
+            <div style="font-weight: 700; color: #0f172a; font-size: 14px;">${inlineMarkdownToHtml(leftPart)}</div>
+            <div style="font-weight: 700; color: ${accentColor}; font-size: 12.5px; white-space: nowrap; margin-left: 16px;">${inlineMarkdownToHtml(rightPart)}</div>
+          </div>
+        `;
+
+        if (descriptionPart) {
+          htmlContent += `<p style="margin: 0 0 6px 0; color: #334155;">${inlineMarkdownToHtml(descriptionPart)}</p>`;
+        }
+        continue;
+      }
+    }
+
+    // Bullet List Item
+    if (isList) {
+      const content = line.substring(isListMatch![0].length).trim();
+      if (!inList) {
+        htmlContent += '<ul style="margin: 4px 0 8px 0; padding-left: 20px; color: #334155;">';
+        inList = true;
+      }
+      htmlContent += `<li style="margin-bottom: 4px; line-height: 1.5;">${inlineMarkdownToHtml(content)}</li>`;
+      continue;
+    }
+
+    // Regular Paragraph
+    closeList();
+    if (isHeaderArea) {
+      htmlContent += `<p style="text-align: center; margin: 0 0 6px 0; color: #475569; font-size: 13px;">${inlineMarkdownToHtml(line)}</p>`;
+    } else {
+      htmlContent += `<p style="margin: 0 0 8px 0; color: #334155;">${inlineMarkdownToHtml(line)}</p>`;
+    }
+  }
+
+  closeList();
+  container.innerHTML = htmlContent;
+  document.body.appendChild(container);
+
+  try {
+    const canvas = await html2canvas(container, {
+      scale: 2,
+      useCORS: true,
+      logging: false,
+      backgroundColor: '#ffffff',
+    });
+
+    document.body.removeChild(container);
+
+    const imgData = canvas.toDataURL('image/jpeg', 0.98);
+    const pdf = new jsPDF('p', 'mm', 'a4');
+    const pdfWidth = pdf.internal.pageSize.getWidth(); // 210 mm
+    const pdfHeight = pdf.internal.pageSize.getHeight(); // 297 mm
+
+    const imgWidth = pdfWidth;
+    const imgHeight = (canvas.height * pdfWidth) / canvas.width;
+
+    let heightLeft = imgHeight;
+    let position = 0;
+
+    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pdfHeight;
+
+    while (heightLeft > 0) {
+      position -= pdfHeight;
+      pdf.addPage();
+      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+      heightLeft -= pdfHeight;
+    }
+
+    return pdf.output('blob');
+  } catch (err) {
+    if (document.body.contains(container)) {
+      document.body.removeChild(container);
+    }
+    throw err;
+  }
+};

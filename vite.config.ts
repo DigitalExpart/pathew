@@ -18,7 +18,7 @@ export default defineConfig({
           // Animation
           'vendor-framer': ['framer-motion'],
           // Heavy PDF / document tools (lazy-loaded features)
-          'vendor-docs': ['pdfjs-dist', 'docx', 'mammoth'],
+          'vendor-docs': ['pdfjs-dist', 'docx', 'mammoth', 'jspdf', 'html2canvas'],
           // Payment
           'vendor-stripe': ['@stripe/react-stripe-js', '@stripe/stripe-js'],
           // Markdown rendering
