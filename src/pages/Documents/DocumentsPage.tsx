@@ -6,7 +6,9 @@ import { FileText, Download, Eye, Clock, X, Trash2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { BuilderService } from '../../services/builderService';
 import type { GeneratedDocument } from '../../services/builderService';
+import { ExportModal } from '../../components/ui/ExportModal';
 import { generateDocxBlob } from '../../utils/docxExport';
+import { generatePdfBlob } from '../../utils/pdfExport';
 import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -15,6 +17,7 @@ export const DocumentsPage: React.FC = () => {
   const [documents, setDocuments] = useState<GeneratedDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDoc, setSelectedDoc] = useState<GeneratedDocument | null>(null);
+  const [exportDoc, setExportDoc] = useState<GeneratedDocument | null>(null);
 
   useEffect(() => {
     fetchDocuments();
@@ -33,17 +36,31 @@ export const DocumentsPage: React.FC = () => {
     }
   };
 
-  const handleExport = async (doc: GeneratedDocument) => {
+  const handleExportDownload = async (format: string) => {
+    if (!exportDoc) return;
     try {
-      const blob = await generateDocxBlob(doc.content, "D69E2E", doc.document_type);
+      let blob: Blob;
+      let extension = format;
+      if (format === 'pdf') {
+        blob = await generatePdfBlob(exportDoc.content, 'D69E2E', exportDoc.document_type);
+        extension = 'pdf';
+      } else {
+        blob = await generateDocxBlob(exportDoc.content, 'D69E2E', exportDoc.document_type);
+        extension = 'docx';
+      }
+
+      const url = URL.createObjectURL(blob);
       const element = document.createElement('a');
-      element.href = URL.createObjectURL(blob);
-      element.download = `${doc.title.replace(/\s+/g, '_')}_v${doc.version}.docx`;
+      element.href = url;
+      element.download = `${exportDoc.title.replace(/\s+/g, '_')}_v${exportDoc.version}.${extension}`;
       document.body.appendChild(element);
       element.click();
       document.body.removeChild(element);
+      URL.revokeObjectURL(url);
+      setExportDoc(null);
     } catch (error) {
       console.error('Export failed:', error);
+      alert('Failed to export document. Please try again.');
     }
   };
 
@@ -119,7 +136,7 @@ export const DocumentsPage: React.FC = () => {
                 <Button 
                   variant="primary" 
                   size="sm" 
-                  onClick={() => handleExport(doc)}
+                  onClick={() => setExportDoc(doc)}
                   style={{ flex: 1, justifyContent: 'center' }}
                 >
                   <Download size={16} style={{ marginRight: '6px' }} /> Export
@@ -129,6 +146,13 @@ export const DocumentsPage: React.FC = () => {
           ))}
         </div>
       )}
+
+      {/* Export Modal */}
+      <ExportModal 
+        isOpen={!!exportDoc} 
+        onClose={() => setExportDoc(null)} 
+        onDownload={handleExportDownload} 
+      />
 
       {/* Document View Modal */}
       <AnimatePresence>
@@ -151,8 +175,8 @@ export const DocumentsPage: React.FC = () => {
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: '12px' }}>
-                  <Button variant="primary" onClick={() => handleExport(selectedDoc)}>
-                    <Download size={16} style={{ marginRight: '8px' }} /> Export DOCX
+                  <Button variant="primary" onClick={() => setExportDoc(selectedDoc)}>
+                    <Download size={16} style={{ marginRight: '8px' }} /> Export
                   </Button>
                   <button onClick={() => setSelectedDoc(null)} style={closeBtnStyle}>
                     <X size={24} />

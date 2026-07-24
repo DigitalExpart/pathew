@@ -32,12 +32,15 @@ export const generatePdfBlob = async (
   const accentColor = `#${cleanHex}`;
   const normalizedType = documentType.toLowerCase().replace(/[\s-]/g, '_');
 
-  // Create temporary container offscreen
+  // Create temporary container fixed in viewport behind everything so html2canvas captures full dimensions properly
   const container = document.createElement('div');
-  container.style.position = 'absolute';
-  container.style.left = '-9999px';
+  container.style.position = 'fixed';
   container.style.top = '0';
-  container.style.width = '794px'; // ~A4 width at 96 DPI
+  container.style.left = '0';
+  container.style.zIndex = '-9999';
+  container.style.opacity = '0';
+  container.style.pointerEvents = 'none';
+  container.style.width = '794px'; // Standard A4 width at 96 DPI
   container.style.backgroundColor = '#ffffff';
   container.style.color = '#1e293b';
   container.style.padding = '48px 56px';
@@ -45,7 +48,7 @@ export const generatePdfBlob = async (
   container.style.fontFamily = "'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
   container.style.fontSize = '13.5px';
   container.style.lineHeight = '1.6';
-  container.style.webkitFontSmoothing = 'antialiased';
+  (container.style as any).webkitFontSmoothing = 'antialiased';
 
   const lines = sanitizedText.split('\n');
   let htmlContent = '';
@@ -225,9 +228,12 @@ export const generatePdfBlob = async (
       useCORS: true,
       logging: false,
       backgroundColor: '#ffffff',
+      windowWidth: 1200,
     });
 
-    document.body.removeChild(container);
+    if (document.body.contains(container)) {
+      document.body.removeChild(container);
+    }
 
     const imgData = canvas.toDataURL('image/jpeg', 0.98);
     const pdf = new jsPDF('p', 'mm', 'a4');
@@ -252,9 +258,74 @@ export const generatePdfBlob = async (
 
     return pdf.output('blob');
   } catch (err) {
+    console.warn('html2canvas PDF generation warning, falling back to direct jsPDF builder:', err);
     if (document.body.contains(container)) {
       document.body.removeChild(container);
     }
-    throw err;
+    return generateDirectPdfFallback(sanitizedText, accentColor);
   }
 };
+
+function generateDirectPdfFallback(sanitizedText: string, accentColorHex: string): Blob {
+  const pdf = new jsPDF('p', 'mm', 'a4');
+  const cleanHex = accentColorHex.replace('#', '');
+  const r = parseInt(cleanHex.substring(0, 2) || 'D6', 16);
+  const g = parseInt(cleanHex.substring(2, 4) || '9E', 16);
+  const b = parseInt(cleanHex.substring(4, 6) || '2E', 16);
+
+  const lines = sanitizedText.split('\n');
+  let y = 20;
+  const margin = 15;
+  const pageWidth = 210;
+  const maxLineWidth = pageWidth - margin * 2;
+
+  pdf.setFont('helvetica', 'normal');
+  pdf.setFontSize(11);
+
+  for (let i = 0; i < lines.length; i++) {
+    const trimmed = lines[i].trim();
+    if (!trimmed) {
+      y += 5;
+      if (y > 275) { pdf.addPage(); y = 20; }
+      continue;
+    }
+
+    if (trimmed.startsWith('# ')) {
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(18);
+      pdf.setTextColor(30, 41, 59);
+      const titleText = trimmed.replace('# ', '').replace(/\*/g, '');
+      pdf.text(titleText, pageWidth / 2, y, { align: 'center' });
+      y += 10;
+    } else if (trimmed.startsWith('## ')) {
+      pdf.setFont('helvetica', 'bold');
+      pdf.setFontSize(13);
+      pdf.setTextColor(r, g, b);
+      const subtitleText = trimmed.replace('## ', '').replace(/\*/g, '');
+      pdf.text(subtitleText, margin, y);
+      y += 2;
+      pdf.setDrawColor(r, g, b);
+      pdf.setLineWidth(0.5);
+      pdf.line(margin, y, pageWidth - margin, y);
+      y += 8;
+    } else {
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10.5);
+      pdf.setTextColor(51, 65, 85);
+      const cleanLine = trimmed.replace(/^[#*+•-]\s+/, '').replace(/\*\*(.*?)\*\*/g, '$1');
+      const splitLines = pdf.splitTextToSize(cleanLine, maxLineWidth);
+      for (let sLine of splitLines) {
+        pdf.text(sLine, margin, y);
+        y += 6;
+        if (y > 275) { pdf.addPage(); y = 20; }
+      }
+    }
+
+    if (y > 275) {
+      pdf.addPage();
+      y = 20;
+    }
+  }
+
+  return pdf.output('blob');
+}
