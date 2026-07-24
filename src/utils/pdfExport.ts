@@ -32,15 +32,13 @@ export const generatePdfBlob = async (
   const accentColor = `#${cleanHex}`;
   const normalizedType = documentType.toLowerCase().replace(/[\s-]/g, '_');
 
-  // Create temporary container fixed in viewport behind everything so html2canvas captures full dimensions properly
+  // Create temporary container positioned offscreen with opacity: 1
   const container = document.createElement('div');
+  container.id = 'pdf-export-container';
   container.style.position = 'fixed';
   container.style.top = '0';
-  container.style.left = '0';
-  container.style.zIndex = '-9999';
-  container.style.opacity = '0';
-  container.style.pointerEvents = 'none';
-  container.style.width = '794px'; // Standard A4 width at 96 DPI
+  container.style.left = '-9999px';
+  container.style.width = '794px'; // ~A4 width at 96 DPI
   container.style.backgroundColor = '#ffffff';
   container.style.color = '#1e293b';
   container.style.padding = '48px 56px';
@@ -48,6 +46,8 @@ export const generatePdfBlob = async (
   container.style.fontFamily = "'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif";
   container.style.fontSize = '13.5px';
   container.style.lineHeight = '1.6';
+  container.style.opacity = '1';
+  container.style.visibility = 'visible';
   (container.style as any).webkitFontSmoothing = 'antialiased';
 
   const lines = sanitizedText.split('\n');
@@ -229,10 +229,24 @@ export const generatePdfBlob = async (
       logging: false,
       backgroundColor: '#ffffff',
       windowWidth: 1200,
+      onclone: (clonedDoc) => {
+        const clonedEl = clonedDoc.getElementById('pdf-export-container');
+        if (clonedEl) {
+          clonedEl.style.position = 'static';
+          clonedEl.style.left = '0px';
+          clonedEl.style.top = '0px';
+          clonedEl.style.opacity = '1';
+          clonedEl.style.visibility = 'visible';
+        }
+      }
     });
 
     if (document.body.contains(container)) {
       document.body.removeChild(container);
+    }
+
+    if (!canvas || canvas.width === 0 || canvas.height === 0) {
+      throw new Error('html2canvas generated empty image canvas');
     }
 
     const imgData = canvas.toDataURL('image/jpeg', 0.98);
