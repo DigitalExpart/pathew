@@ -294,6 +294,62 @@ export const generateDocxBlob = async (markdownText: string, accentColorHex: str
     }
     
     // Normal paragraph or list item
+    if (line.includes('•') && !isList) {
+      const items = line.split('•').map(s => s.trim()).filter(Boolean);
+      if (items.length >= 2) {
+        const mid = Math.ceil(items.length / 2);
+        const maxRows = Math.max(mid, items.length - mid);
+        const tableRows: TableRow[] = [];
+
+        for (let r = 0; r < maxRows; r++) {
+          const leftItem = items[r];
+          const rightItem = items[r + mid];
+          tableRows.push(
+            new TableRow({
+              children: [
+                new TableCell({
+                  width: { size: 50, type: WidthType.PERCENTAGE },
+                  borders: { top: { style: BorderStyle.NONE, size: 0 }, bottom: { style: BorderStyle.NONE, size: 0 }, left: { style: BorderStyle.NONE, size: 0 }, right: { style: BorderStyle.NONE, size: 0 } },
+                  children: leftItem ? [
+                    new Paragraph({
+                      children: parseInlineFormatting(`•  ${leftItem}`),
+                      spacing: { after: 60 }
+                    })
+                  ] : []
+                }),
+                new TableCell({
+                  width: { size: 50, type: WidthType.PERCENTAGE },
+                  borders: { top: { style: BorderStyle.NONE, size: 0 }, bottom: { style: BorderStyle.NONE, size: 0 }, left: { style: BorderStyle.NONE, size: 0 }, right: { style: BorderStyle.NONE, size: 0 } },
+                  children: rightItem ? [
+                    new Paragraph({
+                      children: parseInlineFormatting(`•  ${rightItem}`),
+                      spacing: { after: 60 }
+                    })
+                  ] : []
+                })
+              ]
+            })
+          );
+        }
+
+        children.push(
+          new Table({
+            width: { size: 100, type: WidthType.PERCENTAGE },
+            borders: {
+              top: { style: BorderStyle.NONE, size: 0 },
+              bottom: { style: BorderStyle.NONE, size: 0 },
+              left: { style: BorderStyle.NONE, size: 0 },
+              right: { style: BorderStyle.NONE, size: 0 },
+              insideHorizontal: { style: BorderStyle.NONE, size: 0 },
+              insideVertical: { style: BorderStyle.NONE, size: 0 },
+            },
+            rows: tableRows
+          })
+        );
+        continue;
+      }
+    }
+
     if (isList) {
       children.push(
         new Paragraph({

@@ -58,7 +58,36 @@ export const generatePdfBlob = async (
 
   const dateRegex = /((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{4})\s*[-–—]\s*((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{4}|Present|Current)/i;
 
+  let isSkillsSection = false;
+  let accumulatedSkills: string[] = [];
+
+  const renderTwoColumnHtml = (items: string[]) => {
+    if (!items || items.length === 0) return '';
+    const mid = Math.ceil(items.length / 2);
+    const leftCol = items.slice(0, mid);
+    const rightCol = items.slice(mid);
+
+    return `
+      <div style="display: flex; gap: 24px; margin-top: 6px; margin-bottom: 12px; width: 100%;">
+        <ul style="flex: 1; margin: 0; padding-left: 20px; color: #334155; list-style-type: disc;">
+          ${leftCol.map(item => `<li style="margin-bottom: 4px; line-height: 1.5; font-size: 13px;">${inlineMarkdownToHtml(item)}</li>`).join('')}
+        </ul>
+        <ul style="flex: 1; margin: 0; padding-left: 20px; color: #334155; list-style-type: disc;">
+          ${rightCol.map(item => `<li style="margin-bottom: 4px; line-height: 1.5; font-size: 13px;">${inlineMarkdownToHtml(item)}</li>`).join('')}
+        </ul>
+      </div>
+    `;
+  };
+
+  const flushSkills = () => {
+    if (accumulatedSkills.length > 0) {
+      htmlContent += renderTwoColumnHtml(accumulatedSkills);
+      accumulatedSkills = [];
+    }
+  };
+
   const closeList = () => {
+    flushSkills();
     if (inList) {
       htmlContent += '</ul>';
       inList = false;
@@ -73,6 +102,7 @@ export const generatePdfBlob = async (
     if (line.match(/^[-=_*]{3,}$/)) {
       closeList();
       isHeaderArea = false;
+      isSkillsSection = false;
       continue;
     }
 
@@ -91,6 +121,7 @@ export const generatePdfBlob = async (
     // H1 (Name or Big Title)
     if (line.startsWith('# ')) {
       closeList();
+      isSkillsSection = false;
       if (cleanHeader.includes('|') || cleanHeader.length > 50) {
         htmlContent += `<h2 style="font-size: 16px; font-weight: 700; text-align: center; color: ${accentColor}; margin: 0 0 12px 0;">${inlineMarkdownToHtml(cleanHeader)}</h2>`;
       } else {
@@ -102,6 +133,7 @@ export const generatePdfBlob = async (
     // H2 (Professional Subtitle OR Section Header)
     if (line.startsWith('## ')) {
       closeList();
+      isSkillsSection = /skills|competencies|strengths/i.test(cleanHeader);
       const isGrant = normalizedType.includes('grant') || normalizedType.includes('proposal') || normalizedType.includes('roadmap') || normalizedType.includes('general');
       if (isGrant || (cleanHeader === cleanHeader.toUpperCase() && cleanHeader.length < 50 && !cleanHeader.includes('|'))) {
         isHeaderArea = false;
@@ -120,6 +152,7 @@ export const generatePdfBlob = async (
     // H3 (Contact info line or Sub-header)
     if (line.startsWith('### ')) {
       closeList();
+      isSkillsSection = /skills|competencies|strengths/i.test(cleanHeader);
       const isGrant = normalizedType.includes('grant') || normalizedType.includes('proposal') || normalizedType.includes('roadmap') || normalizedType.includes('general');
       if (isGrant) {
         htmlContent += `<h3 style="font-size: 14px; font-weight: 700; color: #1e293b; margin: 16px 0 8px 0;">${inlineMarkdownToHtml(cleanHeader)}</h3>`;
@@ -133,6 +166,7 @@ export const generatePdfBlob = async (
     if (line.startsWith('#### ')) {
       closeList();
       isHeaderArea = false;
+      isSkillsSection = /skills|competencies|strengths/i.test(cleanHeader);
       htmlContent += `
         <div style="margin-top: 22px; margin-bottom: 10px;">
           <h4 style="font-size: 15px; font-weight: 700; text-transform: uppercase; color: #0f172a; margin: 0 0 4px 0; letter-spacing: 0.5px;">${inlineMarkdownToHtml(cleanHeader)}</h4>
@@ -144,9 +178,10 @@ export const generatePdfBlob = async (
 
     // Uppercase Section Header Fallback
     const isUppercaseHeader = cleanHeader.length > 0 && cleanHeader.length < 60 && cleanHeader === cleanHeader.toUpperCase() && !cleanHeader.includes('|') && !cleanHeader.match(/\d{4}/);
-    if (isUppercaseHeader && (!isHeaderArea || cleanHeader === 'PROFESSIONAL SUMMARY' || cleanHeader === 'EDUCATION' || cleanHeader === 'WORK EXPERIENCE')) {
+    if (isUppercaseHeader && (!isHeaderArea || cleanHeader === 'PROFESSIONAL SUMMARY' || cleanHeader === 'EDUCATION' || cleanHeader === 'WORK EXPERIENCE' || cleanHeader.includes('SKILLS'))) {
       closeList();
       isHeaderArea = false;
+      isSkillsSection = /skills|competencies|strengths/i.test(cleanHeader);
       htmlContent += `
         <div style="margin-top: 22px; margin-bottom: 10px;">
           <h4 style="font-size: 15px; font-weight: 700; text-transform: uppercase; color: #0f172a; margin: 0 0 4px 0; letter-spacing: 0.5px;">${inlineMarkdownToHtml(cleanHeader)}</h4>
@@ -156,9 +191,35 @@ export const generatePdfBlob = async (
       continue;
     }
 
-    // Experience Row Detection (Title | Company | Date)
     const isListMatch = line.match(/^[\p{Pd}*+•]\s+/u);
     const isList = !!isListMatch;
+
+    // Detect inline bullet points separated by bullet symbol • anywhere
+    if (line.includes('•') && !isList) {
+      const items = line.split('•').map(s => s.trim()).filter(Boolean);
+      if (items.length >= 2) {
+        closeList();
+        htmlContent += renderTwoColumnHtml(items);
+        continue;
+      }
+    }
+
+    // If in Skills section, collect items for two-column layout
+    if (isSkillsSection) {
+      if (isList) {
+        const itemContent = line.substring(isListMatch![0].length).trim();
+        if (itemContent) accumulatedSkills.push(itemContent);
+        continue;
+      } else if (line.includes(',')) {
+        const items = line.split(',').map(s => s.trim()).filter(Boolean);
+        if (items.length >= 3) {
+          accumulatedSkills.push(...items);
+          continue;
+        }
+      }
+    }
+
+    // Experience Row Detection (Title | Company | Date)
     const hasPipe = line.includes('|');
 
     if (!isHeaderArea && hasPipe && dateRegex.test(line)) {
@@ -322,6 +383,28 @@ function generateDirectPdfFallback(sanitizedText: string, accentColorHex: string
       pdf.setLineWidth(0.5);
       pdf.line(margin, y, pageWidth - margin, y);
       y += 8;
+    } else if (trimmed.includes('•') && trimmed.split('•').length >= 3) {
+      const items = trimmed.split('•').map(s => s.trim()).filter(Boolean);
+      const mid = Math.ceil(items.length / 2);
+      const colWidth = maxLineWidth / 2 - 5;
+      pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(10);
+      pdf.setTextColor(51, 65, 85);
+      
+      const maxRows = Math.max(mid, items.length - mid);
+      for (let r = 0; r < maxRows; r++) {
+        const leftItem = items[r];
+        const rightItem = items[r + mid];
+        if (leftItem) {
+          pdf.text(`• ${leftItem}`, margin, y, { maxWidth: colWidth });
+        }
+        if (rightItem) {
+          pdf.text(`• ${rightItem}`, margin + maxLineWidth / 2 + 5, y, { maxWidth: colWidth });
+        }
+        y += 5.5;
+        if (y > 275) { pdf.addPage(); y = 20; }
+      }
+      y += 3;
     } else {
       pdf.setFont('helvetica', 'normal');
       pdf.setFontSize(10.5);

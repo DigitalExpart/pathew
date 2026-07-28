@@ -326,6 +326,31 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
                             </div>
                           );
                         }
+
+                        // Detect paragraph containing multiple bullet dots • (e.g. Skill 1 • Skill 2 • Skill 3)
+                        if (text.includes('•')) {
+                          const items = text.split('•').map(s => s.trim()).filter(Boolean);
+                          if (items.length >= 2) {
+                            const mid = Math.ceil(items.length / 2);
+                            const leftCol = items.slice(0, mid);
+                            const rightCol = items.slice(mid);
+                            return (
+                              <div style={{ display: 'flex', gap: '24px', margin: '6px 0 12px 0', width: '100%' }}>
+                                <ul style={{ ...pvUlStyle, flex: 1, margin: 0 }}>
+                                  {leftCol.map((item, idx) => (
+                                    <li key={idx} style={pvListItemStyle}>{renderInlineBold(item)}</li>
+                                  ))}
+                                </ul>
+                                <ul style={{ ...pvUlStyle, flex: 1, margin: 0 }}>
+                                  {rightCol.map((item, idx) => (
+                                    <li key={idx} style={pvListItemStyle}>{renderInlineBold(item)}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            );
+                          }
+                        }
+
                         // Detect experience entry rows: contains | and a date pattern
                         const datePattern = /((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{4})\s*[-–—]\s*((?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}|\d{4}|Present|Current)/i;
                         if (text.includes('|') && datePattern.test(text)) {
@@ -337,9 +362,25 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
                       li: ({node, children, ...props}) => (
                         <li style={pvListItemStyle} {...props}>{children}</li>
                       ),
-                      ul: ({node, ...props}) => (
-                        <ul style={pvUlStyle} {...props} />
-                      ),
+                      ul: ({node, children, ...props}) => {
+                        const childrenArray = React.Children.toArray(children).filter(React.isValidElement);
+                        if (childrenArray.length >= 4) {
+                          const mid = Math.ceil(childrenArray.length / 2);
+                          const leftCol = childrenArray.slice(0, mid);
+                          const rightCol = childrenArray.slice(mid);
+                          return (
+                            <div style={{ display: 'flex', gap: '24px', margin: '4px 0 10px 0', width: '100%' }}>
+                              <ul style={{ ...pvUlStyle, flex: 1, margin: 0 }} {...props}>
+                                {leftCol}
+                              </ul>
+                              <ul style={{ ...pvUlStyle, flex: 1, margin: 0 }} {...props}>
+                                {rightCol}
+                              </ul>
+                            </div>
+                          );
+                        }
+                        return <ul style={pvUlStyle} {...props}>{children}</ul>;
+                      },
                       ol: ({node, ...props}) => (
                         <ol style={pvOlStyle} {...props} />
                       ),
