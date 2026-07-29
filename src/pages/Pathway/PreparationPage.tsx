@@ -1075,9 +1075,9 @@ Week 2: Focus Area
                         <th style={{ padding: '8px 12px 12px', width: '32%', fontWeight: 700, color: '#ffffff', minWidth: '220px' }}>Task</th>
                         <th style={{ padding: '8px 12px 12px', width: '14%', fontWeight: 700, color: '#ffffff', minWidth: '110px' }}>Assign To</th>
                         <th style={{ padding: '8px 12px 12px', width: '13%', fontWeight: 700, color: '#ffffff', minWidth: '130px' }}>Deadline</th>
-                        <th style={{ padding: '8px 12px 12px', width: '12%', fontWeight 700, color: '#ffffff', minWidth: '105px' }}>Priority</th>
-                        <th style={{ padding: '8px 12px 12px', width: '14%', fontWeight 700, color: '#ffffff', minWidth: '130px' }}>Status</th>
-                        <th style={{ padding: '8px 12px 12px', width: '15%', fontWeight 700, color: '#ffffff', minWidth: '140px' }}>Notes</th>
+                        <th style={{ padding: '8px 12px 12px', width: '12%', fontWeight: 700, color: '#ffffff', minWidth: '105px' }}>Priority</th>
+                        <th style={{ padding: '8px 12px 12px', width: '14%', fontWeight: 700, color: '#ffffff', minWidth: '130px' }}>Status</th>
+                        <th style={{ padding: '8px 12px 12px', width: '15%', fontWeight: 700, color: '#ffffff', minWidth: '140px' }}>Notes</th>
                         <th style={{ padding: '8px 12px 12px', width: '5%', minWidth: '40px' }}></th>
                       </tr>
                     </thead>
