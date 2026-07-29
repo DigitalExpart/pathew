@@ -24,6 +24,7 @@ import { Sparkles } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { useTranslation } from 'react-i18next';
+import { addApplicationTrackerEntry } from '../../services/applicationTrackerService';
 
 export const OpportunityDetail: React.FC = () => {
   const { id } = useParams();
@@ -110,11 +111,19 @@ export const OpportunityDetail: React.FC = () => {
       // 1. Increment click count
       await supabase.rpc('increment_click_count', { row_id: opp.id });
 
-      // 2. Record Activity if logged in
+      // 2. Record Activity & save to Application Tracker if logged in
       if (user) {
         await supabase.from('activities').insert({
           user_id: user.id,
           content: t('opportunities.activity.viewedApp', { title: opp.title, company: opp.organization_name || opp.funder_name })
+        });
+
+        await addApplicationTrackerEntry(user.id, {
+          name: opp.title,
+          action: 'Applied',
+          status: 'Applied',
+          date: new Date().toISOString(),
+          opportunityId: opp.id,
         });
       }
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { BuilderService } from '../services/builderService';
 import { PathewAssistantService } from '../services/pathewAssistant';
+import { addApplicationTrackerEntry } from '../services/applicationTrackerService';
 import type { ProfileSource, GeneratedDocument } from '../services/builderService';
 
 export type BuilderStage = 'sources' | 'extraction' | 'missing' | 'editor';
@@ -20,6 +21,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
   const [documentType, setDocumentType] = useState<string>(defaultDocumentType);
   const [opportunityId, setOpportunityId] = useState<string | null>(initialOpportunityId || null);
   const [opportunityText, setOpportunityText] = useState<string>('');
+  const [opportunityTitle, setOpportunityTitle] = useState<string>('');
   const [selectedSourceIds, setSelectedSourceIds] = useState<string[]>([]);
   const [tone, setTone] = useState<string>('Professional (formal)');
   const [language, setLanguage] = useState<string>('English (UK)');
@@ -546,6 +548,9 @@ OUTPUT:
     const { cvTypeRules, experienceLevelMap, pagesMap, toneMap, languageMap, formattingRules } = buildSystemPromptMaps();
     let ctx = '';
     
+    if (opportunityTitle) {
+      ctx += `Target Opportunity / Job Title: ${opportunityTitle}\n\n`;
+    }
     if (opportunityText) {
       ctx += `Target Opportunity / Job Description:\n${opportunityText}\n\n`;
     }
@@ -870,6 +875,23 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
         { matchSummary: result.matchSummary, editingSuggestions: result.editingSuggestions }
       );
 
+      // Auto-save to Application Tracker
+      if (user) {
+        const trackerName = opportunityTitle || opportunityText?.substring(0, 80) || `${documentType} Draft`;
+        const actionMap: Record<string, string> = {
+          'CV': 'CV Generated',
+          'Cover Letter': 'Cover Letter Generated',
+          'Proposal': 'Grant Generated',
+        };
+        await addApplicationTrackerEntry(user.id, {
+          name: trackerName,
+          action: actionMap[documentType] || `${documentType} Generated`,
+          status: 'Ongoing',
+          date: new Date().toISOString(),
+          opportunityId: opportunityId || null,
+        });
+      }
+
     } catch (err: any) {
       setError(err.message || 'Draft generation failed.');
     } finally {
@@ -1035,6 +1057,8 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
     setOpportunityId,
     opportunityText,
     setOpportunityText,
+    opportunityTitle,
+    setOpportunityTitle,
     selectedSourceIds,
     setSelectedSourceIds,
     tone,

@@ -12,7 +12,8 @@ import {
   Wallet,
   Clock,
   X,
-  ShieldAlert
+  ShieldAlert,
+  ClipboardList
 } from 'lucide-react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -37,8 +38,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isCollapsed }
       title: 'PATHWAY',
       items: [
         { icon: LayoutDashboard, label: t('nav.dashboard'), path: '/dashboard' },
+        { icon: ClipboardList, label: t('nav.applicationTracker'), path: '/application-tracker' },
         ...((profile?.role === 'admin' || profile?.role === 'sub_admin') ? [
-          { icon: Clock, label: t('nav.applicationTracker'), path: '/preparation' }
+          { icon: Clock, label: t('nav.preparationPlan'), path: '/preparation' }
         ] : []),
         { icon: Briefcase, label: t('nav.opportunities'), path: '/opportunities' },
         { icon: Briefcase, label: t('nav.jobs'), path: '/jobs' },

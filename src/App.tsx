@@ -30,6 +30,7 @@ import { ContactPage } from './pages/Support/ContactPage';
 import { HowItWorksPage } from './pages/Support/HowItWorksPage';
 import { NotificationsPage } from './pages/Notifications/NotificationsPage';
 import { PreparationPage } from './pages/Pathway/PreparationPage';
+import { ApplicationTrackerPage } from './pages/Pathway/ApplicationTrackerPage';
 import { CookieBanner } from './components/shared/CookieBanner';
 
 // Admin Pages
@@ -94,6 +95,7 @@ function App() {
             <Route path="/settings" element={<RequireAuth><Shell><SettingsPage /></Shell></RequireAuth>} />
             <Route path="/notifications" element={<RequireAuth><Shell><NotificationsPage /></Shell></RequireAuth>} />
             <Route path="/preparation" element={<RequireAuth><Shell><PreparationPage /></Shell></RequireAuth>} />
+            <Route path="/application-tracker" element={<RequireAuth><Shell><ApplicationTrackerPage /></Shell></RequireAuth>} />
 
             {/* Sub Admin Routes */}
             <Route path="/sub-admin" element={<RequireAuth><Shell><SubAdminDashboard /></Shell></RequireAuth>} />

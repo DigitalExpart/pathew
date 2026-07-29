@@ -107,6 +107,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
           if (data) {
             setOppDetails(data);
             builder.setOpportunityId(data.id);
+            builder.setOpportunityTitle(data.title || '');
             builder.setOpportunityText(data.description || '');
           }
         } catch (e) {
@@ -119,7 +120,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
 
   const isFormInvalid = () => {
     if (builder.selectedSourceIds.length === 0) return true;
-    if (!builder.opportunityText && !builder.opportunityId) return true;
+    if (!builder.opportunityText && !builder.opportunityId && !builder.opportunityTitle) return true;
     
     if (type === 'CV' && builder.careerGap && !builder.careerGapExplanation?.trim()) {
       return true;
@@ -271,6 +272,28 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
                   </Badge>
                 </div>
               )}
+
+              <input
+                type="text"
+                placeholder={t('builders.sources.titlePlaceholder', 'Enter job or opportunity title...')}
+                value={builder.opportunityTitle}
+                onChange={(e) => builder.setOpportunityTitle(e.target.value)}
+                style={{
+                  width: '100%',
+                  padding: '14px 16px',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: 'var(--radius-md)',
+                  backgroundColor: 'var(--bg-primary)',
+                  color: 'var(--text-primary)',
+                  fontSize: '1rem',
+                  fontWeight: 600,
+                  outline: 'none',
+                  marginBottom: '12px',
+                  transition: 'border-color 0.2s ease',
+                }}
+                onFocus={(e) => e.target.style.borderColor = 'var(--accent-primary)'}
+                onBlur={(e) => e.target.style.borderColor = 'var(--border-color)'}
+              />
               
               <textarea 
                 placeholder={t('builders.sources.textareaPlaceholder', 'Paste target job listing, scholarship requirements, or funding proposal description here...')}
