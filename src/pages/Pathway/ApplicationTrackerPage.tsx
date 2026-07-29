@@ -90,12 +90,22 @@ export const ApplicationTrackerPage: React.FC = () => {
 
   const formatDateForInput = (dStr?: string) => {
     if (!dStr) return '';
+    const trimmed = dStr.trim();
+    if (trimmed.toLowerCase().includes('ongoing') || trimmed.toLowerCase().includes('no deadline')) {
+      return '';
+    }
+    if (/^\d{4}-\d{2}-\d{2}/.test(trimmed)) {
+      return trimmed.substring(0, 10);
+    }
     try {
-      const d = new Date(dStr);
-      if (isNaN(d.getTime())) return dStr.substring(0, 10);
-      return d.toISOString().split('T')[0];
+      const d = new Date(trimmed);
+      if (isNaN(d.getTime())) return '';
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
     } catch {
-      return dStr.substring(0, 10);
+      return '';
     }
   };
 
@@ -105,7 +115,21 @@ export const ApplicationTrackerPage: React.FC = () => {
     try {
       const result = await getApplicationTrackerEntries(user.id);
       setDocId(result.docId);
-      setEntries(result.entries);
+      // Clean up entries where deadline string is 'Ongoing' or 'No Deadline'
+      const cleanedEntries = (result.entries || []).map(e => {
+        if (e.deadline) {
+          const dLower = e.deadline.toLowerCase();
+          if (dLower.includes('ongoing') || dLower.includes('no deadline')) {
+            return {
+              ...e,
+              status: dLower.includes('ongoing') ? 'Ongoing' : e.status,
+              deadline: undefined
+            };
+          }
+        }
+        return e;
+      });
+      setEntries(cleanedEntries);
     } catch (error) {
       console.error('Error fetching tracker:', error);
     } finally {

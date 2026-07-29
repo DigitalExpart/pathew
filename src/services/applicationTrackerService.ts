@@ -15,15 +15,51 @@ export interface ApplicationTrackerData {
   entries: ApplicationTrackerEntry[];
 }
 
+export const sanitizeTrackerEntry = (entry: Omit<ApplicationTrackerEntry, 'id'>): Omit<ApplicationTrackerEntry, 'id'> => {
+  let { deadline, status, ...rest } = entry;
+
+  if (deadline) {
+    const dLower = deadline.toLowerCase().trim();
+    if (dLower.includes('ongoing') || dLower.includes('no deadline') || dLower === 'none' || dLower === 'n/a') {
+      if (dLower.includes('ongoing')) {
+        status = 'Ongoing';
+      }
+      deadline = undefined;
+    } else {
+      if (/^\d{4}-\d{2}-\d{2}/.test(dLower)) {
+        deadline = dLower.substring(0, 10);
+      } else {
+        try {
+          const d = new Date(deadline);
+          if (!isNaN(d.getTime())) {
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            deadline = `${year}-${month}-${day}`;
+          } else {
+            deadline = undefined;
+          }
+        } catch {
+          deadline = undefined;
+        }
+      }
+    }
+  }
+
+  return { ...rest, status, deadline };
+};
+
 /**
  * Save a new entry to the Application Tracker.
  * Each user has a single "ApplicationTracker" document that stores all entries as JSON.
  */
 export const addApplicationTrackerEntry = async (
   userId: string,
-  entry: Omit<ApplicationTrackerEntry, 'id'>
+  rawEntry: Omit<ApplicationTrackerEntry, 'id'>
 ): Promise<void> => {
   try {
+    const entry = sanitizeTrackerEntry(rawEntry);
+
     // Fetch existing tracker document
     const { data: docs } = await supabase
       .from('documents')
