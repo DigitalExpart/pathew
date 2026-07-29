@@ -16,7 +16,7 @@ export interface ApplicationTrackerData {
 }
 
 export const sanitizeTrackerEntry = (entry: Omit<ApplicationTrackerEntry, 'id'>): Omit<ApplicationTrackerEntry, 'id'> => {
-  let { deadline, status, ...rest } = entry;
+  let { deadline, status, action, ...rest } = entry;
 
   if (deadline) {
     const dLower = deadline.toLowerCase().trim();
@@ -45,7 +45,14 @@ export const sanitizeTrackerEntry = (entry: Omit<ApplicationTrackerEntry, 'id'>)
     }
   }
 
-  return { ...rest, status: status || 'Applied', deadline };
+  // Ensure action 'Applied' maps to status 'Applied'
+  if (action === 'Applied') {
+    status = (status && status !== 'Ongoing') ? status : 'Applied';
+  } else if (!status) {
+    status = 'Ongoing';
+  }
+
+  return { ...rest, action, status, deadline };
 };
 
 /**

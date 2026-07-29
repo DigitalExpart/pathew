@@ -115,13 +115,36 @@ export const ApplicationTrackerPage: React.FC = () => {
     try {
       const result = await getApplicationTrackerEntries(user.id);
       setDocId(result.docId);
+
+      let hasChanges = false;
       const cleanedEntries = (result.entries || []).map(e => {
-        if (e.deadline && e.deadline.toLowerCase().includes('ongoing')) {
-          return { ...e, deadline: 'Ongoing' };
+        let updated = { ...e };
+
+        // Fix legacy status: If action is 'Applied' and status was incorrectly 'Ongoing', fix status to 'Applied'
+        if (updated.action === 'Applied' && updated.status === 'Ongoing') {
+          updated.status = 'Applied';
+          hasChanges = true;
         }
-        return e;
+
+        // Map ongoing opportunity deadline string to 'Ongoing'
+        if (updated.deadline && updated.deadline.toLowerCase().includes('ongoing')) {
+          if (updated.deadline !== 'Ongoing') {
+            updated.deadline = 'Ongoing';
+            hasChanges = true;
+          }
+        } else if (!updated.deadline && updated.name.toLowerCase().includes('womenlift')) {
+          updated.deadline = 'Ongoing';
+          hasChanges = true;
+        }
+
+        return updated;
       });
+
       setEntries(cleanedEntries);
+
+      if (hasChanges && result.docId) {
+        await saveApplicationTrackerEntries(user.id, result.docId, cleanedEntries);
+      }
     } catch (error) {
       console.error('Error fetching tracker:', error);
     } finally {
