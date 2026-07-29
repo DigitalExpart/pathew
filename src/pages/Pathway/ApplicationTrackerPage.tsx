@@ -115,17 +115,9 @@ export const ApplicationTrackerPage: React.FC = () => {
     try {
       const result = await getApplicationTrackerEntries(user.id);
       setDocId(result.docId);
-      // Clean up entries where deadline string is 'Ongoing' or 'No Deadline'
       const cleanedEntries = (result.entries || []).map(e => {
-        if (e.deadline) {
-          const dLower = e.deadline.toLowerCase();
-          if (dLower.includes('ongoing') || dLower.includes('no deadline')) {
-            return {
-              ...e,
-              status: dLower.includes('ongoing') ? 'Ongoing' : e.status,
-              deadline: undefined
-            };
-          }
+        if (e.deadline && e.deadline.toLowerCase().includes('ongoing')) {
+          return { ...e, deadline: 'Ongoing' };
         }
         return e;
       });
@@ -473,25 +465,73 @@ export const ApplicationTrackerPage: React.FC = () => {
                       </td>
                       {/* Deadline */}
                       <td style={tdStyle}>
-                        <input
-                          type="date"
-                          value={formatDateForInput(entry.deadline)}
-                          onChange={(e) => handleDeadlineChange(entry.id, e.target.value)}
-                          title={entry.deadline ? `Deadline: ${new Date(entry.deadline).toLocaleDateString()}` : 'Click to select deadline'}
-                          style={{
-                            padding: '7px 10px',
-                            borderRadius: '8px',
-                            border: entry.deadline ? '1px solid rgba(245, 158, 11, 0.35)' : '1px solid var(--border-color)',
-                            backgroundColor: entry.deadline ? 'rgba(245, 158, 11, 0.08)' : 'var(--bg-primary)',
-                            color: entry.deadline ? '#fbbf24' : 'var(--text-muted)',
-                            fontWeight: entry.deadline ? 600 : 400,
-                            fontSize: '0.8125rem',
-                            cursor: 'pointer',
-                            outline: 'none',
-                            width: '100%',
-                            colorScheme: 'dark',
-                          }}
-                        />
+                        {entry.deadline === 'Ongoing' ? (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <span
+                              onClick={() => handleDeadlineChange(entry.id, '')}
+                              title="Click to set a specific deadline date"
+                              style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                justifyContent: 'space-between',
+                                padding: '7px 10px',
+                                borderRadius: '8px',
+                                fontSize: '0.8125rem',
+                                fontWeight: 600,
+                                backgroundColor: 'rgba(245, 158, 11, 0.12)',
+                                color: '#fbbf24',
+                                border: '1px solid rgba(245, 158, 11, 0.35)',
+                                cursor: 'pointer',
+                                width: '100%',
+                              }}
+                            >
+                              <span>Ongoing</span>
+                              <span style={{ fontSize: '0.7rem', opacity: 0.7 }}>Edit</span>
+                            </span>
+                          </div>
+                        ) : (
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <input
+                              type="date"
+                              value={formatDateForInput(entry.deadline)}
+                              onChange={(e) => handleDeadlineChange(entry.id, e.target.value)}
+                              title={entry.deadline ? `Deadline: ${new Date(entry.deadline).toLocaleDateString()}` : 'Click to select deadline'}
+                              style={{
+                                padding: '7px 10px',
+                                borderRadius: '8px',
+                                border: entry.deadline ? '1px solid rgba(245, 158, 11, 0.35)' : '1px solid var(--border-color)',
+                                backgroundColor: entry.deadline ? 'rgba(245, 158, 11, 0.08)' : 'var(--bg-primary)',
+                                color: entry.deadline ? '#fbbf24' : 'var(--text-muted)',
+                                fontWeight: entry.deadline ? 600 : 400,
+                                fontSize: '0.8125rem',
+                                cursor: 'pointer',
+                                outline: 'none',
+                                flex: 1,
+                                colorScheme: 'dark',
+                              }}
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleDeadlineChange(entry.id, 'Ongoing')}
+                              title="Set deadline to Ongoing"
+                              style={{
+                                padding: '7px 8px',
+                                borderRadius: '6px',
+                                border: '1px solid var(--border-color)',
+                                backgroundColor: 'var(--bg-secondary)',
+                                color: 'var(--text-secondary)',
+                                fontSize: '0.7rem',
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                whiteSpace: 'nowrap'
+                              }}
+                              onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#fbbf24'; e.currentTarget.style.color = '#fbbf24'; }}
+                              onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
+                            >
+                              Ongoing
+                            </button>
+                          </div>
+                        )}
                       </td>
                       {/* Date */}
                       <td style={{ ...tdStyle, color: 'var(--text-secondary)', fontSize: '0.8125rem' }}>

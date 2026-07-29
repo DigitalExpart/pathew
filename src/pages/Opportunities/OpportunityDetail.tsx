@@ -118,13 +118,16 @@ export const OpportunityDetail: React.FC = () => {
           content: t('opportunities.activity.viewedApp', { title: opp.title, company: opp.organization_name || opp.funder_name })
         });
 
+        const isOngoingOpp = opp.deadline?.toLowerCase().includes('ongoing');
+        const deadlineVal = isOngoingOpp ? 'Ongoing' : (opp.deadline || undefined);
+
         await addApplicationTrackerEntry(user.id, {
           name: opp.title,
           action: 'Applied',
           status: 'Applied',
           date: new Date().toISOString(),
           opportunityId: opp.id,
-          deadline: opp.deadline || undefined,
+          deadline: deadlineVal,
         });
       }
 

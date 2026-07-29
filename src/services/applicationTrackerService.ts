@@ -20,10 +20,9 @@ export const sanitizeTrackerEntry = (entry: Omit<ApplicationTrackerEntry, 'id'>)
 
   if (deadline) {
     const dLower = deadline.toLowerCase().trim();
-    if (dLower.includes('ongoing') || dLower.includes('no deadline') || dLower === 'none' || dLower === 'n/a') {
-      if (dLower.includes('ongoing')) {
-        status = 'Ongoing';
-      }
+    if (dLower.includes('ongoing')) {
+      deadline = 'Ongoing';
+    } else if (dLower.includes('no deadline') || dLower === 'none' || dLower === 'n/a') {
       deadline = undefined;
     } else {
       if (/^\d{4}-\d{2}-\d{2}/.test(dLower)) {
@@ -46,7 +45,7 @@ export const sanitizeTrackerEntry = (entry: Omit<ApplicationTrackerEntry, 'id'>)
     }
   }
 
-  return { ...rest, status, deadline };
+  return { ...rest, status: status || 'Applied', deadline };
 };
 
 /**
