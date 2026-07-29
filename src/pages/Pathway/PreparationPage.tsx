@@ -149,17 +149,9 @@ export const PreparationPage: React.FC = () => {
     if (!user) return;
     setLoading(true);
     
-    const cleanText = text.replace(/\[Assistant GENERATED SUCCESS\]/g, '').trim();
-    const weeks = parsePlanToJSON(cleanText);
-    
-    if (weeks.length === 0) {
-      console.warn('No weeks found in assistant text:', cleanText);
-      alert('The AI response did not contain a valid weekly roadmap format (e.g. Week 1: ...). Please ask the assistant to format it as a weekly plan.');
-      setLoading(false);
-      return;
-    }
-
     try {
+      const cleanText = text.replace(/\[Assistant GENERATED SUCCESS\]/g, '').trim();
+      const weeks = parsePlanToJSON(cleanText);
       const now = new Date().toISOString();
       const planPayload = {
         weeks,
@@ -216,7 +208,6 @@ export const PreparationPage: React.FC = () => {
     } catch (error: any) {
       console.error('Error inserting plan:', error);
       alert(`Storage error: ${error.message || 'Unknown error'}`);
-      setPlan({ weeks, startDate: new Date().toISOString() });
     } finally {
       setLoading(false);
     }
@@ -397,24 +388,24 @@ Week 2: Focus Area
       periods.push(currentPeriod);
     }
 
-    // FALLBACK 1: If no periods were parsed by keyword, try parsing by non-empty lines
+    // FALLBACK 1: If no periods were parsed by keyword, parse non-empty lines (including gap points and recommendations)
     if (periods.length === 0) {
       const validLines = lines
-        .map(l => l.replace(/^[:\-*•\d.\s]+/, '').replace(/[\*]+/g, '').trim())
-        .filter(l => l.length > 4 && !l.toLowerCase().includes('key gaps') && !l.startsWith('!'));
+        .map(l => l.replace(/^[:\-*•!#\d.\s]+/, '').replace(/[\*]+/g, '').trim())
+        .filter(l => l.length > 3 && !l.toLowerCase().startsWith('key gaps'));
 
       if (validLines.length > 0) {
-        const tasksPerWeek = Math.max(2, Math.ceil(validLines.length / 4));
+        const tasksPerWeek = Math.max(1, Math.ceil(validLines.length / 4));
         for (let w = 1; w <= 4; w++) {
           const weekTasks = validLines.slice((w - 1) * tasksPerWeek, w * tasksPerWeek);
           if (weekTasks.length > 0) {
             periods.push({
               number: w,
               periodType: 'Week',
-              title: `Week ${w} Action Plan`,
+              title: w === 1 ? 'Priority Qualification & Gap Setup' : `Week ${w} Action & Gap Resolution`,
               tasks: weekTasks.map(tStr => ({
                 id: Math.random().toString(36).substr(2, 9),
-                text: tStr,
+                text: tStr.startsWith('Address') ? tStr : `Address: ${tStr}`,
                 status: 'Not Started',
                 notes: ''
               }))
