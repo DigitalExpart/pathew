@@ -111,6 +111,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
             builder.setOpportunityId(data.id);
             builder.setOpportunityTitle(data.title || '');
             builder.setOpportunityText(data.description || '');
+            builder.setOpportunityDeadline(data.deadline || '');
           }
         } catch (e) {
           console.error(e);

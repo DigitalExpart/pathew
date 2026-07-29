@@ -76,7 +76,7 @@ export const ApplicationTrackerPage: React.FC = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [isAddingNew, setIsAddingNew] = useState(false);
-  const [newEntry, setNewEntry] = useState({ name: '', action: 'Applied', status: 'Applied', notes: '' });
+  const [newEntry, setNewEntry] = useState({ name: '', action: 'Applied', status: 'Applied', deadline: '', notes: '' });
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -87,6 +87,17 @@ export const ApplicationTrackerPage: React.FC = () => {
   useEffect(() => {
     fetchEntries();
   }, [user]);
+
+  const formatDateForInput = (dStr?: string) => {
+    if (!dStr) return '';
+    try {
+      const d = new Date(dStr);
+      if (isNaN(d.getTime())) return dStr.substring(0, 10);
+      return d.toISOString().split('T')[0];
+    } catch {
+      return dStr.substring(0, 10);
+    }
+  };
 
   const fetchEntries = async () => {
     if (!user) return;
@@ -108,6 +119,12 @@ export const ApplicationTrackerPage: React.FC = () => {
     if (user) await saveApplicationTrackerEntries(user.id, docId, updated);
   };
 
+  const handleDeadlineChange = async (entryId: string, newDeadline: string) => {
+    const updated = entries.map(e => e.id === entryId ? { ...e, deadline: newDeadline } : e);
+    setEntries(updated);
+    if (user) await saveApplicationTrackerEntries(user.id, docId, updated);
+  };
+
   const handleDeleteEntry = async (entryId: string) => {
     if (!window.confirm('Are you sure you want to delete this entry?')) return;
     const updated = entries.filter(e => e.id !== entryId);
@@ -123,12 +140,13 @@ export const ApplicationTrackerPage: React.FC = () => {
       action: newEntry.action,
       status: newEntry.status,
       date: new Date().toISOString(),
+      deadline: newEntry.deadline || undefined,
       notes: newEntry.notes,
     };
     const updated = [entry, ...entries];
     setEntries(updated);
     setIsAddingNew(false);
-    setNewEntry({ name: '', action: 'Applied', status: 'Applied', notes: '' });
+    setNewEntry({ name: '', action: 'Applied', status: 'Applied', deadline: '', notes: '' });
     await saveApplicationTrackerEntries(user.id, docId, updated);
   };
 
@@ -297,6 +315,15 @@ export const ApplicationTrackerPage: React.FC = () => {
               </select>
             </div>
             <div>
+              <label style={labelStyle}>Deadline (optional)</label>
+              <input
+                type="date"
+                value={newEntry.deadline || ''}
+                onChange={(e) => setNewEntry({ ...newEntry, deadline: e.target.value })}
+                style={{ ...inputStyle, colorScheme: 'dark' }}
+              />
+            </div>
+            <div>
               <label style={labelStyle}>Notes (optional)</label>
               <input
                 type="text"
@@ -320,25 +347,26 @@ export const ApplicationTrackerPage: React.FC = () => {
           <table style={tableStyle}>
             <thead>
               <tr style={tableHeaderRowStyle}>
-                <th style={{ ...thStyle, width: '35%' }}>Name</th>
-                <th style={{ ...thStyle, width: '18%' }}>Action</th>
-                <th style={{ ...thStyle, width: '17%' }}>Status</th>
-                <th style={{ ...thStyle, width: '12%' }}>Date</th>
-                <th style={{ ...thStyle, width: '13%' }}>Notes</th>
+                <th style={{ ...thStyle, width: '28%' }}>Name</th>
+                <th style={{ ...thStyle, width: '15%' }}>Action</th>
+                <th style={{ ...thStyle, width: '15%' }}>Status</th>
+                <th style={{ ...thStyle, width: '15%' }}>Deadline</th>
+                <th style={{ ...thStyle, width: '11%' }}>Date</th>
+                <th style={{ ...thStyle, width: '11%' }}>Notes</th>
                 <th style={{ ...thStyle, width: '5%' }}></th>
               </tr>
             </thead>
             <tbody>
               {loading ? (
                 <tr>
-                  <td colSpan={6} style={{ padding: '60px', textAlign: 'center' }}>
+                  <td colSpan={7} style={{ padding: '60px', textAlign: 'center' }}>
                     <Loader2 size={32} color="var(--accent-primary)" className="animate-spin" style={{ margin: '0 auto 12px' }} />
                     <p style={{ color: 'var(--text-secondary)' }}>Loading your applications...</p>
                   </td>
                 </tr>
               ) : filteredEntries.length === 0 ? (
                 <tr>
-                  <td colSpan={6} style={{ padding: '60px', textAlign: 'center' }}>
+                  <td colSpan={7} style={{ padding: '60px', textAlign: 'center' }}>
                     <ClipboardList size={48} color="var(--text-muted)" style={{ margin: '0 auto 16px', opacity: 0.3, display: 'block' }} />
                     <h3 style={{ color: 'var(--text-secondary)', marginBottom: '8px' }}>
                       {entries.length === 0 ? 'No applications yet' : 'No matching applications'}
@@ -418,6 +446,28 @@ export const ApplicationTrackerPage: React.FC = () => {
                         >
                           {STATUS_OPTIONS.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
+                      </td>
+                      {/* Deadline */}
+                      <td style={tdStyle}>
+                        <input
+                          type="date"
+                          value={formatDateForInput(entry.deadline)}
+                          onChange={(e) => handleDeadlineChange(entry.id, e.target.value)}
+                          title={entry.deadline ? `Deadline: ${new Date(entry.deadline).toLocaleDateString()}` : 'Click to select deadline'}
+                          style={{
+                            padding: '7px 10px',
+                            borderRadius: '8px',
+                            border: entry.deadline ? '1px solid rgba(245, 158, 11, 0.35)' : '1px solid var(--border-color)',
+                            backgroundColor: entry.deadline ? 'rgba(245, 158, 11, 0.08)' : 'var(--bg-primary)',
+                            color: entry.deadline ? '#fbbf24' : 'var(--text-muted)',
+                            fontWeight: entry.deadline ? 600 : 400,
+                            fontSize: '0.8125rem',
+                            cursor: 'pointer',
+                            outline: 'none',
+                            width: '100%',
+                            colorScheme: 'dark',
+                          }}
+                        />
                       </td>
                       {/* Date */}
                       <td style={{ ...tdStyle, color: 'var(--text-secondary)', fontSize: '0.8125rem' }}>

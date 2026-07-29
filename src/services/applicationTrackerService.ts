@@ -8,6 +8,7 @@ export interface ApplicationTrackerEntry {
   date: string;
   opportunityId?: string | null;
   notes?: string;
+  deadline?: string;
 }
 
 export interface ApplicationTrackerData {

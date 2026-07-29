@@ -22,6 +22,7 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
   const [opportunityId, setOpportunityId] = useState<string | null>(initialOpportunityId || null);
   const [opportunityText, setOpportunityText] = useState<string>('');
   const [opportunityTitle, setOpportunityTitle] = useState<string>('');
+  const [opportunityDeadline, setOpportunityDeadline] = useState<string>('');
   const [selectedSourceIds, setSelectedSourceIds] = useState<string[]>([]);
   const [tone, setTone] = useState<string>('Professional (formal)');
   const [language, setLanguage] = useState<string>('English (UK)');
@@ -889,6 +890,7 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
           status: 'Ongoing',
           date: new Date().toISOString(),
           opportunityId: opportunityId || null,
+          deadline: opportunityDeadline || undefined,
         });
       }
 
@@ -1059,6 +1061,8 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
     setOpportunityText,
     opportunityTitle,
     setOpportunityTitle,
+    opportunityDeadline,
+    setOpportunityDeadline,
     selectedSourceIds,
     setSelectedSourceIds,
     tone,

@@ -124,6 +124,7 @@ export const OpportunityDetail: React.FC = () => {
           status: 'Applied',
           date: new Date().toISOString(),
           opportunityId: opp.id,
+          deadline: opp.deadline || undefined,
         });
       }
 
