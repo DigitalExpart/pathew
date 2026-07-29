@@ -20,7 +20,8 @@ import {
   Briefcase,
   AlertCircle,
   ChevronDown,
-  FileSearch
+  FileSearch,
+  Pencil
 } from 'lucide-react';
 
 interface DocumentBuilderProps {
@@ -86,6 +87,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
 
   const [oppDetails, setOppDetails] = useState<any>(null);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -141,7 +143,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
 
   // Stepper Header
   const renderStepper = () => {
-  const steps = [
+    const steps = [
       { key: 'sources', label: t('builders.common.stepSources', '1. Sources & Target') },
       { key: 'missing', label: t('builders.common.stepGaps', '2. Progressive Gaps') },
       { key: 'editor', label: t('builders.common.stepExport', '3. Perfect & Export') }
@@ -212,9 +214,64 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
       {/* Title block */}
       <header style={headerBlockStyle}>
         <div>
-          <h1 style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: 800, marginBottom: '4px', lineHeight: 1.3 }}>
-            {oppDetails ? t('builders.common.tailoredOppTitle', 'Tailored {{type}} - {{title}}', { type, title: oppDetails.title }) : (initialTitle || t('builders.common.tailoredTitle', 'Tailored {{type}} Workspace', { type }))}
-          </h1>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '4px' }}>
+            {isEditingTitle ? (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+                <input
+                  type="text"
+                  value={builder.opportunityTitle}
+                  onChange={(e) => builder.setOpportunityTitle(e.target.value)}
+                  placeholder={t('builders.common.inputJobTitle', 'Enter job / opportunity title...')}
+                  autoFocus
+                  onKeyDown={(e) => { if (e.key === 'Enter') setIsEditingTitle(false); }}
+                  style={{
+                    fontSize: isMobile ? '1.1rem' : '1.35rem',
+                    fontWeight: 800,
+                    padding: '6px 12px',
+                    borderRadius: '8px',
+                    border: '1px solid var(--accent-primary)',
+                    backgroundColor: 'var(--bg-primary)',
+                    color: 'var(--text-primary)',
+                    outline: 'none',
+                    minWidth: isMobile ? '200px' : '300px'
+                  }}
+                />
+                <Button size="sm" onClick={() => setIsEditingTitle(false)} style={{ padding: '6px 12px', fontSize: '0.8125rem' }}>
+                  {t('common.save', 'Save')}
+                </Button>
+              </div>
+            ) : (
+              <h1 style={{ fontSize: isMobile ? '1.25rem' : '1.5rem', fontWeight: 800, margin: 0, lineHeight: 1.3, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <span>
+                  {builder.opportunityTitle
+                    ? `Tailored ${type} - ${builder.opportunityTitle}`
+                    : oppDetails
+                    ? `Tailored ${type} - ${oppDetails.title}`
+                    : (initialTitle || `Tailored ${type} Workspace`)}
+                </span>
+                <button
+                  onClick={() => setIsEditingTitle(true)}
+                  title={t('common.editJobTitle', 'Edit Job / Opportunity Title')}
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.06)',
+                    border: '1px solid var(--border-color)',
+                    borderRadius: '6px',
+                    padding: '4px 8px',
+                    cursor: 'pointer',
+                    color: 'var(--accent-primary)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    transition: 'all 0.2s ease',
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.borderColor = 'var(--accent-primary)'}
+                  onMouseLeave={(e) => e.currentTarget.style.borderColor = 'var(--border-color)'}
+                >
+                  <Pencil size={16} />
+                </button>
+              </h1>
+            )}
+          </div>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
             {type === 'CV' && t('builders.cv.subtitle', 'Create a highly tailored master resume focusing heavily on opportunity matches.')}
             {type === 'Cover Letter' && t('builders.coverLetter.subtitle', 'Draft a personal, high-converting letter tailored specifically to requirements.')}
