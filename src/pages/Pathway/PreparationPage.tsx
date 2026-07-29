@@ -261,13 +261,17 @@ export const PreparationPage: React.FC = () => {
         setPlan(migratedPlan);
         setCompletedWeeks(migratedPlan.completedWeeks || []);
         
-        const autoPrompt = `Generate a ${planType} preparation plan for ${opportunity ? `"${opportunity.title}"` : 'general career growth'} formatted strictly as:
-Week 1: Focus Area
-- Task 1
-- Task 2
-Week 2: Focus Area
-- Task 1
-- Task 2`;
+        const getAutoPrompt = () => {
+          const is180Day = planType.includes('180');
+          const is365Day = planType.includes('365');
+          const formatSample = is180Day || is365Day
+            ? `Month 1: Focus Area\n- Task 1\n- Task 2\nMonth 2: Focus Area\n- Task 1\n- Task 2`
+            : `Week 1: Focus Area\n- Task 1\n- Task 2\nWeek 2: Focus Area\n- Task 1\n- Task 2`;
+
+          return `Generate a ${planType} preparation plan for ${opportunity ? `"${opportunity.title}"` : 'general career growth'}. Do NOT ask any clarifying questions or repeat questions. Use realistic best-fit defaults for any unstated details and generate the complete roadmap immediately. Format strictly as:\n${formatSample}\nUse short, complete, actionable sentences for all tasks.`;
+        };
+
+        const autoPrompt = getAutoPrompt();
 
         if (!migratedPlan.weeks || migratedPlan.weeks.length === 0) {
           openAssistant('Pathew Assistant', [
@@ -286,13 +290,17 @@ Week 2: Focus Area
           });
         }
       } else {
-        const autoPrompt = `Generate a ${planType} preparation plan for ${opportunity ? `"${opportunity.title}"` : 'general career growth'} formatted strictly as:
-Week 1: Focus Area
-- Task 1
-- Task 2
-Week 2: Focus Area
-- Task 1
-- Task 2`;
+        const getAutoPrompt = () => {
+          const is180Day = planType.includes('180');
+          const is365Day = planType.includes('365');
+          const formatSample = is180Day || is365Day
+            ? `Month 1: Focus Area\n- Task 1\n- Task 2\nMonth 2: Focus Area\n- Task 1\n- Task 2`
+            : `Week 1: Focus Area\n- Task 1\n- Task 2\nWeek 2: Focus Area\n- Task 1\n- Task 2`;
+
+          return `Generate a ${planType} preparation plan for ${opportunity ? `"${opportunity.title}"` : 'general career growth'}. Do NOT ask any clarifying questions or repeat questions. Use realistic best-fit defaults for any unstated details and generate the complete roadmap immediately. Format strictly as:\n${formatSample}\nUse short, complete, actionable sentences for all tasks.`;
+        };
+
+        const autoPrompt = getAutoPrompt();
 
         openAssistant('Pathew Assistant', [
           `Generate a ${planType} plan${planPages === 3 ? ' with detailed 3-page level content' : ' with a concise 1-page overview'}`,
@@ -317,13 +325,13 @@ Week 2: Focus Area
   };
 
   const generateNewPlan = async () => {
-    const autoPrompt = `Generate a ${planType} preparation plan for ${opportunity ? `"${opportunity.title}"` : 'general career growth'} formatted strictly as:
-Week 1: Focus Area
-- Task 1
-- Task 2
-Week 2: Focus Area
-- Task 1
-- Task 2`;
+    const is180Day = planType.includes('180');
+    const is365Day = planType.includes('365');
+    const formatSample = is180Day || is365Day
+      ? `Month 1: Focus Area\n- Task 1\n- Task 2\nMonth 2: Focus Area\n- Task 1\n- Task 2`
+      : `Week 1: Focus Area\n- Task 1\n- Task 2\nWeek 2: Focus Area\n- Task 1\n- Task 2`;
+
+    const autoPrompt = `Generate a ${planType} preparation plan for ${opportunity ? `"${opportunity.title}"` : 'general career growth'}. Do NOT ask any clarifying questions or repeat questions. Use realistic best-fit defaults for any unstated details and generate the complete roadmap immediately. Format strictly as:\n${formatSample}\nUse short, complete, actionable sentences for all tasks.`;
 
     openAssistant('Pathew Assistant', [
       `Regenerate my ${planType} plan${planPages === 3 ? ' with detailed 3-page level content' : ' with a concise 1-page overview'}`,
@@ -388,24 +396,28 @@ Week 2: Focus Area
       periods.push(currentPeriod);
     }
 
-    // FALLBACK 1: If no periods were parsed by keyword, parse non-empty lines (including gap points and recommendations)
+    // FALLBACK 1: If no periods were parsed by keyword, parse non-empty lines
     if (periods.length === 0) {
       const validLines = lines
         .map(l => l.replace(/^[:\-*•!#\d.\s]+/, '').replace(/[\*]+/g, '').trim())
-        .filter(l => l.length > 3 && !l.toLowerCase().startsWith('key gaps'));
+        .filter(l => l.length > 3 && !l.toLowerCase().startsWith('key gaps') && !l.toLowerCase().includes('clarification required'));
 
       if (validLines.length > 0) {
-        const tasksPerWeek = Math.max(1, Math.ceil(validLines.length / 4));
-        for (let w = 1; w <= 4; w++) {
-          const weekTasks = validLines.slice((w - 1) * tasksPerWeek, w * tasksPerWeek);
-          if (weekTasks.length > 0) {
+        const is180 = planType.includes('180');
+        const periodCount = is180 ? 6 : 4;
+        const periodLabel = is180 ? 'Month' : 'Week';
+        const tasksPerPeriod = Math.max(1, Math.ceil(validLines.length / periodCount));
+        
+        for (let p = 1; p <= periodCount; p++) {
+          const pTasks = validLines.slice((p - 1) * tasksPerPeriod, p * tasksPerPeriod);
+          if (pTasks.length > 0) {
             periods.push({
-              number: w,
-              periodType: 'Week',
-              title: w === 1 ? 'Priority Qualification & Gap Setup' : `Week ${w} Action & Gap Resolution`,
-              tasks: weekTasks.map(tStr => ({
+              number: p,
+              periodType: periodLabel,
+              title: `${periodLabel} ${p} Strategy & Implementation`,
+              tasks: pTasks.map(tStr => ({
                 id: Math.random().toString(36).substr(2, 9),
-                text: tStr.startsWith('Address') ? tStr : `Address: ${tStr}`,
+                text: tStr.startsWith('Address') ? tStr : `Execute: ${tStr}`,
                 status: 'Not Started',
                 notes: ''
               }))
@@ -415,19 +427,41 @@ Week 2: Focus Area
       }
     }
 
-    // FALLBACK 2: Default 4-Week template if text is completely empty or non-parseable
+    // FALLBACK 2: Default template matching requested plan duration
     if (periods.length === 0) {
-      const defaultFocus = ['Alignment & Strategy', 'Execution & Application', 'Review & Refinement', 'Final Submission'];
-      defaultFocus.forEach((focus, i) => {
-        periods.push({
-          number: i + 1,
-          periodType: 'Week',
-          title: focus,
-          tasks: [
-            { id: Math.random().toString(36).substr(2, 9), text: `Complete ${focus} objectives`, status: 'Not Started', notes: '' }
-          ]
+      if (planType.includes('180')) {
+        const monthFocus = [
+          'Eligibility Verification & Governance Setup',
+          'Business Plan & Financial Modeling',
+          'Impact Metrics & Environmental Narrative',
+          'Document Drafting & Supporting Evidence',
+          'Expert Review & Partner Testimonials',
+          'Final Submission & Follow-up Strategy'
+        ];
+        monthFocus.forEach((focus, i) => {
+          periods.push({
+            number: i + 1,
+            periodType: 'Month',
+            title: focus,
+            tasks: [
+              { id: Math.random().toString(36).substr(2, 9), text: `Complete ${focus} milestones`, status: 'Not Started', notes: '' },
+              { id: Math.random().toString(36).substr(2, 9), text: `Verify Month ${i + 1} deliverables`, status: 'Not Started', notes: '' }
+            ]
+          });
         });
-      });
+      } else {
+        const defaultFocus = ['Alignment & Strategy', 'Execution & Application', 'Review & Refinement', 'Final Submission'];
+        defaultFocus.forEach((focus, i) => {
+          periods.push({
+            number: i + 1,
+            periodType: 'Week',
+            title: focus,
+            tasks: [
+              { id: Math.random().toString(36).substr(2, 9), text: `Complete ${focus} objectives`, status: 'Not Started', notes: '' }
+            ]
+          });
+        });
+      }
     }
 
     return periods;
