@@ -836,13 +836,14 @@ Instructions:
     } else {
       taskPrompt = `Task: High-Converting Document Generation
 Instructions:
-1. Write a complete, high-quality, tailored draft for the document type: ${documentType || 'CV'}.
-2. Use all [USER BACKGROUND MATERIAL] (including all manual notes, achievements, and project notes) and incorporate the [USER ANSWERS TO GAPS / MISSING INFO] directly into the writing.
-3. Tailor the content to match the [OPPORTUNITY REQUIREMENTS], but DO NOT OVER-TAILOR. Keep it natural, authentic, and realistic. Do not force keywords where they don't belong (especially for grant proposals).
-4. Keep the writing in the selected tone: ${tone || 'Professional & Academic'} and the target language: ${language || 'English (UK)'}.
-5. ${constraintsInstruction} Ensure the draft fits perfectly within these target limits. If the target page limit is >1 page, you MUST write extensively by elaborating on methodologies, background context, and detailed achievements to reach the required length. Do NOT summarize or stop early.
-6. Write the full text directly inside the '<draft>...</draft>' tags. DO NOT output JSON for the draft.
-7. Provide specific "editingSuggestions" for improving the document further inside the '<metadata>' block.`
+1. User Prompt / Instructions: "${action || 'Write a complete draft'}"
+2. Write a complete, high-quality, tailored draft for the document type: ${documentType || 'CV'}.
+3. Use all [USER BACKGROUND MATERIAL] (including all manual notes, achievements, and project notes) and incorporate the [USER ANSWERS TO GAPS / MISSING INFO] directly into the writing.
+4. Tailor the content to match the [OPPORTUNITY REQUIREMENTS], but DO NOT OVER-TAILOR. Keep it natural, authentic, and realistic. Do not force keywords where they don't belong (especially for grant proposals).
+5. Keep the writing in the selected tone: ${tone || 'Professional & Academic'} and the target language: ${language || 'English (UK)'}.
+6. ${constraintsInstruction} Ensure the draft fits perfectly within these target limits. If the target page limit is >1 page, you MUST write extensively by elaborating on methodologies, background context, and detailed achievements to reach the required length. Do NOT summarize or stop early.
+7. Write the full text directly inside the '<draft>...</draft>' tags. DO NOT output JSON for the draft.
+8. Provide specific "editingSuggestions" for improving the document further inside the '<metadata>' block.`
     }
 
     const userMessageContent = `
@@ -933,6 +934,7 @@ ${taskPrompt}
               let parsedMetadata: any = {
                 matchSummary: { strongMatches: [], gaps: [], priorityPoints: [] },
                 missingFields: [], editingSuggestions: [], wordCountEstimate: draftContent.split(' ').length, confidence: 'low'
+              };
               if (metaMatch) {
                 try {
                   parsedMetadata = JSON.parse(metaMatch[1].trim())
