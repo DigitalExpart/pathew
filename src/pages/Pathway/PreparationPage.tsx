@@ -270,6 +270,14 @@ export const PreparationPage: React.FC = () => {
         setPlan(migratedPlan);
         setCompletedWeeks(migratedPlan.completedWeeks || []);
         
+        const autoPrompt = `Generate a ${planType} preparation plan for ${opportunity ? `"${opportunity.title}"` : 'general career growth'} formatted strictly as:
+Week 1: Focus Area
+- Task 1
+- Task 2
+Week 2: Focus Area
+- Task 1
+- Task 2`;
+
         if (!migratedPlan.weeks || migratedPlan.weeks.length === 0) {
           openAssistant('Pathew Assistant', [
             `Generate a ${planType} plan${planPages === 3 ? ' with detailed 3-page level content' : ' with a concise 1-page overview'}`,
@@ -282,10 +290,19 @@ export const PreparationPage: React.FC = () => {
             opportunity: opportunity?.title,
             opportunityId: oppId !== 'general' ? oppId : undefined,
             deadline: opportunity?.deadline,
-            requestId: Date.now() 
+            requestId: Date.now(),
+            autoTrigger: autoPrompt
           });
         }
       } else {
+        const autoPrompt = `Generate a ${planType} preparation plan for ${opportunity ? `"${opportunity.title}"` : 'general career growth'} formatted strictly as:
+Week 1: Focus Area
+- Task 1
+- Task 2
+Week 2: Focus Area
+- Task 1
+- Task 2`;
+
         openAssistant('Pathew Assistant', [
           `Generate a ${planType} plan${planPages === 3 ? ' with detailed 3-page level content' : ' with a concise 1-page overview'}`,
           'How does this work?',
@@ -297,7 +314,8 @@ export const PreparationPage: React.FC = () => {
           opportunity: opportunity?.title,
           opportunityId: oppId !== 'general' ? oppId : undefined,
           deadline: opportunity?.deadline,
-          requestId: Date.now()
+          requestId: Date.now(),
+          autoTrigger: autoPrompt
         });
       }
     } catch (error) {
@@ -308,6 +326,14 @@ export const PreparationPage: React.FC = () => {
   };
 
   const generateNewPlan = async () => {
+    const autoPrompt = `Generate a ${planType} preparation plan for ${opportunity ? `"${opportunity.title}"` : 'general career growth'} formatted strictly as:
+Week 1: Focus Area
+- Task 1
+- Task 2
+Week 2: Focus Area
+- Task 1
+- Task 2`;
+
     openAssistant('Pathew Assistant', [
       `Regenerate my ${planType} plan${planPages === 3 ? ' with detailed 3-page level content' : ' with a concise 1-page overview'}`,
       `Adjust my ${planType} plan to be more aggressive`,
@@ -320,7 +346,8 @@ export const PreparationPage: React.FC = () => {
       opportunity: opportunity?.title,
       opportunityId: oppId !== 'general' ? oppId : undefined,
       deadline: opportunity?.deadline,
-      requestId: Date.now()
+      requestId: Date.now(),
+      autoTrigger: autoPrompt
     });
   };
 
@@ -333,28 +360,32 @@ export const PreparationPage: React.FC = () => {
       const trimmed = line.trim();
       if (!trimmed) return;
 
-      // Match period headers like "Week 1: Focus", "Month 2: Goal", "Quarter 3: Sprint"
-      const periodMatch = trimmed.match(/^(?:###\s*)?(Week|Month|Quarter|Sprint)\s*(\d+)[:\s-]*(.*)/i);
+      // Match headers like "Week 1: Focus", "**Week 1: Focus**", "### Month 2 - Goal", "Phase 3: Sprint", "Stage 1", "1. Week 1: Focus"
+      const periodMatch = trimmed.match(/^(?:[\#\*\-\d\.\s]*)(Week|Month|Quarter|Sprint|Phase|Stage|Step)\s*(\d+)[:\s\-\)\.]*(.*)/i);
       if (periodMatch) {
         if (currentPeriod && currentPeriod.tasks.length > 0) {
           periods.push(currentPeriod);
         }
+        const periodTypeRaw = periodMatch[1];
+        const normalizedType = periodTypeRaw.charAt(0).toUpperCase() + periodTypeRaw.slice(1).toLowerCase();
+        let titleClean = periodMatch[3].replace(/^[\*:]+/, '').replace(/[\*]+/g, '').trim();
+
         currentPeriod = {
-          number: parseInt(periodMatch[2]),
-          periodType: periodMatch[1],
-          title: periodMatch[3].trim() || t('preparation.focusArea'),
+          number: parseInt(periodMatch[2], 10),
+          periodType: (normalizedType === 'Phase' || normalizedType === 'Stage' || normalizedType === 'Step') ? 'Week' : normalizedType,
+          title: titleClean || t('preparation.focusArea', 'Focus Area'),
           tasks: []
         };
         return;
       }
 
       if (currentPeriod) {
-        // Assume anything else is a task if it's long enough and not just a header
-        const cleaned = trimmed.replace(/^[:\-*•\d.\s]+/, '').trim();
-        if (cleaned.length > 3 && !cleaned.toLowerCase().startsWith('objective:')) {
+        // Anything else inside a period is a task
+        const cleanedTask = trimmed.replace(/^[:\-*•\d.\s]+/, '').replace(/[\*]+/g, '').trim();
+        if (cleanedTask.length > 2 && !cleanedTask.toLowerCase().startsWith('objective:')) {
           currentPeriod.tasks.push({
             id: Math.random().toString(36).substr(2, 9),
-            text: cleaned,
+            text: cleanedTask,
             status: 'Not Started',
             notes: ''
           });
@@ -365,7 +396,49 @@ export const PreparationPage: React.FC = () => {
     if (currentPeriod && currentPeriod.tasks.length > 0) {
       periods.push(currentPeriod);
     }
-    
+
+    // FALLBACK 1: If no periods were parsed by keyword, try parsing by non-empty lines
+    if (periods.length === 0) {
+      const validLines = lines
+        .map(l => l.replace(/^[:\-*•\d.\s]+/, '').replace(/[\*]+/g, '').trim())
+        .filter(l => l.length > 4 && !l.toLowerCase().includes('key gaps') && !l.startsWith('!'));
+
+      if (validLines.length > 0) {
+        const tasksPerWeek = Math.max(2, Math.ceil(validLines.length / 4));
+        for (let w = 1; w <= 4; w++) {
+          const weekTasks = validLines.slice((w - 1) * tasksPerWeek, w * tasksPerWeek);
+          if (weekTasks.length > 0) {
+            periods.push({
+              number: w,
+              periodType: 'Week',
+              title: `Week ${w} Action Plan`,
+              tasks: weekTasks.map(tStr => ({
+                id: Math.random().toString(36).substr(2, 9),
+                text: tStr,
+                status: 'Not Started',
+                notes: ''
+              }))
+            });
+          }
+        }
+      }
+    }
+
+    // FALLBACK 2: Default 4-Week template if text is completely empty or non-parseable
+    if (periods.length === 0) {
+      const defaultFocus = ['Alignment & Strategy', 'Execution & Application', 'Review & Refinement', 'Final Submission'];
+      defaultFocus.forEach((focus, i) => {
+        periods.push({
+          number: i + 1,
+          periodType: 'Week',
+          title: focus,
+          tasks: [
+            { id: Math.random().toString(36).substr(2, 9), text: `Complete ${focus} objectives`, status: 'Not Started', notes: '' }
+          ]
+        });
+      });
+    }
+
     return periods;
   };
 
