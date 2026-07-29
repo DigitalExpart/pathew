@@ -33,7 +33,7 @@ export const Card: React.FC<CardProps> = ({ children, title, subtitle, style, gl
             </div>
           )}
           <div>
-            {title && <h3 style={{ fontSize: '1.25rem', marginBottom: '4px' }}>{title}</h3>}
+            {title && <h3 style={{ fontSize: '1.25rem', marginBottom: '4px', color: '#ffffff' }}>{title}</h3>}
             {subtitle && <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{subtitle}</p>}
           </div>
         </div>

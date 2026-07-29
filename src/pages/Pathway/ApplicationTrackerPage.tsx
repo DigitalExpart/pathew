@@ -752,7 +752,7 @@ const thStyle: React.CSSProperties = {
   textAlign: 'left',
   fontSize: '0.75rem',
   fontWeight: 700,
-  color: 'var(--text-muted)',
+  color: '#ffffff',
   textTransform: 'uppercase',
   letterSpacing: '0.05em',
 };

@@ -571,7 +571,8 @@ Week 2: Focus Area
     fontSize: isMobile ? '1.75rem' : '2.5rem',
     fontWeight: 800,
     marginBottom: '8px',
-    lineHeight: 1.2
+    lineHeight: 1.2,
+    color: '#ffffff',
   };
 
   const subtitleStyle: React.CSSProperties = {
@@ -614,11 +615,12 @@ Week 2: Focus Area
     fontSize: isMobile ? '1.125rem' : '1.25rem',
     fontWeight: 700,
     marginBottom: '4px',
+    color: '#ffffff',
   };
 
   const projectCompanyStyle: React.CSSProperties = {
     fontSize: '0.875rem',
-    color: 'var(--text-secondary)',
+    color: '#cbd5e1',
     marginBottom: '12px',
   };
 
@@ -696,6 +698,7 @@ Week 2: Focus Area
   const sectionTitleStyle: React.CSSProperties = {
     fontSize: '1.5rem',
     fontWeight: 700,
+    color: '#ffffff',
   };
 
   const weeksListStyle: React.CSSProperties = {
@@ -1065,102 +1068,146 @@ Week 2: Focus Area
                     <Plus size={16} style={{ marginRight: '4px' }} /> Add Task
                   </Button>
                 </div>
-                
-                <div style={{ overflowX: 'auto', padding: '16px' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
+                             <div style={{ overflowX: 'auto', padding: '16px 0' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '850px' }}>
                     <thead>
-                      <tr style={{ borderBottom: '1px solid var(--border-color)', textAlign: 'left', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
-                        <th style={{ padding: '0 12px 12px', width: '30%', fontWeight: 600 }}>Task</th>
-                        <th style={{ padding: '0 12px 12px', width: '15%', fontWeight: 600 }}>Assign To</th>
-                        <th style={{ padding: '0 12px 12px', width: '10%', fontWeight: 600 }}>Deadline</th>
-                        <th style={{ padding: '0 12px 12px', width: '10%', fontWeight: 600 }}>Priority</th>
-                        <th style={{ padding: '0 12px 12px', width: '15%', fontWeight: 600 }}>Status</th>
-                        <th style={{ padding: '0 12px 12px', width: '15%', fontWeight: 600 }}>Notes</th>
-                        <th style={{ padding: '0 12px 12px', width: '5%' }}></th>
+                      <tr style={{ borderBottom: '1px solid var(--border-color)', textAlign: 'left', color: '#ffffff', fontSize: '0.8125rem', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+                        <th style={{ padding: '8px 12px 12px', width: '32%', fontWeight: 700, color: '#ffffff', minWidth: '220px' }}>Task</th>
+                        <th style={{ padding: '8px 12px 12px', width: '14%', fontWeight: 700, color: '#ffffff', minWidth: '110px' }}>Assign To</th>
+                        <th style={{ padding: '8px 12px 12px', width: '13%', fontWeight: 700, color: '#ffffff', minWidth: '130px' }}>Deadline</th>
+                        <th style={{ padding: '8px 12px 12px', width: '12%', fontWeight 700, color: '#ffffff', minWidth: '105px' }}>Priority</th>
+                        <th style={{ padding: '8px 12px 12px', width: '14%', fontWeight 700, color: '#ffffff', minWidth: '130px' }}>Status</th>
+                        <th style={{ padding: '8px 12px 12px', width: '15%', fontWeight 700, color: '#ffffff', minWidth: '140px' }}>Notes</th>
+                        <th style={{ padding: '8px 12px 12px', width: '5%', minWidth: '40px' }}></th>
                       </tr>
                     </thead>
                     <tbody>
                       {week.tasks.map((task: any, taskIndex: number) => (
                         <tr key={task.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                          <td style={{ padding: '12px' }}>
-                            <input 
-                              type="text" 
+                          <td style={{ padding: '10px 12px', verticalAlign: 'top' }}>
+                            <textarea 
+                              rows={1}
                               value={task.text || ''} 
-                              onChange={(e) => updateTask(weekIndex, taskIndex, 'text', e.target.value)}
+                              onChange={(e) => {
+                                updateTask(weekIndex, taskIndex, 'text', e.target.value);
+                                e.target.style.height = 'auto';
+                                e.target.style.height = `${e.target.scrollHeight}px`;
+                              }}
                               onBlur={() => commitTaskUpdate(plan)}
-                              style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--border-color)', borderRadius: '6px', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.9375rem' }}
+                              style={{ 
+                                width: '100%', 
+                                padding: '8px 10px', 
+                                border: '1px solid var(--border-color)', 
+                                borderRadius: '6px', 
+                                background: 'var(--bg-primary)', 
+                                color: '#ffffff', 
+                                fontSize: '0.875rem',
+                                lineHeight: '1.4',
+                                resize: 'vertical',
+                                minHeight: '38px',
+                                fontFamily: 'inherit',
+                                outline: 'none'
+                              }}
+                              ref={(el) => {
+                                if (el) {
+                                  el.style.height = 'auto';
+                                  el.style.height = `${Math.max(38, el.scrollHeight)}px`;
+                                }
+                              }}
                             />
                           </td>
-                          <td style={{ padding: '12px' }}>
+                          <td style={{ padding: '10px 12px', verticalAlign: 'top' }}>
                             <input 
                               type="text" 
                               value={task.assignTo || ''} 
                               onChange={(e) => updateTask(weekIndex, taskIndex, 'assignTo', e.target.value)}
                               onBlur={() => commitTaskUpdate(plan)}
                               placeholder="Assignee"
-                              style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--border-color)', borderRadius: '6px', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.9375rem' }}
+                              style={{ width: '100%', padding: '8px 10px', border: '1px solid var(--border-color)', borderRadius: '6px', background: 'var(--bg-primary)', color: '#ffffff', fontSize: '0.875rem', outline: 'none' }}
                             />
                           </td>
-                          <td style={{ padding: '12px' }}>
+                          <td style={{ padding: '10px 12px', verticalAlign: 'top' }}>
                             <input 
                               type="date" 
                               value={task.deadline || ''} 
                               onChange={(e) => updateTask(weekIndex, taskIndex, 'deadline', e.target.value)}
                               onBlur={() => commitTaskUpdate(plan)}
-                              style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--border-color)', borderRadius: '6px', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.9375rem' }}
+                              style={{ 
+                                width: '100%', 
+                                padding: '8px 8px', 
+                                border: '1px solid var(--border-color)', 
+                                borderRadius: '6px', 
+                                background: 'var(--bg-primary)', 
+                                color: task.deadline ? '#fbbf24' : '#ffffff', 
+                                fontSize: '0.8125rem',
+                                colorScheme: 'dark',
+                                outline: 'none'
+                              }}
                             />
                           </td>
-                          <td style={{ padding: '12px' }}>
+                          <td style={{ padding: '10px 12px', verticalAlign: 'top' }}>
                             <select 
                               value={task.priority || 'Medium'} 
                               onChange={(e) => updateTask(weekIndex, taskIndex, 'priority', e.target.value)}
                               onBlur={() => commitTaskUpdate(plan)}
                               style={{ 
-                                width: '100%', padding: '10px 12px', border: '1px solid var(--border-color)', borderRadius: '6px', 
-                                background: task.priority === 'High' ? 'rgba(239, 68, 68, 0.1)' : 
-                                            task.priority === 'Low' ? 'rgba(34, 197, 94, 0.1)' : 'var(--bg-primary)', 
-                                color: task.priority === 'High' ? '#ef4444' : 
-                                       task.priority === 'Low' ? '#22c55e' : 'var(--text-primary)', 
-                                fontSize: '0.9375rem', fontWeight: 600
+                                width: '100%', 
+                                padding: '8px 8px', 
+                                border: '1px solid var(--border-color)', 
+                                borderRadius: '6px', 
+                                background: task.priority === 'High' ? 'rgba(239, 68, 68, 0.15)' : 
+                                            task.priority === 'Low' ? 'rgba(34, 197, 94, 0.15)' : 'var(--bg-primary)', 
+                                color: task.priority === 'High' ? '#f87171' : 
+                                       task.priority === 'Low' ? '#4ade80' : '#ffffff', 
+                                fontSize: '0.8125rem', 
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                outline: 'none'
                               }}
                             >
-                              <option value="High">High</option>
-                              <option value="Medium">Medium</option>
-                              <option value="Low">Low</option>
+                              <option value="High" style={{ background: '#1e293b', color: '#f87171' }}>High</option>
+                              <option value="Medium" style={{ background: '#1e293b', color: '#ffffff' }}>Medium</option>
+                              <option value="Low" style={{ background: '#1e293b', color: '#4ade80' }}>Low</option>
                             </select>
                           </td>
-                          <td style={{ padding: '12px' }}>
+                          <td style={{ padding: '10px 12px', verticalAlign: 'top' }}>
                             <select 
                               value={task.status || 'Not Started'} 
                               onChange={(e) => handleStatusChange(weekIndex, taskIndex, e.target.value)}
                               style={{ 
-                                width: '100%', padding: '10px 12px', border: '1px solid var(--border-color)', borderRadius: '6px', 
-                                background: task.status === 'Completed' ? 'rgba(34, 197, 94, 0.1)' : 
-                                            task.status === 'Ongoing' ? 'rgba(59, 130, 246, 0.1)' : 
-                                            task.status === 'Pending' ? 'rgba(245, 158, 11, 0.1)' : 'var(--bg-primary)', 
+                                width: '100%', 
+                                padding: '8px 8px', 
+                                border: '1px solid var(--border-color)', 
+                                borderRadius: '6px', 
+                                background: task.status === 'Completed' ? 'rgba(34, 197, 94, 0.15)' : 
+                                            task.status === 'Ongoing' ? 'rgba(59, 130, 246, 0.15)' : 
+                                            task.status === 'Pending' ? 'rgba(245, 158, 11, 0.15)' : 'var(--bg-primary)', 
                                 color: task.status === 'Completed' ? '#4ade80' : 
                                        task.status === 'Ongoing' ? '#60a5fa' : 
-                                       task.status === 'Pending' ? '#fbbf24' : 'var(--text-primary)', 
-                                fontSize: '0.9375rem', fontWeight: 600
+                                       task.status === 'Pending' ? '#fbbf24' : '#ffffff', 
+                                fontSize: '0.8125rem', 
+                                fontWeight: 600,
+                                cursor: 'pointer',
+                                outline: 'none'
                               }}
                             >
-                              <option value="Not Started">Not Started</option>
-                              <option value="Pending">Pending</option>
-                              <option value="Ongoing">Ongoing</option>
-                              <option value="Completed">Completed</option>
+                              <option value="Not Started" style={{ background: '#1e293b', color: '#ffffff' }}>Not Started</option>
+                              <option value="Pending" style={{ background: '#1e293b', color: '#fbbf24' }}>Pending</option>
+                              <option value="Ongoing" style={{ background: '#1e293b', color: '#60a5fa' }}>Ongoing</option>
+                              <option value="Completed" style={{ background: '#1e293b', color: '#4ade80' }}>Completed</option>
                             </select>
                           </td>
-                          <td style={{ padding: '12px' }}>
+                          <td style={{ padding: '10px 12px', verticalAlign: 'top' }}>
                             <input 
                               type="text"
                               value={task.notes || ''} 
                               onChange={(e) => updateTask(weekIndex, taskIndex, 'notes', e.target.value)}
                               onBlur={() => commitTaskUpdate(plan)}
                               placeholder="Add notes..."
-                              style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--border-color)', borderRadius: '6px', background: 'var(--bg-primary)', color: 'var(--text-primary)', fontSize: '0.9375rem' }}
+                              style={{ width: '100%', padding: '8px 10px', border: '1px solid var(--border-color)', borderRadius: '6px', background: 'var(--bg-primary)', color: '#ffffff', fontSize: '0.875rem', outline: 'none' }}
                             />
                           </td>
-                          <td style={{ padding: '12px', textAlign: 'center' }}>
+                          <td style={{ padding: '10px 12px', textAlign: 'center', verticalAlign: 'top' }}>
                             <button 
                               onClick={() => deleteTask(weekIndex, taskIndex)}
                               style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', padding: '8px', borderRadius: '4px' }}
