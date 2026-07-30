@@ -29,7 +29,7 @@ import { Download } from 'lucide-react';
 export const PreparationPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { user, profile } = useAuth();
+  const { user } = useAuth();
   const { openAssistant } = useAssistant();
   const { t } = useTranslation();
   
@@ -54,11 +54,6 @@ export const PreparationPage: React.FC = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  useEffect(() => {
-    if (profile && profile.role !== 'admin' && profile.role !== 'sub_admin') {
-      navigate('/dashboard');
-    }
-  }, [profile, navigate]);
 
   useEffect(() => {
     const init = async () => {
