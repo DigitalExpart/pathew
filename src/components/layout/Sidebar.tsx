@@ -39,9 +39,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isCollapsed }
       items: [
         { icon: LayoutDashboard, label: t('nav.dashboard'), path: '/dashboard' },
         { icon: ClipboardList, label: t('nav.applicationTracker'), path: '/application-tracker' },
-        ...((profile?.role === 'admin' || profile?.role === 'sub_admin') ? [
-          { icon: Clock, label: t('nav.preparationPlan'), path: '/preparation' }
-        ] : []),
+        { icon: Clock, label: t('nav.preparationPlan'), path: '/preparation' },
         { icon: Briefcase, label: t('nav.opportunities'), path: '/opportunities' },
         { icon: Briefcase, label: t('nav.jobs'), path: '/jobs' },
         { icon: Bookmark, label: t('nav.savedItems'), path: '/saved' },

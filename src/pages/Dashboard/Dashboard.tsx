@@ -12,13 +12,15 @@ import {
   Briefcase,
   Edit2,
   Check,
-  X
+  X,
+  ClipboardList
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { calculateMatchScore } from '../../utils/matchScorer';
+import { getApplicationTrackerEntries } from '../../services/applicationTrackerService';
 
 export const Dashboard: React.FC = () => {
   const { user, profile, refreshProfile } = useAuth();
@@ -73,6 +75,7 @@ export const Dashboard: React.FC = () => {
     opps: 0,
     jobs: 0,
     docs: 0,
+    tracker: 0,
     reviews: 0
   });
   const [recentOpps, setRecentOpps] = React.useState<any[]>([]);
@@ -84,16 +87,18 @@ export const Dashboard: React.FC = () => {
     
     try {
       // Fetch Counts
-      const [oppsCount, jobsCount, docsCount] = await Promise.all([
+      const [oppsCount, jobsCount, docsCount, trackerRes] = await Promise.all([
         supabase.from('opportunities').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
         supabase.from('jobs').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
-        supabase.from('generated_documents').select('*', { count: 'exact', head: true }).eq('user_id', user.id)
+        supabase.from('generated_documents').select('*', { count: 'exact', head: true }).eq('user_id', user.id),
+        getApplicationTrackerEntries(user.id)
       ]);
 
       setStats({
         opps: oppsCount.count || 0,
         jobs: jobsCount.count || 0,
         docs: docsCount.count || 0,
+        tracker: trackerRes.entries ? trackerRes.entries.length : 0,
         reviews: 0 
       });
 
@@ -173,9 +178,9 @@ export const Dashboard: React.FC = () => {
       </header>      {/* Stats Grid */}
       <div className="grid-responsive" style={{ marginBottom: '32px' }}>
         <StatCard icon={Users} label={t('nav.opportunities')} value={stats.opps.toString()} trend="+0" onClick={() => navigate('/saved')} />
-        <StatCard icon={Briefcase} label={t('nav.jobs')} value={stats.jobs.toString()} trend="+0" onClick={() => navigate('/saved')} />
+        <StatCard icon={ClipboardList} label={t('nav.applicationTracker')} value={stats.tracker.toString()} trend="+0" onClick={() => navigate('/application-tracker')} />
+        <StatCard icon={Clock} label={t('nav.preparationPlan')} value={t('dashboard.active', 'Active')} trend="+0" onClick={() => navigate('/preparation')} />
         <StatCard icon={FileCheck} label={t('dashboard.docsGenerated')} value={stats.docs.toString()} trend="+0" onClick={() => navigate('/documents')} />
-        <StatCard icon={Clock} label={t('dashboard.pendingReviews')} value={stats.reviews.toString()} />
       </div>
 
       <div className="flex-responsive" style={{ gap: '32px' }}>
@@ -185,26 +190,24 @@ export const Dashboard: React.FC = () => {
           {/* Preparation Plan */}
           <div>
             <div style={sectionHeaderStyle}>
-              <h2 style={sectionTitleStyle}>{(profile?.role === 'admin' || profile?.role === 'sub_admin') ? t('dashboard.prepPlan') : t('dashboard.profileOverview', 'Profile Overview')}</h2>
-              {(profile?.role === 'admin' || profile?.role === 'sub_admin') && (
-                <div className="desktop-only" style={horizonSelectorStyle}>
-                  {['Quick', '90-day', '180-day', '365-day'].map(horizon => (
-                     <button 
-                      key={horizon} 
-                      style={{
-                        ...horizonButtonStyle,
-                        ...(prepHorizon === horizon ? horizonButtonActiveStyle : {})
-                      }}
-                      onClick={() => {
-                        setPrepHorizon(horizon);
-                        navigate(`/preparation?type=${horizon.toLowerCase()}`);
-                      }}
-                    >
-                      {t(`dashboard.horizons.${horizon.toLowerCase()}`)}
-                    </button>
-                  ))}
-                </div>
-              )}
+              <h2 style={sectionTitleStyle}>{t('nav.preparationPlan')}</h2>
+              <div className="desktop-only" style={horizonSelectorStyle}>
+                {['Quick', '90-day', '180-day', '365-day'].map(horizon => (
+                   <button 
+                    key={horizon} 
+                    style={{
+                      ...horizonButtonStyle,
+                      ...(prepHorizon === horizon ? horizonButtonActiveStyle : {})
+                    }}
+                    onClick={() => {
+                      setPrepHorizon(horizon);
+                      navigate(`/preparation?type=${horizon.toLowerCase()}`);
+                    }}
+                  >
+                    {t(`dashboard.horizons.${horizon.toLowerCase()}`)}
+                  </button>
+                ))}
+              </div>
             </div>
             
             <div className="stack-on-mobile" style={{ display: 'flex', gap: '16px', marginBottom: '16px' }}>
@@ -329,26 +332,44 @@ export const Dashboard: React.FC = () => {
               </Card>
             </div>
 
-            {(profile?.role === 'admin' || profile?.role === 'sub_admin') && (
-              <Card title={t('dashboard.nextSteps')} icon={Target}>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {profile?.projects?.slice(0, 3).map((proj: any) => (
-                    <div key={proj.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', gap: '12px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2px solid var(--accent-primary)', flexShrink: 0 }} />
-                        <span style={{ fontWeight: 500, fontSize: '0.9375rem' }}>{t('dashboard.refine', { title: proj.title })}</span>
-                      </div>
-                      <Badge variant="outline">{t('dashboard.nextUp')}</Badge>
+            <Card title={t('dashboard.nextSteps')} icon={Target}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {profile?.projects?.slice(0, 3).map((proj: any) => (
+                  <div key={proj.id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', gap: '12px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ width: '16px', height: '16px', borderRadius: '50%', border: '2px solid var(--accent-primary)', flexShrink: 0 }} />
+                      <span style={{ fontWeight: 500, fontSize: '0.9375rem' }}>{t('dashboard.refine', { title: proj.title })}</span>
                     </div>
-                  ))}
-                  {!profile?.projects?.length && (
-                    <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px' }}>
-                      {t('dashboard.completeProfileToSeeSteps')}
-                    </p>
-                  )}
+                    <Badge variant="outline">{t('dashboard.nextUp')}</Badge>
+                  </div>
+                ))}
+                {!profile?.projects?.length && (
+                  <p style={{ textAlign: 'center', color: 'var(--text-muted)', padding: '20px' }}>
+                    {t('dashboard.completeProfileToSeeSteps')}
+                  </p>
+                )}
+              </div>
+            </Card>
+
+            {/* Application Tracker Card */}
+            <Card 
+              title={t('nav.applicationTracker')} 
+              icon={ClipboardList}
+              style={{ marginTop: '24px' }}
+            >
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+                <div>
+                  <h3 style={{ fontSize: '1rem', fontWeight: 600, margin: '0 0 4px 0' }}>{t('dashboard.trackerHeading', 'Application Tracking & History')}</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', margin: 0 }}>
+                    {t('dashboard.trackerSub', 'Monitor active job applications, generated documents, and status updates.')}
+                  </p>
                 </div>
-              </Card>
-            )}
+                <Button onClick={() => navigate('/application-tracker')} style={{ gap: '8px' }}>
+                  <ClipboardList size={16} />
+                  {t('dashboard.openTracker', 'Open Tracker')} <ArrowRight size={14} />
+                </Button>
+              </div>
+            </Card>
           </div>
 
           {/* Recent Matches */}
@@ -391,6 +412,8 @@ export const Dashboard: React.FC = () => {
         <section style={{ flex: 1, minWidth: 0 }}>
           <Card title={t('dashboard.quickActions')} style={{ marginBottom: '24px' }}>
             <div style={actionListStyle}>
+              <ActionButton label={t('nav.applicationTracker')} onClick={() => navigate('/application-tracker')} />
+              <ActionButton label={t('nav.preparationPlan')} onClick={() => navigate('/preparation')} />
               <ActionButton label={t('dashboard.buildCV')} onClick={() => navigate('/cv-builder')} />
               <ActionButton label={t('nav.coverLetter')} onClick={() => navigate('/cover-letter')} />
               <ActionButton label={t('nav.grantBuilder')} onClick={() => navigate('/grant-builder')} />
