@@ -9,7 +9,6 @@ import {
   ArrowRight,
   Zap,
   Target,
-  Briefcase,
   Edit2,
   Check,
   X,
