@@ -740,7 +740,8 @@ const selectStyle: React.CSSProperties = {
 const tableStyle: React.CSSProperties = {
   width: '100%',
   borderCollapse: 'collapse',
-  minWidth: '700px',
+  minWidth: '970px',
+  tableLayout: 'fixed',
 };
 
 const tableHeaderRowStyle: React.CSSProperties = {
