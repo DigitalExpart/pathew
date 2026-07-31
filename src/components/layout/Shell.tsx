@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
-import { AssistantProvider, useAssistant } from '../../context/AssistantContext';
-import { AssistantPanel } from '../ai/AssistantPanel';
+import { useAssistant } from '../../context/AssistantContext';
 
 interface ShellProps {
   children: React.ReactNode;
