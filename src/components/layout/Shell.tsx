@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './TopBar';
-import { AssistantProvider } from '../../context/AssistantContext';
+import { AssistantProvider, useAssistant } from '../../context/AssistantContext';
 import { AssistantPanel } from '../ai/AssistantPanel';
 
 interface ShellProps {
@@ -12,6 +12,7 @@ export const Shell: React.FC<ShellProps> = ({ children }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const { isAssistantPanelOpen } = useAssistant();
 
   React.useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -23,6 +24,7 @@ export const Shell: React.FC<ShellProps> = ({ children }) => {
   const isSmallMobile = windowWidth <= 768;
 
   const sidebarWidth = isMobile ? 0 : (isSidebarCollapsed ? 0 : 260);
+  const assistantWidth = (isAssistantPanelOpen && !isMobile) ? 360 : 0;
 
   const contentStyle: React.CSSProperties = {
     padding: isSmallMobile ? '16px' : '32px',
@@ -47,20 +49,17 @@ export const Shell: React.FC<ShellProps> = ({ children }) => {
         />
       )}
 
-      <AssistantProvider>
-        <div style={mainContainerStyle}>
-          <TopBar 
-            onMenuClick={() => setIsSidebarOpen(true)} 
-            sidebarWidth={sidebarWidth}
-            isSidebarCollapsed={isSidebarCollapsed}
-            onToggleSidebar={() => setIsSidebarCollapsed(prev => !prev)}
-          />
-          <main style={contentStyle}>
-            {children}
-          </main>
-        </div>
-        <AssistantPanel />
-      </AssistantProvider>
+      <div style={{ ...mainContainerStyle, marginRight: assistantWidth, transition: 'margin-right 0.3s ease' }}>
+        <TopBar 
+          onMenuClick={() => setIsSidebarOpen(true)} 
+          sidebarWidth={sidebarWidth}
+          isSidebarCollapsed={isSidebarCollapsed}
+          onToggleSidebar={() => setIsSidebarCollapsed(prev => !prev)}
+        />
+        <main style={contentStyle}>
+          {children}
+        </main>
+      </div>
     </div>
   );
 };

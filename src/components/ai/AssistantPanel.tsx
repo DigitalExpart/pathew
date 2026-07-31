@@ -206,9 +206,9 @@ export const AssistantPanel: React.FC = () => {
       <div style={headerStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={iconBoxStyle}>
-            <Sparkles size={18} color="var(--accent-primary)" />
+            <Sparkles size={16} color="var(--accent-primary)" />
           </div>
-          <h2 style={{ fontSize: '1.25rem', fontWeight: 700 }}>{t('assistant.title')}</h2>
+          <h2 style={{ fontSize: '1rem', fontWeight: 700 }}>{t('assistant.title')}</h2>
         </div>
         <button onClick={() => setAssistantPanelOpen(false)} style={closeButtonStyle}>
           <X size={20} />
@@ -635,7 +635,7 @@ const drawerStyle: React.CSSProperties = {
   top: 0,
   right: 0,
   width: '100%',
-  maxWidth: '400px',
+  maxWidth: '360px',
   height: '100dvh',
   backgroundColor: 'var(--bg-secondary)',
   borderLeft: '1px solid var(--border-color)',
@@ -701,7 +701,7 @@ const userMsgStyle: React.CSSProperties = {
   backgroundColor: 'var(--accent-primary)',
   color: '#000',
   borderRadius: '18px 18px 2px 18px',
-  fontSize: '0.9375rem',
+  fontSize: '0.8125rem',
   fontWeight: 500,
 };
 
@@ -711,7 +711,7 @@ const AssistantMsgStyle: React.CSSProperties = {
   backgroundColor: 'var(--bg-tertiary)',
   color: 'var(--text-primary)',
   borderRadius: '18px 18px 18px 2px',
-  fontSize: '0.9375rem',
+  fontSize: '0.8125rem',
   lineHeight: 1.5,
   border: '1px solid var(--border-color)',
 };
@@ -826,7 +826,7 @@ const textareaStyle: React.CSSProperties = {
   background: 'none',
   border: 'none',
   color: 'var(--text-primary)',
-  fontSize: '0.875rem',
+  fontSize: '0.8125rem',
   resize: 'none',
   height: 'auto',
   maxHeight: '120px',

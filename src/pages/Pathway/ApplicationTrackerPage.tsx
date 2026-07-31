@@ -381,8 +381,8 @@ export const ApplicationTrackerPage: React.FC = () => {
       )}
 
       {/* Table */}
-      <Card style={{ overflow: 'hidden', borderRadius: 'var(--radius-lg)' }}>
-        <div style={{ overflowX: 'auto' }}>
+      <Card style={{ overflow: 'hidden', borderRadius: 'var(--radius-lg)', width: '100%' }}>
+        <div style={{ overflowX: 'auto', WebkitOverflowScrolling: 'touch', width: '100%' }}>
           <table style={tableStyle}>
             <thead>
               <tr style={tableHeaderRowStyle}>
@@ -609,6 +609,7 @@ const containerStyle: React.CSSProperties = {
   maxWidth: '1200px',
   margin: '0 auto',
   padding: '0',
+  width: '100%',
 };
 
 const headerStyle: React.CSSProperties = {
@@ -660,7 +661,7 @@ const toolbarStyle: React.CSSProperties = {
 
 const searchContainerStyle: React.CSSProperties = {
   position: 'relative',
-  flex: '1 1 280px',
+  flex: '1 1 200px',
   maxWidth: '400px',
 };
 
