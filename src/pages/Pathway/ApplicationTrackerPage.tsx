@@ -386,13 +386,13 @@ export const ApplicationTrackerPage: React.FC = () => {
           <table style={tableStyle}>
             <thead>
               <tr style={tableHeaderRowStyle}>
-                <th style={{ ...thStyle, width: '28%' }}>Name</th>
-                <th style={{ ...thStyle, width: '15%' }}>Action</th>
-                <th style={{ ...thStyle, width: '15%' }}>Status</th>
-                <th style={{ ...thStyle, width: '15%' }}>Deadline</th>
-                <th style={{ ...thStyle, width: '11%' }}>Date</th>
-                <th style={{ ...thStyle, width: '11%' }}>Notes</th>
-                <th style={{ ...thStyle, width: '5%' }}></th>
+                <th style={{ ...thStyle, width: '28%', minWidth: '220px' }}>Name</th>
+                <th style={{ ...thStyle, width: '15%', minWidth: '150px' }}>Action</th>
+                <th style={{ ...thStyle, width: '15%', minWidth: '140px' }}>Status</th>
+                <th style={{ ...thStyle, width: '15%', minWidth: '140px' }}>Deadline</th>
+                <th style={{ ...thStyle, width: '11%', minWidth: '110px' }}>Date</th>
+                <th style={{ ...thStyle, width: '11%', minWidth: '160px' }}>Notes</th>
+                <th style={{ ...thStyle, width: '5%', minWidth: '50px' }}></th>
               </tr>
             </thead>
             <tbody>
@@ -756,6 +756,7 @@ const thStyle: React.CSSProperties = {
   color: '#ffffff',
   textTransform: 'uppercase',
   letterSpacing: '0.05em',
+  whiteSpace: 'nowrap',
 };
 
 const tableRowStyle: React.CSSProperties = {
