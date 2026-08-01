@@ -43,6 +43,9 @@ CREATE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users
   FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();
 
+-- FIX: Ensure credits column in profiles is NUMERIC so fractional deductions like 0.25 work without rounding to integers
+ALTER TABLE public.profiles ALTER COLUMN credits TYPE NUMERIC(10,2) USING credits::numeric;
+
 -- FIX H2: Credit deduction atomicity
 -- Use an RPC to decrement credits so it's safe against race conditions.
 -- DROP old integer signature to prevent PostgreSQL function overloading ambiguity
@@ -62,9 +65,10 @@ BEGIN
     RAISE EXCEPTION 'Insufficient credits';
   END IF;
 
-  UPDATE public.profiles SET credits = credits - amount WHERE id = user_id;
+  UPDATE public.profiles SET credits = ROUND((credits - amount)::numeric, 2) WHERE id = user_id;
   
-  RETURN current_credits - amount;
+  SELECT credits INTO current_credits FROM public.profiles WHERE id = user_id;
+  RETURN current_credits;
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
