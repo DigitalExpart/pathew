@@ -52,19 +52,18 @@ export const AssistantPanel: React.FC = () => {
       if (currentRequestId && currentRequestId !== lastRequestIdRef.current) {
         lastRequestIdRef.current = currentRequestId;
         if (fullContextData?.duration) {
-          const currentDateStr = new Date().toLocaleDateString('en-GB', { month: 'long', year: 'numeric' });
+          const startDateVal = fullContextData?.startDate ? new Date(fullContextData.startDate) : new Date();
+          const startDateStr = startDateVal.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
           const deadlineStr = fullContextData?.deadline 
-            ? ` (Application Deadline: ${new Date(fullContextData.deadline).toLocaleDateString('en-GB', { month: 'long', year: 'numeric' })})` 
+            ? ` (Application Deadline: ${new Date(fullContextData.deadline).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })})` 
             : '';
           
           let formatInstruction = "Generate a week-by-week plan. Start each week with 'Week X:'";
-          if (fullContextData.duration.includes('180')) {
+          if (fullContextData.duration.includes('180') || fullContextData.duration.includes('360') || fullContextData.duration.includes('365') || fullContextData.duration.includes('year')) {
             formatInstruction = "Generate a month-by-month plan. Start each month with 'Month X:'";
-          } else if (fullContextData.duration.includes('360') || fullContextData.duration.includes('365') || fullContextData.duration.includes('year')) {
-            formatInstruction = "Generate a plan using Quarterly sprints followed by Monthly goals. Start each period with 'Quarter X:' or 'Month X:'";
           }
           
-          handleSend(`${formatInstruction} for a ${fullContextData.duration} preparation starting from ${currentDateStr}${deadlineStr}. Ensure the timeline strictly respects these dates and does not backdate. Use short, complete sentences for tasks.`);
+          handleSend(`${formatInstruction} for a ${fullContextData.duration} preparation starting from ${startDateStr}${deadlineStr}. Ensure the timeline strictly respects these dates and does not backdate. Use short, complete sentences for tasks.`);
         } else if (fullContextData?.autoTrigger) {
           handleSend(fullContextData.autoTrigger);
         }

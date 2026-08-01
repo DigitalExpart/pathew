@@ -191,7 +191,7 @@ export const Dashboard: React.FC = () => {
             <div style={sectionHeaderStyle}>
               <h2 style={sectionTitleStyle}>{t('nav.preparationPlan')}</h2>
               <div className="desktop-only" style={horizonSelectorStyle}>
-                {['Quick', '90-day', '180-day', '365-day'].map(horizon => (
+                {['90-day', '180-day', '360-day'].map(horizon => (
                    <button 
                     key={horizon} 
                     style={{
@@ -203,7 +203,7 @@ export const Dashboard: React.FC = () => {
                       navigate(`/preparation?type=${horizon.toLowerCase()}`);
                     }}
                   >
-                    {t(`dashboard.horizons.${horizon.toLowerCase()}`)}
+                    {horizon}
                   </button>
                 ))}
               </div>

@@ -106,10 +106,10 @@ export function getDaysUntilDeadline(deadline: Date): number {
 export const PLAN_DURATIONS = [
   { key: '90-day',  label: '90-Day Plan',  days: 90,  intentKey: 'currentCycle'  },
   { key: '180-day', label: '180-Day Plan', days: 180, intentKey: 'nextCycle'     },
-  { key: '365-day', label: '365-Day Plan', days: 365, intentKey: 'futuresCycle'  },
+  { key: '360-day', label: '360-Day Plan', days: 360, intentKey: 'futuresCycle'  },
 ] as const;
 
-export type PlanDurationKey = '90-day' | '180-day' | '365-day';
+export type PlanDurationKey = '90-day' | '180-day' | '360-day' | '365-day';
 
 // ─── Recommendation Engine ───────────────────────────────────────
 

@@ -141,9 +141,10 @@ export const OpportunityDetail: React.FC = () => {
     }
   };
 
-  const handleCreatePlan = (duration: string, pages: number) => {
+  const handleCreatePlan = (duration: string, pages: number, startDate?: string) => {
     setIsPlanModalOpen(false);
-    navigate(`/preparation?type=${duration.toLowerCase()}&oppId=${id}&pages=${pages}`);
+    const startDateParam = startDate ? `&startDate=${encodeURIComponent(startDate)}` : '';
+    navigate(`/preparation?type=${duration.toLowerCase()}&oppId=${id}&pages=${pages}${startDateParam}`);
   };
 
   return (

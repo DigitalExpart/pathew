@@ -26,7 +26,7 @@ import {
 interface PlanSelectionModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSelect: (duration: string, pages: number) => void;
+  onSelect: (duration: string, pages: number, startDate?: string) => void;
   deadline?: string | null;
   opportunityTitle?: string;
 }
@@ -41,6 +41,7 @@ export const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
   const { t } = useTranslation();
   const [selectedPlan, setSelectedPlan] = useState<PlanDurationKey | null>(null);
   const [selectedPages, setSelectedPages] = useState<number>(1);
+  const [startDate, setStartDate] = useState<string>('');
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   React.useEffect(() => {
@@ -67,15 +68,17 @@ export const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
 
   const handleConfirm = () => {
     if (selectedPlan) {
-      onSelect(selectedPlan, selectedPages);
+      onSelect(selectedPlan, selectedPages, startDate || undefined);
       setSelectedPlan(null);
       setSelectedPages(1);
+      setStartDate('');
     }
   };
 
   const handleClose = () => {
     setSelectedPlan(null);
     setSelectedPages(1);
+    setStartDate('');
     onClose();
   };
 
@@ -85,6 +88,7 @@ export const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
         return Zap;
       case '180-day':
         return Target;
+      case '360-day':
       case '365-day':
         return Star;
       default:
@@ -98,6 +102,7 @@ export const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
         return '#22c55e';
       case '180-day':
         return 'var(--accent-primary)';
+      case '360-day':
       case '365-day':
         return '#8b5cf6';
       default:
@@ -108,11 +113,12 @@ export const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
   const getPlanDescription = (key: string): string => {
     switch (key) {
       case '90-day':
-        return t('planSelection.currentCycleDesc', 'Focused sprint to apply within the current application window.');
+        return t('planSelection.currentCycleDesc', 'Focused weekly sprint to apply within the current application window.');
       case '180-day':
-        return t('planSelection.nextCycleDesc', 'Build skills and prepare for the next application round.');
+        return t('planSelection.nextCycleDesc', 'Monthly structured plan to build skills and prepare for the next application round.');
+      case '360-day':
       case '365-day':
-        return t('planSelection.futuresCycleDesc', 'Comprehensive long-term growth and career transformation.');
+        return t('planSelection.futuresCycleDesc', 'Comprehensive 12-month plan for long-term career growth.');
       default:
         return '';
     }
@@ -289,6 +295,32 @@ export const PlanSelectionModal: React.FC<PlanSelectionModalProps> = ({
               </div>
             );
           })}
+        </div>
+
+        {/* Optional Start Date Selector */}
+        <div style={{ marginBottom: '20px' }}>
+          <label style={{ display: 'block', fontSize: '0.8125rem', fontWeight: 700, marginBottom: '6px', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
+            {t('planSelection.startDateLabel', 'Start Date (Optional)')}
+          </label>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '10px 14px',
+              borderRadius: 'var(--radius-md)',
+              border: '1px solid var(--border-color)',
+              backgroundColor: 'var(--bg-secondary)',
+              color: 'var(--text-primary)',
+              fontSize: '0.875rem',
+              colorScheme: 'dark',
+              outline: 'none',
+            }}
+          />
+          <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '4px', margin: '4px 0 0' }}>
+            {t('planSelection.startDateHint', 'Leave empty to start today, or pick a custom date for your schedule.')}
+          </p>
         </div>
 
         {/* Page Count Selector */}

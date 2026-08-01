@@ -148,9 +148,10 @@ export const PreparationPage: React.FC = () => {
       const cleanText = text.replace(/\[Assistant GENERATED SUCCESS\]/g, '').trim();
       const weeks = parsePlanToJSON(cleanText);
       const now = new Date().toISOString();
+      const startDateParam = searchParams.get('startDate');
       const planPayload = {
         weeks,
-        startDate: now,
+        startDate: startDateParam ? new Date(startDateParam).toISOString() : now,
         completedWeeks: [],
         opportunity_id: oppId === 'general' ? null : (oppId || null),
         planType,
@@ -256,14 +257,22 @@ export const PreparationPage: React.FC = () => {
         setPlan(migratedPlan);
         setCompletedWeeks(migratedPlan.completedWeeks || []);
         
+        const startDateParam = searchParams.get('startDate');
+
         const getAutoPrompt = () => {
           const is180Day = planType.includes('180');
-          const is365Day = planType.includes('365');
-          const formatSample = is180Day || is365Day
+          const is360Day = planType.includes('360') || planType.includes('365');
+          const isMonthly = is180Day || is360Day;
+          const formatSample = isMonthly
             ? `Month 1: Focus Area\n- Task 1\n- Task 2\nMonth 2: Focus Area\n- Task 1\n- Task 2`
             : `Week 1: Focus Area\n- Task 1\n- Task 2\nWeek 2: Focus Area\n- Task 1\n- Task 2`;
 
-          return `Generate a ${planType} preparation plan for ${opportunity ? `"${opportunity.title}"` : 'general career growth'}. Do NOT ask any clarifying questions or repeat questions. Use realistic best-fit defaults for any unstated details and generate the complete roadmap immediately. Format strictly as:\n${formatSample}\nUse short, complete, actionable sentences for all tasks.`;
+          const startDateFormatted = startDateParam
+            ? new Date(startDateParam).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+            : (parsedPlan?.startDate ? new Date(parsedPlan.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : undefined);
+          const startDateStr = startDateFormatted ? ` starting on ${startDateFormatted}` : '';
+
+          return `Generate a ${planType} preparation plan for ${opportunity ? `"${opportunity.title}"` : 'general career growth'}${startDateStr}. Do NOT ask any clarifying questions or repeat questions. Use realistic best-fit defaults for any unstated details and generate the complete roadmap immediately. Format strictly as:\n${formatSample}\nUse short, complete, actionable sentences for all tasks.`;
         };
 
         const autoPrompt = getAutoPrompt();
@@ -277,6 +286,7 @@ export const PreparationPage: React.FC = () => {
             type: 'Roadmap', 
             duration: planType, 
             pages: planPages,
+            startDate: startDateParam ? new Date(startDateParam).toISOString() : parsedPlan?.startDate,
             opportunity: opportunity?.title,
             opportunityId: oppId !== 'general' ? oppId : undefined,
             deadline: opportunity?.deadline,
@@ -285,14 +295,22 @@ export const PreparationPage: React.FC = () => {
           });
         }
       } else {
+        const startDateParam = searchParams.get('startDate');
+
         const getAutoPrompt = () => {
           const is180Day = planType.includes('180');
-          const is365Day = planType.includes('365');
-          const formatSample = is180Day || is365Day
+          const is360Day = planType.includes('360') || planType.includes('365');
+          const isMonthly = is180Day || is360Day;
+          const formatSample = isMonthly
             ? `Month 1: Focus Area\n- Task 1\n- Task 2\nMonth 2: Focus Area\n- Task 1\n- Task 2`
             : `Week 1: Focus Area\n- Task 1\n- Task 2\nWeek 2: Focus Area\n- Task 1\n- Task 2`;
 
-          return `Generate a ${planType} preparation plan for ${opportunity ? `"${opportunity.title}"` : 'general career growth'}. Do NOT ask any clarifying questions or repeat questions. Use realistic best-fit defaults for any unstated details and generate the complete roadmap immediately. Format strictly as:\n${formatSample}\nUse short, complete, actionable sentences for all tasks.`;
+          const startDateFormatted = startDateParam
+            ? new Date(startDateParam).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+            : undefined;
+          const startDateStr = startDateFormatted ? ` starting on ${startDateFormatted}` : '';
+
+          return `Generate a ${planType} preparation plan for ${opportunity ? `"${opportunity.title}"` : 'general career growth'}${startDateStr}. Do NOT ask any clarifying questions or repeat questions. Use realistic best-fit defaults for any unstated details and generate the complete roadmap immediately. Format strictly as:\n${formatSample}\nUse short, complete, actionable sentences for all tasks.`;
         };
 
         const autoPrompt = getAutoPrompt();
@@ -305,6 +323,7 @@ export const PreparationPage: React.FC = () => {
           type: 'Roadmap', 
           duration: planType, 
           pages: planPages,
+          startDate: startDateParam ? new Date(startDateParam).toISOString() : undefined,
           opportunity: opportunity?.title,
           opportunityId: oppId !== 'general' ? oppId : undefined,
           deadline: opportunity?.deadline,
@@ -320,13 +339,20 @@ export const PreparationPage: React.FC = () => {
   };
 
   const generateNewPlan = async () => {
+    const startDateParam = searchParams.get('startDate');
     const is180Day = planType.includes('180');
-    const is365Day = planType.includes('365');
-    const formatSample = is180Day || is365Day
+    const is360Day = planType.includes('360') || planType.includes('365');
+    const isMonthly = is180Day || is360Day;
+    const formatSample = isMonthly
       ? `Month 1: Focus Area\n- Task 1\n- Task 2\nMonth 2: Focus Area\n- Task 1\n- Task 2`
       : `Week 1: Focus Area\n- Task 1\n- Task 2\nWeek 2: Focus Area\n- Task 1\n- Task 2`;
 
-    const autoPrompt = `Generate a ${planType} preparation plan for ${opportunity ? `"${opportunity.title}"` : 'general career growth'}. Do NOT ask any clarifying questions or repeat questions. Use realistic best-fit defaults for any unstated details and generate the complete roadmap immediately. Format strictly as:\n${formatSample}\nUse short, complete, actionable sentences for all tasks.`;
+    const startDateFormatted = startDateParam
+      ? new Date(startDateParam).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })
+      : (plan?.startDate ? new Date(plan.startDate).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : undefined);
+    const startDateStr = startDateFormatted ? ` starting on ${startDateFormatted}` : '';
+
+    const autoPrompt = `Generate a ${planType} preparation plan for ${opportunity ? `"${opportunity.title}"` : 'general career growth'}${startDateStr}. Do NOT ask any clarifying questions or repeat questions. Use realistic best-fit defaults for any unstated details and generate the complete roadmap immediately. Format strictly as:\n${formatSample}\nUse short, complete, actionable sentences for all tasks.`;
 
     openAssistant('Pathew Assistant', [
       `Regenerate my ${planType} plan${planPages === 3 ? ' with detailed 3-page level content' : ' with a concise 1-page overview'}`,
@@ -337,6 +363,7 @@ export const PreparationPage: React.FC = () => {
       type: 'Roadmap', 
       duration: planType, 
       pages: planPages,
+      startDate: startDateParam ? new Date(startDateParam).toISOString() : plan?.startDate,
       opportunity: opportunity?.title,
       opportunityId: oppId !== 'general' ? oppId : undefined,
       deadline: opportunity?.deadline,
@@ -399,8 +426,10 @@ export const PreparationPage: React.FC = () => {
 
       if (validLines.length > 0) {
         const is180 = planType.includes('180');
-        const periodCount = is180 ? 6 : 4;
-        const periodLabel = is180 ? 'Month' : 'Week';
+        const is360 = planType.includes('360') || planType.includes('365');
+        const isMonthly = is180 || is360;
+        const periodCount = is360 ? 12 : (is180 ? 6 : 12);
+        const periodLabel = isMonthly ? 'Month' : 'Week';
         const tasksPerPeriod = Math.max(1, Math.ceil(validLines.length / periodCount));
         
         for (let p = 1; p <= periodCount; p++) {
@@ -424,14 +453,40 @@ export const PreparationPage: React.FC = () => {
 
     // FALLBACK 2: Default template matching requested plan duration
     if (periods.length === 0) {
-      if (planType.includes('180')) {
+      if (planType.includes('360') || planType.includes('365')) {
+        const monthFocus = [
+          'Assessment & Baseline Goals',
+          'Core Competency Development',
+          'Advanced Portfolio Creation',
+          'Specialized Technical Projects',
+          'Networking & Mentor Engagement',
+          'Mid-Year Progress Evaluation',
+          'Targeted Application Strategy',
+          'Interview & Pitch Preparation',
+          'Industry Case Studies & Workshops',
+          'Mock Interviews & Feedback',
+          'Final Submissions & Follow-ups',
+          'Offer Negotiation & Transition'
+        ];
+        monthFocus.forEach((focus, i) => {
+          periods.push({
+            number: i + 1,
+            periodType: 'Month',
+            title: focus,
+            tasks: [
+              { id: Math.random().toString(36).substr(2, 9), text: `Complete Month ${i + 1} (${focus}) milestones`, status: 'Not Started', notes: '' },
+              { id: Math.random().toString(36).substr(2, 9), text: `Verify Month ${i + 1} deliverables`, status: 'Not Started', notes: '' }
+            ]
+          });
+        });
+      } else if (planType.includes('180')) {
         const monthFocus = [
           'Eligibility Verification & Governance Setup',
           'Business Plan & Financial Modeling',
-          'Impact Metrics & Environmental Narrative',
+          'Impact Metrics & Narrative',
           'Document Drafting & Supporting Evidence',
           'Expert Review & Partner Testimonials',
-          'Final Submission & Follow-up Strategy'
+          'Final Submission & Strategy'
         ];
         monthFocus.forEach((focus, i) => {
           periods.push({
@@ -445,7 +500,20 @@ export const PreparationPage: React.FC = () => {
           });
         });
       } else {
-        const defaultFocus = ['Alignment & Strategy', 'Execution & Application', 'Review & Refinement', 'Final Submission'];
+        const defaultFocus = [
+          'Alignment & Strategy',
+          'Core Skill Gap Analysis',
+          'Key Material Prep',
+          'Execution Phase 1',
+          'Mid-point Assessment',
+          'Execution Phase 2',
+          'Portfolio Refinement',
+          'Outreach & Networking',
+          'Application Drafting',
+          'Review & Feedback',
+          'Final Rehearsals',
+          'Final Submission'
+        ];
         defaultFocus.forEach((focus, i) => {
           periods.push({
             number: i + 1,
@@ -996,6 +1064,11 @@ export const PreparationPage: React.FC = () => {
           </div>
           <div style={{ textAlign: isMobile ? 'left' : 'right' }}>
              <Badge variant="primary" style={{ marginBottom: '8px' }}>{t('preparation.roadmapBadge', { type: planType.toUpperCase() })}</Badge>
+             {plan?.startDate && (
+               <Badge variant="secondary" style={{ marginBottom: '8px', marginLeft: '8px' }}>
+                 Start: {new Date(plan.startDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+               </Badge>
+             )}
              {planPages > 1 && (
                <Badge variant="info" style={{ marginBottom: '8px', marginLeft: '8px' }}>{t('planSelection.pagesBadge', { count: planPages })}</Badge>
              )}
@@ -1013,7 +1086,11 @@ export const PreparationPage: React.FC = () => {
           <div style={sectionHeaderStyle}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
               <Layout size={20} color="var(--accent-primary)" style={{ flexShrink: 0 }} />
-              <h2 style={sectionTitleStyle}>{t('preparation.weeklyRoadmap')}</h2>
+              <h2 style={sectionTitleStyle}>
+                {(planType.includes('180') || planType.includes('360') || planType.includes('365')) 
+                  ? t('preparation.monthlyRoadmap', 'Monthly Preparation Roadmap') 
+                  : t('preparation.weeklyRoadmap', 'Weekly Preparation Roadmap')}
+              </h2>
             </div>
             <div style={{ display: 'flex', gap: '12px' }}>
               <Button variant="outline" size="sm" onClick={handleDownloadDocx} disabled={loading || !plan} style={{ justifyContent: 'center' }}>
