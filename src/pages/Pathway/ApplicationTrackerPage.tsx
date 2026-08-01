@@ -60,7 +60,7 @@ const getStatusIcon = (status: string) => {
 const getActionBadgeColor = (action: string) => {
   if (action.includes('CV')) return { bg: 'rgba(59, 130, 246, 0.1)', color: '#60a5fa' };
   if (action.includes('Cover Letter')) return { bg: 'rgba(168, 85, 247, 0.1)', color: '#c084fc' };
-  if (action.includes('Grant')) return { bg: 'rgba(245, 158, 11, 0.1)', color: '#fbbf24' };
+  if (action.includes('Grant') || action.includes('Proposal')) return { bg: 'rgba(245, 158, 11, 0.1)', color: '#fbbf24' };
   if (action.includes('Applied')) return { bg: 'rgba(34, 197, 94, 0.1)', color: '#4ade80' };
   return { bg: 'var(--bg-tertiary)', color: 'var(--text-secondary)' };
 };
@@ -340,7 +340,7 @@ export const ApplicationTrackerPage: React.FC = () => {
                 <option value="Applied">Applied</option>
                 <option value="CV Generated">CV Generated</option>
                 <option value="Cover Letter Generated">Cover Letter Generated</option>
-                <option value="Grant Generated">Grant Generated</option>
+                <option value="Proposal Generated">Proposal Generated</option>
               </select>
             </div>
             <div>
@@ -462,7 +462,7 @@ export const ApplicationTrackerPage: React.FC = () => {
                           backgroundColor: actionColors.bg,
                           color: actionColors.color,
                         }}>
-                          {entry.action}
+                          {entry.action === 'Grant Generated' ? 'Proposal Generated' : entry.action}
                         </span>
                       </td>
                       {/* Status */}

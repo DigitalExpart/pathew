@@ -882,7 +882,7 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
         const actionMap: Record<string, string> = {
           'CV': 'CV Generated',
           'Cover Letter': 'Cover Letter Generated',
-          'Proposal': 'Grant Generated',
+          'Proposal': 'Proposal Generated',
         };
         await addApplicationTrackerEntry(user.id, {
           name: trackerName,
