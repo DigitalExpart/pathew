@@ -78,29 +78,6 @@ export interface OrganizationActivityLog {
 }
 
 const ORG_DOC_TYPE = 'OrganizationData';
-const ORG_INVITES_DOC_TYPE = 'OrganizationInvitesData';
-const ORG_LOGS_DOC_TYPE = 'OrganizationLogsData';
-
-/**
- * Helper to fetch fallback documents stored in Supabase 'documents' table
- */
-const fetchOrgDocument = async (docType: string, id: string) => {
-  const { data } = await supabase
-    .from('documents')
-    .select('id, content')
-    .eq('type', docType)
-    .eq('title', id)
-    .limit(1);
-
-  if (data && data.length > 0) {
-    try {
-      return JSON.parse(data[0].content);
-    } catch {
-      return null;
-    }
-  }
-  return null;
-};
 
 const saveOrgDocument = async (docType: string, id: string, userId: string, payload: any) => {
   const { data } = await supabase

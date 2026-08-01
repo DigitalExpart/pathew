@@ -52,7 +52,7 @@ export const AdminUsersPage: React.FC = () => {
           action: 'update_user',
           userId: editingUser.id,
           updateData: {
-            credits: parseInt(editCredits) || 0, 
+            credits: parseFloat(editCredits) || 0, 
             subscription_plan: editPlan,
             ...(editRole !== editingUser.role ? { role: editRole } : {})
           }
@@ -64,7 +64,7 @@ export const AdminUsersPage: React.FC = () => {
       
       setUsers(prev => prev.map(u => u.id === editingUser.id ? { 
         ...u, 
-        credits: parseInt(editCredits) || 0, 
+        credits: parseFloat(editCredits) || 0, 
         subscription_plan: editPlan,
         role: editRole 
       } : u));
@@ -122,10 +122,6 @@ export const AdminUsersPage: React.FC = () => {
             <div style={{ display: 'flex', gap: '12px' }}>
               <Button variant="ghost" onClick={() => setEditingUser(null)} style={{ flex: 1 }}>Cancel</Button>
               <Button onClick={handleSaveEdit} style={{ flex: 1 }}>Save Changes</Button>
-
-            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-              <button onClick={() => setEditingUser(null)} style={{ ...actionBtnStyle, padding: '8px 16px' }}>Cancel</button>
-              <button onClick={handleSaveUser} style={{ ...actionBtnStyle, backgroundColor: 'var(--accent-primary)', color: '#000', padding: '8px 16px', fontWeight: 700 }}>Save Changes</button>
             </div>
           </div>
         </div>
@@ -251,6 +247,8 @@ const planColor = (plan: string) => {
 
 const filterBoxStyle: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px' };
 const filterInputStyle: React.CSSProperties = { background: 'none', border: 'none', color: '#e2e8f0', fontSize: '0.8125rem', outline: 'none', flex: 1 };
+const searchInputStyle: React.CSSProperties = { width: '100%', padding: '10px 14px 10px 36px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '0.875rem', outline: 'none' };
+const filterBtnStyle: React.CSSProperties = { padding: '8px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', cursor: 'pointer', fontSize: '0.8125rem' };
 const thStyle: React.CSSProperties = { padding: '14px 20px', textAlign: 'left', fontSize: '0.6875rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' };
 const tdStyle: React.CSSProperties = { padding: '14px 20px', fontSize: '0.8125rem' };
 const planBadgeStyle: React.CSSProperties = { padding: '4px 10px', borderRadius: '6px', fontSize: '0.6875rem', fontWeight: 700 };

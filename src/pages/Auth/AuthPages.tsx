@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { Mail, Lock, ArrowLeft, Eye, EyeOff, User, Building2, CheckCircle2, Globe, Phone, ShieldCheck } from 'lucide-react';
+import { Mail, Lock, ArrowLeft, Eye, EyeOff, User, Building2 } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.svg';
 import { supabase } from '../../lib/supabase';
@@ -178,8 +178,8 @@ export const SignUpPage: React.FC = () => {
   const [loading, setLoading] = React.useState(false);
   const [authError, setAuthError] = React.useState<string | null>(null);
   const [errors, setErrors] = React.useState<Record<string, string>>({});
-  const [resending, setResending] = React.useState(false);
-  const [resendMessage, setResendMessage] = React.useState<string | null>(null);
+  const [_resending, _setResending] = React.useState(false);
+  const [_resendMessage, _setResendMessage] = React.useState<string | null>(null);
 
   const { user, loading: authLoading } = useAuth();
 

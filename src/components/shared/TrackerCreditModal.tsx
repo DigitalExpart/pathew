@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Card } from '../ui/Card';
 import { Button } from '../ui/Button';
 import { Badge } from '../ui/Badge';
-import { Coins, ArrowRight, X, AlertCircle, Sparkles } from 'lucide-react';
+import { Coins, ArrowRight, X } from 'lucide-react';
 import { CheckoutModal } from '../payment/CheckoutModal';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -21,7 +20,7 @@ export const TrackerCreditModal: React.FC<TrackerCreditModalProps> = ({
   onClose,
   currentCredits = 0,
   requiredCredits = 0.25,
-  actionName = 'Application Tracker Entry',
+  actionName: _actionName = 'Application Tracker Entry',
 }) => {
   const { t } = useTranslation();
   const [showCheckout, setShowCheckout] = useState(false);
@@ -69,7 +68,7 @@ export const TrackerCreditModal: React.FC<TrackerCreditModalProps> = ({
             
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
               <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>{t('trackerQuota.actionCost', 'Required for this action:')}</span>
-              <span style={{ fontSize: '0.9375rem', fontWeight 800, color: '#f59e0b' }}>
+              <span style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#f59e0b' }}>
                 {formatCredits(requiredCredits)} {t('common.credits', 'Credits')}
               </span>
             </div>

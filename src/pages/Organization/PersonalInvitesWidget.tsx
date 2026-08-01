@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { Badge } from '../../components/ui/Badge';
-import { Building2, CheckCircle2, XCircle, Mail, Shield } from 'lucide-react';
+import { Building2, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import {
   getUserPendingInvites,

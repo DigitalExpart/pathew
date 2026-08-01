@@ -5,30 +5,20 @@ import { Badge } from '../../components/ui/Badge';
 import {
   Building2,
   Users,
-  CreditCard,
   Plus,
   Send,
-  CheckCircle2,
   Clock,
-  AlertCircle,
   FileText,
   Briefcase,
   Coins,
-  Trash2,
-  Mail,
-  User,
-  ExternalLink,
-  ShieldCheck,
-  Award
+  ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { useTranslation } from 'react-i18next';
 import { formatCredits } from '../../utils/formatters';
 import {
   getOrganizationByUserId,
   getOrganizationMembers,
   inviteMemberToOrganization,
-  addOrganizationCredits,
   type Organization,
   type OrganizationMember
 } from '../../services/organizationService';
@@ -36,8 +26,7 @@ import { CheckoutModal } from '../../components/payment/CheckoutModal';
 import { supabase } from '../../lib/supabase';
 
 export const OrgDashboardPage: React.FC = () => {
-  const { user, profile } = useAuth();
-  const { t } = useTranslation();
+  const { user } = useAuth();
   const [org, setOrg] = useState<Organization | null>(null);
   const [members, setMembers] = useState<OrganizationMember[]>([]);
   const [loading, setLoading] = useState(true);

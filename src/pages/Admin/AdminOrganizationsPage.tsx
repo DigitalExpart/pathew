@@ -8,16 +8,7 @@ import {
   XCircle,
   Clock,
   Search,
-  Filter,
   Eye,
-  ShieldCheck,
-  Globe,
-  Mail,
-  Phone,
-  MapPin,
-  User,
-  AlertCircle,
-  FileText,
   RefreshCw
 } from 'lucide-react';
 import { formatCredits } from '../../utils/formatters';
