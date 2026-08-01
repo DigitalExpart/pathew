@@ -45,15 +45,15 @@ CREATE TRIGGER on_auth_user_created
 
 -- FIX H2: Credit deduction atomicity
 -- Use an RPC to decrement credits so it's safe against race conditions.
-CREATE OR REPLACE FUNCTION public.decrement_credits(user_id UUID, amount INTEGER)
-RETURNS INTEGER AS $$
+CREATE OR REPLACE FUNCTION public.decrement_credits(user_id UUID, amount NUMERIC)
+RETURNS NUMERIC AS $$
 DECLARE
-  current_credits INTEGER;
+  current_credits NUMERIC;
 BEGIN
   -- Row-level lock to prevent concurrent modifications
   SELECT credits INTO current_credits FROM public.profiles WHERE id = user_id FOR UPDATE;
 
-  IF current_credits < amount THEN
+  IF current_credits IS NULL OR current_credits < amount THEN
     RAISE EXCEPTION 'Insufficient credits';
   END IF;
 

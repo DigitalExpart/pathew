@@ -246,12 +246,12 @@ export const addApplicationTrackerEntry = async (
       }
     }
 
-    // Avoid duplicates: check if same name + action already exists from the last 5 minutes
-    const fiveMinAgoMs = Date.now() - 5 * 60 * 1000;
+    // Avoid rapid duplicate submits: check if exact same name + action was saved in the last 30 seconds
+    const thirtySecAgoMs = Date.now() - 30 * 1000;
     const isDuplicate = (trackerData.entries || []).some(e => {
       if (e.name !== entry.name || e.action !== entry.action) return false;
       const entryTime = new Date(e.date).getTime();
-      return !isNaN(entryTime) && entryTime > fiveMinAgoMs;
+      return !isNaN(entryTime) && entryTime > thirtySecAgoMs;
     });
     if (isDuplicate) {
       const usage = await getTrackerUsage(userId);
@@ -319,12 +319,36 @@ export const addApplicationTrackerEntry = async (
         };
       }
 
-      // Deduct 0.25 credit
-      const newCredits = Math.max(0, parseFloat((currentCredits - TRACKER_ACTION_COST).toFixed(2)));
-      await supabase
-        .from('profiles')
-        .update({ credits: newCredits })
-        .eq('id', userId);
+      // Deduct 0.25 credit: Try RPC first (SECURITY DEFINER), fallback to direct profiles update
+      let newCredits = Math.max(0, parseFloat((currentCredits - TRACKER_ACTION_COST).toFixed(2)));
+      let deductionDone = false;
+
+      try {
+        const { data: rpcCredits, error: rpcErr } = await supabase.rpc('decrement_credits', {
+          user_id: userId,
+          amount: TRACKER_ACTION_COST,
+        });
+
+        if (!rpcErr && typeof rpcCredits === 'number') {
+          newCredits = rpcCredits;
+          deductionDone = true;
+        } else if (rpcErr) {
+          console.warn('RPC decrement_credits returned error, using profile fallback:', rpcErr.message);
+        }
+      } catch (rpcException) {
+        console.warn('RPC decrement_credits exception:', rpcException);
+      }
+
+      if (!deductionDone) {
+        const { error: profileErr } = await supabase
+          .from('profiles')
+          .update({ credits: newCredits })
+          .eq('id', userId);
+
+        if (profileErr) {
+          console.error('Direct profile credit update error:', profileErr.message);
+        }
+      }
 
       // Record transaction
       await supabase.from('transactions').insert({
