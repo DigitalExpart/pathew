@@ -6,6 +6,7 @@ import { Coins, ArrowRight, X, AlertCircle, Sparkles } from 'lucide-react';
 import { CheckoutModal } from '../payment/CheckoutModal';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { formatCredits } from '../../utils/formatters';
 
 interface TrackerCreditModalProps {
   isOpen: boolean;
@@ -62,14 +63,14 @@ export const TrackerCreditModal: React.FC<TrackerCreditModalProps> = ({
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '14px', paddingTop: '12px', borderTop: '1px solid var(--border-color)' }}>
               <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>{t('trackerQuota.currentBalance', 'Your Current Credit Balance:')}</span>
               <span style={{ fontSize: '0.9375rem', fontWeight: 800, color: currentCredits < requiredCredits ? '#ef4444' : '#22c55e' }}>
-                {currentCredits} {t('common.credits', 'Credits')}
+                {formatCredits(currentCredits)} {t('common.credits', 'Credits')}
               </span>
             </div>
             
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '6px' }}>
               <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>{t('trackerQuota.actionCost', 'Required for this action:')}</span>
-              <span style={{ fontSize: '0.9375rem', fontWeight: 800, color: '#f59e0b' }}>
-                {requiredCredits} {t('common.credits', 'Credits')}
+              <span style={{ fontSize: '0.9375rem', fontWeight 800, color: '#f59e0b' }}>
+                {formatCredits(requiredCredits)} {t('common.credits', 'Credits')}
               </span>
             </div>
           </div>

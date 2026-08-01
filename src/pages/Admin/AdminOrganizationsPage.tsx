@@ -20,6 +20,7 @@ import {
   FileText,
   RefreshCw
 } from 'lucide-react';
+import { formatCredits } from '../../utils/formatters';
 import {
   getAllOrganizations,
   updateOrganizationVerification,
@@ -276,7 +277,7 @@ export const AdminOrganizationsPage: React.FC = () => {
                 <p style={detailItemStyle}><strong>Contact Email:</strong> {selectedOrg.contact_email}</p>
                 <p style={detailItemStyle}><strong>Contact Phone:</strong> {selectedOrg.contact_phone}</p>
                 <p style={detailItemStyle}><strong>Team Size:</strong> {selectedOrg.team_size || 'N/A'}</p>
-                <p style={detailItemStyle}><strong>Current Wallet:</strong> {selectedOrg.credits} Credits</p>
+                <p style={detailItemStyle}><strong>Current Wallet:</strong> {formatCredits(selectedOrg.credits)} Credits</p>
               </div>
             </div>
 

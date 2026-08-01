@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
+import { formatCredits } from '../../utils/formatters';
 import {
   getOrganizationByUserId,
   getOrganizationMembers,
@@ -199,7 +200,7 @@ export const OrgDashboardPage: React.FC = () => {
         <div style={{ display: 'flex', gap: '12px' }}>
           <Button onClick={() => setShowCheckout(true)} style={{ gap: '8px' }}>
             <Coins size={18} />
-            Buy Org Credits ({org.credits} Available)
+            Buy Org Credits ({formatCredits(org.credits)} Available)
           </Button>
         </div>
       </div>
@@ -213,7 +214,7 @@ export const OrgDashboardPage: React.FC = () => {
             </div>
             <div>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Org Credit Wallet</p>
-              <p style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>{org.credits} Credits</p>
+              <p style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)' }}>{formatCredits(org.credits)} Credits</p>
             </div>
           </div>
         </Card>
@@ -517,7 +518,7 @@ export const OrgDashboardPage: React.FC = () => {
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', backgroundColor: 'var(--bg-secondary)', padding: '20px', borderRadius: '12px', marginBottom: '24px' }}>
             <div>
               <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)' }}>Current Credit Balance</span>
-              <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#22c55e', margin: '4px 0 0 0' }}>{org.credits} Credits</h2>
+              <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#22c55e', margin: '4px 0 0 0' }}>{formatCredits(org.credits)} Credits</h2>
             </div>
             <Button onClick={() => setShowCheckout(true)} style={{ gap: '8px' }}>
               <Coins size={18} /> Purchase Custom Credit Pack

@@ -3,6 +3,7 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Search, ChevronDown, Edit3 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { formatCredits } from '../../utils/formatters';
 
 export const AdminUsersPage: React.FC = () => {
   const [users, setUsers] = useState<any[]>([]);
@@ -121,15 +122,55 @@ export const AdminUsersPage: React.FC = () => {
             <div style={{ display: 'flex', gap: '12px' }}>
               <Button variant="ghost" onClick={() => setEditingUser(null)} style={{ flex: 1 }}>Cancel</Button>
               <Button onClick={handleSaveEdit} style={{ flex: 1 }}>Save Changes</Button>
+
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+              <button onClick={() => setEditingUser(null)} style={{ ...actionBtnStyle, padding: '8px 16px' }}>Cancel</button>
+              <button onClick={handleSaveUser} style={{ ...actionBtnStyle, backgroundColor: 'var(--accent-primary)', color: '#000', padding: '8px 16px', fontWeight: 700 }}>Save Changes</button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Users Table */}
-      <Card style={{ padding: '0', backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.06)', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <div>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '4px' }}>User Management</h1>
+          <p style={{ color: '#94a3b8', fontSize: '0.875rem' }}>Manage users, roles, credit balances, and subscription tiers</p>
+        </div>
+      </div>
+
+      <Card style={{ padding: '20px' }}>
+        <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
+          <div style={{ flex: 1, minWidth: '240px', position: 'relative' }}>
+            <Search size={16} color="#64748b" style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)' }} />
+            <input
+              type="text"
+              placeholder="Search by name or email..."
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              style={searchInputStyle}
+            />
+          </div>
+
+          <div style={{ display: 'flex', gap: '6px' }}>
+            {['All', 'Free', 'Starter', 'Growth', 'Power User'].map(p => (
+              <button
+                key={p}
+                onClick={() => setPlanFilter(p)}
+                style={{
+                  ...filterBtnStyle,
+                  backgroundColor: planFilter === p ? 'var(--accent-primary)' : 'rgba(255,255,255,0.05)',
+                  color: planFilter === p ? '#000' : '#94a3b8',
+                  fontWeight: planFilter === p ? 700 : 500
+                }}
+              >
+                {p}
+              </button>
+            ))}
+          </div>
+        </div>
+
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
             <thead>
               <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
                 {['User', 'Role', 'Plan', 'Credits', 'Joined', 'Last Active', 'Actions'].map(h => (
@@ -139,29 +180,22 @@ export const AdminUsersPage: React.FC = () => {
             </thead>
             <tbody>
               {loading ? (
-                <tr><td colSpan={6} style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>Loading users...</td></tr>
+                <tr><td colSpan={7} style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>Loading users...</td></tr>
               ) : filtered.length === 0 ? (
-                <tr><td colSpan={6} style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>No users found.</td></tr>
+                <tr><td colSpan={7} style={{ padding: '40px', textAlign: 'center', color: '#64748b' }}>No users found.</td></tr>
               ) : filtered.map(u => (
                 <tr key={u.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                   <td style={tdStyle}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ width: '32px', height: '32px', borderRadius: '50%', backgroundColor: 'rgba(245,158,11,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: '0.75rem', color: '#f59e0b' }}>
-                        {(u.full_name || '?')[0].toUpperCase()}
-                      </div>
-                      <div>
-                        <p style={{ fontWeight: 600, fontSize: '0.8125rem', color: '#e2e8f0' }}>{u.full_name || 'Unnamed'}</p>
-                        <p style={{ fontSize: '0.6875rem', color: '#64748b' }}>{u.email || u.id.slice(0, 8) + '...'}</p>
-                      </div>
-                    </div>
+                    <div style={{ fontWeight: 600, color: '#f8fafc' }}>{u.full_name || 'No name'}</div>
+                    <div style={{ fontSize: '0.75rem', color: '#64748b' }}>{u.email}</div>
                   </td>
                   <td style={tdStyle}>
                     <span style={{ 
-                      fontSize: '0.6875rem', 
-                      fontWeight: 700, 
-                      padding: '4px 8px', 
+                      fontSize: '0.75rem', 
+                      fontWeight: 600, 
+                      padding: '2px 8px', 
                       borderRadius: '4px',
-                      backgroundColor: u.role === 'sub_admin' ? 'rgba(245,158,11,0.1)' : 'rgba(148,163,184,0.1)',
+                      backgroundColor: u.role === 'sub_admin' ? 'rgba(245,158,11,0.15)' : 'rgba(255,255,255,0.05)',
                       color: u.role === 'sub_admin' ? '#f59e0b' : '#94a3b8'
                     }}>
                       {u.role === 'sub_admin' ? 'Sub Admin' : 'User'}
@@ -172,7 +206,7 @@ export const AdminUsersPage: React.FC = () => {
                       {u.subscription_plan || 'Free'}
                     </span>
                   </td>
-                  <td style={tdStyle}><span style={{ fontWeight: 700, color: '#e2e8f0' }}>{u.credits ?? 0}</span></td>
+                  <td style={tdStyle}><span style={{ fontWeight: 700, color: '#e2e8f0' }}>{formatCredits(u.credits)}</span></td>
                   <td style={tdStyle}><span style={{ color: '#64748b', fontSize: '0.8125rem' }}>{new Date(u.created_at).toLocaleDateString()}</span></td>
                   <td style={tdStyle}>
                     <span style={{ color: '#64748b', fontSize: '0.8125rem', display: 'flex', alignItems: 'center', gap: '6px' }}>

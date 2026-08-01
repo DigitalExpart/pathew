@@ -6,6 +6,7 @@ import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { formatCredits } from '../../utils/formatters';
 
 export const WalletPage: React.FC = () => {
   const { t } = useTranslation();
@@ -243,7 +244,7 @@ export const WalletPage: React.FC = () => {
           </div>
           <div style={balanceContentStyle}>
             <p style={balanceLabelStyle}>{t('wallet.availableBalance')}</p>
-            <h2 style={balanceValueStyle}>{profile?.credits?.toLocaleString() || '0'}</h2>
+            <h2 style={balanceValueStyle}>{formatCredits(profile?.credits)}</h2>
             <p style={balanceSubtextStyle}>{t('wallet.creditsReady')}</p>
           </div>
           <div style={balanceFooterStyle}>
@@ -271,7 +272,7 @@ export const WalletPage: React.FC = () => {
                     <p style={txDateStyle}>{new Date(tx.created_at).toLocaleDateString()}</p>
                   </div>
                   <div style={{ ...txAmountStyle, color: tx.type === 'credit' ? '#22c55e' : 'var(--text-primary)' }}>
-                    {tx.type === 'credit' ? '+' : ''}{tx.amount}
+                    {tx.type === 'credit' ? '+' : ''}{formatCredits(tx.amount)}
                   </div>
                 </div>
               ))

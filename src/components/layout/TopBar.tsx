@@ -9,6 +9,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { supabase } from '../../lib/supabase';
+import { formatCredits } from '../../utils/formatters';
 
 interface TopBarProps {
   onMenuClick?: () => void;
@@ -162,7 +163,7 @@ export const TopBar: React.FC<TopBarProps> = ({ onMenuClick, sidebarWidth = 260,
 
         <Link to="/wallet" style={{ ...creditBadgeStyle, textDecoration: 'none' }}>
           <Coins size={16} color="var(--accent-primary)" />
-          <span style={creditTextStyle}>{profile?.credits?.toLocaleString() || '0'}</span>
+          <span style={creditTextStyle}>{formatCredits(profile?.credits)}</span>
         </Link>
         
         <div style={dividerStyle}></div>

@@ -28,6 +28,7 @@ import {
   type TrackerUsageData,
 } from '../../services/applicationTrackerService';
 import { TrackerCreditModal } from '../../components/shared/TrackerCreditModal';
+import { formatCredits } from '../../utils/formatters';
 
 const STATUS_OPTIONS = [
   'Applied',
@@ -283,7 +284,7 @@ export const ApplicationTrackerPage: React.FC = () => {
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <Badge variant={trackerUsage.totalActionsCount < 3 ? 'success' : 'warning'} style={{ fontSize: '0.75rem' }}>
-              {profile?.credits ?? 0} Credits Available
+              {formatCredits(profile?.credits)} Credits Available
             </Badge>
           </div>
         </div>
