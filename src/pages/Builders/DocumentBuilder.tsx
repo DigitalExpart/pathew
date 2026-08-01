@@ -24,6 +24,8 @@ import {
   Pencil
 } from 'lucide-react';
 
+import { TrackerCreditModal } from '../../components/shared/TrackerCreditModal';
+
 interface DocumentBuilderProps {
   type: 'CV' | 'Cover Letter' | 'Proposal';
   initialTitle?: string;
@@ -35,7 +37,7 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
   initialTitle, 
   initialContent 
 }) => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
@@ -1036,6 +1038,12 @@ export const DocumentBuilder: React.FC<DocumentBuilderProps> = ({
           </div>
         )}
 
+        <TrackerCreditModal
+          isOpen={builder.trackerQuotaModalOpen}
+          onClose={() => builder.setTrackerQuotaModalOpen(false)}
+          currentCredits={profile?.credits}
+          actionName={`${type} Builder Tracker Entry`}
+        />
       </div>
     </div>
   );

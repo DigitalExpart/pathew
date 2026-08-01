@@ -95,6 +95,9 @@ export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportun
   const [savedVersions, setSavedVersions] = useState<GeneratedDocument[]>([]);
   const [currentVersionNumber, setCurrentVersionNumber] = useState<number>(1);
 
+  // Tracker quota modal state
+  const [trackerQuotaModalOpen, setTrackerQuotaModalOpen] = useState(false);
+
   // Load user profile sources
   const loadSources = async () => {
     if (!user) return;
@@ -893,7 +896,9 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
           deadline: opportunityDeadline || undefined,
         });
 
-        if (trackerResult.charged && refreshProfile) {
+        if (!trackerResult.success && trackerResult.error === 'INSUFFICIENT_CREDITS') {
+          setTrackerQuotaModalOpen(true);
+        } else if (trackerResult.charged && refreshProfile) {
           refreshProfile();
         }
       }
@@ -1145,6 +1150,10 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
     generateTailoredDraft,
     regenerateDraft,
     saveDraftToDb,
-    resetPipeline
+    resetPipeline,
+
+    // Quota Modal
+    trackerQuotaModalOpen,
+    setTrackerQuotaModalOpen
   };
 };
