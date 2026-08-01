@@ -447,13 +447,13 @@ export const ApplicationTrackerPage: React.FC = () => {
           <table style={tableStyle}>
             <thead>
               <tr style={tableHeaderRowStyle}>
-                <th style={{ ...thStyle, width: '28%', minWidth: '220px' }}>Name</th>
-                <th style={{ ...thStyle, width: '15%', minWidth: '150px' }}>Action</th>
-                <th style={{ ...thStyle, width: '15%', minWidth: '140px' }}>Status</th>
-                <th style={{ ...thStyle, width: '15%', minWidth: '140px' }}>Deadline</th>
-                <th style={{ ...thStyle, width: '11%', minWidth: '110px' }}>Date</th>
-                <th style={{ ...thStyle, width: '11%', minWidth: '160px' }}>Notes</th>
-                <th style={{ ...thStyle, width: '5%', minWidth: '50px' }}></th>
+                <th style={{ ...thStyle, width: '24%', minWidth: '190px' }}>Name</th>
+                <th style={{ ...thStyle, width: '13%', minWidth: '130px' }}>Action</th>
+                <th style={{ ...thStyle, width: '13%', minWidth: '130px' }}>Status</th>
+                <th style={{ ...thStyle, width: '23%', minWidth: '220px' }}>Deadline</th>
+                <th style={{ ...thStyle, width: '14%', minWidth: '120px', paddingLeft: '16px' }}>Date</th>
+                <th style={{ ...thStyle, width: '10%', minWidth: '130px' }}>Notes</th>
+                <th style={{ ...thStyle, width: '3%', minWidth: '40px' }}></th>
               </tr>
             </thead>
             <tbody>
@@ -548,9 +548,9 @@ export const ApplicationTrackerPage: React.FC = () => {
                         </select>
                       </td>
                       {/* Deadline */}
-                      <td style={tdStyle}>
+                      <td style={{ ...tdStyle, paddingRight: '12px' }}>
                         {entry.deadline === 'Ongoing' ? (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', width: '100%' }}>
                             <span
                               onClick={() => handleDeadlineChange(entry.id, '')}
                               title="Click to set a specific deadline date"
@@ -574,14 +574,14 @@ export const ApplicationTrackerPage: React.FC = () => {
                             </span>
                           </div>
                         ) : (
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', width: '100%' }}>
                             <input
                               type="date"
                               value={formatDateForInput(entry.deadline)}
                               onChange={(e) => handleDeadlineChange(entry.id, e.target.value)}
                               title={entry.deadline ? `Deadline: ${new Date(entry.deadline).toLocaleDateString()}` : 'Click to select deadline'}
                               style={{
-                                padding: '7px 10px',
+                                padding: '7px 8px',
                                 borderRadius: '8px',
                                 border: entry.deadline ? '1px solid rgba(245, 158, 11, 0.35)' : '1px solid var(--border-color)',
                                 backgroundColor: entry.deadline ? 'rgba(245, 158, 11, 0.08)' : 'var(--bg-primary)',
@@ -590,7 +590,8 @@ export const ApplicationTrackerPage: React.FC = () => {
                                 fontSize: '0.8125rem',
                                 cursor: 'pointer',
                                 outline: 'none',
-                                flex: 1,
+                                flex: '1 1 120px',
+                                minWidth: '115px',
                                 colorScheme: 'dark',
                               }}
                             />
@@ -599,7 +600,7 @@ export const ApplicationTrackerPage: React.FC = () => {
                               onClick={() => handleDeadlineChange(entry.id, 'Ongoing')}
                               title="Set deadline to Ongoing"
                               style={{
-                                padding: '7px 8px',
+                                padding: '6px 8px',
                                 borderRadius: '6px',
                                 border: '1px solid var(--border-color)',
                                 backgroundColor: 'var(--bg-secondary)',
@@ -607,7 +608,8 @@ export const ApplicationTrackerPage: React.FC = () => {
                                 fontSize: '0.7rem',
                                 fontWeight: 600,
                                 cursor: 'pointer',
-                                whiteSpace: 'nowrap'
+                                whiteSpace: 'nowrap',
+                                flexShrink: 0
                               }}
                               onMouseEnter={(e) => { e.currentTarget.style.borderColor = '#fbbf24'; e.currentTarget.style.color = '#fbbf24'; }}
                               onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border-color)'; e.currentTarget.style.color = 'var(--text-secondary)'; }}
@@ -618,8 +620,15 @@ export const ApplicationTrackerPage: React.FC = () => {
                         )}
                       </td>
                       {/* Date */}
-                      <td style={{ ...tdStyle, color: 'var(--text-secondary)', fontSize: '0.8125rem' }}>
-                        {new Date(entry.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
+                      <td style={{ ...tdStyle, paddingLeft: '16px', color: 'var(--text-secondary)', fontSize: '0.8125rem', whiteSpace: 'nowrap' }}>
+                        {(() => {
+                          try {
+                            const d = new Date(entry.date);
+                            return isNaN(d.getTime()) ? (entry.date || '-') : d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+                          } catch {
+                            return entry.date || '-';
+                          }
+                        })()}
                       </td>
                       {/* Notes */}
                       <td style={tdStyle}>

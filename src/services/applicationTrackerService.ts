@@ -247,10 +247,12 @@ export const addApplicationTrackerEntry = async (
     }
 
     // Avoid duplicates: check if same name + action already exists from the last 5 minutes
-    const fiveMinAgo = new Date(Date.now() - 5 * 60 * 1000).toISOString();
-    const isDuplicate = (trackerData.entries || []).some(
-      e => e.name === entry.name && e.action === entry.action && e.date > fiveMinAgo
-    );
+    const fiveMinAgoMs = Date.now() - 5 * 60 * 1000;
+    const isDuplicate = (trackerData.entries || []).some(e => {
+      if (e.name !== entry.name || e.action !== entry.action) return false;
+      const entryTime = new Date(e.date).getTime();
+      return !isNaN(entryTime) && entryTime > fiveMinAgoMs;
+    });
     if (isDuplicate) {
       const usage = await getTrackerUsage(userId);
       return {
