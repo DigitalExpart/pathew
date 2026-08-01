@@ -68,6 +68,9 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql SECURITY DEFINER;
 
+-- GRANT EXECUTE PERMISSION TO AUTHENTICATED USERS & SERVICE ROLE
+GRANT EXECUTE ON FUNCTION public.decrement_credits(UUID, NUMERIC) TO authenticated, anon, service_role;
+
 -- Verify: List all tables with RLS status
 -- SELECT schemaname, tablename, rowsecurity FROM pg_tables WHERE schemaname = 'public';
 
