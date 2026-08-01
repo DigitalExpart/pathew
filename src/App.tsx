@@ -47,6 +47,8 @@ import { AdminOpportunityForm } from './pages/Admin/AdminOpportunityForm';
 import { AdminReviewsPage } from './pages/Admin/AdminReviewsPage';
 import { AdminRssSourcesPage } from './pages/Admin/AdminRssSourcesPage';
 import { AdminCouponsPage } from './pages/Admin/AdminCouponsPage';
+import { AdminOrganizationsPage } from './pages/Admin/AdminOrganizationsPage';
+import { OrgDashboardPage } from './pages/Organization/OrgDashboardPage';
 
 // Sub Admin Pages
 import { SubAdminDashboard } from './pages/SubAdmin/SubAdminDashboard';
@@ -96,6 +98,7 @@ function App() {
             <Route path="/notifications" element={<RequireAuth><Shell><NotificationsPage /></Shell></RequireAuth>} />
             <Route path="/preparation" element={<RequireAuth><Shell><PreparationPage /></Shell></RequireAuth>} />
             <Route path="/application-tracker" element={<RequireAuth><Shell><ApplicationTrackerPage /></Shell></RequireAuth>} />
+            <Route path="/org-dashboard" element={<RequireAuth><Shell><OrgDashboardPage /></Shell></RequireAuth>} />
 
             {/* Sub Admin Routes */}
             <Route path="/sub-admin" element={<RequireAuth><Shell><SubAdminDashboard /></Shell></RequireAuth>} />
@@ -106,6 +109,7 @@ function App() {
             <Route path="/admin" element={<AdminLogin />} />
             <Route path="/admin/dashboard" element={<RequireAdmin><AdminShell><AdminDashboard /></AdminShell></RequireAdmin>} />
             <Route path="/admin/users" element={<RequireAdmin><AdminShell><AdminUsersPage /></AdminShell></RequireAdmin>} />
+            <Route path="/admin/organizations" element={<RequireAdmin><AdminShell><AdminOrganizationsPage /></AdminShell></RequireAdmin>} />
             <Route path="/admin/subscriptions" element={<RequireAdmin><AdminShell><AdminSubscriptionsPage /></AdminShell></RequireAdmin>} />
             <Route path="/admin/transactions" element={<RequireAdmin><AdminShell><AdminTransactionsPage /></AdminShell></RequireAdmin>} />
             <Route path="/admin/opportunities" element={<RequireAdmin><AdminShell><AdminOpportunitiesPage /></AdminShell></RequireAdmin>} />

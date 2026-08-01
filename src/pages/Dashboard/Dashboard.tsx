@@ -20,6 +20,7 @@ import { supabase } from '../../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { calculateMatchScore } from '../../utils/matchScorer';
 import { getApplicationTrackerEntries } from '../../services/applicationTrackerService';
+import { PersonalInvitesWidget } from '../Organization/PersonalInvitesWidget';
 
 export const Dashboard: React.FC = () => {
   const { user, profile, refreshProfile } = useAuth();
@@ -174,7 +175,12 @@ export const Dashboard: React.FC = () => {
           <Zap size={18} fill="currentColor" className={scanning ? 'animate-pulse' : ''} />
           {scanning ? t('dashboard.scanning') : t('dashboard.quickScan')}
         </Button>
-      </header>      {/* Stats Grid */}
+      </header>
+
+      {/* Organization Pending Invitations */}
+      <PersonalInvitesWidget />
+
+      {/* Stats Grid */}
       <div className="grid-responsive" style={{ marginBottom: '32px' }}>
         <StatCard icon={Users} label={t('nav.opportunities')} value={stats.opps.toString()} trend="+0" onClick={() => navigate('/saved')} />
         <StatCard icon={ClipboardList} label={t('nav.applicationTracker')} value={stats.tracker.toString()} trend="+0" onClick={() => navigate('/application-tracker')} />

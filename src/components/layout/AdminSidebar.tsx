@@ -1,12 +1,13 @@
 import React from 'react';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import { useAdmin } from '../../context/AdminContext';
-import { LayoutDashboard, Users, CreditCard, ArrowLeftRight, FileText, Bot, Settings, LogOut, ArrowLeft, Megaphone, Star, Rss, Ticket, X } from 'lucide-react';
+import { LayoutDashboard, Users, CreditCard, ArrowLeftRight, FileText, Bot, Settings, LogOut, ArrowLeft, Megaphone, Star, Rss, Ticket, X, Building2 } from 'lucide-react';
 import logo from '../../assets/images/logo.svg';
 
 const navItems = [
   { icon: LayoutDashboard, label: 'Overview', path: '/admin/dashboard' },
   { icon: Users, label: 'Users', path: '/admin/users' },
+  { icon: Building2, label: 'Verify Organizations', path: '/admin/organizations' },
   { icon: CreditCard, label: 'Subscriptions', path: '/admin/subscriptions' },
   { icon: ArrowLeftRight, label: 'Transactions', path: '/admin/transactions' },
   { icon: Ticket, label: 'Coupons', path: '/admin/coupons' },

@@ -1,12 +1,13 @@
 import React from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { Mail, Lock, ArrowLeft, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, ArrowLeft, Eye, EyeOff, User, Building2, CheckCircle2, Globe, Phone, ShieldCheck } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.svg';
 import { supabase } from '../../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
+import { createOrganization } from '../../services/organizationService';
 
 export const LoginPage: React.FC = () => {
   const { t } = useTranslation();
@@ -130,7 +131,11 @@ export const LoginPage: React.FC = () => {
 export const SignUpPage: React.FC = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const [accountType, setAccountType] = React.useState<'personal' | 'business' | null>(null);
   const [isSubmitted, setIsSubmitted] = React.useState(false);
+  const [isOrgSubmitted, setIsOrgSubmitted] = React.useState(false);
+
+  // Personal form data
   const [formData, setFormData] = React.useState({
     fullName: '',
     email: '',
@@ -140,6 +145,34 @@ export const SignUpPage: React.FC = () => {
     termsAccepted: false,
     privacyAccepted: false,
   });
+
+  // Business form data
+  const [orgData, setOrgData] = React.useState({
+    orgName: '',
+    orgType: 'Startup / SME',
+    regNumber: '',
+    taxId: '',
+    country: 'United Kingdom',
+    city: '',
+    addressLine1: '',
+    addressLine2: '',
+    website: '',
+    officialEmail: '',
+    phone: '',
+    contactName: '',
+    contactTitle: 'Managing Director',
+    contactEmail: '',
+    contactPhone: '',
+    password: '',
+    confirmPassword: '',
+    summary: '',
+    servicesOffered: '',
+    teamSize: '1-10',
+    industryCategories: '',
+    verificationNotes: '',
+    termsAccepted: false,
+  });
+
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -156,7 +189,7 @@ export const SignUpPage: React.FC = () => {
     }
   }, [user, authLoading, navigate]);
 
-  const validate = () => {
+  const validatePersonal = () => {
     const newErrors: Record<string, string> = {};
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = t('auth.errors.passwordMismatch');
@@ -174,31 +207,24 @@ export const SignUpPage: React.FC = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleResendEmail = async (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (resending) return;
-    setResending(true);
-    setResendMessage(null);
-    try {
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email: formData.email,
-        options: {
-          emailRedirectTo: window.location.origin + '/dashboard',
-        }
-      });
-      if (error) throw error;
-      setResendMessage(t('auth.resendSuccess') || 'Verification email resent successfully.');
-    } catch (err: any) {
-      setResendMessage(err.message || 'Failed to resend email.');
-    } finally {
-      setResending(false);
+  const validateBusiness = () => {
+    const newErrors: Record<string, string> = {};
+    if (orgData.password !== orgData.confirmPassword) {
+      newErrors.confirmPassword = 'Passwords do not match';
     }
+    if (orgData.password.length < 8) {
+      newErrors.password = 'Password must be at least 8 characters';
+    }
+    if (!orgData.termsAccepted) {
+      newErrors.terms = 'You must accept the terms and conditions';
+    }
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const handleSignUp = async (e: React.FormEvent) => {
+  const handleSignUpPersonal = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validate()) {
+    if (validatePersonal()) {
       setLoading(true);
       setAuthError(null);
       
@@ -210,6 +236,7 @@ export const SignUpPage: React.FC = () => {
             emailRedirectTo: window.location.origin + '/dashboard',
             data: {
               full_name: formData.fullName,
+              account_type: 'personal',
               marketing_consent: formData.marketingConsent,
             }
           }
@@ -230,6 +257,67 @@ export const SignUpPage: React.FC = () => {
     }
   };
 
+  const handleSignUpBusiness = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (validateBusiness()) {
+      setLoading(true);
+      setAuthError(null);
+
+      try {
+        // 1. Create auth user
+        const { data, error } = await supabase.auth.signUp({
+          email: orgData.contactEmail,
+          password: orgData.password,
+          options: {
+            emailRedirectTo: window.location.origin + '/org-dashboard',
+            data: {
+              full_name: orgData.contactName,
+              account_type: 'business',
+              organisation: orgData.orgName,
+            }
+          }
+        });
+
+        if (error) throw error;
+
+        // 2. Create Organization record (pending verification)
+        const userId = data.user?.id || 'temp_' + Date.now();
+        await createOrganization(userId, {
+          name: orgData.orgName,
+          type: orgData.orgType,
+          registration_number: orgData.regNumber,
+          tax_id: orgData.taxId,
+          country: orgData.country,
+          city: orgData.city,
+          address_line1: orgData.addressLine1,
+          address_line2: orgData.addressLine2,
+          website: orgData.website,
+          official_email: orgData.officialEmail,
+          phone: orgData.phone,
+          contact_name: orgData.contactName,
+          contact_title: orgData.contactTitle,
+          contact_email: orgData.contactEmail,
+          contact_phone: orgData.contactPhone,
+          summary: orgData.summary,
+          services_offered: orgData.servicesOffered,
+          team_size: orgData.teamSize,
+          industry_categories: orgData.industryCategories ? orgData.industryCategories.split(',').map(s => s.trim()) : [],
+          verification_notes: orgData.verificationNotes,
+        });
+
+        if (data.session) {
+          navigate('/org-dashboard', { replace: true });
+        } else {
+          setIsOrgSubmitted(true);
+        }
+      } catch (err: any) {
+        setAuthError(err.message || 'Failed to register business account');
+      } finally {
+        setLoading(false);
+      }
+    }
+  };
+
   if (authLoading || (user && !authLoading)) {
     return (
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: 'var(--bg-primary)' }}>
@@ -238,49 +326,403 @@ export const SignUpPage: React.FC = () => {
     );
   }
 
-  if (isSubmitted) {
+  if (isSubmitted || isOrgSubmitted) {
     return (
       <div style={authWrapperStyle}>
         <div style={authContentStyle}>
           <Card style={{ padding: '48px', textAlign: 'center' }}>
             <div style={verifyIconStyle}>
-              <Mail size={48} color="var(--accent-primary)" />
+              {isOrgSubmitted ? <Building2 size={48} color="var(--accent-primary)" /> : <Mail size={48} color="var(--accent-primary)" />}
             </div>
-            <h2 style={{ marginBottom: '16px' }}>{t('auth.verifyEmail')}</h2>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: 1.6 }}>
-              {t('auth.verifyEmailDesc')} <strong style={{ color: 'var(--text-primary)' }}>{formData.email}</strong>. 
-              {t('auth.verifyEmailSubDesc')}
+            <h2 style={{ marginBottom: '16px' }}>
+              {isOrgSubmitted ? 'Organization Account Created' : t('auth.verifyEmail')}
+            </h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: 1.6 }}>
+              {isOrgSubmitted ? (
+                <>
+                  Your registration for <strong>{orgData.orgName}</strong> was submitted successfully! Your account is currently <strong>pending admin verification</strong>. You can view your dashboard, and full business features will unlock once approved.
+                </>
+              ) : (
+                <>
+                  {t('auth.verifyEmailDesc')} <strong style={{ color: 'var(--text-primary)' }}>{formData.email}</strong>. {t('auth.verifyEmailSubDesc')}
+                </>
+              )}
             </p>
-            <Button onClick={() => navigate('/login')} style={{ width: '100%' }}>
-              {t('auth.backToLogin')}
+            <Button onClick={() => navigate(isOrgSubmitted ? '/org-dashboard' : '/login')} style={{ width: '100%' }}>
+              {isOrgSubmitted ? 'Go to Organization Dashboard' : t('auth.backToLogin')}
             </Button>
-            <p style={{ marginTop: '24px', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-              {t('auth.didntReceiveEmail')}{' '}
-              <a 
-                href="#" 
-                onClick={handleResendEmail} 
-                style={{...linkStyle, opacity: resending ? 0.5 : 1, pointerEvents: resending ? 'none' : 'auto'}}
-              >
-                {resending ? 'Resending...' : t('auth.resendLink')}
-              </a>
-            </p>
-            {resendMessage && (
-              <p style={{ marginTop: '12px', fontSize: '0.875rem', color: resendMessage.includes('Failed') ? '#ef4444' : '#10b981', fontWeight: 500 }}>
-                {resendMessage}
-              </p>
-            )}
           </Card>
         </div>
       </div>
     );
   }
 
+  // Step 1: Choose Account Type Selection
+  if (accountType === null) {
+    return (
+      <div style={authWrapperStyle}>
+        <Link to="/" style={backButtonStyle}>
+          <ArrowLeft size={20} />
+        </Link>
+
+        <div style={{ ...authContentStyle, maxWidth: '640px' }}>
+          <Link to="/" style={logoWrapperStyle}>
+            <img src={logo} alt="PATHEW Logo" style={{ height: '48px', objectFit: 'contain' }} />
+          </Link>
+
+          <Card style={{ padding: '40px' }}>
+            <h2 style={{ marginBottom: '8px', textAlign: 'center' }}>Choose Your Account Type</h2>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '32px', textAlign: 'center' }}>
+              Select how you plan to use PATHEW to customize your experience.
+            </p>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '32px' }}>
+              {/* Personal Account Option */}
+              <div
+                onClick={() => setAccountType('personal')}
+                style={{
+                  padding: '24px',
+                  borderRadius: '16px',
+                  border: '2px solid var(--border-color)',
+                  backgroundColor: 'var(--bg-secondary)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  textAlign: 'left',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = 'var(--accent-primary)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = 'var(--border-color)';
+                  e.currentTarget.style.transform = 'none';
+                }}
+              >
+                <div style={{ width: '44px', height: '44px', borderRadius: '12px', backgroundColor: 'rgba(59, 130, 246, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+                  <User size={24} color="#60a5fa" />
+                </div>
+                <h3 style={{ fontSize: '1.125rem', fontWeight: 800, marginBottom: '6px' }}>Personal Account</h3>
+                <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                  For job seekers, researchers, and professionals building their career with AI CVs, grants, proposals & tracking.
+                </p>
+              </div>
+
+              {/* Business Account Option */}
+              <div
+                onClick={() => setAccountType('business')}
+                style={{
+                  padding: '24px',
+                  borderRadius: '16px',
+                  border: '2px solid var(--border-color)',
+                  backgroundColor: 'var(--bg-secondary)',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  textAlign: 'left',
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = '#f59e0b';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = 'var(--border-color)';
+                  e.currentTarget.style.transform = 'none';
+                }}
+              >
+                <div style={{ width: '44px', height: '44px', borderRadius: '12px', backgroundColor: 'rgba(245, 158, 11, 0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
+                  <Building2 size={24} color="#f59e0b" />
+                </div>
+                <h3 style={{ fontSize: '1.125rem', fontWeight: 800, marginBottom: '6px' }}>Business Account</h3>
+                <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
+                  For companies, NGOs, universities & teams managing members, shared org credits, team outputs & postings.
+                </p>
+              </div>
+            </div>
+
+            <p style={{ textAlign: 'center', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+              Already have an account? <Link to="/login" style={linkStyle}>Log In</Link>
+            </p>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Step 2B: Business / Organization Registration Form
+  if (accountType === 'business') {
+    return (
+      <div style={authWrapperStyle}>
+        <button onClick={() => setAccountType(null)} style={{ ...backButtonStyle, background: 'none', border: 'none', cursor: 'pointer' }}>
+          <ArrowLeft size={20} /> Back to account type
+        </button>
+
+        <div style={{ ...authContentStyle, maxWidth: '720px' }}>
+          <Link to="/" style={logoWrapperStyle}>
+            <img src={logo} alt="PATHEW Logo" style={{ height: '48px', objectFit: 'contain' }} />
+          </Link>
+
+          <Card style={{ padding: '36px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+              <Building2 size={24} color="#f59e0b" />
+              <h2 style={{ margin: 0 }}>Organization Registration</h2>
+            </div>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '28px', fontSize: '0.875rem' }}>
+              Register your organization to manage team members, share credits, and post opportunities.
+            </p>
+
+            <form onSubmit={handleSignUpBusiness} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={labelStyle}>Organization Name *</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Acme Innovations Ltd"
+                    style={baseInputStyle}
+                    value={orgData.orgName}
+                    onChange={e => setOrgData({ ...orgData, orgName: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label style={labelStyle}>Organization Type / Sector *</label>
+                  <select
+                    style={baseInputStyle}
+                    value={orgData.orgType}
+                    onChange={e => setOrgData({ ...orgData, orgType: e.target.value })}
+                  >
+                    <option value="Startup / SME">Startup / SME</option>
+                    <option value="Non-Profit / NGO">Non-Profit / NGO</option>
+                    <option value="Enterprise / Corporate">Enterprise / Corporate</option>
+                    <option value="Educational / University">Educational / University</option>
+                    <option value="Government / Public Agency">Government / Public Agency</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={labelStyle}>Registration Number *</label>
+                  <input
+                    type="text"
+                    placeholder="Official company reg #"
+                    style={baseInputStyle}
+                    value={orgData.regNumber}
+                    onChange={e => setOrgData({ ...orgData, regNumber: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label style={labelStyle}>Tax / VAT Number (Optional)</label>
+                  <input
+                    type="text"
+                    placeholder="VAT123456789"
+                    style={baseInputStyle}
+                    value={orgData.taxId}
+                    onChange={e => setOrgData({ ...orgData, taxId: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={labelStyle}>Country *</label>
+                  <input
+                    type="text"
+                    style={baseInputStyle}
+                    value={orgData.country}
+                    onChange={e => setOrgData({ ...orgData, country: e.target.value })}
+                    required
+                  />
+                </div>
+                <div>
+                  <label style={labelStyle}>City *</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. London"
+                    style={baseInputStyle}
+                    value={orgData.city}
+                    onChange={e => setOrgData({ ...orgData, city: e.target.value })}
+                    required
+                  />
+                </div>
+                <div>
+                  <label style={labelStyle}>Official Phone *</label>
+                  <input
+                    type="text"
+                    placeholder="+44 20 1234 5678"
+                    style={baseInputStyle}
+                    value={orgData.phone}
+                    onChange={e => setOrgData({ ...orgData, phone: e.target.value })}
+                    required
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={labelStyle}>Address Line 1 *</label>
+                <input
+                  type="text"
+                  placeholder="Street address"
+                  style={baseInputStyle}
+                  value={orgData.addressLine1}
+                  onChange={e => setOrgData({ ...orgData, addressLine1: e.target.value })}
+                  required
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={labelStyle}>Official Email *</label>
+                  <input
+                    type="email"
+                    placeholder="info@org.com"
+                    style={baseInputStyle}
+                    value={orgData.officialEmail}
+                    onChange={e => setOrgData({ ...orgData, officialEmail: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label style={labelStyle}>Website URL</label>
+                  <input
+                    type="url"
+                    placeholder="https://..."
+                    style={baseInputStyle}
+                    value={orgData.website}
+                    onChange={e => setOrgData({ ...orgData, website: e.target.value })}
+                  />
+                </div>
+              </div>
+
+              <div style={{ paddingTop: '12px', borderTop: '1px solid var(--border-color)', marginTop: '8px' }}>
+                <h4 style={{ fontSize: '0.9375rem', fontWeight: 700, marginBottom: '12px', color: 'var(--accent-primary)' }}>
+                  Contact Person Details
+                </h4>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                  <div>
+                    <label style={labelStyle}>Contact Person Full Name *</label>
+                    <input
+                      type="text"
+                      placeholder="Jane Doe"
+                      style={baseInputStyle}
+                      value={orgData.contactName}
+                      onChange={e => setOrgData({ ...orgData, contactName: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label style={labelStyle}>Contact Person Title / Role *</label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Managing Director / HR Manager"
+                      style={baseInputStyle}
+                      value={orgData.contactTitle}
+                      onChange={e => setOrgData({ ...orgData, contactTitle: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '12px' }}>
+                  <div>
+                    <label style={labelStyle}>Contact Email (Account Login) *</label>
+                    <input
+                      type="email"
+                      placeholder="jane@org.com"
+                      style={baseInputStyle}
+                      value={orgData.contactEmail}
+                      onChange={e => setOrgData({ ...orgData, contactEmail: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label style={labelStyle}>Contact Phone *</label>
+                    <input
+                      type="text"
+                      placeholder="+44 7123 456789"
+                      style={baseInputStyle}
+                      value={orgData.contactPhone}
+                      onChange={e => setOrgData({ ...orgData, contactPhone: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '12px' }}>
+                  <div>
+                    <label style={labelStyle}>Account Password *</label>
+                    <input
+                      type="password"
+                      placeholder="At least 8 characters"
+                      style={baseInputStyle}
+                      value={orgData.password}
+                      onChange={e => setOrgData({ ...orgData, password: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label style={labelStyle}>Confirm Password *</label>
+                    <input
+                      type="password"
+                      placeholder="Repeat password"
+                      style={baseInputStyle}
+                      value={orgData.confirmPassword}
+                      onChange={e => setOrgData({ ...orgData, confirmPassword: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ paddingTop: '12px', borderTop: '1px solid var(--border-color)', marginTop: '8px' }}>
+                <label style={labelStyle}>Organization Summary / Mission Statement</label>
+                <textarea
+                  rows={3}
+                  placeholder="Briefly describe what your organization does..."
+                  style={{ ...baseInputStyle, width: '100%' }}
+                  value={orgData.summary}
+                  onChange={e => setOrgData({ ...orgData, summary: e.target.value })}
+                />
+              </div>
+
+              <div style={checkboxRowStyle}>
+                <input
+                  type="checkbox"
+                  id="org-terms"
+                  checked={orgData.termsAccepted}
+                  onChange={e => setOrgData({ ...orgData, termsAccepted: e.target.checked })}
+                  required
+                />
+                <label htmlFor="org-terms" style={checkboxLabelStyle}>
+                  I confirm I am an authorized representative of this organization and agree to <Link to="/terms" style={linkStyle}>Terms</Link>
+                </label>
+              </div>
+
+              {authError && <p style={errorTextStyle}>{authError}</p>}
+
+              <Button type="submit" style={{ width: '100%', marginTop: '12px' }} disabled={loading}>
+                {loading ? 'Submitting Registration...' : 'Submit Organization Registration'}
+              </Button>
+            </form>
+          </Card>
+        </div>
+      </div>
+    );
+  }
+
+  // Step 2A: Personal Registration Form
   return (
     <div style={authWrapperStyle}>
-      <Link to="/" style={backButtonStyle}>
-        <ArrowLeft size={20} />
-      </Link>
-      
+      <button onClick={() => setAccountType(null)} style={{ ...backButtonStyle, background: 'none', border: 'none', cursor: 'pointer' }}>
+        <ArrowLeft size={20} /> Back to account type
+      </button>
+
       <div style={authContentStyle}>
         <Link to="/" style={logoWrapperStyle}>
           <img src={logo} alt="PATHEW Logo" style={{ height: '48px', objectFit: 'contain' }} />
@@ -292,7 +734,7 @@ export const SignUpPage: React.FC = () => {
             {t('auth.signUpDesc')}
           </p>
 
-          <form onSubmit={handleSignUp} style={formStyle}>
+          <form onSubmit={handleSignUpPersonal} style={formStyle}>
             <div style={inputGroupStyle}>
               <label style={labelStyle}>{t('auth.fullName')}</label>
               <input 
