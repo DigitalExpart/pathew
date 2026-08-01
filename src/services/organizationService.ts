@@ -573,3 +573,163 @@ export const addOrganizationCredits = async (
   }
   return currentCredits;
 };
+
+/**
+ * Request to join a registered organization (Personal User action)
+ */
+export const requestToJoinOrganization = async (
+  userId: string,
+  userEmail: string,
+  userName: string,
+  orgId: string,
+  _orgName?: string
+): Promise<{ success: boolean; message?: string }> => {
+  try {
+    // Check if already a member or pending request exists
+    const { data: existing } = await supabase
+      .from('organization_members')
+      .select('id, status')
+      .eq('organization_id', orgId)
+      .eq('user_id', userId)
+      .limit(1);
+
+    if (existing && existing.length > 0) {
+      if (existing[0].status === 'accepted') {
+        return { success: false, message: 'You are already an active member of this organization.' };
+      }
+      if (existing[0].status === 'pending') {
+        return { success: false, message: 'A join request is already pending approval from this organization.' };
+      }
+    }
+
+    const { error } = await supabase.from('organization_members').insert({
+      id: 'mem_' + Math.random().toString(36).substr(2, 9),
+      organization_id: orgId,
+      user_id: userId,
+      user_email: userEmail.trim().toLowerCase(),
+      user_name: userName,
+      role: 'member',
+      status: 'pending',
+      created_at: new Date().toISOString(),
+    });
+
+    if (!error) return { success: true };
+  } catch (err) {
+    console.warn('DB request join fallback:', err);
+  }
+
+  // Document Fallback Storage
+  const { data: docs } = await supabase
+    .from('documents')
+    .select('id, user_id, content')
+    .eq('type', ORG_DOC_TYPE)
+    .eq('title', orgId)
+    .limit(1);
+
+  if (docs && docs.length > 0) {
+    try {
+      const parsed = JSON.parse(docs[0].content);
+      parsed.members = parsed.members || [];
+      parsed.members = parsed.members.filter((m: any) => m.user_id !== userId);
+      parsed.members.push({
+        id: 'mem_' + Math.random().toString(36).substr(2, 9),
+        organization_id: orgId,
+        user_id: userId,
+        user_email: userEmail.trim().toLowerCase(),
+        user_name: userName,
+        role: 'member',
+        status: 'pending',
+        created_at: new Date().toISOString(),
+      });
+      await saveOrgDocument(ORG_DOC_TYPE, orgId, docs[0].user_id, parsed);
+      return { success: true };
+    } catch {}
+  }
+  return { success: true };
+};
+
+/**
+ * Get user's active & pending organization memberships/requests
+ */
+export const getUserOrganizationMemberships = async (userId: string): Promise<OrganizationMember[]> => {
+  if (!userId) return [];
+  try {
+    const { data, error } = await supabase
+      .from('organization_members')
+      .select('*')
+      .eq('user_id', userId);
+
+    if (!error && data) return data;
+  } catch (err) {}
+
+  // Fallback check in documents
+  const { data: docs } = await supabase.from('documents').select('content').eq('type', ORG_DOC_TYPE);
+  const userMemberships: OrganizationMember[] = [];
+  if (docs) {
+    docs.forEach(doc => {
+      try {
+        const parsed = JSON.parse(doc.content);
+        if (parsed.members) {
+          parsed.members.forEach((m: OrganizationMember) => {
+            if (m.user_id === userId) {
+              userMemberships.push(m);
+            }
+          });
+        }
+      } catch {}
+    });
+  }
+  return userMemberships;
+};
+
+/**
+ * Organization Admin action: Accept or Reject a join request
+ */
+export const respondToJoinRequest = async (
+  memberRecordId: string,
+  orgId: string,
+  orgName: string,
+  userId: string,
+  accept: boolean
+): Promise<boolean> => {
+  const newStatus: MembershipStatus = accept ? 'accepted' : 'declined';
+  try {
+    await supabase
+      .from('organization_members')
+      .update({ status: newStatus })
+      .eq('id', memberRecordId);
+
+    if (accept) {
+      await supabase.from('profiles').update({ organisation: orgName }).eq('id', userId);
+    }
+    return true;
+  } catch (err) {
+    console.warn('Respond join request DB fallback:', err);
+  }
+
+  // Fallback doc update
+  const { data: docs } = await supabase
+    .from('documents')
+    .select('id, user_id, content')
+    .eq('type', ORG_DOC_TYPE)
+    .eq('title', orgId)
+    .limit(1);
+
+  if (docs && docs.length > 0) {
+    try {
+      const parsed = JSON.parse(docs[0].content);
+      if (parsed.members) {
+        parsed.members = parsed.members.map((m: any) =>
+          m.id === memberRecordId || m.user_id === userId ? { ...m, status: newStatus } : m
+        );
+      }
+      await saveOrgDocument(ORG_DOC_TYPE, orgId, docs[0].user_id, parsed);
+      if (accept) {
+        await supabase.from('profiles').update({ organisation: orgName }).eq('id', userId);
+      }
+      return true;
+    } catch {}
+  }
+  return false;
+};
+

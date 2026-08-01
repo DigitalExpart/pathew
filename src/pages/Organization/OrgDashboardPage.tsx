@@ -20,6 +20,7 @@ import {
   getOrganizationByUserId,
   getOrganizationMembers,
   inviteMemberToOrganization,
+  respondToJoinRequest,
   type Organization,
   type OrganizationMember
 } from '../../services/organizationService';
@@ -90,6 +91,20 @@ export const OrgDashboardPage: React.FC = () => {
       setMembers(updated);
     } else {
       setInviteError('Failed to send invitation. Please try again.');
+    }
+  };
+
+  const handleJoinRequestResponse = async (memberRecordId: string, memberUserId: string, accept: boolean) => {
+    if (!org) return;
+    setLoading(true);
+    try {
+      await respondToJoinRequest(memberRecordId, org.id, org.name, memberUserId, accept);
+      const updated = await getOrganizationMembers(org.id);
+      setMembers(updated);
+    } catch (err) {
+      console.error('Error responding to join request:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -327,6 +342,63 @@ export const OrgDashboardPage: React.FC = () => {
       {/* TAB CONTENT: Members */}
       {activeTab === 'members' && (
         <div>
+          {/* Pending Member Join Requests */}
+          {members.some(m => m.status === 'pending') && (
+            <Card style={{ padding: '24px', marginBottom: '24px', backgroundColor: 'rgba(59, 130, 246, 0.04)', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
+              <h3 style={{ fontSize: '1rem', fontWeight: 800, marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', color: '#60a5fa' }}>
+                <Clock size={18} />
+                Pending Member Join Requests ({members.filter(m => m.status === 'pending').length})
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {members.filter(m => m.status === 'pending').map(req => (
+                  <div
+                    key={req.id}
+                    style={{
+                      backgroundColor: 'var(--bg-secondary)',
+                      border: '1px solid var(--border-color)',
+                      borderRadius: '10px',
+                      padding: '16px',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      flexWrap: 'wrap',
+                      gap: '12px'
+                    }}
+                  >
+                    <div>
+                      <p style={{ margin: 0, fontSize: '0.9375rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                        {req.user_name ? `${req.user_name} (${req.user_email})` : req.user_email}
+                      </p>
+                      <p style={{ margin: '4px 0 0 0', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+                        Requested to join team on {new Date(req.created_at).toLocaleDateString()}
+                      </p>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => handleJoinRequestResponse(req.id, req.user_id || '', false)}
+                        disabled={loading}
+                        style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)' }}
+                      >
+                        Reject
+                      </Button>
+                      <Button
+                        size="sm"
+                        onClick={() => handleJoinRequestResponse(req.id, req.user_id || '', true)}
+                        disabled={loading}
+                        style={{ gap: '6px' }}
+                      >
+                        <ShieldCheck size={14} /> Accept & Add to Team
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          )}
+
           {/* Invite Form */}
           <Card style={{ padding: '24px', marginBottom: '24px' }}>
             <h3 style={{ fontSize: '1rem', fontWeight: 700, marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
