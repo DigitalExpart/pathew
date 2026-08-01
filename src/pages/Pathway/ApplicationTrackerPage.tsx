@@ -14,15 +14,20 @@ import {
   CheckCircle,
   XCircle,
   AlertCircle,
-  Loader2
+  Loader2,
+  Coins
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import {
   getApplicationTrackerEntries,
   saveApplicationTrackerEntries,
+  getTrackerUsage,
+  addApplicationTrackerEntry,
   type ApplicationTrackerEntry,
+  type TrackerUsageData,
 } from '../../services/applicationTrackerService';
+import { TrackerCreditModal } from '../../components/shared/TrackerCreditModal';
 
 const STATUS_OPTIONS = [
   'Applied',
@@ -66,7 +71,7 @@ const getActionBadgeColor = (action: string) => {
 };
 
 export const ApplicationTrackerPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const { t } = useTranslation();
   const [entries, setEntries] = useState<ApplicationTrackerEntry[]>([]);
   const [docId, setDocId] = useState<string | null>(null);
@@ -76,6 +81,9 @@ export const ApplicationTrackerPage: React.FC = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [isAddingNew, setIsAddingNew] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCreditModalOpen, setIsCreditModalOpen] = useState(false);
+  const [trackerUsage, setTrackerUsage] = useState<TrackerUsageData | null>(null);
   const [newEntry, setNewEntry] = useState({ name: '', action: 'Applied', status: 'Applied', deadline: '', notes: '' });
 
   useEffect(() => {
@@ -113,6 +121,9 @@ export const ApplicationTrackerPage: React.FC = () => {
     if (!user) return;
     setLoading(true);
     try {
+      const usage = await getTrackerUsage(user.id);
+      setTrackerUsage(usage);
+
       const result = await getApplicationTrackerEntries(user.id);
       setDocId(result.docId);
 
@@ -172,21 +183,32 @@ export const ApplicationTrackerPage: React.FC = () => {
   };
 
   const handleAddEntry = async () => {
-    if (!user || !newEntry.name.trim()) return;
-    const entry: ApplicationTrackerEntry = {
-      id: Math.random().toString(36).substr(2, 9) + Date.now().toString(36),
-      name: newEntry.name.trim(),
-      action: newEntry.action,
-      status: newEntry.status,
-      date: new Date().toISOString(),
-      deadline: newEntry.deadline || undefined,
-      notes: newEntry.notes,
-    };
-    const updated = [entry, ...entries];
-    setEntries(updated);
-    setIsAddingNew(false);
-    setNewEntry({ name: '', action: 'Applied', status: 'Applied', deadline: '', notes: '' });
-    await saveApplicationTrackerEntries(user.id, docId, updated);
+    if (!user || !newEntry.name.trim() || isSubmitting) return;
+    setIsSubmitting(true);
+
+    try {
+      const result = await addApplicationTrackerEntry(user.id, {
+        name: newEntry.name.trim(),
+        action: newEntry.action,
+        status: newEntry.status,
+        date: new Date().toISOString(),
+        deadline: newEntry.deadline || undefined,
+        notes: newEntry.notes,
+      });
+
+      if (result.success) {
+        setIsAddingNew(false);
+        setNewEntry({ name: '', action: 'Applied', status: 'Applied', deadline: '', notes: '' });
+        await fetchEntries();
+        await refreshProfile();
+      } else if (result.error === 'INSUFFICIENT_CREDITS') {
+        setIsCreditModalOpen(true);
+      }
+    } catch (error) {
+      console.error('Error adding entry:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleNotesChange = async (entryId: string, notes: string) => {
@@ -229,6 +251,43 @@ export const ApplicationTrackerPage: React.FC = () => {
           </p>
         </div>
       </header>
+
+      {/* Quota Banner */}
+      {trackerUsage && (
+        <div style={{
+          marginBottom: '20px',
+          padding: '12px 16px',
+          borderRadius: 'var(--radius-lg)',
+          border: '1px solid',
+          borderColor: (trackerUsage.totalActionsCount < 3) ? 'rgba(34, 197, 94, 0.3)' : 'rgba(245, 158, 11, 0.3)',
+          backgroundColor: (trackerUsage.totalActionsCount < 3) ? 'rgba(34, 197, 94, 0.06)' : 'rgba(245, 158, 11, 0.06)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          gap: '12px',
+          flexWrap: 'wrap'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Coins size={18} color={(trackerUsage.totalActionsCount < 3) ? '#22c55e' : '#f59e0b'} />
+            <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+              {trackerUsage.totalActionsCount < 3 ? (
+                <>
+                  <strong>Free Tier Quota:</strong> You have {Math.max(0, 3 - trackerUsage.totalActionsCount)} of 3 free tracker actions remaining.
+                </>
+              ) : (
+                <>
+                  <strong>Credit-Based Actions Active:</strong> Free tier used (3/3). Each new entry costs <strong>0.25 credits</strong>.
+                </>
+              )}
+            </span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Badge variant={trackerUsage.totalActionsCount < 3 ? 'success' : 'warning'} style={{ fontSize: '0.75rem' }}>
+              {profile?.credits ?? 0} Credits Available
+            </Badge>
+          </div>
+        </div>
+      )}
 
       {/* Stats Cards */}
       <div style={statsGridStyle}>
@@ -599,6 +658,13 @@ export const ApplicationTrackerPage: React.FC = () => {
           </p>
         </div>
       )}
+
+      <TrackerCreditModal
+        isOpen={isCreditModalOpen}
+        onClose={() => setIsCreditModalOpen(false)}
+        currentCredits={profile?.credits ?? 0}
+        requiredCredits={0.25}
+      />
     </div>
   );
 };

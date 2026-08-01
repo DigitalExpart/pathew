@@ -25,11 +25,12 @@ import { useAuth } from '../../context/AuthContext';
 import { supabase } from '../../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { addApplicationTrackerEntry } from '../../services/applicationTrackerService';
+import { TrackerCreditModal } from '../../components/shared/TrackerCreditModal';
 
 export const OpportunityDetail: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user, profile } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
   const { openAssistant } = useAssistant();
   const { t } = useTranslation();
   
@@ -104,6 +105,8 @@ export const OpportunityDetail: React.FC = () => {
     }
   };
 
+  const [isCreditModalOpen, setIsCreditModalOpen] = React.useState(false);
+
   const handleApply = async () => {
     if (!opp) return;
     setApplying(true);
@@ -121,7 +124,7 @@ export const OpportunityDetail: React.FC = () => {
         const isOngoingOpp = opp.deadline?.toLowerCase().includes('ongoing');
         const deadlineVal = isOngoingOpp ? 'Ongoing' : (opp.deadline || undefined);
 
-        await addApplicationTrackerEntry(user.id, {
+        const trackerResult = await addApplicationTrackerEntry(user.id, {
           name: opp.title,
           action: 'Applied',
           status: 'Applied',
@@ -129,6 +132,16 @@ export const OpportunityDetail: React.FC = () => {
           opportunityId: opp.id,
           deadline: deadlineVal,
         });
+
+        if (!trackerResult.success && trackerResult.error === 'INSUFFICIENT_CREDITS') {
+          setIsCreditModalOpen(true);
+          setApplying(false);
+          return;
+        }
+
+        if (trackerResult.charged) {
+          await refreshProfile();
+        }
       }
 
       // 3. Open external link
@@ -372,6 +385,13 @@ export const OpportunityDetail: React.FC = () => {
         onSelect={handleCreatePlan}
         deadline={opp.deadline}
         opportunityTitle={opp.title}
+      />
+
+      <TrackerCreditModal
+        isOpen={isCreditModalOpen}
+        onClose={() => setIsCreditModalOpen(false)}
+        currentCredits={profile?.credits ?? 0}
+        requiredCredits={0.25}
       />
         </>
       )}

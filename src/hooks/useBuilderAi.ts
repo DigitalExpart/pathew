@@ -14,7 +14,7 @@ export interface UseBuilderAiProps {
 }
 
 export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportunityId }: UseBuilderAiProps) => {
-  const { user } = useAuth();
+  const { user, refreshProfile } = useAuth();
   
   // Builder configuration states
   const [stage, setStage] = useState<BuilderStage>('sources');
@@ -884,7 +884,7 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
           'Cover Letter': 'Cover Letter Generated',
           'Proposal': 'Proposal Generated',
         };
-        await addApplicationTrackerEntry(user.id, {
+        const trackerResult = await addApplicationTrackerEntry(user.id, {
           name: trackerName,
           action: actionMap[documentType] || `${documentType} Generated`,
           status: 'Ongoing',
@@ -892,6 +892,10 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
           opportunityId: opportunityId || null,
           deadline: opportunityDeadline || undefined,
         });
+
+        if (trackerResult.charged && refreshProfile) {
+          refreshProfile();
+        }
       }
 
     } catch (err: any) {
