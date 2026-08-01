@@ -7,6 +7,7 @@ import { Badge } from '../../components/ui/Badge';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { PersonalInvitesWidget } from '../Organization/PersonalInvitesWidget';
 
 export const ProfilePage: React.FC = () => {
   const { user, profile } = useAuth();
@@ -97,6 +98,8 @@ export const ProfilePage: React.FC = () => {
           transition={{ delay: 0.1 }}
           style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}
         >
+          {/* Organization Invites & Team Membership Widget */}
+          <PersonalInvitesWidget />
           {/* Basic Info & Story */}
           <Card>
             <div style={{ padding: '32px' }}>

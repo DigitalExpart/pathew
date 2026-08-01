@@ -39,7 +39,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isCollapsed }
       title: 'PATHWAY',
       items: [
         { icon: LayoutDashboard, label: t('nav.dashboard'), path: '/dashboard' },
-        { icon: Building2, label: 'Org Dashboard', path: '/org-dashboard' },
+        ...(profile?.account_type === 'business' ? [
+          { icon: Building2, label: 'Org Dashboard', path: '/org-dashboard' }
+        ] : []),
         { icon: ClipboardList, label: t('nav.applicationTracker'), path: '/application-tracker' },
         { icon: Clock, label: t('nav.preparationPlan'), path: '/preparation' },
         { icon: Briefcase, label: t('nav.opportunities'), path: '/opportunities' },

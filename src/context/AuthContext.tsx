@@ -23,6 +23,7 @@ interface Profile {
   year_of_birth?: string;
   gender?: string;
   country?: string;
+  account_type?: 'personal' | 'business';
   street_address?: string;
   postal_code?: string;
   certifications?: any[];

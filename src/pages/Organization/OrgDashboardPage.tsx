@@ -14,6 +14,7 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 import { formatCredits } from '../../utils/formatters';
 import {
   getOrganizationByUserId,
@@ -27,6 +28,7 @@ import { supabase } from '../../lib/supabase';
 
 export const OrgDashboardPage: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [org, setOrg] = useState<Organization | null>(null);
   const [members, setMembers] = useState<OrganizationMember[]>([]);
   const [loading, setLoading] = useState(true);
@@ -131,10 +133,25 @@ export const OrgDashboardPage: React.FC = () => {
 
   if (!org) {
     return (
-      <div style={{ padding: '40px', textAlign: 'center' }}>
-        <Building2 size={48} color="var(--text-muted)" style={{ marginBottom: '16px' }} />
-        <h2>No Organization Account Found</h2>
-        <p style={{ color: 'var(--text-muted)' }}>Register a business account to access team management features.</p>
+      <div style={{ maxWidth: '600px', margin: '60px auto', padding: '40px 24px', textAlign: 'center', backgroundColor: 'var(--bg-secondary)', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
+        <div style={{ width: '64px', height: '64px', borderRadius: '16px', backgroundColor: 'rgba(245, 158, 11, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px auto' }}>
+          <Building2 size={32} color="var(--accent-primary)" />
+        </div>
+        <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '10px' }}>
+          Organization Dashboard Restricted
+        </h2>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: '28px' }}>
+          This workspace is exclusively for registered Business and Organization Accounts. Personal account users can view, accept, and manage organization invitations directly on their Profile page.
+        </p>
+
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <Button onClick={() => navigate('/profile')}>
+            Go to My Profile
+          </Button>
+          <Button variant="outline" onClick={() => navigate('/signup')}>
+            Register Business Account
+          </Button>
+        </div>
       </div>
     );
   }
