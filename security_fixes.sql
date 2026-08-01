@@ -45,6 +45,11 @@ CREATE TRIGGER on_auth_user_created
 
 -- FIX H2: Credit deduction atomicity
 -- Use an RPC to decrement credits so it's safe against race conditions.
+-- DROP old integer signature to prevent PostgreSQL function overloading ambiguity
+DROP FUNCTION IF EXISTS public.decrement_credits(uuid, integer);
+DROP FUNCTION IF EXISTS public.decrement_credits(uuid, numeric);
+DROP FUNCTION IF EXISTS public.decrement_credits(uuid, double precision);
+
 CREATE OR REPLACE FUNCTION public.decrement_credits(user_id UUID, amount NUMERIC)
 RETURNS NUMERIC AS $$
 DECLARE

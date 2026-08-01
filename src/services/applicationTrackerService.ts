@@ -329,7 +329,7 @@ export const addApplicationTrackerEntry = async (
           amount: TRACKER_ACTION_COST,
         });
 
-        if (!rpcErr && typeof rpcCredits === 'number') {
+        if (!rpcErr && typeof rpcCredits === 'number' && rpcCredits < currentCredits) {
           newCredits = rpcCredits;
           deductionDone = true;
         } else if (rpcErr) {
@@ -347,6 +347,8 @@ export const addApplicationTrackerEntry = async (
 
         if (profileErr) {
           console.error('Direct profile credit update error:', profileErr.message);
+        } else {
+          deductionDone = true;
         }
       }
 
