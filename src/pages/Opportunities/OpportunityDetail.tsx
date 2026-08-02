@@ -16,7 +16,8 @@ import {
   Target,
   Globe,
   Gift,
-  Briefcase
+  Briefcase,
+  Users
 } from 'lucide-react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useAssistant } from '../../context/AssistantContext';
@@ -26,6 +27,7 @@ import { supabase } from '../../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { addApplicationTrackerEntry } from '../../services/applicationTrackerService';
 import { TrackerCreditModal } from '../../components/shared/TrackerCreditModal';
+import { ApplyModal } from './ApplyModal';
 
 export const OpportunityDetail: React.FC = () => {
   const { id } = useParams();
@@ -41,6 +43,8 @@ export const OpportunityDetail: React.FC = () => {
   const [applying, setApplying] = React.useState(false);
   const [descExpanded, setDescExpanded] = React.useState(false);
   const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
+  const [showApplyModal, setShowApplyModal] = React.useState(false);
+  const [applicantCount, setApplicantCount] = React.useState<number>(0);
 
   React.useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -60,6 +64,17 @@ export const OpportunityDetail: React.FC = () => {
         
         if (error) throw error;
         setOpp(data);
+
+        // Fetch applicant count
+        const { count, error: countErr } = await supabase
+          .from('opportunity_applications')
+          .select('*', { count: 'exact', head: true })
+          .eq('opportunity_id', id);
+        
+        if (!countErr && count !== null) {
+          setApplicantCount(count);
+        }
+
       } catch (error) {
         console.error('Error fetching opportunity:', error);
       } finally {
@@ -144,8 +159,12 @@ export const OpportunityDetail: React.FC = () => {
         }
       }
 
-      // 3. Open external link
-      window.open(opp.apply_link, '_blank');
+      // 3. Open external link or show internal apply modal
+      if (opp.apply_link) {
+        window.open(opp.apply_link, '_blank');
+      } else {
+        setShowApplyModal(true);
+      }
       
     } catch (error) {
       console.error('Error applying:', error);
@@ -357,6 +376,9 @@ export const OpportunityDetail: React.FC = () => {
               {opp.salary && <InfoItem icon={Briefcase} label={t('opportunities.salary')} value={opp.salary} />}
               {opp.amount && <InfoItem icon={Gift} label={t('opportunities.funding')} value={opp.amount} />}
               {opp.work_mode && <InfoItem icon={Target} label={t('opportunities.mode')} value={opp.work_mode} />}
+              {opp.available_spots && <InfoItem icon={Users} label="Spots" value={opp.available_spots.toString()} />}
+              {applicantCount > 0 && <InfoItem icon={Users} label="Applicants" value={applicantCount.toString()} />}
+              {opp.experience_level && <InfoItem icon={Briefcase} label="Experience" value={opp.experience_level} />}
             </div>
           </Card>
 
@@ -393,6 +415,19 @@ export const OpportunityDetail: React.FC = () => {
         currentCredits={profile?.credits ?? 0}
         requiredCredits={0.25}
       />
+
+      {showApplyModal && (
+        <ApplyModal
+          opportunityId={opp.id}
+          opportunityTitle={opp.title}
+          onClose={() => setShowApplyModal(false)}
+          onSuccess={() => {
+            setShowApplyModal(false);
+            setApplicantCount(prev => prev + 1);
+            alert("Application submitted successfully!");
+          }}
+        />
+      )}
         </>
       )}
     </div>

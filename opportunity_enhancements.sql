@@ -1,0 +1,67 @@
+-- Add new columns to opportunities table
+ALTER TABLE opportunities ADD COLUMN IF NOT EXISTS available_spots INTEGER;
+ALTER TABLE opportunities ADD COLUMN IF NOT EXISTS languages JSONB DEFAULT '[]';
+
+-- Create opportunity_applications table
+CREATE TABLE IF NOT EXISTS opportunity_applications (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    opportunity_id UUID REFERENCES opportunities(id) ON DELETE CASCADE,
+    applicant_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    resume_text TEXT,
+    resume_url TEXT,
+    proposal_letter TEXT,
+    portfolio_url TEXT,
+    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'hired', 'declined')),
+    created_at TIMESTAMPTZ DEFAULT now(),
+    updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Enable RLS for opportunity_applications
+ALTER TABLE opportunity_applications ENABLE ROW LEVEL SECURITY;
+
+-- Helper to update updated_at if not already defined globally
+-- CREATE OR REPLACE FUNCTION update_updated_at_column() ...
+
+-- Trigger for updated_at
+DROP TRIGGER IF EXISTS update_opportunity_applications_updated_at ON opportunity_applications;
+CREATE TRIGGER update_opportunity_applications_updated_at
+BEFORE UPDATE ON opportunity_applications
+FOR EACH ROW EXECUTE PROCEDURE update_updated_at_column();
+
+-- Policies for opportunity_applications
+
+-- 1. Applicants can see their own applications
+DROP POLICY IF EXISTS "Applicants can view their own applications" ON opportunity_applications;
+CREATE POLICY "Applicants can view their own applications" ON opportunity_applications
+    FOR SELECT TO authenticated
+    USING (auth.uid() = applicant_id);
+
+-- 2. Organizations/Creators can view applications for their opportunities
+DROP POLICY IF EXISTS "Creators can view applications for their opportunities" ON opportunity_applications;
+CREATE POLICY "Creators can view applications for their opportunities" ON opportunity_applications
+    FOR SELECT TO authenticated
+    USING (
+        EXISTS (
+            SELECT 1 FROM opportunities o
+            WHERE o.id = opportunity_applications.opportunity_id
+            AND o.user_id = auth.uid()
+        )
+    );
+
+-- 3. Applicants can insert their own applications
+DROP POLICY IF EXISTS "Applicants can insert their own applications" ON opportunity_applications;
+CREATE POLICY "Applicants can insert their own applications" ON opportunity_applications
+    FOR INSERT TO authenticated
+    WITH CHECK (auth.uid() = applicant_id);
+
+-- 4. Creators can update application status (hire, decline)
+DROP POLICY IF EXISTS "Creators can update applications" ON opportunity_applications;
+CREATE POLICY "Creators can update applications" ON opportunity_applications
+    FOR UPDATE TO authenticated
+    USING (
+        EXISTS (
+            SELECT 1 FROM opportunities o
+            WHERE o.id = opportunity_applications.opportunity_id
+            AND o.user_id = auth.uid()
+        )
+    );

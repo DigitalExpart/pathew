@@ -22,7 +22,9 @@ import {
   X,
   CheckCircle2,
   FileEdit,
-  Mail
+  Mail,
+  Link as LinkIcon,
+  Globe
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -55,7 +57,11 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
   const [org, setOrg] = useState<Organization | null>(null);
   const [members, setMembers] = useState<OrganizationMember[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'members' | 'documents' | 'opportunities' | 'credits'>(defaultTab);
+  const [activeTab, setActiveTab] = useState<'overview' | 'members' | 'documents' | 'opportunities' | 'credits' | 'applicants'>(defaultTab as any);
+
+  // Applicants State
+  const [applicants, setApplicants] = useState<any[]>([]);
+  const [loadingApplicants, setLoadingApplicants] = useState(false);
 
   // Add / Invite Member Modal State
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
@@ -92,6 +98,13 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
   const [oppType, setOppType] = useState('Job');
   const [oppDesc, setOppDesc] = useState('');
   const [oppLink, setOppLink] = useState('');
+  const [oppDeadline, setOppDeadline] = useState('');
+  const [oppAvailableSpots, setOppAvailableSpots] = useState('');
+  const [oppSkillsNeeded, setOppSkillsNeeded] = useState('');
+  const [oppLocation, setOppLocation] = useState('');
+  const [oppWorkMode, setOppWorkMode] = useState('On-site');
+  const [oppLanguages, setOppLanguages] = useState('');
+  const [oppExperienceLevel, setOppExperienceLevel] = useState('<5 years');
   const [oppPostedMsg, setOppPostedMsg] = useState<string | null>(null);
 
   // Credit Purchase Modal
@@ -124,6 +137,64 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
       console.error('Error fetching organization dashboard:', err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchApplicants = async () => {
+    if (!user) return;
+    setLoadingApplicants(true);
+    try {
+      const { data: orgOpps } = await supabase
+        .from('opportunities')
+        .select('id')
+        .eq('user_id', user.id);
+        
+      if (orgOpps && orgOpps.length > 0) {
+        const oppIds = orgOpps.map(o => o.id);
+        
+        const { data: appsData, error: appsErr } = await supabase
+          .from('opportunity_applications')
+          .select(`
+            *,
+            opportunities (title)
+          `)
+          .in('opportunity_id', oppIds)
+          .order('created_at', { ascending: false });
+          
+        if (!appsErr && appsData) {
+          const applicantIds = appsData.map(a => a.applicant_id);
+          const { data: profiles, error: profErr } = await supabase
+            .from('profiles')
+            .select('id, full_name, avatar_url, target_role, email')
+            .in('id', applicantIds);
+            
+          if (!profErr && profiles) {
+             appsData.forEach(app => {
+               app.profile = profiles.find(p => p.id === app.applicant_id);
+             });
+          }
+          setApplicants(appsData);
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching applicants:', err);
+    } finally {
+      setLoadingApplicants(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'applicants') {
+      fetchApplicants();
+    }
+  }, [activeTab, user]);
+
+  const handleUpdateApplicationStatus = async (applicationId: string, status: 'hired' | 'declined') => {
+    try {
+      await supabase.from('opportunity_applications').update({ status }).eq('id', applicationId);
+      setApplicants(prev => prev.map(a => a.id === applicationId ? { ...a, status } : a));
+    } catch (err) {
+      console.error('Error updating status:', err);
     }
   };
 
@@ -287,16 +358,27 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
         type: oppType,
         description: oppDesc,
         organization_name: org.name,
-        location: `${org.city}, ${org.country}`,
-        apply_link: oppLink || 'https://pathew.com',
+        location: oppLocation || `${org.city}, ${org.country}`,
+        apply_link: oppLink || '', // allow empty for in-platform applications
         user_id: user?.id,
         featured: false,
         status: 'Active',
+        deadline: oppDeadline,
+        available_spots: oppAvailableSpots ? parseInt(oppAvailableSpots, 10) : null,
+        skills: oppSkillsNeeded ? oppSkillsNeeded.split(',').map(s => s.trim()) : [],
+        work_mode: oppWorkMode,
+        languages: oppLanguages ? oppLanguages.split(',').map(s => s.trim()) : [],
+        experience_level: oppExperienceLevel,
       });
       setOppPostedMsg('Opportunity posted successfully on behalf of ' + org.name + '!');
       setOppTitle('');
       setOppDesc('');
       setOppLink('');
+      setOppDeadline('');
+      setOppAvailableSpots('');
+      setOppSkillsNeeded('');
+      setOppLocation('');
+      setOppLanguages('');
     } catch (err: any) {
       setOppPostedMsg('Failed to post opportunity: ' + err.message);
     }
@@ -444,6 +526,7 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
           { key: 'members', label: 'Manage Members & Team', icon: Users },
           { key: 'documents', label: 'Member Activities & Outputs', icon: FileText },
           { key: 'opportunities', label: 'Post Opportunities', icon: Briefcase },
+          { key: 'applicants', label: 'Review Applicants', icon: UserCheck },
           { key: 'credits', label: 'Credits & Wallet', icon: Coins },
         ].map(tab => (
           <button
@@ -715,8 +798,11 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
                 </select>
               </div>
 
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
               <div>
-                <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Application URL</label>
+                <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Application URL (Leave blank for in-platform application)</label>
                 <input
                   type="url"
                   placeholder="https://..."
@@ -725,6 +811,88 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
                   style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
                 />
               </div>
+
+              <div>
+                <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Deadline</label>
+                <input
+                  type="date"
+                  value={oppDeadline}
+                  onChange={e => setOppDeadline(e.target.value)}
+                  style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+              <div>
+                <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Available Spots</label>
+                <input
+                  type="number"
+                  placeholder="e.g. 2"
+                  value={oppAvailableSpots}
+                  onChange={e => setOppAvailableSpots(e.target.value)}
+                  min="1"
+                  style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Work Arrangement</label>
+                <select
+                  value={oppWorkMode}
+                  onChange={e => setOppWorkMode(e.target.value)}
+                  style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                >
+                  <option value="On-site">On-site</option>
+                  <option value="Remote">Remote</option>
+                  <option value="Hybrid">Hybrid</option>
+                </select>
+              </div>
+              <div>
+                <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Experience Level</label>
+                <select
+                  value={oppExperienceLevel}
+                  onChange={e => setOppExperienceLevel(e.target.value)}
+                  style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                >
+                  <option value="<5 years">Less than 5 years</option>
+                  <option value="5+ years">5+ years</option>
+                  <option value="10+ years">10+ years</option>
+                </select>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div>
+                <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Skills Needed (comma separated)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. React, Node.js, Python"
+                  value={oppSkillsNeeded}
+                  onChange={e => setOppSkillsNeeded(e.target.value)}
+                  style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                />
+              </div>
+              <div>
+                <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Languages (comma separated)</label>
+                <input
+                  type="text"
+                  placeholder="e.g. English, Spanish"
+                  value={oppLanguages}
+                  onChange={e => setOppLanguages(e.target.value)}
+                  style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Specific Location (leave blank to use org location)</label>
+              <input
+                type="text"
+                placeholder={`Default: ${org?.city}, ${org?.country}`}
+                value={oppLocation}
+                onChange={e => setOppLocation(e.target.value)}
+                style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+              />
             </div>
 
             <div>
@@ -747,6 +915,90 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
             <p style={{ marginTop: '16px', fontSize: '0.875rem', fontWeight: 600, color: oppPostedMsg.includes('successfully') ? '#22c55e' : '#ef4444' }}>
               {oppPostedMsg}
             </p>
+          )}
+        </Card>
+      )}
+
+      {/* TAB CONTENT: Applicants */}
+      {activeTab === 'applicants' && (
+        <Card style={{ padding: '28px' }}>
+          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, marginBottom: '8px' }}>Review Applicants</h3>
+          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '24px' }}>
+            Review users who have applied to opportunities posted by your organization.
+          </p>
+
+          {loadingApplicants ? (
+            <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Loading applicants...</div>
+          ) : applicants.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px', backgroundColor: 'var(--bg-secondary)', borderRadius: '12px', color: 'var(--text-muted)' }}>
+              No applications found for your opportunities yet.
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {applicants.map(app => (
+                <div key={app.id} style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '16px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '12px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                      <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'var(--bg-primary)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        {app.profile?.avatar_url ? (
+                          <img src={app.profile.avatar_url} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        ) : (
+                          <UserCheck size={24} color="var(--text-muted)" />
+                        )}
+                      </div>
+                      <div>
+                        <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                          {app.profile?.full_name || 'Anonymous User'}
+                        </h4>
+                        <p style={{ margin: '2px 0 0 0', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+                          Applied for: <strong style={{ color: 'var(--text-primary)' }}>{app.opportunities?.title || 'Unknown Opportunity'}</strong>
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                      <Badge variant={app.status === 'hired' ? 'success' : app.status === 'declined' ? 'danger' : 'default'}>
+                        {app.status.toUpperCase()}
+                      </Badge>
+                      
+                      {app.status === 'pending' && (
+                        <>
+                          <Button size="sm" variant="outline" onClick={() => handleUpdateApplicationStatus(app.id, 'declined')} style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                            Decline
+                          </Button>
+                          <Button size="sm" onClick={() => handleUpdateApplicationStatus(app.id, 'hired')} style={{ gap: '6px', backgroundColor: '#22c55e', color: '#fff' }}>
+                            Hire
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+
+                  <div style={{ backgroundColor: 'var(--bg-primary)', padding: '12px', borderRadius: '8px', fontSize: '0.875rem' }}>
+                    <h5 style={{ margin: '0 0 8px 0', fontSize: '0.8125rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Proposal / Cover Letter</h5>
+                    <p style={{ margin: 0, whiteSpace: 'pre-wrap', color: 'var(--text-primary)' }}>{app.proposal_letter}</p>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                    {app.resume_url ? (
+                      <a href={app.resume_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.875rem', color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none' }}>
+                        <LinkIcon size={14} /> View Resume
+                      </a>
+                    ) : app.resume_text ? (
+                      <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                        <FileText size={14} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px' }} /> Resume text provided
+                      </span>
+                    ) : null}
+                    
+                    {app.portfolio_url && (
+                      <a href={app.portfolio_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.875rem', color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none' }}>
+                        <Globe size={14} /> View Portfolio
+                      </a>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
         </Card>
       )}
