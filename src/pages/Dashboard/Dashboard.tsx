@@ -185,7 +185,7 @@ export const Dashboard: React.FC = () => {
             <Building2 size={28} color="#f59e0b" />
             <div>
               <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                Business Workspace Active: {profile.organisation || 'Organization Account'}
+                Business Workspace Active: {profile?.organisation || 'Organization Account'}
               </h3>
               <p style={{ margin: '2px 0 0 0', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
                 Manage team members, post opportunities, buy credits, and oversee member outputs from your Organization Dashboard.

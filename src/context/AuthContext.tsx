@@ -2,7 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import type { User } from '@supabase/supabase-js';
 import { Navigate } from 'react-router-dom';
-import { getOrganizationByUserId, getUserOrganizationMemberships } from '../services/organizationService';
+import { getOrganizationByUserId } from '../services/organizationService';
 
 interface Profile {
   id: string;
