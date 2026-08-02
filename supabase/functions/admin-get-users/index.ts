@@ -71,16 +71,11 @@ Deno.serve(async (req: Request) => {
     }
     
     if (action === 'update_user' && userId && updateData) {
-      // SECURITY: Prevent role escalation — sub_admins cannot change roles
-      if (updateData.role && callerProfile.role !== 'admin') {
-        const { data: targetUser } = await supabaseAdmin.from('profiles').select('role').eq('id', userId).single();
-        if (targetUser?.role !== updateData.role) {
-          return new Response(JSON.stringify({ error: 'Only full admins can change user roles' }), {
-            status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-          })
-        }
-        // It's the same role, so we can delete it from the update to be safe
-        delete updateData.role;
+      // SECURITY: Sub admins can assign 'sub_admin' or 'user' roles, but only full admins can assign 'admin'
+      if (updateData.role === 'admin' && callerProfile.role !== 'admin') {
+        return new Response(JSON.stringify({ error: 'Only full admins can promote users to full Admin' }), {
+          status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        })
       }
 
       const { error } = await supabaseAdmin

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { Search, ChevronDown, Edit3 } from 'lucide-react';
+import { Search, Edit3 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { formatCredits } from '../../utils/formatters';
 
@@ -59,7 +59,16 @@ export const AdminUsersPage: React.FC = () => {
         }
       });
       
-      if (error) throw error;
+      if (error) {
+        let msg = error.message;
+        if (error.context && typeof error.context.json === 'function') {
+          try {
+            const body = await error.context.json();
+            if (body?.error) msg = body.error;
+          } catch (_) {}
+        }
+        throw new Error(msg);
+      }
       if (data?.error) throw new Error(data.error);
       
       setUsers(prev => prev.map(u => u.id === editingUser.id ? { 
@@ -78,22 +87,10 @@ export const AdminUsersPage: React.FC = () => {
 
   return (
     <div style={{ width: '100%', maxWidth: '1200px' }}>
-      <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '4px' }}>User Management</h1>
-        <p style={{ color: '#64748b', fontSize: '0.875rem' }}>{users.length} registered users</p>
-      </div>
-
-      {/* Filters */}
-      <div style={{ display: 'flex', gap: '12px', marginBottom: '24px', flexWrap: 'wrap' }}>
-        <div style={{ ...filterBoxStyle, flex: 1, minWidth: '200px' }}>
-          <Search size={16} color="#64748b" />
-          <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name or ID..." style={filterInputStyle} />
-        </div>
-        <div style={filterBoxStyle}>
-          <select value={planFilter} onChange={e => setPlanFilter(e.target.value)} style={{ ...filterInputStyle, cursor: 'pointer' }}>
-            {['All', 'Free', 'Starter', 'Growth', 'Power User'].map(p => <option key={p} value={p}>{p}</option>)}
-          </select>
-          <ChevronDown size={14} color="#64748b" />
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <div>
+          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '4px' }}>User Management</h1>
+          <p style={{ color: '#94a3b8', fontSize: '0.875rem' }}>{users.length} registered users — manage roles, credits, and plans</p>
         </div>
       </div>
 
@@ -101,7 +98,7 @@ export const AdminUsersPage: React.FC = () => {
       {editingUser && (
         <div style={{ position: 'fixed', inset: 0, backgroundColor: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(4px)', zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }} onClick={() => setEditingUser(null)}>
           <div style={{ maxWidth: '400px', width: '100%', padding: '32px', backgroundColor: '#0f172a', borderRadius: '16px', border: '1px solid rgba(255,255,255,0.08)' }} onClick={(e) => e.stopPropagation()}>
-            <h3 style={{ marginBottom: '20px', fontWeight: 700 }}>Edit User: {editingUser.full_name}</h3>
+            <h3 style={{ marginBottom: '20px', fontWeight: 700 }}>Edit User: {editingUser.full_name || editingUser.email}</h3>
             <div style={{ marginBottom: '16px' }}>
               <label style={editLabelStyle}>Credits</label>
               <input type="number" value={editCredits} onChange={e => setEditCredits(e.target.value)} style={editInputStyle} />
@@ -117,6 +114,7 @@ export const AdminUsersPage: React.FC = () => {
               <select value={editRole} onChange={e => setEditRole(e.target.value)} style={editInputStyle}>
                 <option value="user">User</option>
                 <option value="sub_admin">Sub Admin</option>
+                <option value="admin">Admin</option>
               </select>
             </div>
             <div style={{ display: 'flex', gap: '12px' }}>
@@ -126,13 +124,6 @@ export const AdminUsersPage: React.FC = () => {
           </div>
         </div>
       )}
-
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 800, marginBottom: '4px' }}>User Management</h1>
-          <p style={{ color: '#94a3b8', fontSize: '0.875rem' }}>Manage users, roles, credit balances, and subscription tiers</p>
-        </div>
-      </div>
 
       <Card style={{ padding: '20px' }}>
         <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
@@ -191,10 +182,10 @@ export const AdminUsersPage: React.FC = () => {
                       fontWeight: 600, 
                       padding: '2px 8px', 
                       borderRadius: '4px',
-                      backgroundColor: u.role === 'sub_admin' ? 'rgba(245,158,11,0.15)' : 'rgba(255,255,255,0.05)',
-                      color: u.role === 'sub_admin' ? '#f59e0b' : '#94a3b8'
+                      backgroundColor: u.role === 'admin' ? 'rgba(239,68,68,0.15)' : u.role === 'sub_admin' ? 'rgba(245,158,11,0.15)' : 'rgba(255,255,255,0.05)',
+                      color: u.role === 'admin' ? '#ef4444' : u.role === 'sub_admin' ? '#f59e0b' : '#94a3b8'
                     }}>
-                      {u.role === 'sub_admin' ? 'Sub Admin' : 'User'}
+                      {u.role === 'admin' ? 'Admin' : u.role === 'sub_admin' ? 'Sub Admin' : 'User'}
                     </span>
                   </td>
                   <td style={tdStyle}>
@@ -245,8 +236,6 @@ const planColor = (plan: string) => {
   }
 };
 
-const filterBoxStyle: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: '10px', padding: '10px 14px', backgroundColor: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px' };
-const filterInputStyle: React.CSSProperties = { background: 'none', border: 'none', color: '#e2e8f0', fontSize: '0.8125rem', outline: 'none', flex: 1 };
 const searchInputStyle: React.CSSProperties = { width: '100%', padding: '10px 14px 10px 36px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '0.875rem', outline: 'none' };
 const filterBtnStyle: React.CSSProperties = { padding: '8px 14px', borderRadius: '8px', border: '1px solid var(--border-color)', cursor: 'pointer', fontSize: '0.8125rem' };
 const thStyle: React.CSSProperties = { padding: '14px 20px', textAlign: 'left', fontSize: '0.6875rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' };
