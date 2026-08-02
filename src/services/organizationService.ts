@@ -773,3 +773,224 @@ export const respondToJoinRequest = async (
   return false;
 };
 
+/**
+ * Search registered platform users by name or email for direct addition
+ */
+export const searchPlatformUsers = async (
+  query: string
+): Promise<Array<{ id: string; full_name: string; email: string; avatar_url?: string }>> => {
+  if (!query || query.trim().length < 2) return [];
+  const q = query.trim().toLowerCase();
+
+  try {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('id, full_name, email, avatar_url')
+      .or(`full_name.ilike.%${q}%,email.ilike.%${q}%`)
+      .limit(10);
+
+    if (!error && data) {
+      return data;
+    }
+  } catch (err) {
+    console.warn('Profile search DB query warning:', err);
+  }
+
+  return [];
+};
+
+/**
+ * Direct Add existing platform user to Organization
+ */
+export const addDirectMemberToOrganization = async (
+  orgId: string,
+  orgName: string,
+  user: { id: string; email: string; full_name: string },
+  role: MemberRole = 'member'
+): Promise<boolean> => {
+  const newMember: OrganizationMember = {
+    id: 'mem_' + Math.random().toString(36).substr(2, 9),
+    organization_id: orgId,
+    user_id: user.id,
+    user_email: user.email.trim().toLowerCase(),
+    user_name: user.full_name,
+    role,
+    status: 'accepted',
+    created_at: new Date().toISOString(),
+  };
+
+  try {
+    await supabase.from('organization_members').insert(newMember);
+    await supabase.from('profiles').update({ organisation: orgName }).eq('id', user.id);
+  } catch (err) {
+    console.warn('Direct member add DB insert warning:', err);
+  }
+
+  // Save to fallback storage
+  const { data: docs } = await supabase
+    .from('documents')
+    .select('id, user_id, content')
+    .eq('type', ORG_DOC_TYPE)
+    .eq('title', orgId)
+    .limit(1);
+
+  if (docs && docs.length > 0) {
+    try {
+      const parsed = JSON.parse(docs[0].content);
+      parsed.members = parsed.members || [];
+      // Replace existing entry if any
+      parsed.members = parsed.members.filter(
+        (m: any) => m.user_email?.toLowerCase() !== user.email.toLowerCase()
+      );
+      parsed.members.push(newMember);
+      await saveOrgDocument(ORG_DOC_TYPE, orgId, docs[0].user_id, parsed);
+    } catch (docErr) {
+      console.warn('Fallback doc storage warning:', docErr);
+    }
+  }
+
+  return true;
+};
+
+/**
+ * Remove member from Organization
+ */
+export const removeOrganizationMember = async (
+  orgId: string,
+  memberId: string
+): Promise<boolean> => {
+  try {
+    await supabase.from('organization_members').delete().eq('id', memberId);
+  } catch (err) {
+    console.warn('Delete member DB error:', err);
+  }
+
+  // Fallback update
+  const { data: docs } = await supabase
+    .from('documents')
+    .select('id, user_id, content')
+    .eq('type', ORG_DOC_TYPE)
+    .eq('title', orgId)
+    .limit(1);
+
+  if (docs && docs.length > 0) {
+    try {
+      const parsed = JSON.parse(docs[0].content);
+      if (parsed.members) {
+        parsed.members = parsed.members.filter((m: any) => m.id !== memberId);
+      }
+      await saveOrgDocument(ORG_DOC_TYPE, orgId, docs[0].user_id, parsed);
+    } catch {}
+  }
+  return true;
+};
+
+/**
+ * Update member role in Organization
+ */
+export const updateMemberRoleInOrg = async (
+  orgId: string,
+  memberId: string,
+  newRole: MemberRole
+): Promise<boolean> => {
+  try {
+    await supabase
+      .from('organization_members')
+      .update({ role: newRole })
+      .eq('id', memberId);
+  } catch (err) {
+    console.warn('Update member role DB error:', err);
+  }
+
+  // Fallback update
+  const { data: docs } = await supabase
+    .from('documents')
+    .select('id, user_id, content')
+    .eq('type', ORG_DOC_TYPE)
+    .eq('title', orgId)
+    .limit(1);
+
+  if (docs && docs.length > 0) {
+    try {
+      const parsed = JSON.parse(docs[0].content);
+      if (parsed.members) {
+        parsed.members = parsed.members.map((m: any) =>
+          m.id === memberId ? { ...m, role: newRole } : m
+        );
+      }
+      await saveOrgDocument(ORG_DOC_TYPE, orgId, docs[0].user_id, parsed);
+    } catch {}
+  }
+  return true;
+};
+
+/**
+ * Fetch member activity and documents (CVs, cover letters, grants, job applications)
+ */
+export const getMemberActivityAndDocuments = async (
+  userId?: string,
+  _userEmail?: string
+): Promise<{
+  documents: any[];
+  applications: any[];
+  profile?: any;
+}> => {
+  let documents: any[] = [];
+  let applications: any[] = [];
+  let profile: any = null;
+
+  if (userId) {
+    try {
+      // Fetch profile
+      const { data: prof } = await supabase.from('profiles').select('*').eq('id', userId).single();
+      if (prof) profile = prof;
+
+      // Fetch user documents (CVs, cover letters, grant proposals)
+      const { data: docs } = await supabase
+        .from('documents')
+        .select('*')
+        .eq('user_id', userId)
+        .neq('type', ORG_DOC_TYPE);
+      if (docs) documents = docs;
+
+      // Fetch application tracker records
+      const { data: apps } = await supabase.from('applications').select('*').eq('user_id', userId);
+      if (apps) applications = apps;
+    } catch (err) {
+      console.warn('Error fetching member activities:', err);
+    }
+  }
+
+  return { documents, applications, profile };
+};
+
+/**
+ * Organization Admin action: Update member profile
+ */
+export const updateMemberProfileByOrgAdmin = async (
+  userId: string,
+  updates: {
+    full_name?: string;
+    headline?: string;
+    bio?: string;
+    phone?: string;
+    location?: string;
+    skills?: string[];
+  }
+): Promise<boolean> => {
+  try {
+    const { error } = await supabase
+      .from('profiles')
+      .update({
+        ...updates,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', userId);
+
+    if (!error) return true;
+  } catch (err) {
+    console.warn('Profile update by org admin error:', err);
+  }
+  return true;
+};
+

@@ -99,6 +99,7 @@ function App() {
             <Route path="/preparation" element={<RequireAuth><Shell><PreparationPage /></Shell></RequireAuth>} />
             <Route path="/application-tracker" element={<RequireAuth><Shell><ApplicationTrackerPage /></Shell></RequireAuth>} />
             <Route path="/org-dashboard" element={<RequireAuth><Shell><OrgDashboardPage /></Shell></RequireAuth>} />
+            <Route path="/org-members" element={<RequireAuth><Shell><OrgDashboardPage defaultTab="members" /></Shell></RequireAuth>} />
 
             {/* Sub Admin Routes */}
             <Route path="/sub-admin" element={<RequireAuth><Shell><SubAdminDashboard /></Shell></RequireAuth>} />

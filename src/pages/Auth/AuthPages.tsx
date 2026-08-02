@@ -7,7 +7,7 @@ import logo from '../../assets/images/logo.svg';
 import { supabase } from '../../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
-import { createOrganization } from '../../services/organizationService';
+import { createOrganization, getUserPendingInvites, respondToOrganizationInvite } from '../../services/organizationService';
 
 export const LoginPage: React.FC = () => {
   const { t } = useTranslation();
@@ -247,6 +247,23 @@ export const SignUpPage: React.FC = () => {
 
         if (error) throw error;
         
+        if (data.user?.id) {
+          try {
+            const pending = await getUserPendingInvites(formData.email);
+            if (pending && pending.length > 0) {
+              for (const inv of pending) {
+                await respondToOrganizationInvite(inv.id, inv.organization_id, true, {
+                  id: data.user.id,
+                  email: formData.email,
+                  full_name: formData.fullName,
+                });
+              }
+            }
+          } catch (invErr) {
+            console.warn('Auto-claim invite error:', invErr);
+          }
+        }
+
         if (data.session) {
           navigate('/dashboard', { replace: true });
         } else {

@@ -14,7 +14,8 @@ import {
   X,
   ShieldAlert,
   ClipboardList,
-  Building2
+  Building2,
+  Users
 } from 'lucide-react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -40,7 +41,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isCollapsed }
       items: [
         { icon: LayoutDashboard, label: t('nav.dashboard'), path: '/dashboard' },
         ...(profile?.account_type === 'business' ? [
-          { icon: Building2, label: 'Org Dashboard', path: '/org-dashboard' }
+          { icon: Building2, label: 'Org Dashboard', path: '/org-dashboard' },
+          { icon: Users, label: 'Manage Members', path: '/org-members' }
         ] : []),
         { icon: ClipboardList, label: t('nav.applicationTracker'), path: '/application-tracker' },
         { icon: Clock, label: t('nav.preparationPlan'), path: '/preparation' },
