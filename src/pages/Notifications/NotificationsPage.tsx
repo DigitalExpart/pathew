@@ -93,8 +93,8 @@ export const NotificationsPage: React.FC = () => {
       }
 
       // Fetch pending Organization Invites
-      if (user.email) {
-        const invites = await getUserPendingInvites(user.email);
+      if (user.email || user.id) {
+        const invites = await getUserPendingInvites(user.email || '', user.id);
         setPendingInvites(invites);
       }
     } catch (err) {

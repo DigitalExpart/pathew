@@ -329,43 +329,63 @@ export const inviteMemberToOrganization = async (
   orgId: string,
   orgName: string,
   email: string,
-  role: MemberRole = 'member'
+  role: MemberRole = 'member',
+  targetUserId?: string
 ): Promise<boolean> => {
+  const cleanEmail = email.trim().toLowerCase();
+  const inviteId = 'inv_' + Math.random().toString(36).substr(2, 9);
   const newInvite: OrganizationInvite = {
-    id: 'inv_' + Math.random().toString(36).substr(2, 9),
+    id: inviteId,
     organization_id: orgId,
     organization_name: orgName,
-    email: email.trim().toLowerCase(),
+    email: cleanEmail,
     role,
     status: 'pending',
     created_at: new Date().toISOString(),
   };
 
   try {
-    const { error } = await supabase.from('organization_invites').insert(newInvite);
-    if (!error) {
-      // Create system notification for target user
-      try {
+    // 1. Insert into organization_invites
+    await supabase.from('organization_invites').insert(newInvite);
+
+    // 2. Insert/update organization_members record with status 'invited'
+    await supabase.from('organization_members').insert({
+      id: 'mem_' + Math.random().toString(36).substr(2, 9),
+      organization_id: orgId,
+      user_id: targetUserId || null,
+      user_email: cleanEmail,
+      role,
+      status: 'invited',
+      created_at: new Date().toISOString(),
+    });
+
+    // 3. Create system notification for target user if registered
+    try {
+      let recipientId = targetUserId;
+      if (!recipientId) {
         const { data: targetProfiles } = await supabase
           .from('profiles')
           .select('id')
-          .eq('email', email.trim().toLowerCase())
+          .eq('email', cleanEmail)
           .limit(1);
-
         if (targetProfiles && targetProfiles.length > 0) {
-          await supabase.from('notifications').insert({
-            user_id: targetProfiles[0].id,
-            title: `Organization Team Invitation`,
-            description: `${orgName} has invited you to join their team as a ${role.toUpperCase()}. View your Notifications to accept or decline.`,
-            type: 'system',
-            is_read: false,
-          });
+          recipientId = targetProfiles[0].id;
         }
-      } catch (notifErr) {
-        console.warn('Invite notification warning:', notifErr);
       }
-      return true;
+
+      if (recipientId) {
+        await supabase.from('notifications').insert({
+          user_id: recipientId,
+          title: `Organization Team Invitation`,
+          description: `${orgName} has invited you to join their team as a ${role.toUpperCase()}. View your Notifications or Profile to accept or decline.`,
+          type: 'system',
+          is_read: false,
+        });
+      }
+    } catch (notifErr) {
+      console.warn('Invite notification warning:', notifErr);
     }
+    return true;
   } catch (err) {
     console.warn('Primary invite insert failed, fallback to doc storage', err);
   }
@@ -387,7 +407,7 @@ export const inviteMemberToOrganization = async (
       parsed.members.push({
         id: 'mem_' + Math.random().toString(36).substr(2, 9),
         organization_id: orgId,
-        user_email: email.trim().toLowerCase(),
+        user_email: cleanEmail,
         role,
         status: 'invited',
         created_at: new Date().toISOString(),
@@ -402,43 +422,99 @@ export const inviteMemberToOrganization = async (
 };
 
 /**
- * Get pending invites for a personal user by email
+ * Get pending invites for a personal user by email and optional userId
  */
-export const getUserPendingInvites = async (email: string): Promise<OrganizationInvite[]> => {
-  if (!email) return [];
-  const cleanEmail = email.trim().toLowerCase();
+export const getUserPendingInvites = async (email: string, userId?: string): Promise<OrganizationInvite[]> => {
+  if (!email && !userId) return [];
+  const cleanEmail = email ? email.trim().toLowerCase() : '';
+  const inviteList: OrganizationInvite[] = [];
+  const existingOrgIds = new Set<string>();
 
+  // 1. Fetch from organization_invites table
   try {
-    const { data, error } = await supabase
+    const { data: invitesData } = await supabase
       .from('organization_invites')
       .select('*')
       .eq('email', cleanEmail)
       .eq('status', 'pending');
 
-    if (!error && data) return data;
+    if (invitesData && invitesData.length > 0) {
+      invitesData.forEach(inv => {
+        inviteList.push(inv);
+        existingOrgIds.add(inv.organization_id);
+      });
+    }
   } catch (err) {
     console.warn('Error fetching invites table:', err);
   }
 
-  // Fallback search in documents
-  const { data: docs } = await supabase.from('documents').select('content').eq('type', ORG_DOC_TYPE);
-  const userInvites: OrganizationInvite[] = [];
+  // 2. Fetch pending or invited memberships from organization_members table
+  try {
+    let query = supabase.from('organization_members').select('*').in('status', ['invited', 'pending']);
+    if (userId && cleanEmail) {
+      query = query.or(`user_id.eq.${userId},user_email.ilike.${cleanEmail}`);
+    } else if (userId) {
+      query = query.eq('user_id', userId);
+    } else {
+      query = query.eq('user_email', cleanEmail);
+    }
 
-  if (docs) {
-    docs.forEach(doc => {
-      try {
-        const parsed = JSON.parse(doc.content);
-        if (parsed.invites) {
-          parsed.invites.forEach((inv: OrganizationInvite) => {
-            if (inv.email.toLowerCase() === cleanEmail && inv.status === 'pending') {
-              userInvites.push(inv);
-            }
+    const { data: membersData } = await query;
+    if (membersData && membersData.length > 0) {
+      for (const mem of membersData) {
+        if (!existingOrgIds.has(mem.organization_id)) {
+          // Fetch organization name
+          let orgName = 'Organization';
+          const { data: orgData } = await supabase
+            .from('organizations')
+            .select('name')
+            .eq('id', mem.organization_id)
+            .single();
+
+          if (orgData) {
+            orgName = orgData.name;
+          }
+
+          inviteList.push({
+            id: mem.id,
+            organization_id: mem.organization_id,
+            organization_name: orgName,
+            email: mem.user_email || cleanEmail,
+            role: mem.role || 'member',
+            status: 'pending',
+            created_at: mem.created_at || new Date().toISOString(),
           });
+          existingOrgIds.add(mem.organization_id);
         }
-      } catch {}
-    });
+      }
+    }
+  } catch (err) {
+    console.warn('Error fetching organization_members pending invites:', err);
   }
-  return userInvites;
+
+  // 3. Fallback search in documents if needed
+  if (inviteList.length === 0) {
+    const { data: docs } = await supabase.from('documents').select('content').eq('type', ORG_DOC_TYPE);
+    if (docs) {
+      docs.forEach(doc => {
+        try {
+          const parsed = JSON.parse(doc.content);
+          if (parsed.invites && parsed.organization) {
+            parsed.invites.forEach((inv: OrganizationInvite) => {
+              if (inv.email.toLowerCase() === cleanEmail && inv.status === 'pending') {
+                if (!existingOrgIds.has(inv.organization_id)) {
+                  inviteList.push(inv);
+                  existingOrgIds.add(inv.organization_id);
+                }
+              }
+            });
+          }
+        } catch {}
+      });
+    }
+  }
+
+  return inviteList;
 };
 
 /**
@@ -451,22 +527,71 @@ export const respondToOrganizationInvite = async (
   user: { id: string; email?: string; full_name?: string | null }
 ): Promise<boolean> => {
   const newStatus: MembershipStatus = accept ? 'accepted' : 'declined';
+  const cleanEmail = (user.email || '').trim().toLowerCase();
 
   try {
-    await supabase.from('organization_invites').update({ status: accept ? 'accepted' : 'declined' }).eq('id', inviteId);
+    // 1. Update organization_invites status if present
+    await supabase
+      .from('organization_invites')
+      .update({ status: accept ? 'accepted' : 'declined' })
+      .or(`id.eq.${inviteId},and(organization_id.eq.${orgId},email.ilike.${cleanEmail})`);
 
-    if (accept) {
+    // 2. Resolve target Organization Name
+    const { data: orgData } = await supabase
+      .from('organizations')
+      .select('name')
+      .eq('id', orgId)
+      .single();
+
+    const orgName = orgData?.name || 'Organization';
+
+    // 3. Update existing organization_members record or insert accepted record
+    const { data: existingMembers } = await supabase
+      .from('organization_members')
+      .select('id')
+      .eq('organization_id', orgId)
+      .or(`user_id.eq.${user.id},user_email.ilike.${cleanEmail}`);
+
+    if (existingMembers && existingMembers.length > 0) {
+      await supabase
+        .from('organization_members')
+        .update({
+          status: newStatus,
+          user_id: user.id,
+          user_email: cleanEmail,
+          user_name: user.full_name || '',
+        })
+        .eq('id', existingMembers[0].id);
+    } else if (accept) {
       await supabase.from('organization_members').insert({
+        id: 'mem_' + Math.random().toString(36).substr(2, 9),
         organization_id: orgId,
         user_id: user.id,
-        user_email: user.email || '',
+        user_email: cleanEmail,
         user_name: user.full_name || '',
         role: 'member',
         status: 'accepted',
+        created_at: new Date().toISOString(),
       });
-      // Update profile organisation
-      await supabase.from('profiles').update({ organisation: orgId }).eq('id', user.id);
     }
+
+    // 4. Update profile organisation name if accepted
+    if (accept) {
+      await supabase
+        .from('profiles')
+        .update({ organisation: orgName })
+        .eq('id', user.id);
+
+      // Create confirmation notification
+      await supabase.from('notifications').insert({
+        user_id: user.id,
+        title: `Joined ${orgName}!`,
+        description: `You have successfully joined ${orgName}. Your profile is now linked to the organization.`,
+        type: 'system',
+        is_read: false,
+      });
+    }
+
     return true;
   } catch (err) {
     console.warn('Invite response DB fallback:', err);
@@ -490,7 +615,7 @@ export const respondToOrganizationInvite = async (
       }
       if (parsed.members) {
         parsed.members = parsed.members.map((m: any) =>
-          m.user_email?.toLowerCase() === user.email?.toLowerCase()
+          m.user_email?.toLowerCase() === cleanEmail || m.user_id === user.id
             ? { ...m, user_id: user.id, user_name: user.full_name, status: newStatus }
             : m
         );
@@ -830,48 +955,7 @@ export const addDirectMemberToOrganization = async (
   user: { id: string; email: string; full_name: string },
   role: MemberRole = 'member'
 ): Promise<boolean> => {
-  const newMember: OrganizationMember = {
-    id: 'mem_' + Math.random().toString(36).substr(2, 9),
-    organization_id: orgId,
-    user_id: user.id,
-    user_email: user.email.trim().toLowerCase(),
-    user_name: user.full_name,
-    role,
-    status: 'accepted',
-    created_at: new Date().toISOString(),
-  };
-
-  try {
-    await supabase.from('organization_members').insert(newMember);
-    await supabase.from('profiles').update({ organisation: orgName }).eq('id', user.id);
-  } catch (err) {
-    console.warn('Direct member add DB insert warning:', err);
-  }
-
-  // Save to fallback storage
-  const { data: docs } = await supabase
-    .from('documents')
-    .select('id, user_id, content')
-    .eq('type', ORG_DOC_TYPE)
-    .eq('title', orgId)
-    .limit(1);
-
-  if (docs && docs.length > 0) {
-    try {
-      const parsed = JSON.parse(docs[0].content);
-      parsed.members = parsed.members || [];
-      // Replace existing entry if any
-      parsed.members = parsed.members.filter(
-        (m: any) => m.user_email?.toLowerCase() !== user.email.toLowerCase()
-      );
-      parsed.members.push(newMember);
-      await saveOrgDocument(ORG_DOC_TYPE, orgId, docs[0].user_id, parsed);
-    } catch (docErr) {
-      console.warn('Fallback doc storage warning:', docErr);
-    }
-  }
-
-  return true;
+  return await inviteMemberToOrganization(orgId, orgName, user.email, role, user.id);
 };
 
 /**

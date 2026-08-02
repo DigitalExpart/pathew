@@ -54,7 +54,7 @@ export const PersonalInvitesWidget: React.FC = () => {
     setLoading(true);
     try {
       const [pendingInvites, memberships, orgs] = await Promise.all([
-        getUserPendingInvites(user.email),
+        getUserPendingInvites(user.email, user.id),
         getUserOrganizationMemberships(user.id),
         getAllOrganizations()
       ]);
@@ -120,7 +120,8 @@ export const PersonalInvitesWidget: React.FC = () => {
     }
   };
 
-  const isMemberOfOrg = Boolean(profile?.organisation);
+  const acceptedMemberships = userRequests.filter(m => m.status === 'accepted');
+  const isMemberOfOrg = Boolean(profile?.organisation) || acceptedMemberships.length > 0;
   const pendingRequests = userRequests.filter(m => m.status === 'pending');
 
   const filteredOrgs = allOrgs.filter(o =>
