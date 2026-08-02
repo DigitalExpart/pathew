@@ -12,7 +12,7 @@ import { createOrganization, getUserPendingInvites, respondToOrganizationInvite 
 export const LoginPage: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
+  const { user, profile, loading: authLoading } = useAuth();
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [showPassword, setShowPassword] = React.useState(false);
@@ -21,9 +21,17 @@ export const LoginPage: React.FC = () => {
 
   React.useEffect(() => {
     if (user && !authLoading) {
-      navigate('/dashboard', { replace: true });
+      if (
+        user.user_metadata?.account_type === 'business' ||
+        profile?.account_type === 'business' ||
+        Boolean(profile?.organisation)
+      ) {
+        navigate('/org-dashboard', { replace: true });
+      } else {
+        navigate('/dashboard', { replace: true });
+      }
     }
-  }, [user, authLoading, navigate]);
+  }, [user, profile, authLoading, navigate]);
 
   if (authLoading || user) {
     return (
@@ -33,20 +41,28 @@ export const LoginPage: React.FC = () => {
     );
   }
 
-  
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (error) throw error;
-      navigate('/dashboard');
+
+      if (
+        data.user?.user_metadata?.account_type === 'business' ||
+        profile?.account_type === 'business' ||
+        Boolean(profile?.organisation)
+      ) {
+        navigate('/org-dashboard', { replace: true });
+      } else {
+        navigate('/dashboard', { replace: true });
+      }
     } catch (err: any) {
       setError(err.message || t('auth.errors.failedLogin'));
     } finally {

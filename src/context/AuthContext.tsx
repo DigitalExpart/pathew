@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabase';
 import type { User } from '@supabase/supabase-js';
 import { Navigate } from 'react-router-dom';
+import { getOrganizationByUserId, getUserOrganizationMemberships } from '../services/organizationService';
 
 interface Profile {
   id: string;
@@ -68,14 +69,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const fetchProfile = async (userId: string, userEmail?: string) => {
     try {
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('profiles')
         .select('*')
         .eq('id', userId)
         .single();
       
-      if (error) throw error;
-      setProfile(data);
+      let userProfile = data || null;
+
+      // Auto-detect if user owns or belongs to an organization
+      try {
+        const org = await getOrganizationByUserId(userId);
+        if (org) {
+          userProfile = {
+            ...(userProfile || { id: userId, credits: 0 }),
+            account_type: 'business',
+            organisation: org.name,
+          };
+        } else {
+          const memberships = await getUserOrganizationMemberships(userId);
+          const activeMem = memberships.find(m => m.status === 'accepted');
+          if (activeMem) {
+            userProfile = {
+              ...(userProfile || { id: userId, credits: 0 }),
+              account_type: 'business',
+              organisation: activeMem.organization_id,
+            };
+          }
+        }
+      } catch (orgErr) {
+        console.warn('Auto-detect org profile error:', orgErr);
+      }
+
+      setProfile(userProfile);
 
       if (userEmail) {
         supabase.from('profiles').update({

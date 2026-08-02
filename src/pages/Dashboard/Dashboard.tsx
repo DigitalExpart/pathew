@@ -12,7 +12,8 @@ import {
   Edit2,
   Check,
   X,
-  ClipboardList
+  ClipboardList,
+  Building2
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
@@ -176,6 +177,27 @@ export const Dashboard: React.FC = () => {
           {scanning ? t('dashboard.scanning') : t('dashboard.quickScan')}
         </Button>
       </header>
+
+      {/* Business Account Banner */}
+      {(profile?.account_type === 'business' || profile?.organisation) && (
+        <Card style={{ padding: '20px', marginBottom: '24px', backgroundColor: 'rgba(245, 158, 11, 0.08)', border: '1px solid #f59e0b', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <Building2 size={28} color="#f59e0b" />
+            <div>
+              <h3 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                Business Workspace Active: {profile.organisation || 'Organization Account'}
+              </h3>
+              <p style={{ margin: '2px 0 0 0', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                Manage team members, post opportunities, buy credits, and oversee member outputs from your Organization Dashboard.
+              </p>
+            </div>
+          </div>
+
+          <Button onClick={() => navigate('/org-dashboard')} style={{ backgroundColor: '#f59e0b', color: '#000', fontWeight: 700, gap: '6px' }}>
+            <Building2 size={16} /> Go to Organization Dashboard
+          </Button>
+        </Card>
+      )}
 
       {/* Organization Pending Invitations */}
       <PersonalInvitesWidget />
