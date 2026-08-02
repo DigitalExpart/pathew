@@ -21,7 +21,6 @@ import { supabase } from '../../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { calculateMatchScore } from '../../utils/matchScorer';
 import { getApplicationTrackerEntries } from '../../services/applicationTrackerService';
-import { PersonalInvitesWidget } from '../Organization/PersonalInvitesWidget';
 
 export const Dashboard: React.FC = () => {
   const { user, profile, refreshProfile } = useAuth();
@@ -198,9 +197,6 @@ export const Dashboard: React.FC = () => {
           </Button>
         </Card>
       )}
-
-      {/* Organization Pending Invitations */}
-      <PersonalInvitesWidget />
 
       {/* Stats Grid */}
       <div className="grid-responsive" style={{ marginBottom: '32px' }}>
