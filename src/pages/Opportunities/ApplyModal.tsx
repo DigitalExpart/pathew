@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, UploadCloud, Link as LinkIcon, Send } from 'lucide-react';
+import { X, Link as LinkIcon, Send } from 'lucide-react';
 import { Button } from '../../components/ui/Button';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
@@ -29,7 +29,7 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({ opportunityId, opportuni
 
     try {
       // Check if user already applied
-      const { data: existingApp, error: existingErr } = await supabase
+      const { data: existingApp } = await supabase
         .from('opportunity_applications')
         .select('id')
         .eq('opportunity_id', opportunityId)

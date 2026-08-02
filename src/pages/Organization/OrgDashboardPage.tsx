@@ -957,7 +957,7 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
                     </div>
                     
                     <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                      <Badge variant={app.status === 'hired' ? 'success' : app.status === 'declined' ? 'danger' : 'default'}>
+                      <Badge variant={app.status === 'hired' ? 'success' : app.status === 'declined' ? 'danger' : 'warning'}>
                         {app.status.toUpperCase()}
                       </Badge>
                       
