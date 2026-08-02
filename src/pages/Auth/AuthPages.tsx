@@ -285,28 +285,32 @@ export const SignUpPage: React.FC = () => {
 
         // 2. Create Organization record (pending verification)
         const userId = data.user?.id || 'temp_' + Date.now();
-        await createOrganization(userId, {
-          name: orgData.orgName,
-          type: orgData.orgType,
-          registration_number: orgData.regNumber,
-          tax_id: orgData.taxId,
-          country: orgData.country,
-          city: orgData.city,
-          address_line1: orgData.addressLine1,
-          address_line2: orgData.addressLine2,
-          website: orgData.website,
-          official_email: orgData.officialEmail,
-          phone: orgData.phone,
-          contact_name: orgData.contactName,
-          contact_title: orgData.contactTitle,
-          contact_email: orgData.contactEmail,
-          contact_phone: orgData.contactPhone,
-          summary: orgData.summary,
-          services_offered: orgData.servicesOffered,
-          team_size: orgData.teamSize,
-          industry_categories: orgData.industryCategories ? orgData.industryCategories.split(',').map(s => s.trim()) : [],
-          verification_notes: orgData.verificationNotes,
-        });
+        try {
+          await createOrganization(userId, {
+            name: orgData.orgName,
+            type: orgData.orgType,
+            registration_number: orgData.regNumber,
+            tax_id: orgData.taxId,
+            country: orgData.country,
+            city: orgData.city,
+            address_line1: orgData.addressLine1,
+            address_line2: orgData.addressLine2,
+            website: orgData.website,
+            official_email: orgData.officialEmail,
+            phone: orgData.phone,
+            contact_name: orgData.contactName,
+            contact_title: orgData.contactTitle,
+            contact_email: orgData.contactEmail,
+            contact_phone: orgData.contactPhone,
+            summary: orgData.summary,
+            services_offered: orgData.servicesOffered,
+            team_size: orgData.teamSize,
+            industry_categories: orgData.industryCategories ? orgData.industryCategories.split(',').map(s => s.trim()) : [],
+            verification_notes: orgData.verificationNotes,
+          });
+        } catch (orgErr) {
+          console.warn('Secondary organization creation error:', orgErr);
+        }
 
         if (data.session) {
           navigate('/org-dashboard', { replace: true });

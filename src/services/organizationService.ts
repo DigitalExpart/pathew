@@ -80,23 +80,27 @@ export interface OrganizationActivityLog {
 const ORG_DOC_TYPE = 'OrganizationData';
 
 const saveOrgDocument = async (docType: string, id: string, userId: string, payload: any) => {
-  const { data } = await supabase
-    .from('documents')
-    .select('id')
-    .eq('type', docType)
-    .eq('title', id)
-    .limit(1);
+  try {
+    const { data } = await supabase
+      .from('documents')
+      .select('id')
+      .eq('type', docType)
+      .eq('title', id)
+      .limit(1);
 
-  const contentStr = JSON.stringify(payload);
-  if (data && data.length > 0) {
-    await supabase.from('documents').update({ content: contentStr }).eq('id', data[0].id);
-  } else {
-    await supabase.from('documents').insert({
-      user_id: userId,
-      type: docType,
-      title: id,
-      content: contentStr,
-    });
+    const contentStr = JSON.stringify(payload);
+    if (data && data.length > 0) {
+      await supabase.from('documents').update({ content: contentStr }).eq('id', data[0].id);
+    } else {
+      await supabase.from('documents').insert({
+        user_id: userId,
+        type: docType,
+        title: id,
+        content: contentStr,
+      });
+    }
+  } catch (err) {
+    console.warn('saveOrgDocument write failed silently:', err);
   }
 };
 
@@ -121,14 +125,19 @@ export const createOrganization = async (
     const { data, error } = await supabase.from('organizations').insert(newOrg).select().single();
     if (!error && data) {
       // Add owner as member
-      await supabase.from('organization_members').insert({
-        organization_id: data.id,
-        user_id: userId,
-        user_email: orgInput.contact_email,
-        user_name: orgInput.contact_name,
-        role: 'owner',
-        status: 'accepted',
-      });
+      try {
+        await supabase.from('organization_members').insert({
+          id: 'mem_' + Math.random().toString(36).substr(2, 9),
+          organization_id: data.id,
+          user_id: userId,
+          user_email: orgInput.contact_email,
+          user_name: orgInput.contact_name,
+          role: 'owner',
+          status: 'accepted',
+        });
+      } catch (memErr) {
+        console.warn('Organization member table write warning:', memErr);
+      }
       return data;
     }
   } catch (err) {
@@ -136,41 +145,49 @@ export const createOrganization = async (
   }
 
   // Document Fallback Storage
-  const ownerMember: OrganizationMember = {
-    id: 'mem_' + Math.random().toString(36).substr(2, 9),
-    organization_id: newOrg.id,
-    user_id: userId,
-    user_email: orgInput.contact_email,
-    user_name: orgInput.contact_name,
-    role: 'owner',
-    status: 'accepted',
-    created_at: new Date().toISOString(),
-  };
+  try {
+    const ownerMember: OrganizationMember = {
+      id: 'mem_' + Math.random().toString(36).substr(2, 9),
+      organization_id: newOrg.id,
+      user_id: userId,
+      user_email: orgInput.contact_email,
+      user_name: orgInput.contact_name,
+      role: 'owner',
+      status: 'accepted',
+      created_at: new Date().toISOString(),
+    };
 
-  const payload = {
-    organization: newOrg,
-    members: [ownerMember],
-    transactions: [],
-    logs: [
-      {
-        id: 'log_' + Date.now(),
-        organization_id: newOrg.id,
-        user_id: userId,
-        user_name: orgInput.contact_name,
-        action: 'Organization Registered',
-        details: 'Submitted for verification',
-        created_at: new Date().toISOString(),
-      },
-    ],
-  };
+    const payload = {
+      organization: newOrg,
+      members: [ownerMember],
+      transactions: [],
+      logs: [
+        {
+          id: 'log_' + Date.now(),
+          organization_id: newOrg.id,
+          user_id: userId,
+          user_name: orgInput.contact_name,
+          action: 'Organization Registered',
+          details: 'Submitted for verification',
+          created_at: new Date().toISOString(),
+        },
+      ],
+    };
 
-  await saveOrgDocument(ORG_DOC_TYPE, newOrg.id, userId, payload);
+    await saveOrgDocument(ORG_DOC_TYPE, newOrg.id, userId, payload);
 
-  // Link profile
-  await supabase.from('profiles').update({
-    account_type: 'business',
-    organisation: newOrg.name,
-  }).eq('id', userId);
+    // Link profile
+    try {
+      await supabase.from('profiles').update({
+        account_type: 'business',
+        organisation: newOrg.name,
+      }).eq('id', userId);
+    } catch (profErr) {
+      console.warn('Profile link warning:', profErr);
+    }
+  } catch (fallbackErr) {
+    console.warn('Organization document fallback storage warning:', fallbackErr);
+  }
 
   return newOrg;
 };
