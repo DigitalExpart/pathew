@@ -21,7 +21,8 @@ import {
   UserCheck,
   X,
   CheckCircle2,
-  FileEdit
+  FileEdit,
+  Mail
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -944,21 +945,54 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
 
             {/* Feedback & Generated Link Display */}
             {inviteSuccessMsg && (
-              <div style={{ marginTop: '16px', padding: '14px', backgroundColor: 'rgba(34, 197, 94, 0.1)', border: '1px solid #22c55e', borderRadius: '8px', color: '#22c55e', fontSize: '0.875rem' }}>
-                <p style={{ margin: 0, fontWeight: 700, display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <CheckCircle2 size={16} /> {inviteSuccessMsg}
+              <div style={{ marginTop: '16px', padding: '16px', backgroundColor: 'rgba(34, 197, 94, 0.1)', border: '1px solid #22c55e', borderRadius: '10px', color: 'var(--text-primary)', fontSize: '0.875rem' }}>
+                <p style={{ margin: '0 0 10px 0', fontWeight: 700, color: '#22c55e', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <CheckCircle2 size={18} /> {inviteSuccessMsg}
                 </p>
+
                 {generatedInviteUrl && (
-                  <div style={{ marginTop: '10px', display: 'flex', gap: '8px' }}>
-                    <input
-                      type="text"
-                      readOnly
-                      value={generatedInviteUrl}
-                      style={{ flex: 1, padding: '6px 10px', backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '0.75rem' }}
-                    />
-                    <Button size="sm" onClick={handleCopyInviteLink} style={{ gap: '4px' }}>
-                      {copiedLink ? <Check size={14} /> : <Copy size={14} />} {copiedLink ? 'Copied' : 'Copy'}
-                    </Button>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div style={{ display: 'flex', gap: '8px' }}>
+                      <input
+                        type="text"
+                        readOnly
+                        value={generatedInviteUrl}
+                        style={{ flex: 1, padding: '8px 12px', backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-primary)', fontSize: '0.8125rem' }}
+                      />
+                      <Button size="sm" onClick={handleCopyInviteLink} style={{ gap: '4px' }}>
+                        {copiedLink ? <Check size={14} /> : <Copy size={14} />} {copiedLink ? 'Copied' : 'Copy Link'}
+                      </Button>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '4px' }}>
+                      <a
+                        href={`mailto:${inviteEmail}?subject=${encodeURIComponent(`Invitation to Join ${org?.name || 'Organization'} on PATHEW`)}&body=${encodeURIComponent(`Hi,\n\nYou have been invited by ${org?.name || 'our organization'} to join our team workspace on PATHEW as a ${inviteRole}.\n\nClick the registration link below to accept your invitation and activate your account:\n${generatedInviteUrl}\n\nBest regards,\n${org?.name || 'PATHEW Team'}`)}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{ textDecoration: 'none', flex: 1, minWidth: '200px' }}
+                      >
+                        <Button size="sm" style={{ width: '100%', gap: '6px', backgroundColor: '#3b82f6', color: '#ffffff' }}>
+                          <Mail size={14} /> Send Email to {inviteEmail}
+                        </Button>
+                      </a>
+
+                      {navigator.share && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => {
+                            navigator.share({
+                              title: `Join ${org?.name} on PATHEW`,
+                              text: `You have been invited to join ${org?.name} on PATHEW as a ${inviteRole}.`,
+                              url: generatedInviteUrl,
+                            }).catch(() => {});
+                          }}
+                          style={{ gap: '6px' }}
+                        >
+                          <Send size={14} /> Share via WhatsApp / Apps
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
