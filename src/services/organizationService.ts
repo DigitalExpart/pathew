@@ -343,7 +343,29 @@ export const inviteMemberToOrganization = async (
 
   try {
     const { error } = await supabase.from('organization_invites').insert(newInvite);
-    if (!error) return true;
+    if (!error) {
+      // Create system notification for target user
+      try {
+        const { data: targetProfiles } = await supabase
+          .from('profiles')
+          .select('id')
+          .eq('email', email.trim().toLowerCase())
+          .limit(1);
+
+        if (targetProfiles && targetProfiles.length > 0) {
+          await supabase.from('notifications').insert({
+            user_id: targetProfiles[0].id,
+            title: `Organization Team Invitation`,
+            description: `${orgName} has invited you to join their team as a ${role.toUpperCase()}. View your Notifications to accept or decline.`,
+            type: 'system',
+            is_read: false,
+          });
+        }
+      } catch (notifErr) {
+        console.warn('Invite notification warning:', notifErr);
+      }
+      return true;
+    }
   } catch (err) {
     console.warn('Primary invite insert failed, fallback to doc storage', err);
   }

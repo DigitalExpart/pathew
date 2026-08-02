@@ -27,13 +27,18 @@ import {
   type OrganizationMember
 } from '../../services/organizationService';
 
+import { useNavigate } from 'react-router-dom';
+import { XCircle } from 'lucide-react';
+
 export const PersonalInvitesWidget: React.FC = () => {
   const { user, profile, refreshProfile } = useAuth();
+  const navigate = useNavigate();
   const [invites, setInvites] = useState<OrganizationInvite[]>([]);
   const [userRequests, setUserRequests] = useState<OrganizationMember[]>([]);
   const [allOrgs, setAllOrgs] = useState<Organization[]>([]);
   const [loading, setLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const [successModal, setSuccessModal] = useState<{ open: boolean; accept: boolean; orgName: string } | null>(null);
 
   // Add Org Modal State
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
@@ -74,6 +79,11 @@ export const PersonalInvitesWidget: React.FC = () => {
       });
       if (ok) {
         setMsg(accept ? `Joined ${invite.organization_name} successfully!` : `Declined invite from ${invite.organization_name}.`);
+        setSuccessModal({
+          open: true,
+          accept,
+          orgName: invite.organization_name,
+        });
         if (refreshProfile) await refreshProfile();
         await fetchData();
       }
@@ -385,6 +395,43 @@ export const PersonalInvitesWidget: React.FC = () => {
             {/* Modal Footer */}
             <div style={{ padding: '16px 24px', borderTop: '1px solid var(--border-color)', display: 'flex', justifyContent: 'flex-end' }}>
               <Button variant="outline" onClick={() => setIsAddModalOpen(false)}>Close</Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SUCCESS CONFIRMATION POPUP MODAL */}
+      {successModal && (
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.75)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1200, backdropFilter: 'blur(6px)' }} onClick={() => setSuccessModal(null)}>
+          <div style={{ backgroundColor: 'var(--bg-primary)', borderRadius: '16px', border: '1px solid var(--border-color)', width: '90%', maxWidth: '460px', textAlign: 'center', padding: '36px 28px', boxShadow: '0 24px 48px rgba(0,0,0,0.5)' }} onClick={e => e.stopPropagation()}>
+            <div style={{
+              width: '64px', height: '64px', borderRadius: '50%',
+              backgroundColor: successModal.accept ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              margin: '0 auto 16px',
+            }}>
+              {successModal.accept ? <CheckCircle2 size={36} color="#22c55e" /> : <XCircle size={36} color="#ef4444" />}
+            </div>
+
+            <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>
+              {successModal.accept ? '🎉 Invitation Accepted!' : 'Invitation Declined'}
+            </h3>
+
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '24px' }}>
+              {successModal.accept
+                ? `You are now an active team member of "${successModal.orgName}". Access your Organization Workspace and shared credits from the sidebar menu.`
+                : `You have declined the team invitation from "${successModal.orgName}".`}
+            </p>
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              {successModal.accept && (
+                <Button onClick={() => { setSuccessModal(null); navigate('/org-dashboard'); }} style={{ flex: 1, backgroundColor: '#22c55e', color: '#ffffff' }}>
+                  Go to Org Dashboard
+                </Button>
+              )}
+              <Button variant="outline" onClick={() => setSuccessModal(null)} style={{ flex: 1 }}>
+                Close
+              </Button>
             </div>
           </div>
         </div>

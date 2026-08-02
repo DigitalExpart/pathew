@@ -10,10 +10,20 @@ import {
   MessageSquare, 
   Zap, 
   Star,
-  Clock
+  Clock,
+  Building2,
+  CheckCircle2,
+  XCircle,
+  X
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import {
+  getUserPendingInvites,
+  respondToOrganizationInvite,
+  type OrganizationInvite
+} from '../../services/organizationService';
 
 interface Notification {
   id: string;
@@ -26,12 +36,18 @@ interface Notification {
 
 export const NotificationsPage: React.FC = () => {
   const { t } = useTranslation();
-  const { user } = useAuth();
+  const { user, profile, refreshProfile } = useAuth();
+  const navigate = useNavigate();
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [pendingInvites, setPendingInvites] = useState<OrganizationInvite[]>([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [markedReadSession, setMarkedReadSession] = useState<Set<string>>(new Set());
+
+  // Success Popup Modal State
+  const [successModal, setSuccessModal] = useState<{ open: boolean; accept: boolean; orgName: string } | null>(null);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -45,6 +61,7 @@ export const NotificationsPage: React.FC = () => {
     if (!user) return;
     setLoading(true);
     try {
+      // Fetch system notifications
       const { data, error } = await supabase
         .from('notifications')
         .select('*')
@@ -54,12 +71,11 @@ export const NotificationsPage: React.FC = () => {
       if (error) throw error;
       
       if (!data || data.length === 0) {
-        // Create a default welcome notification if they have none
         const welcomeNotif = {
           user_id: user.id,
           title: 'Welcome to Pathew! 🎉',
           description: 'Your profile is set up. Explore new opportunities matched just for you.',
-          type: 'system',
+          type: 'system' as const,
           is_read: false
         };
         const { data: newData, error: insertError } = await supabase
@@ -75,6 +91,12 @@ export const NotificationsPage: React.FC = () => {
       } else {
         setNotifications(data);
       }
+
+      // Fetch pending Organization Invites
+      if (user.email) {
+        const invites = await getUserPendingInvites(user.email);
+        setPendingInvites(invites);
+      }
     } catch (err) {
       console.error('Error fetching notifications:', err);
     } finally {
@@ -85,6 +107,32 @@ export const NotificationsPage: React.FC = () => {
   useEffect(() => {
     fetchNotifications();
   }, [user]);
+
+  const handleRespondInvite = async (invite: OrganizationInvite, accept: boolean) => {
+    if (!user) return;
+    setActionLoading(true);
+    try {
+      const ok = await respondToOrganizationInvite(invite.id, invite.organization_id, accept, {
+        id: user.id,
+        email: user.email,
+        full_name: profile?.full_name || user.user_metadata?.full_name,
+      });
+
+      if (ok) {
+        if (refreshProfile) await refreshProfile();
+        setSuccessModal({
+          open: true,
+          accept,
+          orgName: invite.organization_name,
+        });
+        await fetchNotifications();
+      }
+    } catch (err) {
+      console.error('Error responding to invite:', err);
+    } finally {
+      setActionLoading(false);
+    }
+  };
 
   const markAllAsRead = async () => {
     try {
@@ -313,6 +361,68 @@ export const NotificationsPage: React.FC = () => {
         </div>
       </header>
 
+      {/* PENDING ORGANIZATION INVITATIONS SECTION */}
+      {pendingInvites.length > 0 && (
+        <Card style={{ padding: '24px', marginBottom: '24px', backgroundColor: 'rgba(245, 158, 11, 0.06)', border: '1px solid #f59e0b' }}>
+          <h3 style={{ fontSize: '1.1rem', fontWeight: 800, color: '#f59e0b', marginBottom: '14px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <Building2 size={22} color="#f59e0b" />
+            Pending Organization Team Invitations ({pendingInvites.length})
+          </h3>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+            {pendingInvites.map(inv => (
+              <div
+                key={inv.id}
+                style={{
+                  backgroundColor: 'var(--bg-secondary)',
+                  border: '1px solid var(--border-color)',
+                  borderRadius: '12px',
+                  padding: '18px 20px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '16px',
+                }}
+              >
+                <div>
+                  <h4 style={{ margin: 0, fontWeight: 800, fontSize: '1.05rem', color: 'var(--text-primary)' }}>
+                    {inv.organization_name}
+                  </h4>
+                  <p style={{ margin: '4px 0 0 0', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
+                    Invited you (<strong>{inv.email}</strong>) to join their team workspace as a <strong style={{ textTransform: 'capitalize', color: 'var(--accent-primary)' }}>{inv.role}</strong>.
+                  </p>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                    Received on {new Date(inv.created_at).toLocaleDateString()}
+                  </span>
+                </div>
+
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => handleRespondInvite(inv, false)}
+                    disabled={actionLoading}
+                    style={{ color: '#ef4444', borderColor: 'rgba(239,68,68,0.3)', gap: '6px' }}
+                  >
+                    <X size={14} /> Decline
+                  </Button>
+                  <Button
+                    size="sm"
+                    onClick={() => handleRespondInvite(inv, true)}
+                    disabled={actionLoading}
+                    style={{ gap: '6px', backgroundColor: '#22c55e', color: '#ffffff' }}
+                  >
+                    <CheckCircle2 size={16} /> Accept Invitation
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      )}
+
+      {/* STANDARD NOTIFICATIONS LIST */}
       <Card style={{ padding: 0, overflow: 'hidden' }}>
         <div style={filterBarStyle}>
           <div style={{ display: 'flex', gap: '24px', justifyContent: isMobile ? 'center' : 'flex-start' }}>
@@ -390,6 +500,64 @@ export const NotificationsPage: React.FC = () => {
           )}
         </div>
       </Card>
+
+      {/* SUCCESS CONFIRMATION POPUP MODAL */}
+      {successModal && (
+        <div style={modalOverlayStyle} onClick={() => setSuccessModal(null)}>
+          <div style={{ ...modalContentStyle, maxWidth: '460px', textAlign: 'center', padding: '36px 28px' }} onClick={e => e.stopPropagation()}>
+            <div style={{
+              width: '64px',
+              height: '64px',
+              borderRadius: '50%',
+              backgroundColor: successModal.accept ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 16px',
+            }}>
+              {successModal.accept ? <CheckCircle2 size={36} color="#22c55e" /> : <XCircle size={36} color="#ef4444" />}
+            </div>
+
+            <h3 style={{ fontSize: '1.3rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>
+              {successModal.accept ? '🎉 Invitation Accepted!' : 'Invitation Declined'}
+            </h3>
+
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '24px' }}>
+              {successModal.accept
+                ? `You are now an active team member of "${successModal.orgName}". Access your Organization Workspace and shared credits from the sidebar menu.`
+                : `You have declined the team invitation from "${successModal.orgName}".`}
+            </p>
+
+            <div style={{ display: 'flex', gap: '10px' }}>
+              {successModal.accept && (
+                <Button onClick={() => { setSuccessModal(null); navigate('/org-dashboard'); }} style={{ flex: 1, backgroundColor: '#22c55e', color: '#ffffff' }}>
+                  Go to Org Dashboard
+                </Button>
+              )}
+              <Button variant="outline" onClick={() => setSuccessModal(null)} style={{ flex: 1 }}>
+                Close
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
+};
+
+const modalOverlayStyle: React.CSSProperties = {
+  position: 'fixed',
+  top: 0, left: 0, right: 0, bottom: 0,
+  backgroundColor: 'rgba(0,0,0,0.75)',
+  display: 'flex', alignItems: 'center', justifyContent: 'center',
+  zIndex: 1200,
+  backdropFilter: 'blur(6px)',
+};
+
+const modalContentStyle: React.CSSProperties = {
+  backgroundColor: 'var(--bg-primary)',
+  borderRadius: '16px',
+  border: '1px solid var(--border-color)',
+  width: '90%',
+  boxShadow: '0 24px 48px rgba(0,0,0,0.5)',
 };

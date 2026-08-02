@@ -35,15 +35,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isCollapsed }
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  const isOrgUser =
+    profile?.account_type === 'business' ||
+    Boolean(profile?.organisation) ||
+    window.location.pathname.includes('/org-');
+
   const navGroups = [
     {
       title: 'PATHWAY',
       items: [
         { icon: LayoutDashboard, label: t('nav.dashboard'), path: '/dashboard' },
-        ...(profile?.account_type === 'business' ? [
-          { icon: Building2, label: 'Org Dashboard', path: '/org-dashboard' },
-          { icon: Users, label: 'Manage Members', path: '/org-members' }
-        ] : []),
         { icon: ClipboardList, label: t('nav.applicationTracker'), path: '/application-tracker' },
         { icon: Clock, label: t('nav.preparationPlan'), path: '/preparation' },
         { icon: Briefcase, label: t('nav.opportunities'), path: '/opportunities' },
@@ -52,6 +53,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isCollapsed }
         { icon: FileText, label: t('nav.myDocuments', 'My Documents'), path: '/documents' },
       ]
     },
+    ...(isOrgUser ? [
+      {
+        title: 'ORGANIZATION WORKSPACE',
+        items: [
+          { icon: Building2, label: 'Org Dashboard', path: '/org-dashboard' },
+          { icon: Users, label: 'Manage Members', path: '/org-members' },
+        ]
+      }
+    ] : []),
     {
       title: 'CV BUILDER',
       items: [
