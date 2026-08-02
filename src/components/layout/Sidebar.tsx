@@ -31,14 +31,13 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isCollapsed }) => {
-  const { signOut, profile } = useAuth();
+  const { signOut, profile, user } = useAuth();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const isOrgUser =
     profile?.account_type === 'business' ||
-    Boolean(profile?.organisation) ||
-    window.location.pathname.includes('/org-');
+    user?.user_metadata?.account_type === 'business';
 
   const navGroups = [
     {

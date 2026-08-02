@@ -50,7 +50,7 @@ interface OrgDashboardProps {
 }
 
 export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'overview' }) => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const navigate = useNavigate();
   const [org, setOrg] = useState<Organization | null>(null);
   const [members, setMembers] = useState<OrganizationMember[]>([]);
@@ -116,6 +116,9 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
       if (data) {
         const mems = await getOrganizationMembers(data.id);
         setMembers(mems);
+      } else if (profile?.account_type !== 'business' && user?.user_metadata?.account_type !== 'business') {
+        navigate('/dashboard', { replace: true });
+        return;
       }
     } catch (err) {
       console.error('Error fetching organization dashboard:', err);
@@ -308,24 +311,26 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
   }
 
   if (!org) {
+    if (profile?.account_type !== 'business' && user?.user_metadata?.account_type !== 'business') {
+      navigate('/dashboard', { replace: true });
+      return null;
+    }
+
     return (
       <div style={{ maxWidth: '600px', margin: '60px auto', padding: '40px 24px', textAlign: 'center', backgroundColor: 'var(--bg-secondary)', borderRadius: '16px', border: '1px solid var(--border-color)' }}>
         <div style={{ width: '64px', height: '64px', borderRadius: '16px', backgroundColor: 'rgba(245, 158, 11, 0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px auto' }}>
           <Building2 size={32} color="var(--accent-primary)" />
         </div>
         <h2 style={{ fontSize: '1.5rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '10px' }}>
-          Organization Dashboard Restricted
+          Organization Setup Required
         </h2>
         <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem', lineHeight: 1.6, marginBottom: '28px' }}>
-          This workspace is exclusively for registered Business and Organization Accounts. Personal account users can view, accept, and manage organization invitations directly on their Profile page.
+          You have a Business account registered, but your organization profile setup is not yet complete. Please complete your registration to access your workspace.
         </p>
 
         <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Button onClick={() => navigate('/career-profile')}>
-            Go to My Profile
-          </Button>
-          <Button variant="outline" onClick={() => navigate('/signup')}>
-            Register Business Account
+          <Button onClick={() => navigate('/dashboard')}>
+            Go to Main Dashboard
           </Button>
         </div>
       </div>

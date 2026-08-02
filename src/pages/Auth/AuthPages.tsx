@@ -23,8 +23,7 @@ export const LoginPage: React.FC = () => {
     if (user && !authLoading) {
       if (
         user.user_metadata?.account_type === 'business' ||
-        profile?.account_type === 'business' ||
-        Boolean(profile?.organisation)
+        profile?.account_type === 'business'
       ) {
         navigate('/org-dashboard', { replace: true });
       } else {
@@ -56,8 +55,7 @@ export const LoginPage: React.FC = () => {
 
       if (
         data.user?.user_metadata?.account_type === 'business' ||
-        profile?.account_type === 'business' ||
-        Boolean(profile?.organisation)
+        profile?.account_type === 'business'
       ) {
         navigate('/org-dashboard', { replace: true });
       } else {

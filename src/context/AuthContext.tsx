@@ -77,7 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       let userProfile = data || null;
 
-      // Auto-detect if user owns or belongs to an organization
+      // Auto-detect if user owns an organization
       try {
         const org = await getOrganizationByUserId(userId);
         if (org) {
@@ -86,16 +86,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             account_type: 'business',
             organisation: org.name,
           };
-        } else {
-          const memberships = await getUserOrganizationMemberships(userId);
-          const activeMem = memberships.find(m => m.status === 'accepted');
-          if (activeMem) {
-            userProfile = {
-              ...(userProfile || { id: userId, credits: 0 }),
-              account_type: 'business',
-              organisation: activeMem.organization_id,
-            };
-          }
         }
       } catch (orgErr) {
         console.warn('Auto-detect org profile error:', orgErr);

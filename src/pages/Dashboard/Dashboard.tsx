@@ -179,7 +179,7 @@ export const Dashboard: React.FC = () => {
       </header>
 
       {/* Business Account Banner */}
-      {(profile?.account_type === 'business' || profile?.organisation) && (
+      {(profile?.account_type === 'business' || user?.user_metadata?.account_type === 'business') && (
         <Card style={{ padding: '20px', marginBottom: '24px', backgroundColor: 'rgba(245, 158, 11, 0.08)', border: '1px solid #f59e0b', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
             <Building2 size={28} color="#f59e0b" />
