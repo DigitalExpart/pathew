@@ -98,8 +98,6 @@ export const ProfilePage: React.FC = () => {
           transition={{ delay: 0.1 }}
           style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}
         >
-          {/* Organization Invites & Team Membership Widget */}
-          <PersonalInvitesWidget />
           {/* Basic Info & Story */}
           <Card>
             <div style={{ padding: '32px' }}>
@@ -272,6 +270,11 @@ export const ProfilePage: React.FC = () => {
               )}
             </div>
           </Card>
+
+          {/* Organization Invites & Team Membership Widget */}
+          <div style={{ marginTop: '20px' }}>
+            <PersonalInvitesWidget />
+          </div>
         </motion.div>
       </div>
     </div>

@@ -838,35 +838,65 @@ export const requestToJoinOrganization = async (
 /**
  * Get user's active & pending organization memberships/requests
  */
-export const getUserOrganizationMemberships = async (userId: string): Promise<OrganizationMember[]> => {
-  if (!userId) return [];
-  try {
-    const { data, error } = await supabase
-      .from('organization_members')
-      .select('*')
-      .eq('user_id', userId);
+export const getUserOrganizationMemberships = async (userId: string, userEmail?: string): Promise<OrganizationMember[]> => {
+  if (!userId && !userEmail) return [];
+  const cleanEmail = userEmail ? userEmail.trim().toLowerCase() : '';
+  const result: OrganizationMember[] = [];
 
-    if (!error && data) return data;
-  } catch (err) {}
+  try {
+    let query = supabase.from('organization_members').select('*');
+    if (userId && cleanEmail) {
+      query = query.or(`user_id.eq.${userId},user_email.ilike.${cleanEmail}`);
+    } else if (userId) {
+      query = query.eq('user_id', userId);
+    } else {
+      query = query.eq('user_email', cleanEmail);
+    }
+
+    const { data, error } = await query;
+    if (!error && data && data.length > 0) {
+      for (const m of data) {
+        let orgName = (m as any).organization_name;
+        if (!orgName && m.organization_id) {
+          const { data: orgData } = await supabase
+            .from('organizations')
+            .select('name')
+            .eq('id', m.organization_id)
+            .single();
+          if (orgData) orgName = orgData.name;
+        }
+
+        result.push({
+          ...m,
+          organization_name: orgName || 'Organization',
+        } as any);
+      }
+      return result;
+    }
+  } catch (err) {
+    console.warn('Error querying organization_members:', err);
+  }
 
   // Fallback check in documents
   const { data: docs } = await supabase.from('documents').select('content').eq('type', ORG_DOC_TYPE);
-  const userMemberships: OrganizationMember[] = [];
   if (docs) {
     docs.forEach(doc => {
       try {
         const parsed = JSON.parse(doc.content);
         if (parsed.members) {
           parsed.members.forEach((m: OrganizationMember) => {
-            if (m.user_id === userId) {
-              userMemberships.push(m);
+            if (m.user_id === userId || (cleanEmail && m.user_email?.toLowerCase() === cleanEmail)) {
+              result.push({
+                ...m,
+                organization_name: parsed.organization?.name || 'Organization',
+              } as any);
             }
           });
         }
       } catch {}
     });
   }
-  return userMemberships;
+  return result;
 };
 
 /**

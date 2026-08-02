@@ -55,7 +55,7 @@ export const PersonalInvitesWidget: React.FC = () => {
     try {
       const [pendingInvites, memberships, orgs] = await Promise.all([
         getUserPendingInvites(user.email, user.id),
-        getUserOrganizationMemberships(user.id),
+        getUserOrganizationMemberships(user.id, user.email),
         getAllOrganizations()
       ]);
       setInvites(pendingInvites);
@@ -121,7 +121,20 @@ export const PersonalInvitesWidget: React.FC = () => {
   };
 
   const acceptedMemberships = userRequests.filter(m => m.status === 'accepted');
-  const isMemberOfOrg = Boolean(profile?.organisation) || acceptedMemberships.length > 0;
+  const activeOrgsList: Array<{ id: string; name: string }> = [];
+
+  acceptedMemberships.forEach(m => {
+    const orgName = (m as any).organization_name || 'Organization';
+    if (!activeOrgsList.some(o => o.name === orgName)) {
+      activeOrgsList.push({ id: m.organization_id || m.id, name: orgName });
+    }
+  });
+
+  if (profile?.organisation && !activeOrgsList.some(o => o.name === profile.organisation)) {
+    activeOrgsList.push({ id: 'prof_org', name: profile.organisation });
+  }
+
+  const isMemberOfOrg = activeOrgsList.length > 0;
   const pendingRequests = userRequests.filter(m => m.status === 'pending');
 
   const filteredOrgs = allOrgs.filter(o =>
@@ -256,21 +269,25 @@ export const PersonalInvitesWidget: React.FC = () => {
 
       {/* 3. Active Membership Details */}
       {isMemberOfOrg && (
-        <div style={{ backgroundColor: 'rgba(34, 197, 94, 0.05)', border: '1px solid rgba(34, 197, 94, 0.2)', borderRadius: '10px', padding: '16px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <UserCheck size={20} color="#22c55e" />
-              <div>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Active Member</span>
-                <h4 style={{ margin: '2px 0 0 0', fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-                  {profile?.organisation}
-                </h4>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          {activeOrgsList.map(orgItem => (
+            <div key={orgItem.id} style={{ backgroundColor: 'rgba(34, 197, 94, 0.05)', border: '1px solid rgba(34, 197, 94, 0.2)', borderRadius: '10px', padding: '16px' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <UserCheck size={20} color="#22c55e" />
+                  <div>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>Active Member</span>
+                    <h4 style={{ margin: '2px 0 0 0', fontSize: '1rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                      {orgItem.name}
+                    </h4>
+                  </div>
+                </div>
+                <Badge variant="success" style={{ gap: '4px' }}>
+                  <ShieldCheck size={12} /> Connected & Verified
+                </Badge>
               </div>
             </div>
-            <Badge variant="success" style={{ gap: '4px' }}>
-              <ShieldCheck size={12} /> Connected & Verified
-            </Badge>
-          </div>
+          ))}
         </div>
       )}
 
