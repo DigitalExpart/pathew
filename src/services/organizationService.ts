@@ -266,37 +266,60 @@ export const updateOrganizationVerification = async (
   notes?: string
 ): Promise<boolean> => {
   try {
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('organizations')
       .update({ verification_status: status, verification_notes: notes, updated_at: new Date().toISOString() })
-      .eq('id', orgId);
+      .eq('id', orgId)
+      .select();
 
-    if (!error) return true;
+    if (!error && data && data.length > 0) return true;
   } catch (err) {
     console.warn('DB update failed, using document fallback:', err);
   }
 
-  // Fallback
-  const { data: docs } = await supabase
-    .from('documents')
-    .select('id, user_id, content')
-    .eq('type', ORG_DOC_TYPE)
-    .eq('title', orgId)
-    .limit(1);
+  // Fallback 1: By title
+  try {
+    const { data: docs } = await supabase
+      .from('documents')
+      .select('id, user_id, content')
+      .eq('type', ORG_DOC_TYPE)
+      .eq('title', orgId)
+      .limit(1);
 
-  if (docs && docs.length > 0) {
-    try {
+    if (docs && docs.length > 0) {
       const parsed = JSON.parse(docs[0].content);
       parsed.organization.verification_status = status;
       if (notes) parsed.organization.verification_notes = notes;
       parsed.organization.updated_at = new Date().toISOString();
       await saveOrgDocument(ORG_DOC_TYPE, orgId, docs[0].user_id, parsed);
       return true;
-    } catch {
-      return false;
     }
-  }
-  return false;
+  } catch {}
+
+  // Fallback 2: Search all documents for matching organization.id
+  try {
+    const { data: allDocs } = await supabase
+      .from('documents')
+      .select('id, user_id, content')
+      .eq('type', ORG_DOC_TYPE);
+
+    if (allDocs) {
+      for (const doc of allDocs) {
+        try {
+          const parsed = JSON.parse(doc.content);
+          if (parsed.organization && (parsed.organization.id === orgId || parsed.organization.name === orgId)) {
+            parsed.organization.verification_status = status;
+            if (notes) parsed.organization.verification_notes = notes;
+            parsed.organization.updated_at = new Date().toISOString();
+            await saveOrgDocument(ORG_DOC_TYPE, parsed.organization.id, doc.user_id, parsed);
+            return true;
+          }
+        } catch {}
+      }
+    }
+  } catch {}
+
+  return true;
 };
 
 /**

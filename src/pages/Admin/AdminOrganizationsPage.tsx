@@ -27,6 +27,7 @@ export const AdminOrganizationsPage: React.FC = () => {
   const [selectedOrg, setSelectedOrg] = useState<Organization | null>(null);
   const [adminNote, setAdminNote] = useState('');
   const [actionLoading, setActionLoading] = useState(false);
+  const [feedbackPopup, setFeedbackPopup] = useState<{ status: VerificationStatus; orgName: string } | null>(null);
 
   useEffect(() => {
     fetchOrgs();
@@ -55,6 +56,10 @@ export const AdminOrganizationsPage: React.FC = () => {
         if (selectedOrg?.id === orgId) {
           setSelectedOrg(prev => prev ? { ...prev, verification_status: newStatus, verification_notes: adminNote } : null);
         }
+        setFeedbackPopup({
+          status: newStatus,
+          orgName: selectedOrg?.name || 'Organization',
+        });
       }
     } catch (err) {
       console.error('Error updating status:', err);
@@ -323,10 +328,70 @@ export const AdminOrganizationsPage: React.FC = () => {
                   disabled={actionLoading}
                   style={{ backgroundColor: '#22c55e', color: '#fff', gap: '6px' }}
                 >
-                  <CheckCircle2 size={16} /> Approve & Verify Organization
+                  <CheckCircle2 size={16} /> {actionLoading ? 'Updating...' : 'Approve & Verify Organization'}
                 </Button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Success Feedback Popup Modal */}
+      {feedbackPopup && (
+        <div style={{ ...modalOverlayStyle, zIndex: 1200 }} onClick={() => setFeedbackPopup(null)}>
+          <div
+            style={{
+              ...modalContentStyle,
+              maxWidth: '440px',
+              textAlign: 'center',
+              padding: '36px 28px',
+            }}
+            onClick={e => e.stopPropagation()}
+          >
+            <div
+              style={{
+                width: '64px',
+                height: '64px',
+                borderRadius: '50%',
+                backgroundColor: feedbackPopup.status === 'verified' ? 'rgba(34, 197, 94, 0.15)' : 'rgba(239, 68, 68, 0.15)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                margin: '0 auto 16px',
+              }}
+            >
+              {feedbackPopup.status === 'verified' ? (
+                <CheckCircle2 size={36} color="#22c55e" />
+              ) : (
+                <XCircle size={36} color="#ef4444" />
+              )}
+            </div>
+
+            <h3 style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '8px' }}>
+              {feedbackPopup.status === 'verified' ? 'Organization Approved!' : 'Registration Rejected'}
+            </h3>
+
+            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5, marginBottom: '24px' }}>
+              <strong>{feedbackPopup.orgName}</strong> status has been updated to{' '}
+              <span style={{ color: feedbackPopup.status === 'verified' ? '#22c55e' : '#ef4444', fontWeight: 700 }}>
+                {feedbackPopup.status.toUpperCase()}
+              </span>.
+            </p>
+
+            <Button
+              onClick={() => {
+                setFeedbackPopup(null);
+                setSelectedOrg(null);
+              }}
+              style={{
+                width: '100%',
+                backgroundColor: feedbackPopup.status === 'verified' ? '#22c55e' : 'var(--bg-tertiary)',
+                color: '#ffffff',
+                fontWeight: 600,
+              }}
+            >
+              Done & Close
+            </Button>
           </div>
         </div>
       )}
