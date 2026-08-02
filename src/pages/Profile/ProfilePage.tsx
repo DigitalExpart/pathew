@@ -20,6 +20,10 @@ export const ProfilePage: React.FC = () => {
     avatar_url: ''
   });
   const [isStoryExpanded, setIsStoryExpanded] = useState(false);
+  const [isGoalsExpanded, setIsGoalsExpanded] = useState(false);
+  const [isSkillsExpanded, setIsSkillsExpanded] = useState(false);
+  const [isExperienceExpanded, setIsExperienceExpanded] = useState(false);
+  const [isEducationExpanded, setIsEducationExpanded] = useState(false);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -39,6 +43,26 @@ export const ProfilePage: React.FC = () => {
       });
     }
   }, [profile, user]);
+
+  const displayedGoals = React.useMemo(() => {
+    if (!profile?.goals) return [];
+    return isGoalsExpanded ? profile.goals : profile.goals.slice(0, 3);
+  }, [profile?.goals, isGoalsExpanded]);
+
+  const displayedSkills = React.useMemo(() => {
+    if (!profile?.skills) return [];
+    return isSkillsExpanded ? profile.skills : profile.skills.slice(0, 4);
+  }, [profile?.skills, isSkillsExpanded]);
+
+  const displayedExperience = React.useMemo(() => {
+    if (!profile?.experience) return [];
+    return isExperienceExpanded ? profile.experience : profile.experience.slice(0, 1);
+  }, [profile?.experience, isExperienceExpanded]);
+
+  const displayedEducation = React.useMemo(() => {
+    if (!profile?.education) return [];
+    return isEducationExpanded ? profile.education : profile.education.slice(0, 1);
+  }, [profile?.education, isEducationExpanded]);
 
   // Calculate profile strength
   const strength = React.useMemo(() => {
@@ -165,24 +189,62 @@ export const ProfilePage: React.FC = () => {
             <Card title={t('profile.careerGoals')} icon={Target}>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {profile?.goals?.length ? (
-                  profile.goals.map((goal: string, i: number) => (
+                  displayedGoals.map((goal: string, i: number) => (
                     <Badge key={i} variant="primary" style={{ padding: '8px 12px' }}>{t(`setup.goalsList.${goal}`, goal) as string}</Badge>
                   ))
                 ) : (
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{t('profile.noGoals')}</p>
                 )}
               </div>
+              {profile?.goals && profile.goals.length > 3 && (
+                <button
+                  onClick={() => setIsGoalsExpanded(!isGoalsExpanded)}
+                  style={{
+                    marginTop: '14px',
+                    color: 'var(--accent-primary)',
+                    fontWeight: 600,
+                    fontSize: '0.875rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {isGoalsExpanded ? t('profile.showLess', 'Show Less') : t('profile.readMore', 'Read More')}
+                </button>
+              )}
             </Card>
             <Card title={t('profile.coreSkills')} icon={Sparkles}>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {profile?.skills?.length ? (
-                  profile.skills.map((skill: string, i: number) => (
+                  displayedSkills.map((skill: string, i: number) => (
                     <Badge key={i} variant="secondary" style={{ padding: '8px 12px' }}>{skill}</Badge>
                   ))
                 ) : (
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{t('profile.noSkills')}</p>
                 )}
               </div>
+              {profile?.skills && profile.skills.length > 4 && (
+                <button
+                  onClick={() => setIsSkillsExpanded(!isSkillsExpanded)}
+                  style={{
+                    marginTop: '14px',
+                    color: 'var(--accent-primary)',
+                    fontWeight: 600,
+                    fontSize: '0.875rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '4px',
+                    background: 'none',
+                    border: 'none',
+                    cursor: 'pointer'
+                  }}
+                >
+                  {isSkillsExpanded ? t('profile.showLess', 'Show Less') : t('profile.readMore', 'Read More')}
+                </button>
+              )}
             </Card>
           </div>
 
@@ -190,7 +252,7 @@ export const ProfilePage: React.FC = () => {
           <Card title={t('profile.workExperience')} icon={Briefcase}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {profile?.experience?.length ? (
-                profile.experience.map((exp: any, i: number, arr: any[]) => (
+                displayedExperience.map((exp: any, i: number, arr: any[]) => (
                   <div key={i} style={{ display: 'flex', gap: '20px', paddingBottom: i !== arr.length - 1 ? '24px' : 0, borderBottom: i !== arr.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
                     <div style={{ width: '40px', height: '40px', backgroundColor: 'var(--bg-primary)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <Briefcase size={20} color="var(--accent-primary)" />
@@ -199,7 +261,9 @@ export const ProfilePage: React.FC = () => {
                       <h4 style={{ fontSize: '1.125rem', fontWeight: 600 }}>{exp.title}</h4>
                       <p style={{ color: 'var(--accent-primary)', fontSize: '0.9375rem', fontWeight: 500 }}>{exp.company}</p>
                       <p style={{ color: 'var(--text-muted)', fontSize: '0.8125rem', marginTop: '4px' }}>{exp.duration}</p>
-                      <p style={{ color: 'var(--text-secondary)', marginTop: '12px', fontSize: '0.9375rem', lineHeight: 1.6 }}>{exp.description}</p>
+                      {exp.description && (
+                        <p style={{ color: 'var(--text-secondary)', marginTop: '12px', fontSize: '0.9375rem', lineHeight: 1.6 }}>{exp.description}</p>
+                      )}
                     </div>
                   </div>
                 ))
@@ -207,13 +271,32 @@ export const ProfilePage: React.FC = () => {
                 <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '20px' }}>{t('profile.noExperience')}</p>
               )}
             </div>
+            {profile?.experience && profile.experience.length > 1 && (
+              <button
+                onClick={() => setIsExperienceExpanded(!isExperienceExpanded)}
+                style={{
+                  marginTop: '16px',
+                  color: 'var(--accent-primary)',
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                {isExperienceExpanded ? t('profile.showLess', 'Show Less') : t('profile.readMore', 'Read More')}
+              </button>
+            )}
           </Card>
 
           {/* Education */}
           <Card title={t('profile.education')} icon={BookOpen}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {profile?.education?.length ? (
-                profile.education.map((edu: any, i: number) => (
+                displayedEducation.map((edu: any, i: number) => (
                   <div key={i} style={{ display: 'flex', gap: '20px' }}>
                     <div style={{ width: '40px', height: '40px', backgroundColor: 'var(--bg-primary)', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                       <BookOpen size={20} color="var(--accent-primary)" />
@@ -229,6 +312,25 @@ export const ProfilePage: React.FC = () => {
                 <p style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '20px' }}>{t('profile.noEducation')}</p>
               )}
             </div>
+            {profile?.education && profile.education.length > 1 && (
+              <button
+                onClick={() => setIsEducationExpanded(!isEducationExpanded)}
+                style={{
+                  marginTop: '16px',
+                  color: 'var(--accent-primary)',
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                {isEducationExpanded ? t('profile.showLess', 'Show Less') : t('profile.readMore', 'Read More')}
+              </button>
+            )}
           </Card>
         </motion.div>
 
