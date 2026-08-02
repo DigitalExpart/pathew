@@ -7,11 +7,12 @@ interface CardProps {
   style?: React.CSSProperties;
   glass?: boolean;
   icon?: React.ElementType;
+  action?: React.ReactNode;
   onClick?: () => void;
   className?: string;
 }
 
-export const Card: React.FC<CardProps> = ({ children, title, subtitle, style, glass, icon: Icon, onClick, className = '' }) => {
+export const Card: React.FC<CardProps> = ({ children, title, subtitle, style, glass, icon: Icon, action, onClick, className = '' }) => {
   return (
     <div 
       className={`card ${glass ? 'glass' : ''} ${className}`}
@@ -25,17 +26,20 @@ export const Card: React.FC<CardProps> = ({ children, title, subtitle, style, gl
         ...style
       }}
     >
-      {(title || subtitle || Icon) && (
-        <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '12px' }}>
-          {Icon && (
-            <div style={{ padding: '8px', backgroundColor: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)' }}>
-              <Icon size={20} color="var(--accent-primary)" />
+      {(title || subtitle || Icon || action) && (
+        <div style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            {Icon && (
+              <div style={{ padding: '8px', backgroundColor: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)' }}>
+                <Icon size={20} color="var(--accent-primary)" />
+              </div>
+            )}
+            <div>
+              {title && <h3 style={{ fontSize: '1.25rem', marginBottom: '4px', color: '#ffffff' }}>{title}</h3>}
+              {subtitle && <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{subtitle}</p>}
             </div>
-          )}
-          <div>
-            {title && <h3 style={{ fontSize: '1.25rem', marginBottom: '4px', color: '#ffffff' }}>{title}</h3>}
-            {subtitle && <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>{subtitle}</p>}
           </div>
+          {action && <div>{action}</div>}
         </div>
       )}
       {children}

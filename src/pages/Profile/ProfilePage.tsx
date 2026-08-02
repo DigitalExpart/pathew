@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { useAuth } from '../../context/AuthContext';
-import { User, CheckCircle2, Sparkles, Target, Briefcase, BookOpen, FileEdit, Award } from 'lucide-react';
+import { User, CheckCircle2, Sparkles, Target, Briefcase, BookOpen, FileEdit, Award, Edit3 } from 'lucide-react';
 import { Badge } from '../../components/ui/Badge';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -24,6 +24,7 @@ export const ProfilePage: React.FC = () => {
   const [isSkillsExpanded, setIsSkillsExpanded] = useState(false);
   const [isExperienceExpanded, setIsExperienceExpanded] = useState(false);
   const [isEducationExpanded, setIsEducationExpanded] = useState(false);
+  const [isAchievementsExpanded, setIsAchievementsExpanded] = useState(false);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
@@ -64,6 +65,11 @@ export const ProfilePage: React.FC = () => {
     return isEducationExpanded ? profile.education : profile.education.slice(0, 1);
   }, [profile?.education, isEducationExpanded]);
 
+  const displayedAchievements = React.useMemo(() => {
+    if (!profile?.achievements) return [];
+    return isAchievementsExpanded ? profile.achievements : profile.achievements.slice(0, 2);
+  }, [profile?.achievements, isAchievementsExpanded]);
+
   // Calculate profile strength
   const strength = React.useMemo(() => {
     let score = 0;
@@ -101,6 +107,29 @@ export const ProfilePage: React.FC = () => {
     
     return Math.min(score, 100);
   }, [profile, formData]);
+  const renderEditBtn = (targetPath: string = '/profile') => (
+    <button
+      onClick={() => navigate(targetPath)}
+      title="Edit & Update"
+      style={{
+        background: 'rgba(245, 158, 11, 0.1)',
+        border: '1px solid rgba(245, 158, 11, 0.3)',
+        borderRadius: '8px',
+        padding: '5px 10px',
+        color: 'var(--accent-primary)',
+        cursor: 'pointer',
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: '6px',
+        fontSize: '0.8125rem',
+        fontWeight: 600,
+        transition: 'all 0.2s ease'
+      }}
+    >
+      <Edit3 size={14} /> Edit
+    </button>
+  );
+
   return (
     <div style={{ ...containerStyle, padding: isMobile ? '20px 16px' : '40px 20px' }}>
       <motion.header 
@@ -146,7 +175,10 @@ export const ProfilePage: React.FC = () => {
               </div>
 
               <div style={{ borderTop: '1px solid var(--border-color)', paddingTop: '32px' }}>
-                <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '16px', color: 'var(--text-primary)' }}>{t('profile.myStory')}</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>{t('profile.myStory')}</h3>
+                  {renderEditBtn('/profile')}
+                </div>
                 <div style={{ position: 'relative' }}>
                   <p style={{ 
                     color: 'var(--text-secondary)', 
@@ -173,10 +205,12 @@ export const ProfilePage: React.FC = () => {
                         display: 'flex',
                         alignItems: 'center',
                         gap: '4px',
+                        background: 'none',
+                        border: 'none',
                         cursor: 'pointer'
                       }}
                     >
-                      {isStoryExpanded ? t('profile.showLess') : t('profile.readMore')}
+                      {isStoryExpanded ? 'Show Less' : 'Show More'}
                     </button>
                   )}
                 </div>
@@ -186,7 +220,7 @@ export const ProfilePage: React.FC = () => {
 
           {/* Goals & Skills */}
           <div className="grid-responsive" style={{ gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr' }}>
-            <Card title={t('profile.careerGoals')} icon={Target}>
+            <Card title={t('profile.careerGoals')} icon={Target} action={renderEditBtn('/profile')}>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {profile?.goals?.length ? (
                   displayedGoals.map((goal: string, i: number) => (
@@ -212,11 +246,11 @@ export const ProfilePage: React.FC = () => {
                     cursor: 'pointer'
                   }}
                 >
-                  {isGoalsExpanded ? t('profile.showLess', 'Show Less') : t('profile.readMore', 'Read More')}
+                  {isGoalsExpanded ? 'Show Less' : 'Show More'}
                 </button>
               )}
             </Card>
-            <Card title={t('profile.coreSkills')} icon={Sparkles}>
+            <Card title={t('profile.coreSkills')} icon={Sparkles} action={renderEditBtn('/profile')}>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
                 {profile?.skills?.length ? (
                   displayedSkills.map((skill: string, i: number) => (
@@ -242,14 +276,14 @@ export const ProfilePage: React.FC = () => {
                     cursor: 'pointer'
                   }}
                 >
-                  {isSkillsExpanded ? t('profile.showLess', 'Show Less') : t('profile.readMore', 'Read More')}
+                  {isSkillsExpanded ? 'Show Less' : 'Show More'}
                 </button>
               )}
             </Card>
           </div>
 
           {/* Experience */}
-          <Card title={t('profile.workExperience')} icon={Briefcase}>
+          <Card title={t('profile.workExperience')} icon={Briefcase} action={renderEditBtn('/profile')}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {profile?.experience?.length ? (
                 displayedExperience.map((exp: any, i: number, arr: any[]) => (
@@ -287,13 +321,13 @@ export const ProfilePage: React.FC = () => {
                   cursor: 'pointer'
                 }}
               >
-                {isExperienceExpanded ? t('profile.showLess', 'Show Less') : t('profile.readMore', 'Read More')}
+                {isExperienceExpanded ? 'Show Less' : 'Show More'}
               </button>
             )}
           </Card>
 
           {/* Education */}
-          <Card title={t('profile.education')} icon={BookOpen}>
+          <Card title={t('profile.education')} icon={BookOpen} action={renderEditBtn('/profile')}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
               {profile?.education?.length ? (
                 displayedEducation.map((edu: any, i: number) => (
@@ -328,7 +362,7 @@ export const ProfilePage: React.FC = () => {
                   cursor: 'pointer'
                 }}
               >
-                {isEducationExpanded ? t('profile.showLess', 'Show Less') : t('profile.readMore', 'Read More')}
+                {isEducationExpanded ? 'Show Less' : 'Show More'}
               </button>
             )}
           </Card>
@@ -358,10 +392,10 @@ export const ProfilePage: React.FC = () => {
             </div>
           </Card>
 
-          <Card title={t('profile.achievements')} icon={Award} style={{ marginTop: '20px' }}>
+          <Card title={t('profile.achievements')} icon={Award} action={renderEditBtn('/profile')} style={{ marginTop: '20px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
               {profile?.achievements?.length ? (
-                profile.achievements.map((ach: string, i: number) => (
+                displayedAchievements.map((ach: string, i: number) => (
                   <div key={i} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
                     <CheckCircle2 size={16} color="var(--accent-primary)" style={{ marginTop: '4px' }} />
                     <span style={{ fontSize: '0.9375rem', color: 'var(--text-secondary)' }}>{ach}</span>
@@ -371,6 +405,25 @@ export const ProfilePage: React.FC = () => {
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.875rem' }}>{t('profile.noAchievements')}</p>
               )}
             </div>
+            {profile?.achievements && profile.achievements.length > 2 && (
+              <button
+                onClick={() => setIsAchievementsExpanded(!isAchievementsExpanded)}
+                style={{
+                  marginTop: '14px',
+                  color: 'var(--accent-primary)',
+                  fontWeight: 600,
+                  fontSize: '0.875rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '4px',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer'
+                }}
+              >
+                {isAchievementsExpanded ? 'Show Less' : 'Show More'}
+              </button>
+            )}
           </Card>
 
           {/* Organization Invites & Team Membership Widget */}
