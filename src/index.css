@@ -363,3 +363,126 @@ h5, h6 { font-weight: 500; }
   font-weight: 600;
   color: inherit;
 }
+
+/* Autofill Background & Text Color Overrides for Input/Select/Textarea */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #0f172a inset !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  caret-color: #f8fafc !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+[data-theme='light'] input:-webkit-autofill,
+[data-theme='light'] input:-webkit-autofill:hover, 
+[data-theme='light'] input:-webkit-autofill:focus,
+[data-theme='light'] input:-webkit-autofill:active,
+[data-theme='light'] select:-webkit-autofill,
+[data-theme='light'] select:-webkit-autofill:hover,
+[data-theme='light'] select:-webkit-autofill:focus,
+[data-theme='light'] textarea:-webkit-autofill,
+[data-theme='light'] textarea:-webkit-autofill:hover,
+[data-theme='light'] textarea:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 1000px #ffffff inset !important;
+  -webkit-text-fill-color: #0f172a !important;
+  caret-color: #0f172a !important;
+}
+
+/* Base input focus and option styling */
+input:focus, select:focus, textarea:focus {
+  border-color: var(--accent-primary) !important;
+  box-shadow: 0 0 0 2px var(--accent-glow) !important;
+}
+
+select option {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* Responsive Auth Layout & Form Grids */
+.auth-wrapper {
+  background-color: var(--bg-primary);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.auth-header-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  box-sizing: border-box;
+}
+
+.auth-back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: transparent;
+  border: 1px solid transparent;
+  cursor: pointer;
+  padding: 8px 14px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.auth-back-button:hover {
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+}
+
+.auth-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.auth-grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.auth-card-padding {
+  padding: 36px;
+}
+
+@media (max-width: 640px) {
+  .auth-wrapper {
+    padding: 20px 12px;
+  }
+
+  .auth-header-bar {
+    margin-bottom: 16px;
+  }
+
+  .auth-grid-2,
+  .auth-grid-3 {
+    grid-template-columns: 1fr !important;
+    gap: 12px;
+  }
+
+  .auth-card-padding {
+    padding: 24px 16px !important;
+  }
+}

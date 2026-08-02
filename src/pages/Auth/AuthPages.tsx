@@ -55,17 +55,20 @@ export const LoginPage: React.FC = () => {
   };
 
   return (
-    <div style={authWrapperStyle}>
-      <Link to="/" style={backButtonStyle}>
-        <ArrowLeft size={20} />
-      </Link>
-      
-      <div style={authContentStyle}>
-        <Link to="/" style={logoWrapperStyle}>
-          <img src={logo} alt="PATHEW Logo" style={{ height: '48px', objectFit: 'contain' }} />
+    <div className="auth-wrapper">
+      <div className="auth-header-bar" style={{ maxWidth: '480px' }}>
+        <Link to="/" className="auth-back-button">
+          <ArrowLeft size={18} />
+          <span>Back</span>
         </Link>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
+          <img src={logo} alt="PATHEW Logo" style={{ height: '40px', objectFit: 'contain' }} />
+        </Link>
+        <div style={{ width: '70px' }} />
+      </div>
 
-        <Card style={{ padding: '40px' }}>
+      <div style={{ width: '100%', maxWidth: '480px' }}>
+        <Card className="auth-card-padding">
           <h2 style={{ marginBottom: '8px' }}>{t('auth.welcomeBack')}</h2>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>
             {t('auth.loginDesc')}
@@ -328,9 +331,9 @@ export const SignUpPage: React.FC = () => {
 
   if (isSubmitted || isOrgSubmitted) {
     return (
-      <div style={authWrapperStyle}>
-        <div style={authContentStyle}>
-          <Card style={{ padding: '48px', textAlign: 'center' }}>
+      <div className="auth-wrapper">
+        <div style={{ width: '100%', maxWidth: '480px' }}>
+          <Card className="auth-card-padding" style={{ textAlign: 'center' }}>
             <div style={verifyIconStyle}>
               {isOrgSubmitted ? <Building2 size={48} color="var(--accent-primary)" /> : <Mail size={48} color="var(--accent-primary)" />}
             </div>
@@ -360,23 +363,26 @@ export const SignUpPage: React.FC = () => {
   // Step 1: Choose Account Type Selection
   if (accountType === null) {
     return (
-      <div style={authWrapperStyle}>
-        <Link to="/" style={backButtonStyle}>
-          <ArrowLeft size={20} />
-        </Link>
-
-        <div style={{ ...authContentStyle, maxWidth: '640px' }}>
-          <Link to="/" style={logoWrapperStyle}>
-            <img src={logo} alt="PATHEW Logo" style={{ height: '48px', objectFit: 'contain' }} />
+      <div className="auth-wrapper">
+        <div className="auth-header-bar" style={{ maxWidth: '680px' }}>
+          <Link to="/" className="auth-back-button">
+            <ArrowLeft size={18} />
+            <span>Back to Home</span>
           </Link>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
+            <img src={logo} alt="PATHEW Logo" style={{ height: '40px', objectFit: 'contain' }} />
+          </Link>
+          <div style={{ width: '110px' }} />
+        </div>
 
-          <Card style={{ padding: '40px' }}>
+        <div style={{ width: '100%', maxWidth: '680px' }}>
+          <Card className="auth-card-padding">
             <h2 style={{ marginBottom: '8px', textAlign: 'center' }}>Choose Your Account Type</h2>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '32px', textAlign: 'center' }}>
               Select how you plan to use PATHEW to customize your experience.
             </p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '32px' }}>
+            <div className="auth-grid-2" style={{ marginBottom: '32px' }}>
               {/* Personal Account Option */}
               <div
                 onClick={() => setAccountType('personal')}
@@ -450,17 +456,20 @@ export const SignUpPage: React.FC = () => {
   // Step 2B: Business / Organization Registration Form
   if (accountType === 'business') {
     return (
-      <div style={authWrapperStyle}>
-        <button onClick={() => setAccountType(null)} style={{ ...backButtonStyle, background: 'none', border: 'none', cursor: 'pointer' }}>
-          <ArrowLeft size={20} /> Back to account type
-        </button>
-
-        <div style={{ ...authContentStyle, maxWidth: '720px' }}>
-          <Link to="/" style={logoWrapperStyle}>
-            <img src={logo} alt="PATHEW Logo" style={{ height: '48px', objectFit: 'contain' }} />
+      <div className="auth-wrapper">
+        <div className="auth-header-bar" style={{ maxWidth: '760px' }}>
+          <button onClick={() => setAccountType(null)} className="auth-back-button">
+            <ArrowLeft size={18} />
+            <span>Back to account type</span>
+          </button>
+          <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
+            <img src={logo} alt="PATHEW Logo" style={{ height: '40px', objectFit: 'contain' }} />
           </Link>
+          <div style={{ width: '150px' }} />
+        </div>
 
-          <Card style={{ padding: '36px' }}>
+        <div style={{ width: '100%', maxWidth: '760px' }}>
+          <Card className="auth-card-padding">
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
               <Building2 size={24} color="#f59e0b" />
               <h2 style={{ margin: 0 }}>Organization Registration</h2>
@@ -470,7 +479,7 @@ export const SignUpPage: React.FC = () => {
             </p>
 
             <form onSubmit={handleSignUpBusiness} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div className="auth-grid-2">
                 <div>
                   <label style={labelStyle}>Organization Name *</label>
                   <input
@@ -499,7 +508,7 @@ export const SignUpPage: React.FC = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div className="auth-grid-2">
                 <div>
                   <label style={labelStyle}>Registration Number *</label>
                   <input
@@ -524,7 +533,7 @@ export const SignUpPage: React.FC = () => {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+              <div className="auth-grid-3">
                 <div>
                   <label style={labelStyle}>Country *</label>
                   <input
@@ -571,7 +580,7 @@ export const SignUpPage: React.FC = () => {
                 />
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div className="auth-grid-2">
                 <div>
                   <label style={labelStyle}>Official Email *</label>
                   <input
@@ -596,12 +605,12 @@ export const SignUpPage: React.FC = () => {
                 </div>
               </div>
 
-              <div style={{ paddingTop: '12px', borderTop: '1px solid var(--border-color)', marginTop: '8px' }}>
-                <h4 style={{ fontSize: '0.9375rem', fontWeight: 700, marginBottom: '12px', color: 'var(--accent-primary)' }}>
+              <div style={{ paddingTop: '16px', borderTop: '1px solid var(--border-color)', marginTop: '8px' }}>
+                <h4 style={{ fontSize: '0.9375rem', fontWeight: 700, marginBottom: '14px', color: 'var(--accent-primary)' }}>
                   Contact Person Details
                 </h4>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div className="auth-grid-2">
                   <div>
                     <label style={labelStyle}>Contact Person Full Name *</label>
                     <input
@@ -627,7 +636,7 @@ export const SignUpPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '12px' }}>
+                <div className="auth-grid-2" style={{ marginTop: '12px' }}>
                   <div>
                     <label style={labelStyle}>Contact Email (Account Login) *</label>
                     <input
@@ -653,39 +662,59 @@ export const SignUpPage: React.FC = () => {
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '12px' }}>
+                <div className="auth-grid-2" style={{ marginTop: '12px' }}>
                   <div>
                     <label style={labelStyle}>Account Password *</label>
-                    <input
-                      type="password"
-                      placeholder="At least 8 characters"
-                      style={baseInputStyle}
-                      value={orgData.password}
-                      onChange={e => setOrgData({ ...orgData, password: e.target.value })}
-                      required
-                    />
+                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="At least 8 characters"
+                        style={{...baseInputStyle, paddingRight: '40px'}}
+                        value={orgData.password}
+                        onChange={e => setOrgData({ ...orgData, password: e.target.value })}
+                        required
+                        minLength={8}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        style={{ position: 'absolute', right: '12px', background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                      >
+                        {showPassword ? <EyeOff size={18} color="var(--text-muted)" /> : <Eye size={18} color="var(--text-muted)" />}
+                      </button>
+                    </div>
                   </div>
 
                   <div>
                     <label style={labelStyle}>Confirm Password *</label>
-                    <input
-                      type="password"
-                      placeholder="Repeat password"
-                      style={baseInputStyle}
-                      value={orgData.confirmPassword}
-                      onChange={e => setOrgData({ ...orgData, confirmPassword: e.target.value })}
-                      required
-                    />
+                    <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="Repeat password"
+                        style={{...baseInputStyle, paddingRight: '40px'}}
+                        value={orgData.confirmPassword}
+                        onChange={e => setOrgData({ ...orgData, confirmPassword: e.target.value })}
+                        required
+                        minLength={8}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        style={{ position: 'absolute', right: '12px', background: 'none', border: 'none', padding: 0, cursor: 'pointer', display: 'flex', alignItems: 'center' }}
+                      >
+                        {showConfirmPassword ? <EyeOff size={18} color="var(--text-muted)" /> : <Eye size={18} color="var(--text-muted)" />}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              <div style={{ paddingTop: '12px', borderTop: '1px solid var(--border-color)', marginTop: '8px' }}>
+              <div style={{ paddingTop: '16px', borderTop: '1px solid var(--border-color)', marginTop: '8px' }}>
                 <label style={labelStyle}>Organization Summary / Mission Statement</label>
                 <textarea
                   rows={3}
                   placeholder="Briefly describe what your organization does..."
-                  style={{ ...baseInputStyle, width: '100%' }}
+                  style={baseInputStyle}
                   value={orgData.summary}
                   onChange={e => setOrgData({ ...orgData, summary: e.target.value })}
                 />
@@ -718,17 +747,20 @@ export const SignUpPage: React.FC = () => {
 
   // Step 2A: Personal Registration Form
   return (
-    <div style={authWrapperStyle}>
-      <button onClick={() => setAccountType(null)} style={{ ...backButtonStyle, background: 'none', border: 'none', cursor: 'pointer' }}>
-        <ArrowLeft size={20} /> Back to account type
-      </button>
-
-      <div style={authContentStyle}>
-        <Link to="/" style={logoWrapperStyle}>
-          <img src={logo} alt="PATHEW Logo" style={{ height: '48px', objectFit: 'contain' }} />
+    <div className="auth-wrapper">
+      <div className="auth-header-bar" style={{ maxWidth: '480px' }}>
+        <button onClick={() => setAccountType(null)} className="auth-back-button">
+          <ArrowLeft size={18} />
+          <span>Back to account type</span>
+        </button>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
+          <img src={logo} alt="PATHEW Logo" style={{ height: '40px', objectFit: 'contain' }} />
         </Link>
+        <div style={{ width: '150px' }} />
+      </div>
 
-        <Card style={{ padding: '40px' }}>
+      <div style={{ width: '100%', maxWidth: '480px' }}>
+        <Card className="auth-card-padding">
           <h2 style={{ marginBottom: '8px' }}>{t('auth.createAccountTitle')}</h2>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>
             {t('auth.signUpDesc')}
@@ -765,7 +797,7 @@ export const SignUpPage: React.FC = () => {
                 <input 
                   type={showPassword ? "text" : "password"} 
                   placeholder={t('auth.placeholders.password')} 
-                  style={{...baseInputStyle, width: '100%', paddingRight: '40px'}} 
+                  style={{...baseInputStyle, paddingRight: '40px'}} 
                   value={formData.password}
                   onChange={(e) => setFormData({...formData, password: e.target.value})}
                   required 
@@ -788,7 +820,7 @@ export const SignUpPage: React.FC = () => {
                 <input 
                   type={showConfirmPassword ? "text" : "password"} 
                   placeholder={t('auth.placeholders.repeatPassword')} 
-                  style={{...baseInputStyle, width: '100%', paddingRight: '40px'}} 
+                  style={{...baseInputStyle, paddingRight: '40px'}} 
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({...formData, confirmPassword: e.target.value})}
                   required 
@@ -852,42 +884,6 @@ export const SignUpPage: React.FC = () => {
 };
 
 // Shared Styles
-const authWrapperStyle: React.CSSProperties = {
-  backgroundColor: 'var(--bg-primary)',
-  minHeight: '100vh',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  padding: '40px',
-  position: 'relative',
-};
-
-const backButtonStyle: React.CSSProperties = {
-  position: 'absolute',
-  top: '40px',
-  left: '40px',
-  display: 'flex',
-  alignItems: 'center',
-  gap: '8px',
-  color: 'var(--text-secondary)',
-  fontSize: '0.875rem',
-  fontWeight: 500,
-};
-
-const authContentStyle: React.CSSProperties = {
-  width: '100%',
-  maxWidth: '480px',
-};
-
-const logoWrapperStyle: React.CSSProperties = {
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  gap: '12px',
-  marginBottom: '40px',
-};
-
 const formStyle: React.CSSProperties = {
   display: 'flex',
   flexDirection: 'column',
@@ -933,6 +929,10 @@ const baseInputStyle: React.CSSProperties = {
   color: 'var(--text-primary)',
   outline: 'none',
   fontSize: '0.875rem',
+  width: '100%',
+  boxSizing: 'border-box',
+  fontFamily: 'inherit',
+  transition: 'border-color 0.2s ease, box-shadow 0.2s ease',
 };
 
 const forgotLinkStyle: React.CSSProperties = {
@@ -1028,9 +1028,9 @@ export const ForgotPasswordPage: React.FC = () => {
 
   if (success) {
     return (
-      <div style={authWrapperStyle}>
-        <div style={authContentStyle}>
-          <Card style={{ padding: '48px', textAlign: 'center' }}>
+      <div className="auth-wrapper">
+        <div style={{ width: '100%', maxWidth: '480px' }}>
+          <Card className="auth-card-padding" style={{ textAlign: 'center' }}>
             <div style={verifyIconStyle}>
               <Mail size={48} color="var(--accent-primary)" />
             </div>
@@ -1049,17 +1049,20 @@ export const ForgotPasswordPage: React.FC = () => {
   }
 
   return (
-    <div style={authWrapperStyle}>
-      <Link to="/login" style={backButtonStyle}>
-        <ArrowLeft size={20} />
-      </Link>
-      
-      <div style={authContentStyle}>
-        <Link to="/" style={logoWrapperStyle}>
-          <img src={logo} alt="PATHEW Logo" style={{ height: '48px', objectFit: 'contain' }} />
+    <div className="auth-wrapper">
+      <div className="auth-header-bar" style={{ maxWidth: '480px' }}>
+        <Link to="/login" className="auth-back-button">
+          <ArrowLeft size={18} />
+          <span>Back to Login</span>
         </Link>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
+          <img src={logo} alt="PATHEW Logo" style={{ height: '40px', objectFit: 'contain' }} />
+        </Link>
+        <div style={{ width: '110px' }} />
+      </div>
 
-        <Card style={{ padding: '40px' }}>
+      <div style={{ width: '100%', maxWidth: '480px' }}>
+        <Card className="auth-card-padding">
           <h2 style={{ marginBottom: '8px' }}>Reset Password</h2>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>
             Enter your email address and we'll send you a link to reset your password.
@@ -1125,13 +1128,20 @@ export const ResetPasswordPage: React.FC = () => {
   };
 
   return (
-    <div style={authWrapperStyle}>
-      <div style={authContentStyle}>
-        <Link to="/" style={logoWrapperStyle}>
-          <img src={logo} alt="PATHEW Logo" style={{ height: '48px', objectFit: 'contain' }} />
+    <div className="auth-wrapper">
+      <div className="auth-header-bar" style={{ maxWidth: '480px' }}>
+        <Link to="/login" className="auth-back-button">
+          <ArrowLeft size={18} />
+          <span>Back to Login</span>
         </Link>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center' }}>
+          <img src={logo} alt="PATHEW Logo" style={{ height: '40px', objectFit: 'contain' }} />
+        </Link>
+        <div style={{ width: '110px' }} />
+      </div>
 
-        <Card style={{ padding: '40px' }}>
+      <div style={{ width: '100%', maxWidth: '480px' }}>
+        <Card className="auth-card-padding">
           <h2 style={{ marginBottom: '8px' }}>Create New Password</h2>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>
             Please enter your new password below.
