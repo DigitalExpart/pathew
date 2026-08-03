@@ -100,20 +100,29 @@ Deno.serve(async (req: Request) => {
         requiredCredits = 1;
       }
     } else {
-      if (documentType === 'Roadmap') {
+      const docLower = (documentType || '').toLowerCase();
+      if (docLower.includes('roadmap') || docLower.includes('preparation') || docLower.includes('plan')) {
         requiredCredits = 3;
-      } else if (documentType === 'Cover Letter' || documentType === 'Cover letter') {
+      } else if (docLower.includes('cover letter') || docLower.includes('cover_letter')) {
         requiredCredits = 1;
+      } else if (docLower.includes('cv') || docLower.includes('resume')) {
+        requiredCredits = 1;
+      } else if (docLower.includes('grant') || docLower.includes('proposal')) {
+        requiredCredits = 1.5;
       } else {
-        requiredCredits = 0;
+        // Default credit cost for any AI document generation or assistant drafting
+        requiredCredits = 1;
       }
     }
 
     if (currentCredits < requiredCredits) {
       return new Response(JSON.stringify({ 
-        draft: 'You have exhausted your free credits! Please [click here to visit your Wallet](/wallet) to subscribe to a plan and get more credits.',
+        error: 'INSUFFICIENT_CREDITS',
+        draft: 'You have exhausted your available credits! Please visit your Wallet or Pricing page to subscribe to a plan or top up your credits.',
         matchSummary: { strongMatches: [], gaps: [], priorityPoints: [] },
-        editingSuggestions: [], wordCountEstimate: 0, confidence: 'low', sessionId: sid
+        editingSuggestions: [], wordCountEstimate: 0, confidence: 'low', sessionId: sid,
+        requiredCredits,
+        creditsRemaining: currentCredits
       }), {
         status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       })

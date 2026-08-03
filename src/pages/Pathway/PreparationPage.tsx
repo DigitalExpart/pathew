@@ -29,7 +29,7 @@ import { Download } from 'lucide-react';
 export const PreparationPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const { openAssistant } = useAssistant();
   const { t } = useTranslation();
   
@@ -275,7 +275,8 @@ export const PreparationPage: React.FC = () => {
           return `Generate a ${planType} preparation plan for ${opportunity ? `"${opportunity.title}"` : 'general career growth'}${startDateStr}. Do NOT ask any clarifying questions or repeat questions. Use realistic best-fit defaults for any unstated details and generate the complete roadmap immediately. Format strictly as:\n${formatSample}\nUse short, complete, actionable sentences for all tasks.`;
         };
 
-        const autoPrompt = getAutoPrompt();
+        const hasEnoughCredits = (profile?.credits ?? 0) >= 3;
+        const autoPrompt = hasEnoughCredits ? getAutoPrompt() : undefined;
 
         if (!migratedPlan.weeks || migratedPlan.weeks.length === 0) {
           openAssistant('Pathew Assistant', [
@@ -313,7 +314,8 @@ export const PreparationPage: React.FC = () => {
           return `Generate a ${planType} preparation plan for ${opportunity ? `"${opportunity.title}"` : 'general career growth'}${startDateStr}. Do NOT ask any clarifying questions or repeat questions. Use realistic best-fit defaults for any unstated details and generate the complete roadmap immediately. Format strictly as:\n${formatSample}\nUse short, complete, actionable sentences for all tasks.`;
         };
 
-        const autoPrompt = getAutoPrompt();
+        const hasEnoughCredits = (profile?.credits ?? 0) >= 3;
+        const autoPrompt = hasEnoughCredits ? getAutoPrompt() : undefined;
 
         openAssistant('Pathew Assistant', [
           `Generate a ${planType} plan${planPages === 3 ? ' with detailed 3-page level content' : ' with a concise 1-page overview'}`,

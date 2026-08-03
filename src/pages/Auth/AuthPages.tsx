@@ -444,7 +444,7 @@ export const SignUpPage: React.FC = () => {
                 </div>
                 <h3 style={{ fontSize: '1.125rem', fontWeight: 800, marginBottom: '6px' }}>Personal Account</h3>
                 <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-                  For job seekers, researchers, and professionals building their career with AI CVs, grants, proposals & tracking.
+                  For individuals
                 </p>
               </div>
 
@@ -474,7 +474,7 @@ export const SignUpPage: React.FC = () => {
                 </div>
                 <h3 style={{ fontSize: '1.125rem', fontWeight: 800, marginBottom: '6px' }}>Business Account</h3>
                 <p style={{ fontSize: '0.8125rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
-                  For companies, NGOs, universities & teams managing members, shared org credits, team outputs & postings.
+                  For Businesses
                 </p>
               </div>
             </div>

@@ -14,7 +14,7 @@ export interface UseBuilderAiProps {
 }
 
 export const useBuilderAi = ({ builderType, defaultDocumentType, initialOpportunityId }: UseBuilderAiProps) => {
-  const { user, refreshProfile } = useAuth();
+  const { user, refreshProfile, profile } = useAuth();
   
   // Builder configuration states
   const [stage, setStage] = useState<BuilderStage>('sources');
@@ -764,6 +764,16 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
       return;
     }
 
+    const userCredits = profile?.credits ?? 0;
+    const docLower = (documentType || '').toLowerCase();
+    const reqCredits = (docLower.includes('grant') || docLower.includes('proposal')) ? 1.5 : 1;
+
+    if (userCredits < reqCredits) {
+      setError(`Insufficient Credits! You currently have ${userCredits} credit(s), but generating a ${documentType} requires ${reqCredits} credit(s). Please top up your wallet to proceed.`);
+      setStage('sources');
+      return;
+    }
+
     setIsGenerating(true);
     setError(null);
     setStage('editor');
@@ -903,6 +913,8 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
         }
       }
 
+      if (refreshProfile) refreshProfile();
+
     } catch (err: any) {
       setError(err.message || 'Draft generation failed.');
     } finally {
@@ -913,6 +925,12 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
   // 3. REGENERATE OR REWRITE AN ACTIVE SECTION
   const regenerateDraft = async (customInstructions: string) => {
     if (!user) return;
+
+    const userCredits = profile?.credits ?? 0;
+    if (userCredits < 1) {
+      setError(`Insufficient Credits! You have 0 credits remaining. Please top up your wallet to rewrite or regenerate sections.`);
+      return;
+    }
 
     setIsGenerating(true);
     setError(null);
@@ -991,6 +1009,8 @@ PAGE TARGET: ${targetPages} PAGES — MASSIVELY EXHAUSTIVE FORMAT
         { matchSummary: result.matchSummary || matchSummary, editingSuggestions: result.editingSuggestions || editingSuggestions },
         nextVersion
       );
+
+      if (refreshProfile) refreshProfile();
 
     } catch (err: any) {
       setError(err.message || 'Regeneration failed.');
