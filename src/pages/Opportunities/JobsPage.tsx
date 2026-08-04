@@ -26,8 +26,8 @@ export const JobsPage: React.FC = () => {
       const { data, error } = await supabase
         .from('opportunities')
         .select('*')
-        .in('status', ['published', 'Active', 'active'])
-        .in('type', ['job', 'Job', 'JOB'])
+        .neq('status', 'draft')
+        .or('type.eq.job,type.eq.Job,type.eq.JOB,type.is.null')
         .order('featured', { ascending: false })
         .order('created_at', { ascending: false });
       

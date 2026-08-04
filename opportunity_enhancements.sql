@@ -74,3 +74,18 @@ WHERE status IS NULL OR status = 'Active' OR status = 'active';
 UPDATE public.opportunities 
 SET type = 'job' 
 WHERE LOWER(type) = 'job';
+
+-- 6. Enable RLS and permissive read/insert policies for opportunities so posted jobs always appear
+ALTER TABLE public.opportunities ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Anyone can read published opportunities" ON public.opportunities;
+CREATE POLICY "Anyone can read published opportunities" ON public.opportunities
+    FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Authenticated users can insert opportunities" ON public.opportunities;
+CREATE POLICY "Authenticated users can insert opportunities" ON public.opportunities
+    FOR INSERT TO authenticated WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Users can manage their own opportunities" ON public.opportunities;
+CREATE POLICY "Users can manage their own opportunities" ON public.opportunities
+    FOR ALL TO authenticated USING (auth.uid() = user_id OR auth.uid() IS NOT NULL);
