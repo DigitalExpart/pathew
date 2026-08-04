@@ -353,16 +353,17 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
     }
 
     try {
+      const normalizedType = (oppType || '').toLowerCase().includes('job') ? 'job' : (oppType || 'grant');
       await supabase.from('opportunities').insert({
         title: oppTitle,
-        type: oppType,
+        type: normalizedType,
         description: oppDesc,
         organization_name: org.name,
         location: oppLocation || `${org.city}, ${org.country}`,
         apply_link: oppLink || '', // allow empty for in-platform applications
         user_id: user?.id,
         featured: false,
-        status: 'Active',
+        status: 'published',
         deadline: oppDeadline,
         available_spots: oppAvailableSpots ? parseInt(oppAvailableSpots, 10) : null,
         skills: oppSkillsNeeded ? oppSkillsNeeded.split(',').map(s => s.trim()) : [],

@@ -65,3 +65,12 @@ CREATE POLICY "Creators can update applications" ON opportunity_applications
             AND o.user_id = auth.uid()
         )
     );
+
+-- 5. Normalize opportunities status and type so all posted jobs & opportunities show on the platform
+UPDATE public.opportunities 
+SET status = 'published' 
+WHERE status IS NULL OR status = 'Active' OR status = 'active';
+
+UPDATE public.opportunities 
+SET type = 'job' 
+WHERE LOWER(type) = 'job';
