@@ -92,3 +92,7 @@ CREATE POLICY "Users can manage their own opportunities" ON public.opportunities
 
 -- 7. Drop strict work_mode check constraint if exists so both 'remote', 'onsite', 'hybrid' pass without error
 ALTER TABLE public.opportunities DROP CONSTRAINT IF EXISTS opportunities_work_mode_check;
+
+-- 8. Add media_urls and attached_documents columns to opportunity_applications
+ALTER TABLE public.opportunity_applications ADD COLUMN IF NOT EXISTS media_urls JSONB DEFAULT '[]';
+ALTER TABLE public.opportunity_applications ADD COLUMN IF NOT EXISTS attached_documents JSONB DEFAULT '[]';

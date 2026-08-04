@@ -352,6 +352,17 @@ export const OpportunityDetail: React.FC = () => {
               )}
             </div>
           </Card>
+
+          {/* Inline Application Section on Opportunity Page */}
+          <ApplyModal
+            isInline
+            opportunityId={opp.id}
+            opportunityTitle={opp.title}
+            onSuccess={() => {
+              setApplicantCount(prev => prev + 1);
+              alert("Application submitted successfully!");
+            }}
+          />
         </div>
 
         <div style={sidebarColStyle}>

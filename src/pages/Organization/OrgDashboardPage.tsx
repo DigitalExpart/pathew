@@ -1231,10 +1231,13 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
                     <p style={{ margin: 0, whiteSpace: 'pre-wrap', color: 'var(--text-primary)' }}>{app.proposal_letter}</p>
                   </div>
 
-                  <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                  {/* CV & Resume Links */}
+                  <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
                     {app.resume_url ? (
-                      <a href={app.resume_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.875rem', color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none' }}>
-                        <LinkIcon size={14} /> View Resume
+                      <a href={app.resume_url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                        <Button size="sm" variant="outline" style={{ gap: '6px', color: 'var(--accent-primary)', borderColor: 'var(--accent-primary)' }}>
+                          <FileText size={14} /> Download / View CV
+                        </Button>
                       </a>
                     ) : app.resume_text ? (
                       <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
@@ -1243,11 +1246,47 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
                     ) : null}
                     
                     {app.portfolio_url && (
-                      <a href={app.portfolio_url} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.875rem', color: 'var(--accent-primary)', display: 'flex', alignItems: 'center', gap: '6px', textDecoration: 'none' }}>
-                        <Globe size={14} /> View Portfolio
+                      <a href={app.portfolio_url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                        <Button size="sm" variant="outline" style={{ gap: '6px' }}>
+                          <Globe size={14} /> View Portfolio Link
+                        </Button>
                       </a>
                     )}
                   </div>
+
+                  {/* Media Portfolio Attachments (Videos, Images, PDFs) */}
+                  {app.media_urls && Array.isArray(app.media_urls) && app.media_urls.length > 0 && (
+                    <div style={{ marginTop: '8px', paddingTop: '12px', borderTop: '1px dashed var(--border-color)' }}>
+                      <h5 style={{ margin: '0 0 10px 0', fontSize: '0.8125rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>
+                        Attached Media Portfolio ({app.media_urls.length} Files)
+                      </h5>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '12px' }}>
+                        {app.media_urls.map((media: any, mIdx: number) => {
+                          const mUrl = typeof media === 'string' ? media : media.url;
+                          const mType = typeof media === 'object' ? media.type : (mUrl.includes('.mp4') || mUrl.includes('.mov') || mUrl.includes('video') ? 'video' : mUrl.includes('.png') || mUrl.includes('.jpg') || mUrl.includes('.jpeg') || mUrl.includes('image') ? 'image' : 'document');
+                          const mName = typeof media === 'object' ? media.name : `Attachment ${mIdx + 1}`;
+
+                          return (
+                            <div key={mIdx} style={{ padding: '10px', backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                              {mType === 'video' ? (
+                                <video src={mUrl} controls style={{ width: '100%', maxHeight: '140px', borderRadius: '6px', backgroundColor: '#000' }} />
+                              ) : mType === 'image' ? (
+                                <img src={mUrl} alt={mName} style={{ width: '100%', maxHeight: '140px', objectFit: 'cover', borderRadius: '6px' }} />
+                              ) : (
+                                <div style={{ padding: '16px', textOverflow: 'ellipsis', overflow: 'hidden', textAlign: 'center' }}>
+                                  <FileText size={32} color="var(--accent-primary)" style={{ margin: '0 auto 6px auto', display: 'block' }} />
+                                  <span style={{ fontSize: '0.75rem', color: 'var(--text-primary)', fontWeight: 600 }}>{mName}</span>
+                                </div>
+                              )}
+                              <a href={mUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.75rem', color: 'var(--accent-primary)', fontWeight: 600, textDecoration: 'none', textAlign: 'center' }}>
+                                Open Full {mType === 'video' ? 'Video' : mType === 'image' ? 'Picture' : 'File'} ↗
+                              </a>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
