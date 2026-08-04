@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   X, 
   Link as LinkIcon, 
@@ -47,6 +47,10 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({
 }) => {
   const { user, profile } = useAuth();
   
+  // React refs for file inputs to prevent duplicate DOM ID collisions
+  const cvInputRef = useRef<HTMLInputElement>(null);
+  const mediaInputRef = useRef<HTMLInputElement>(null);
+
   // Application fields
   const [resumeText, setResumeText] = useState('');
   const [resumeUrl, setResumeUrl] = useState('');
@@ -132,12 +136,20 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({
       const cleanFileName = `${user?.id || 'anon'}_${Date.now()}_${Math.random().toString(36).substring(7)}.${fileExt}`;
       const filePath = `${folder}/${cleanFileName}`;
 
-      const { error: uploadErr } = await supabase.storage
-        .from('documents')
+      let targetBucket = folder === 'portfolios' ? 'portfolios' : 'documents';
+
+      let { error: uploadErr } = await supabase.storage
+        .from(targetBucket)
         .upload(filePath, file, { upsert: true });
 
+      if (uploadErr && targetBucket !== 'documents') {
+        const res = await supabase.storage.from('documents').upload(filePath, file, { upsert: true });
+        uploadErr = res.error;
+        targetBucket = 'documents';
+      }
+
       if (!uploadErr) {
-        const { data: { publicUrl } } = supabase.storage.from('documents').getPublicUrl(filePath);
+        const { data: { publicUrl } } = supabase.storage.from(targetBucket).getPublicUrl(filePath);
         return publicUrl;
       } else {
         console.warn('Supabase storage bucket upload notice:', uploadErr.message);
@@ -146,12 +158,16 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({
       console.warn('Storage error, defaulting to Data URL fallback:', e);
     }
 
-    // Fallback Data URL for guaranteed reliability
-    return new Promise<string>((resolve) => {
-      const reader = new FileReader();
-      reader.onloadend = () => resolve(reader.result as string);
-      reader.readAsDataURL(file);
-    });
+    // Fallback Data URL for reliability (up to 15MB)
+    if (file.size < 15 * 1024 * 1024) {
+      return new Promise<string>((resolve) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(file);
+      });
+    } else {
+      throw new Error(`File ${file.name} is too large. Please upload files under 15MB.`);
+    }
   };
 
   // Handle CV File selection/drop & upload
@@ -161,14 +177,20 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({
     setUploadingCv(true);
     setError(null);
 
-    const uploadedUrl = await uploadFileToStorage(file, 'cvs');
-    if (uploadedUrl) {
-      setCvFileUrl(uploadedUrl);
-      setResumeUrl(uploadedUrl);
-    } else {
-      setError('Failed to upload CV file. Please try again.');
+    try {
+      const uploadedUrl = await uploadFileToStorage(file, 'cvs');
+      if (uploadedUrl) {
+        setCvFileUrl(uploadedUrl);
+        setResumeUrl(uploadedUrl);
+      } else {
+        setError('Failed to upload CV file. Please try again.');
+      }
+    } catch (err: any) {
+      console.error('CV upload error:', err);
+      setError('CV upload error: ' + (err.message || 'Failed to upload'));
+    } finally {
+      setUploadingCv(false);
     }
-    setUploadingCv(false);
   };
 
   const handleCvFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -183,27 +205,33 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({
     setUploadingMedia(true);
     setError(null);
 
-    const uploadedItems: MediaFileItem[] = [];
+    try {
+      const uploadedItems: MediaFileItem[] = [];
 
-    for (let i = 0; i < fileList.length; i++) {
-      const file = fileList[i];
-      const { type, format } = getMediaTypeAndFormat(file);
+      for (let i = 0; i < fileList.length; i++) {
+        const file = fileList[i];
+        const { type, format } = getMediaTypeAndFormat(file);
 
-      const url = await uploadFileToStorage(file, 'portfolios');
-      if (url) {
-        uploadedItems.push({
-          id: `${Date.now()}_${i}_${Math.random().toString(36).substring(7)}`,
-          name: file.name,
-          url,
-          type,
-          format,
-          size: file.size
-        });
+        const url = await uploadFileToStorage(file, 'portfolios');
+        if (url) {
+          uploadedItems.push({
+            id: `${Date.now()}_${i}_${Math.random().toString(36).substring(7)}`,
+            name: file.name,
+            url,
+            type,
+            format,
+            size: file.size
+          });
+        }
       }
-    }
 
-    setMediaFiles(prev => [...prev, ...uploadedItems]);
-    setUploadingMedia(false);
+      setMediaFiles(prev => [...prev, ...uploadedItems]);
+    } catch (err: any) {
+      console.error('Media upload error:', err);
+      setError('Media upload error: ' + (err.message || 'Failed to upload'));
+    } finally {
+      setUploadingMedia(false);
+    }
   };
 
   const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -264,7 +292,7 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({
 
       const finalResumeUrl = cvFileUrl || resumeUrl;
 
-      const { error: insertErr } = await supabase.from('opportunity_applications').insert({
+      const basePayload: Record<string, any> = {
         opportunity_id: opportunityId,
         applicant_id: user.id,
         resume_text: resumeText,
@@ -272,12 +300,35 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({
         proposal_letter: proposalLetter,
         portfolio_url: portfolioUrl || (mediaFiles.length > 0 ? mediaFiles[0].url : ''),
         media_urls: mediaFiles,
-        attached_documents: selectedDocId ? [selectedDocId] : [],
-        profile_attached: profileAttached,
         status: 'pending'
-      });
+      };
 
-      if (insertErr) throw insertErr;
+      // Try inserting with optional enhanced fields, with automatic fallback if database columns are missing
+      try {
+        const { error: insertErr } = await supabase.from('opportunity_applications').insert({
+          ...basePayload,
+          attached_documents: selectedDocId ? [selectedDocId] : [],
+          profile_attached: profileAttached,
+        });
+
+        if (insertErr) {
+          // If schema cache indicates missing column, fallback to standard base payload
+          if (
+            insertErr.message?.includes('attached_documents') || 
+            insertErr.message?.includes('profile_attached') ||
+            insertErr.code === 'PGRST204'
+          ) {
+            const { error: fallbackErr } = await supabase.from('opportunity_applications').insert(basePayload);
+            if (fallbackErr) throw fallbackErr;
+          } else {
+            throw insertErr;
+          }
+        }
+      } catch (insertCatch: any) {
+        // Fallback retry with core base payload
+        const { error: fallbackErr } = await supabase.from('opportunity_applications').insert(basePayload);
+        if (fallbackErr) throw fallbackErr;
+      }
 
       onSuccess();
     } catch (err: any) {
@@ -382,6 +433,7 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({
           {/* Option A: Drag & Drop / Upload CV File */}
           <div style={{ marginBottom: '18px' }}>
             <div 
+              onClick={() => cvInputRef.current?.click()}
               onDragOver={(e) => { e.preventDefault(); setIsDragOverCv(true); }}
               onDragLeave={() => setIsDragOverCv(false)}
               onDrop={async (e) => {
@@ -400,14 +452,14 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({
               }}
             >
               <input
-                id="cv-file-upload-input"
+                ref={cvInputRef}
                 type="file"
                 accept=".pdf,.doc,.docx,.txt,.rtf"
                 onChange={handleCvFileChange}
                 style={{ display: 'none' }}
               />
 
-              <label htmlFor="cv-file-upload-input" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
                 {uploadingCv ? (
                   <Loader2 size={28} className="animate-spin" color="var(--accent-primary)" />
                 ) : cvFileName ? (
@@ -437,7 +489,7 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({
                     </div>
                   )}
                 </div>
-              </label>
+              </div>
             </div>
           </div>
 
@@ -557,13 +609,15 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({
               </div>
             </div>
 
-            <label
-              htmlFor="media-file-upload-input"
+            <button
+              type="button"
+              onClick={() => mediaInputRef.current?.click()}
               style={{
                 padding: '9px 16px',
                 backgroundColor: 'var(--accent-primary)',
                 color: '#000',
                 borderRadius: '8px',
+                border: 'none',
                 cursor: 'pointer',
                 fontSize: '0.8125rem',
                 fontWeight: 700,
@@ -575,9 +629,9 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({
             >
               {uploadingMedia ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
               {uploadingMedia ? 'Uploading...' : '+ Attach Media Files'}
-            </label>
+            </button>
             <input
-              id="media-file-upload-input"
+              ref={mediaInputRef}
               type="file"
               accept="image/*,video/*,audio/*,.pdf,.doc,.docx,.ppt,.pptx,.zip"
               multiple
