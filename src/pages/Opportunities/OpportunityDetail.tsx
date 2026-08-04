@@ -159,9 +159,13 @@ export const OpportunityDetail: React.FC = () => {
         }
       }
 
-      // 3. Open external link or show internal apply modal
-      if (opp.apply_link) {
-        window.open(opp.apply_link, '_blank');
+      // 3. Open external link if valid URL provided, or show internal apply modal
+      const hasValidExternalUrl = opp.apply_link && 
+        opp.apply_link.trim().length > 0 && 
+        (opp.apply_link.startsWith('http://') || opp.apply_link.startsWith('https://'));
+
+      if (hasValidExternalUrl) {
+        window.open(opp.apply_link.trim(), '_blank');
       } else {
         setShowApplyModal(true);
       }

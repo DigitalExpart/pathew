@@ -112,6 +112,8 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
   const [oppWorkMode, setOppWorkMode] = useState('remote');
   const [oppLanguages, setOppLanguages] = useState('');
   const [oppExperienceLevel, setOppExperienceLevel] = useState('<5 years');
+  const [oppPayType, setOppPayType] = useState('hourly');
+  const [oppAmount, setOppAmount] = useState('');
   const [oppPostedMsg, setOppPostedMsg] = useState<string | null>(null);
 
   // Credit Purchase Modal
@@ -417,6 +419,17 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
 
     try {
       const normalizedType = (oppType || '').toLowerCase().includes('job') ? 'job' : (oppType || 'grant').toLowerCase();
+      let formattedSalary = oppAmount.trim();
+      if (formattedSalary) {
+        if (oppPayType === 'hourly' && !formattedSalary.toLowerCase().includes('/hr') && !formattedSalary.toLowerCase().includes('/hour')) {
+          formattedSalary = `${formattedSalary}/hr`;
+        } else if (oppPayType === 'fixed' && !formattedSalary.toLowerCase().includes('fixed')) {
+          formattedSalary = `${formattedSalary} (Fixed)`;
+        } else if (oppPayType === 'monthly' && !formattedSalary.toLowerCase().includes('/month') && !formattedSalary.toLowerCase().includes('/mo')) {
+          formattedSalary = `${formattedSalary}/month`;
+        }
+      }
+
       const { error } = await supabase.from('opportunities').insert({
         title: oppTitle,
         type: normalizedType,
@@ -433,6 +446,8 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
         work_mode: (oppWorkMode || 'remote').toLowerCase().replace('on-site', 'onsite'),
         languages: oppLanguages ? oppLanguages.split(',').map(s => s.trim()) : [],
         experience_level: oppExperienceLevel || null,
+        salary: formattedSalary || null,
+        amount: formattedSalary || null,
       });
 
       if (error) {
@@ -450,6 +465,7 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
       setOppSkillsNeeded('');
       setOppLocation('');
       setOppLanguages('');
+      setOppAmount('');
 
       fetchPostedOpps();
     } catch (err: any) {
@@ -909,6 +925,34 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
                   type="date"
                   value={oppDeadline}
                   onChange={e => setOppDeadline(e.target.value)}
+                  style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                />
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <div>
+                <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Pay / Rate Type</label>
+                <select
+                  value={oppPayType}
+                  onChange={e => setOppPayType(e.target.value)}
+                  style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                >
+                  <option value="fixed">Fixed Budget / Amount</option>
+                  <option value="hourly">Hourly Rate ($/hr)</option>
+                  <option value="monthly">Monthly Salary</option>
+                  <option value="annual">Annual Salary</option>
+                  <option value="unpaid">Unpaid / Equity</option>
+                </select>
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px' }}>Amount / Compensation Range</label>
+                <input
+                  type="text"
+                  placeholder={oppPayType === 'hourly' ? 'e.g. $30/hr or £25-£35/hr' : oppPayType === 'fixed' ? 'e.g. $500 or ₦150,000' : 'e.g. £50,000/yr'}
+                  value={oppAmount}
+                  onChange={e => setOppAmount(e.target.value)}
                   style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
                 />
               </div>
