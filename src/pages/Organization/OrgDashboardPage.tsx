@@ -353,24 +353,31 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
     }
 
     try {
-      const normalizedType = (oppType || '').toLowerCase().includes('job') ? 'job' : (oppType || 'grant');
-      await supabase.from('opportunities').insert({
+      const normalizedType = (oppType || '').toLowerCase().includes('job') ? 'job' : (oppType || 'grant').toLowerCase();
+      const { error } = await supabase.from('opportunities').insert({
         title: oppTitle,
         type: normalizedType,
-        description: oppDesc,
+        description: oppDesc || null,
         organization_name: org.name,
-        location: oppLocation || `${org.city}, ${org.country}`,
+        location: oppLocation || (org.city && org.country ? `${org.city}, ${org.country}` : org.country || org.city || 'Remote'),
         apply_link: oppLink || '', // allow empty for in-platform applications
         user_id: user?.id,
         featured: false,
         status: 'published',
-        deadline: oppDeadline,
+        deadline: oppDeadline && oppDeadline.trim() ? oppDeadline : null,
         available_spots: oppAvailableSpots ? parseInt(oppAvailableSpots, 10) : null,
         skills: oppSkillsNeeded ? oppSkillsNeeded.split(',').map(s => s.trim()) : [],
-        work_mode: oppWorkMode,
+        work_mode: oppWorkMode || 'Remote',
         languages: oppLanguages ? oppLanguages.split(',').map(s => s.trim()) : [],
-        experience_level: oppExperienceLevel,
+        experience_level: oppExperienceLevel || null,
       });
+
+      if (error) {
+        console.error('Error posting opportunity:', error);
+        setOppPostedMsg('Failed to post opportunity: ' + error.message);
+        return;
+      }
+
       setOppPostedMsg('Opportunity posted successfully on behalf of ' + org.name + '!');
       setOppTitle('');
       setOppDesc('');

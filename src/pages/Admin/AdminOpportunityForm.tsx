@@ -78,11 +78,15 @@ export const AdminOpportunityForm: React.FC = () => {
     e.preventDefault();
     setLoading(true);
     try {
+      const payload = {
+        ...formData,
+        deadline: formData.deadline && formData.deadline.trim() ? formData.deadline : null
+      };
       if (id) {
-        const { error } = await supabase.from('opportunities').update(formData).eq('id', id);
+        const { error } = await supabase.from('opportunities').update(payload).eq('id', id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from('opportunities').insert([formData]);
+        const { error } = await supabase.from('opportunities').insert([payload]);
         if (error) throw error;
       }
       navigate('/admin/opportunities');
