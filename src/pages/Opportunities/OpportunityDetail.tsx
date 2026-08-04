@@ -45,6 +45,8 @@ export const OpportunityDetail: React.FC = () => {
   const [isMobile, setIsMobile] = React.useState(window.innerWidth <= 768);
   const [showApplyModal, setShowApplyModal] = React.useState(false);
   const [applicantCount, setApplicantCount] = React.useState<number>(0);
+  const [hiredCount, setHiredCount] = React.useState<number>(0);
+  const [userAppStatus, setUserAppStatus] = React.useState<string | null>(null);
 
   React.useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth <= 768);
@@ -65,14 +67,23 @@ export const OpportunityDetail: React.FC = () => {
         if (error) throw error;
         setOpp(data);
 
-        // Fetch applicant count
-        const { count, error: countErr } = await supabase
+        // Fetch applicant count & hired status
+        const { data: appRecords, count, error: countErr } = await supabase
           .from('opportunity_applications')
-          .select('*', { count: 'exact', head: true })
+          .select('id, status, applicant_id', { count: 'exact' })
           .eq('opportunity_id', id);
         
-        if (!countErr && count !== null) {
-          setApplicantCount(count);
+        if (!countErr && appRecords) {
+          setApplicantCount(count !== null ? count : appRecords.length);
+          const hiredList = appRecords.filter(a => a.status === 'hired');
+          setHiredCount(hiredList.length);
+
+          if (user) {
+            const myApp = appRecords.find(a => a.applicant_id === user.id);
+            if (myApp) {
+              setUserAppStatus(myApp.status);
+            }
+          }
         }
 
       } catch (error) {
@@ -82,7 +93,7 @@ export const OpportunityDetail: React.FC = () => {
       }
     };
     fetchOpp();
-  }, [id]);
+  }, [id, user]);
 
   const handleFitAnalysis = () => {
     if (!opp) return;
@@ -208,8 +219,20 @@ export const OpportunityDetail: React.FC = () => {
         <div style={headerMainStyle}>
           <div style={{ ...companyLogoStyle, flexShrink: 0, width: isMobile ? '48px' : '64px', height: isMobile ? '48px' : '64px', fontSize: isMobile ? '1.25rem' : '1.5rem', borderRadius: isMobile ? '12px' : '16px' }}>{(opp.organization_name || opp.funder_name || 'O').charAt(0)}</div>
           <div>
-            <h1 style={{ ...titleStyle, fontSize: isMobile ? '1.125rem' : '1.5rem' }}>{opp.title}</h1>
-            <p style={{ ...companyNameStyle, fontSize: isMobile ? '0.9375rem' : '1.125rem' }}>{opp.organization_name || opp.funder_name || t('opportunities.variousSources')}</p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+              <h1 style={{ ...titleStyle, fontSize: isMobile ? '1.125rem' : '1.5rem', margin: 0 }}>{opp.title}</h1>
+              {hiredCount > 0 && (
+                <Badge variant="success" style={{ backgroundColor: '#22c55e', color: '#fff', padding: '4px 10px', fontSize: '0.75rem', fontWeight: 800 }}>
+                  ✓ HIRED ({hiredCount})
+                </Badge>
+              )}
+              {userAppStatus === 'hired' && (
+                <Badge variant="success" style={{ backgroundColor: '#22c55e', color: '#fff', padding: '4px 10px', fontSize: '0.75rem', fontWeight: 800 }}>
+                  🎉 YOU ARE HIRED!
+                </Badge>
+              )}
+            </div>
+            <p style={{ ...companyNameStyle, fontSize: isMobile ? '0.9375rem' : '1.125rem', marginTop: '6px' }}>{opp.organization_name || opp.funder_name || t('opportunities.variousSources')}</p>
           </div>
         </div>
         <div style={{ ...headerActionsStyle, width: isMobile ? '100%' : 'auto' }}>
@@ -392,7 +415,20 @@ export const OpportunityDetail: React.FC = () => {
               {opp.amount && <InfoItem icon={Gift} label={t('opportunities.funding')} value={opp.amount} />}
               {opp.work_mode && <InfoItem icon={Target} label={t('opportunities.mode')} value={opp.work_mode} />}
               {opp.available_spots && <InfoItem icon={Users} label="Spots" value={opp.available_spots.toString()} />}
-              {applicantCount > 0 && <InfoItem icon={Users} label="Applicants" value={applicantCount.toString()} />}
+              
+              {/* Always display Applicants Count */}
+              <InfoItem icon={Users} label="Applicants" value={`${applicantCount} ${applicantCount === 1 ? 'Applicant' : 'Applicants'}`} />
+              
+              {/* Display Hired Status if Org has Hired */}
+              {hiredCount > 0 && (
+                <InfoItem icon={CheckCircle2} label="Hired Status" value={`Hired (${hiredCount} candidate${hiredCount > 1 ? 's' : ''})`} />
+              )}
+
+              {/* Display User Application Status */}
+              {userAppStatus && (
+                <InfoItem icon={Briefcase} label="Your Status" value={userAppStatus === 'hired' ? 'HIRED 🎉' : userAppStatus === 'declined' ? 'Declined' : 'Applied (Pending)'} />
+              )}
+
               {opp.experience_level && <InfoItem icon={Briefcase} label="Experience" value={opp.experience_level} />}
             </div>
           </Card>

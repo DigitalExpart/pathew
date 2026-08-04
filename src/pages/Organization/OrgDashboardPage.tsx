@@ -236,6 +236,7 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
           opps.forEach(o => {
             o.applications = appsMap[o.id] || [];
             o.applicant_count = (appsMap[o.id] || []).length;
+            o.hired_count = (appsMap[o.id] || []).filter(a => a.status === 'hired').length;
           });
         }
         setPostedOpps(opps);
@@ -1098,6 +1099,11 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
                         <Badge variant={opp.status === 'published' || opp.status === 'Active' ? 'success' : 'outline'}>
                           {opp.status || 'published'}
                         </Badge>
+                        {opp.hired_count > 0 && (
+                          <Badge variant="success" style={{ backgroundColor: '#22c55e', color: '#fff', fontWeight: 800 }}>
+                            ✓ HIRED ({opp.hired_count})
+                          </Badge>
+                        )}
                         <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
                           Posted: {new Date(opp.created_at).toLocaleDateString()}
                         </span>
