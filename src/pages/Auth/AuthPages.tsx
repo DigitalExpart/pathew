@@ -558,7 +558,7 @@ export const SignUpPage: React.FC = () => {
                 </div>
 
                 <div>
-                  <label style={labelStyle}>Tax / VAT Number (Optional)</label>
+                  <label style={labelStyle}>Tax / VAT Number</label>
                   <input
                     type="text"
                     placeholder="VAT123456789"
