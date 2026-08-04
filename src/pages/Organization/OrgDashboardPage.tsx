@@ -25,7 +25,15 @@ import {
   Mail,
   Globe,
   ListFilter,
-  ExternalLink
+  ExternalLink,
+  User,
+  Phone,
+  MapPin,
+  GraduationCap,
+  Award,
+  FolderGit2,
+  Calendar,
+  Eye
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -63,6 +71,7 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
   // Applicants State
   const [applicants, setApplicants] = useState<any[]>([]);
   const [loadingApplicants, setLoadingApplicants] = useState(false);
+  const [inspectingApplicant, setInspectingApplicant] = useState<any | null>(null);
 
   // Posted Opportunities State
   const [postedOpps, setPostedOpps] = useState<any[]>([]);
@@ -170,16 +179,18 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
           .order('created_at', { ascending: false });
           
         if (!appsErr && appsData) {
-          const applicantIds = appsData.map(a => a.applicant_id);
-          const { data: profiles, error: profErr } = await supabase
-            .from('profiles')
-            .select('id, full_name, avatar_url, target_role, email')
-            .in('id', applicantIds);
-            
-          if (!profErr && profiles) {
-             appsData.forEach(app => {
-               app.profile = profiles.find(p => p.id === app.applicant_id);
-             });
+          const applicantIds = appsData.map(a => a.applicant_id).filter(Boolean);
+          if (applicantIds.length > 0) {
+            const { data: profiles, error: profErr } = await supabase
+              .from('profiles')
+              .select('*')
+              .in('id', applicantIds);
+              
+            if (!profErr && profiles) {
+               appsData.forEach(app => {
+                 app.profile = profiles.find(p => p.id === app.applicant_id) || null;
+               });
+            }
           }
           setApplicants(appsData);
         }
@@ -1190,16 +1201,27 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
                 <div key={app.id} style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '16px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '12px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                      <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'var(--bg-primary)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <div 
+                        onClick={() => setInspectingApplicant(app)}
+                        style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'var(--accent-glow)', border: '2px solid var(--accent-primary)', overflow: 'hidden', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                        title="Click to view applicant full profile"
+                      >
                         {app.profile?.avatar_url ? (
                           <img src={app.profile.avatar_url} alt="Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                         ) : (
-                          <UserCheck size={24} color="var(--text-muted)" />
+                          <User size={24} color="var(--accent-primary)" />
                         )}
                       </div>
                       <div>
-                        <h4 style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-                          {app.profile?.full_name || 'Anonymous User'}
+                        <h4 
+                          onClick={() => setInspectingApplicant(app)}
+                          style={{ margin: 0, fontSize: '1.05rem', fontWeight: 700, color: 'var(--text-primary)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px' }}
+                          title="Click to view applicant full profile"
+                        >
+                          <span>{app.profile?.full_name || app.profile?.name || (app.profile?.email ? app.profile.email.split('@')[0] : null) || `Applicant #${app.applicant_id.substring(0, 6)}`}</span>
+                          <span style={{ fontSize: '0.75rem', color: 'var(--accent-primary)', fontWeight: 600, textDecoration: 'underline' }}>
+                            (View Full Profile ↗)
+                          </span>
                         </h4>
                         <p style={{ margin: '2px 0 0 0', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
                           Applied for: <strong style={{ color: 'var(--text-primary)' }}>{app.opportunities?.title || 'Unknown Opportunity'}</strong>
@@ -1207,7 +1229,11 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
                       </div>
                     </div>
                     
-                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+                      <Button size="sm" variant="outline" onClick={() => setInspectingApplicant(app)} style={{ gap: '6px', color: 'var(--accent-primary)', borderColor: 'rgba(245, 158, 11, 0.4)' }}>
+                        <Eye size={14} /> View Full Profile
+                      </Button>
+
                       <Badge variant={app.status === 'hired' ? 'success' : app.status === 'declined' ? 'danger' : 'warning'}>
                         {app.status.toUpperCase()}
                       </Badge>
@@ -1772,6 +1798,380 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
               <Button variant="outline" onClick={() => setSelectedMember(null)}>
                 Close
               </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* APPLICANT FULL PROFILE INSPECTOR MODAL */}
+      {inspectingApplicant && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          backdropFilter: 'blur(8px)',
+          WebkitBackdropFilter: 'blur(8px)',
+          zIndex: 99999,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '16px'
+        }}>
+          <div style={{
+            backgroundColor: 'var(--bg-primary)',
+            border: '1px solid var(--border-color)',
+            borderRadius: '20px',
+            width: '100%',
+            maxWidth: '880px',
+            maxHeight: '92vh',
+            overflowY: 'auto',
+            boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.7)',
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            {/* Modal Header */}
+            <div style={{
+              padding: '24px',
+              borderBottom: '1px solid var(--border-color)',
+              backgroundColor: 'var(--bg-secondary)',
+              borderTopLeftRadius: '20px',
+              borderTopRightRadius: '20px',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              flexWrap: 'wrap',
+              gap: '16px'
+            }}>
+              <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                <div style={{
+                  width: '64px',
+                  height: '64px',
+                  borderRadius: '50%',
+                  backgroundColor: 'var(--accent-glow)',
+                  border: '2px solid var(--accent-primary)',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 800,
+                  fontSize: '1.5rem',
+                  color: 'var(--accent-primary)',
+                  flexShrink: 0
+                }}>
+                  {inspectingApplicant.profile?.avatar_url ? (
+                    <img src={inspectingApplicant.profile.avatar_url} alt="Profile Avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                  ) : (
+                    (inspectingApplicant.profile?.full_name || inspectingApplicant.profile?.name || inspectingApplicant.profile?.email || 'A').charAt(0).toUpperCase()
+                  )}
+                </div>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
+                    <h2 style={{ margin: 0, fontSize: '1.35rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+                      {inspectingApplicant.profile?.full_name || inspectingApplicant.profile?.name || (inspectingApplicant.profile?.email ? inspectingApplicant.profile.email.split('@')[0] : null) || `Applicant #${inspectingApplicant.applicant_id.substring(0, 8)}`}
+                    </h2>
+                    <Badge variant={inspectingApplicant.status === 'hired' ? 'success' : inspectingApplicant.status === 'declined' ? 'danger' : 'warning'}>
+                      {inspectingApplicant.status.toUpperCase()}
+                    </Badge>
+                  </div>
+
+                  <p style={{ margin: '4px 0 0 0', fontSize: '0.875rem', color: 'var(--accent-primary)', fontWeight: 600 }}>
+                    {inspectingApplicant.profile?.target_role || inspectingApplicant.profile?.headline || 'PATHEW Candidate'}
+                  </p>
+
+                  <p style={{ margin: '4px 0 0 0', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+                    Applied for: <strong style={{ color: 'var(--text-primary)' }}>{inspectingApplicant.opportunities?.title || 'Opportunity'}</strong>
+                  </p>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                {inspectingApplicant.status === 'pending' && (
+                  <>
+                    <Button size="sm" variant="outline" onClick={() => { handleUpdateApplicationStatus(inspectingApplicant.id, 'declined'); setInspectingApplicant({ ...inspectingApplicant, status: 'declined' }); }} style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)' }}>
+                      Decline
+                    </Button>
+                    <Button size="sm" onClick={() => { handleUpdateApplicationStatus(inspectingApplicant.id, 'hired'); setInspectingApplicant({ ...inspectingApplicant, status: 'hired' }); }} style={{ backgroundColor: '#22c55e', color: '#fff' }}>
+                      Hire Candidate
+                    </Button>
+                  </>
+                )}
+                <button 
+                  onClick={() => setInspectingApplicant(null)} 
+                  style={{ background: 'var(--bg-primary)', border: '1px solid var(--border-color)', color: 'var(--text-muted)', borderRadius: '50%', width: '36px', height: '36px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}
+                >
+                  <X size={20} />
+                </button>
+              </div>
+            </div>
+
+            {/* Modal Body */}
+            <div style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              
+              {/* Contact & Links Bar */}
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px', padding: '16px', backgroundColor: 'var(--bg-secondary)', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+                {inspectingApplicant.profile?.email && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8125rem', color: 'var(--text-primary)' }}>
+                    <Mail size={15} color="var(--accent-primary)" />
+                    <span>{inspectingApplicant.profile.email}</span>
+                  </div>
+                )}
+                {inspectingApplicant.profile?.phone && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8125rem', color: 'var(--text-primary)' }}>
+                    <Phone size={15} color="var(--accent-primary)" />
+                    <span>{inspectingApplicant.profile.phone}</span>
+                  </div>
+                )}
+                {(inspectingApplicant.profile?.location || inspectingApplicant.profile?.country) && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8125rem', color: 'var(--text-primary)' }}>
+                    <MapPin size={15} color="var(--accent-primary)" />
+                    <span>{inspectingApplicant.profile.location || inspectingApplicant.profile.country}</span>
+                  </div>
+                )}
+                {(inspectingApplicant.profile?.portfolio_url || inspectingApplicant.portfolio_url) && (
+                  <a 
+                    href={inspectingApplicant.profile?.portfolio_url || inspectingApplicant.portfolio_url} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8125rem', color: 'var(--accent-primary)', fontWeight: 600, textDecoration: 'none' }}
+                  >
+                    <Globe size={15} />
+                    <span>Portfolio Website ↗</span>
+                  </a>
+                )}
+              </div>
+
+              {/* 1. About & Career Story */}
+              {(inspectingApplicant.profile?.story || inspectingApplicant.profile?.bio) && (
+                <div>
+                  <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 8px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <User size={18} color="var(--accent-primary)" />
+                    About & Profile Bio
+                  </h3>
+                  <p style={{ margin: 0, padding: '14px', backgroundColor: 'var(--bg-secondary)', borderRadius: '10px', fontSize: '0.875rem', color: 'var(--text-primary)', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
+                    {inspectingApplicant.profile.story || inspectingApplicant.profile.bio}
+                  </p>
+                </div>
+              )}
+
+              {/* 2. Skills & Technical Expertise */}
+              {inspectingApplicant.profile?.skills && (Array.isArray(inspectingApplicant.profile.skills) ? inspectingApplicant.profile.skills.length > 0 : Boolean(inspectingApplicant.profile.skills)) && (
+                <div>
+                  <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 10px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Sparkles size={18} color="var(--accent-primary)" />
+                    Skills & Technical Expertise
+                  </h3>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+                    {(Array.isArray(inspectingApplicant.profile.skills) 
+                      ? inspectingApplicant.profile.skills 
+                      : typeof inspectingApplicant.profile.skills === 'string' 
+                      ? inspectingApplicant.profile.skills.split(',') 
+                      : []
+                    ).map((skill: string, idx: number) => (
+                      <span key={idx} style={{ padding: '6px 12px', backgroundColor: 'var(--accent-glow)', color: 'var(--accent-primary)', border: '1px solid rgba(245, 158, 11, 0.3)', borderRadius: '16px', fontSize: '0.8125rem', fontWeight: 600 }}>
+                        {skill.trim()}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 3. Work Experience */}
+              {inspectingApplicant.profile?.experience && Array.isArray(inspectingApplicant.profile.experience) && inspectingApplicant.profile.experience.length > 0 && (
+                <div>
+                  <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 12px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Briefcase size={18} color="var(--accent-primary)" />
+                    Work Experience ({inspectingApplicant.profile.experience.length})
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {inspectingApplicant.profile.experience.map((exp: any, idx: number) => (
+                      <div key={idx} style={{ padding: '14px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '10px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '8px' }}>
+                          <div>
+                            <h4 style={{ margin: 0, fontSize: '0.9375rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                              {exp.role || exp.title || exp.position || 'Position'}
+                            </h4>
+                            <p style={{ margin: '2px 0 0 0', fontSize: '0.8125rem', color: 'var(--accent-primary)', fontWeight: 600 }}>
+                              {exp.company || exp.organisation || exp.employer || 'Company'} {exp.location && `• ${exp.location}`}
+                            </p>
+                          </div>
+                          {(exp.start_date || exp.dates || exp.duration) && (
+                            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', backgroundColor: 'var(--bg-primary)', padding: '2px 8px', borderRadius: '6px' }}>
+                              <Calendar size={12} style={{ display: 'inline', verticalAlign: 'middle', marginRight: '4px' }} />
+                              {exp.start_date ? `${exp.start_date} - ${exp.end_date || 'Present'}` : exp.dates || exp.duration}
+                            </span>
+                          )}
+                        </div>
+                        {exp.description && (
+                          <p style={{ margin: '8px 0 0 0', fontSize: '0.8125rem', color: 'var(--text-secondary)', lineHeight: 1.5, whiteSpace: 'pre-wrap' }}>
+                            {exp.description}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 4. Education & Certifications */}
+              {((inspectingApplicant.profile?.education && Array.isArray(inspectingApplicant.profile.education) && inspectingApplicant.profile.education.length > 0) ||
+                (inspectingApplicant.profile?.certifications && Array.isArray(inspectingApplicant.profile.certifications) && inspectingApplicant.profile.certifications.length > 0)) && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px' }}>
+                  
+                  {/* Education */}
+                  {inspectingApplicant.profile?.education && Array.isArray(inspectingApplicant.profile.education) && inspectingApplicant.profile.education.length > 0 && (
+                    <div>
+                      <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 10px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <GraduationCap size={18} color="var(--accent-primary)" />
+                        Education
+                      </h3>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        {inspectingApplicant.profile.education.map((edu: any, idx: number) => (
+                          <div key={idx} style={{ padding: '12px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '10px' }}>
+                            <h4 style={{ margin: 0, fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                              {edu.degree || edu.field_of_study || 'Degree / Qualification'}
+                            </h4>
+                            <p style={{ margin: '2px 0 0 0', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+                              {edu.school || edu.institution || edu.university || 'Educational Institution'}
+                            </p>
+                            {(edu.start_year || edu.end_year || edu.year) && (
+                              <p style={{ margin: '4px 0 0 0', fontSize: '0.75rem', color: 'var(--accent-primary)' }}>
+                                {edu.start_year ? `${edu.start_year} - ${edu.end_year || 'Present'}` : edu.year}
+                              </p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Certifications */}
+                  {inspectingApplicant.profile?.certifications && Array.isArray(inspectingApplicant.profile.certifications) && inspectingApplicant.profile.certifications.length > 0 && (
+                    <div>
+                      <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 10px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <Award size={18} color="var(--accent-primary)" />
+                        Certifications
+                      </h3>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        {inspectingApplicant.profile.certifications.map((cert: any, idx: number) => (
+                          <div key={idx} style={{ padding: '12px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '10px' }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                              <div>
+                                <h4 style={{ margin: 0, fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                                  {cert.name || cert.title || 'Certificate'}
+                                </h4>
+                                <p style={{ margin: '2px 0 0 0', fontSize: '0.8125rem', color: 'var(--text-muted)' }}>
+                                  {cert.issuer || cert.organization || 'Issuing Body'}
+                                </p>
+                              </div>
+                              {(cert.credential_url || cert.url) && (
+                                <a href={cert.credential_url || cert.url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent-primary)', fontSize: '0.75rem', fontWeight: 600, textDecoration: 'none' }}>
+                                  Verify ↗
+                                </a>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 5. Projects & Portfolios */}
+              {inspectingApplicant.profile?.projects && Array.isArray(inspectingApplicant.profile.projects) && inspectingApplicant.profile.projects.length > 0 && (
+                <div>
+                  <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 10px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <FolderGit2 size={18} color="var(--accent-primary)" />
+                    Projects & Work Showcase ({inspectingApplicant.profile.projects.length})
+                  </h3>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '12px' }}>
+                    {inspectingApplicant.profile.projects.map((proj: any, idx: number) => (
+                      <div key={idx} style={{ padding: '14px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '10px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <h4 style={{ margin: 0, fontSize: '0.875rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                          {proj.title || proj.name || 'Project'}
+                        </h4>
+                        {proj.description && (
+                          <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-secondary)', lineHeight: 1.4 }}>
+                            {proj.description}
+                          </p>
+                        )}
+                        {(proj.link || proj.url) && (
+                          <a href={proj.link || proj.url} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.75rem', color: 'var(--accent-primary)', fontWeight: 600, marginTop: 'auto', textDecoration: 'none' }}>
+                            View Project ↗
+                          </a>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* 6. Application Submissions (Proposal, Attached CV & Media) */}
+              <div style={{ padding: '18px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '12px' }}>
+                <h3 style={{ fontSize: '1rem', fontWeight: 700, margin: '0 0 12px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <FileText size={18} color="var(--accent-primary)" />
+                  Application Documents & Cover Letter
+                </h3>
+
+                <div style={{ marginBottom: '14px', padding: '14px', backgroundColor: 'var(--bg-primary)', borderRadius: '8px' }}>
+                  <h5 style={{ margin: '0 0 6px 0', fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Submitted Proposal / Cover Letter</h5>
+                  <p style={{ margin: 0, fontSize: '0.875rem', whiteSpace: 'pre-wrap', color: 'var(--text-primary)', lineHeight: 1.6 }}>
+                    {inspectingApplicant.proposal_letter}
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: inspectingApplicant.media_urls?.length ? '14px' : '0' }}>
+                  {inspectingApplicant.resume_url ? (
+                    <a href={inspectingApplicant.resume_url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+                      <Button size="sm" variant="outline" style={{ gap: '6px', color: 'var(--accent-primary)', borderColor: 'var(--accent-primary)' }}>
+                        <FileText size={14} /> Download / View Attached CV
+                      </Button>
+                    </a>
+                  ) : inspectingApplicant.resume_text ? (
+                    <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                      📄 Resume Text Provided in Application
+                    </span>
+                  ) : null}
+                </div>
+
+                {/* Attached Media Portfolio Files */}
+                {inspectingApplicant.media_urls && Array.isArray(inspectingApplicant.media_urls) && inspectingApplicant.media_urls.length > 0 && (
+                  <div style={{ paddingTop: '12px', borderTop: '1px dashed var(--border-color)' }}>
+                    <h5 style={{ margin: '0 0 10px 0', fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 700 }}>
+                      Attached Media Files ({inspectingApplicant.media_urls.length})
+                    </h5>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '12px' }}>
+                      {inspectingApplicant.media_urls.map((media: any, mIdx: number) => {
+                        const mUrl = typeof media === 'string' ? media : media.url;
+                        const mType = typeof media === 'object' ? media.type : (mUrl.includes('.mp4') || mUrl.includes('.mov') || mUrl.includes('video') ? 'video' : mUrl.includes('.png') || mUrl.includes('.jpg') || mUrl.includes('image') ? 'image' : 'document');
+                        const mName = typeof media === 'object' ? media.name : `Attachment ${mIdx + 1}`;
+
+                        return (
+                          <div key={mIdx} style={{ padding: '10px', backgroundColor: 'var(--bg-primary)', border: '1px solid var(--border-color)', borderRadius: '8px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                            {mType === 'video' ? (
+                              <video src={mUrl} controls style={{ width: '100%', maxHeight: '120px', borderRadius: '6px', backgroundColor: '#000' }} />
+                            ) : mType === 'image' ? (
+                              <img src={mUrl} alt={mName} style={{ width: '100%', maxHeight: '120px', objectFit: 'cover', borderRadius: '6px' }} />
+                            ) : (
+                              <div style={{ padding: '12px', textOverflow: 'ellipsis', overflow: 'hidden', textAlign: 'center' }}>
+                                <FileText size={28} color="var(--accent-primary)" style={{ margin: '0 auto 4px auto', display: 'block' }} />
+                                <span style={{ fontSize: '0.75rem', color: 'var(--text-primary)', fontWeight: 600 }}>{mName}</span>
+                              </div>
+                            )}
+                            <a href={mUrl} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.75rem', color: 'var(--accent-primary)', fontWeight: 600, textDecoration: 'none', textAlign: 'center' }}>
+                              Open {mType === 'video' ? 'Video' : mType === 'image' ? 'Picture' : 'File'} ↗
+                            </a>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
+
             </div>
           </div>
         </div>
