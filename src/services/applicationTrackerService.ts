@@ -319,9 +319,8 @@ export const addApplicationTrackerEntry = async (
         };
       }
 
-      // Deduct 0.25 credit: Try RPC first (SECURITY DEFINER), fallback to direct profiles update
+      // Deduct 0.25 credit: Try RPC (SECURITY DEFINER)
       let newCredits = Math.max(0, parseFloat((currentCredits - TRACKER_ACTION_COST).toFixed(2)));
-      let deductionDone = false;
 
       try {
         const { data: rpcCredits, error: rpcErr } = await supabase.rpc('decrement_credits', {
@@ -329,27 +328,13 @@ export const addApplicationTrackerEntry = async (
           amount: TRACKER_ACTION_COST,
         });
 
-        if (!rpcErr && typeof rpcCredits === 'number' && rpcCredits < currentCredits) {
+        if (!rpcErr && typeof rpcCredits === 'number') {
           newCredits = rpcCredits;
-          deductionDone = true;
         } else if (rpcErr) {
-          console.warn('RPC decrement_credits returned error, using profile fallback:', rpcErr.message);
+          console.warn('RPC decrement_credits returned error:', rpcErr.message);
         }
       } catch (rpcException) {
         console.warn('RPC decrement_credits exception:', rpcException);
-      }
-
-      if (!deductionDone) {
-        const { error: profileErr } = await supabase
-          .from('profiles')
-          .update({ credits: newCredits })
-          .eq('id', userId);
-
-        if (profileErr) {
-          console.error('Direct profile credit update error:', profileErr.message);
-        } else {
-          deductionDone = true;
-        }
       }
 
       // Record transaction

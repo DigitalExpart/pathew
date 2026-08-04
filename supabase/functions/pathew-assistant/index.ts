@@ -115,17 +115,28 @@ Deno.serve(async (req: Request) => {
       }
     }
 
-    if (currentCredits < requiredCredits) {
-      return new Response(JSON.stringify({ 
-        error: 'INSUFFICIENT_CREDITS',
-        draft: 'You have exhausted your available credits! Please visit your Wallet or Pricing page to subscribe to a plan or top up your credits.',
-        matchSummary: { strongMatches: [], gaps: [], priorityPoints: [] },
-        editingSuggestions: [], wordCountEstimate: 0, confidence: 'low', sessionId: sid,
-        requiredCredits,
-        creditsRemaining: currentCredits
-      }), {
-        status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-      })
+    let newCreditsAfterDeduction = currentCredits;
+    if (requiredCredits > 0) {
+      const { data: rpcNewCredits, error: creditError } = await supabaseAdmin.rpc('decrement_credits', {
+        user_id: user.id,
+        amount: requiredCredits
+      });
+
+      if (creditError || rpcNewCredits === null || typeof rpcNewCredits !== 'number') {
+        console.error(`[CREDIT ERROR PRE-CHECK] ${creditError?.message || 'Failed to decrement credits'} for user ${user.id}`);
+        return new Response(JSON.stringify({ 
+          error: 'INSUFFICIENT_CREDITS',
+          draft: 'You have exhausted your available credits! Please visit your Wallet or Pricing page to subscribe to a plan or top up your credits.',
+          matchSummary: { strongMatches: [], gaps: [], priorityPoints: [] },
+          editingSuggestions: [], wordCountEstimate: 0, confidence: 'low', sessionId: sid,
+          requiredCredits,
+          creditsRemaining: currentCredits
+        }), {
+          status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        });
+      }
+      newCreditsAfterDeduction = rpcNewCredits;
+      console.log(`[CREDITS DEDUCTED PRE-FLIGHT] ${currentCredits} -> ${newCreditsAfterDeduction} (Cost: ${requiredCredits}) for user ${user.id}`);
     }
 
     // Fetch opportunity details
@@ -954,16 +965,8 @@ ${taskPrompt}
               parsedMetadata.draft = draftContent
               parsedMetadata.sessionId = sid
 
-              // === DEDUCT CREDIT ===
+              // Credits were already atomically deducted pre-flight
               let creditCost = requiredCredits;
-
-              // H2: Use RPC for atomic credit deduction
-              const { data: newCredits, error: creditError } = await supabaseAdmin.rpc('decrement_credits', {
-                user_id: user.id,
-                amount: creditCost
-              });
-              if (creditError) console.error(`[CREDIT ERROR] ${creditError.message}`)
-              else console.log(`[CREDITS] ${currentCredits} -> ${newCredits} (Cost: ${creditCost}) for user ${user.id}`)
 
               // === SAVE TO HISTORY ===
               if (!sessionId) {
@@ -1000,7 +1003,7 @@ ${taskPrompt}
               if (asstMsgError) console.error(`[HISTORY ERROR ASST] ${asstMsgError.message}`)
               else console.log(`[HISTORY] Saved messages for session ${sid}`)
 
-              parsedMetadata.creditsRemaining = newCredits
+              parsedMetadata.creditsRemaining = newCreditsAfterDeduction
               parsedMetadata.creditsDeducted = creditCost
 
               controller.enqueue(encoder.encode(`data: ${JSON.stringify({ type: 'done', metadata: parsedMetadata })}\n\n`))
