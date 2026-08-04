@@ -89,3 +89,6 @@ CREATE POLICY "Authenticated users can insert opportunities" ON public.opportuni
 DROP POLICY IF EXISTS "Users can manage their own opportunities" ON public.opportunities;
 CREATE POLICY "Users can manage their own opportunities" ON public.opportunities
     FOR ALL TO authenticated USING (auth.uid() = user_id OR auth.uid() IS NOT NULL);
+
+-- 7. Drop strict work_mode check constraint if exists so both 'remote', 'onsite', 'hybrid' pass without error
+ALTER TABLE public.opportunities DROP CONSTRAINT IF EXISTS opportunities_work_mode_check;

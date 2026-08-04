@@ -109,7 +109,7 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
   const [oppAvailableSpots, setOppAvailableSpots] = useState('');
   const [oppSkillsNeeded, setOppSkillsNeeded] = useState('');
   const [oppLocation, setOppLocation] = useState('');
-  const [oppWorkMode, setOppWorkMode] = useState('On-site');
+  const [oppWorkMode, setOppWorkMode] = useState('remote');
   const [oppLanguages, setOppLanguages] = useState('');
   const [oppExperienceLevel, setOppExperienceLevel] = useState('<5 years');
   const [oppPostedMsg, setOppPostedMsg] = useState<string | null>(null);
@@ -430,7 +430,7 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
         deadline: oppDeadline && oppDeadline.trim() ? oppDeadline : null,
         available_spots: oppAvailableSpots ? parseInt(oppAvailableSpots, 10) : null,
         skills: oppSkillsNeeded ? oppSkillsNeeded.split(',').map(s => s.trim()) : [],
-        work_mode: oppWorkMode || 'Remote',
+        work_mode: (oppWorkMode || 'remote').toLowerCase().replace('on-site', 'onsite'),
         languages: oppLanguages ? oppLanguages.split(',').map(s => s.trim()) : [],
         experience_level: oppExperienceLevel || null,
       });
@@ -933,9 +933,9 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
                   onChange={e => setOppWorkMode(e.target.value)}
                   style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
                 >
-                  <option value="On-site">On-site</option>
-                  <option value="Remote">Remote</option>
-                  <option value="Hybrid">Hybrid</option>
+                  <option value="remote">Remote</option>
+                  <option value="onsite">On-site</option>
+                  <option value="hybrid">Hybrid</option>
                 </select>
               </div>
               <div>
