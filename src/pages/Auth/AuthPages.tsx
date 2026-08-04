@@ -8,6 +8,7 @@ import { supabase } from '../../lib/supabase';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { createOrganization, getUserPendingInvites, respondToOrganizationInvite } from '../../services/organizationService';
+import { COUNTRIES } from '../../utils/countries';
 
 export const LoginPage: React.FC = () => {
   const { t } = useTranslation();
@@ -571,13 +572,19 @@ export const SignUpPage: React.FC = () => {
               <div className="auth-grid-3">
                 <div>
                   <label style={labelStyle}>Country *</label>
-                  <input
-                    type="text"
-                    style={baseInputStyle}
+                  <select
+                    style={{ ...baseInputStyle, cursor: 'pointer' }}
                     value={orgData.country}
                     onChange={e => setOrgData({ ...orgData, country: e.target.value })}
                     required
-                  />
+                  >
+                    <option value="" disabled style={{ backgroundColor: '#0f172a', color: '#94a3b8' }}>Select Country...</option>
+                    {COUNTRIES.map(country => (
+                      <option key={country} value={country} style={{ backgroundColor: '#0f172a', color: '#e2e8f0' }}>
+                        {country}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label style={labelStyle}>City *</label>
