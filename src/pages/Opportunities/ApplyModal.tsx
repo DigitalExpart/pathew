@@ -6,15 +6,12 @@ import {
   Upload, 
   FileText, 
   Image as ImageIcon, 
-  Video, 
   Paperclip, 
-  Check, 
   Loader2, 
   Trash2,
   UserCheck,
   Globe,
   FileCheck,
-  Eye,
   Film,
   Music,
   Sparkles,
@@ -492,7 +489,7 @@ export const ApplyModal: React.FC<ApplyModalProps> = ({
 
         {/* SECTION 2: Proposal / Cover Letter */}
         <div>
-          <label style={{ fontSize: '0.9375rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyBetween: 'space-between', marginBottom: '8px', color: 'var(--text-primary)' }}>
+          <label style={{ fontSize: '0.9375rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', color: 'var(--text-primary)' }}>
             <span>2. Proposal / Cover Letter <span style={{ color: '#ef4444' }}>*</span></span>
           </label>
           <textarea

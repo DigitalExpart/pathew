@@ -23,7 +23,6 @@ import {
   CheckCircle2,
   FileEdit,
   Mail,
-  Link as LinkIcon,
   Globe,
   ListFilter,
   ExternalLink
