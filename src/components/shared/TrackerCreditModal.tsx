@@ -42,7 +42,7 @@ export const TrackerCreditModal: React.FC<TrackerCreditModalProps> = ({
                   {t('trackerQuota.modalTitle', 'Credits Required to Save Tracker Progress')}
                 </h3>
                 <Badge variant="warning" style={{ marginTop: '6px', fontSize: '0.6875rem' }}>
-                  {t('trackerQuota.limitReachedBadge', '3 Free Actions Used')}
+                  {t('trackerQuota.limitReachedBadge', '10 Free Actions Used')}
                 </Badge>
               </div>
             </div>
@@ -55,7 +55,7 @@ export const TrackerCreditModal: React.FC<TrackerCreditModalProps> = ({
             <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5, margin: 0 }}>
               {t(
                 'trackerQuota.limitDescription',
-                'You have used your 3 free Application Tracker actions. Each additional tracker action (manual entries, Apply Now tracking, and generated CVs or proposals) costs 0.25 credits.'
+                'You have used your 10 free Application Tracker actions. Each additional tracker action (manual entries, Apply Now tracking, and generated CVs or proposals) costs 0.25 credits.'
               )}
             </p>
             

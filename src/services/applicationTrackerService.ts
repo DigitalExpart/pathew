@@ -53,7 +53,7 @@ export interface TrackerActionResult {
 }
 
 export const TRACKER_ACTION_COST = 0.25;
-export const FREE_TRACKER_LIMIT = 3;
+export const FREE_TRACKER_LIMIT = 10;
 
 export const sanitizeTrackerEntry = (entry: Omit<ApplicationTrackerEntry, 'id'>): Omit<ApplicationTrackerEntry, 'id'> => {
   let { deadline, status, action, ...rest } = entry;

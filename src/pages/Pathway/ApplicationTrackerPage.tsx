@@ -254,15 +254,14 @@ export const ApplicationTrackerPage: React.FC = () => {
         </div>
       </header>
 
-      {/* Quota Banner */}
-      {trackerUsage && (
+      {/* Quota Banner - Only shown during 10 Free Tier Actions */}
+      {trackerUsage && trackerUsage.totalActionsCount < 10 && (
         <div style={{
           marginBottom: '20px',
           padding: '12px 16px',
           borderRadius: 'var(--radius-lg)',
-          border: '1px solid',
-          borderColor: (trackerUsage.totalActionsCount < 3) ? 'rgba(34, 197, 94, 0.3)' : 'rgba(245, 158, 11, 0.3)',
-          backgroundColor: (trackerUsage.totalActionsCount < 3) ? 'rgba(34, 197, 94, 0.06)' : 'rgba(245, 158, 11, 0.06)',
+          border: '1px solid rgba(34, 197, 94, 0.3)',
+          backgroundColor: 'rgba(34, 197, 94, 0.06)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -270,21 +269,13 @@ export const ApplicationTrackerPage: React.FC = () => {
           flexWrap: 'wrap'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Coins size={18} color={(trackerUsage.totalActionsCount < 3) ? '#22c55e' : '#f59e0b'} />
+            <Coins size={18} color="#22c55e" />
             <span style={{ fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' }}>
-              {trackerUsage.totalActionsCount < 3 ? (
-                <>
-                  <strong>Free Tier Quota:</strong> You have {Math.max(0, 3 - trackerUsage.totalActionsCount)} of 3 free tracker actions remaining.
-                </>
-              ) : (
-                <>
-                  <strong>Credit-Based Actions Active:</strong> Free tier used (3/3). Each new entry costs <strong>0.25 credits</strong>.
-                </>
-              )}
+              <strong>Free Tier Quota:</strong> You have {Math.max(0, 10 - trackerUsage.totalActionsCount)} of 10 free tracker actions remaining.
             </span>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <Badge variant={trackerUsage.totalActionsCount < 3 ? 'success' : 'warning'} style={{ fontSize: '0.75rem' }}>
+            <Badge variant="success" style={{ fontSize: '0.75rem' }}>
               {formatCredits(profile?.credits)} Credits Available
             </Badge>
           </div>
