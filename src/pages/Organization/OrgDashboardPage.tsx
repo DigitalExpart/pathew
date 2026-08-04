@@ -24,7 +24,9 @@ import {
   FileEdit,
   Mail,
   Link as LinkIcon,
-  Globe
+  Globe,
+  ListFilter,
+  ExternalLink
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -48,7 +50,7 @@ import { CheckoutModal } from '../../components/payment/CheckoutModal';
 import { supabase } from '../../lib/supabase';
 
 interface OrgDashboardProps {
-  defaultTab?: 'overview' | 'members' | 'documents' | 'opportunities' | 'credits';
+  defaultTab?: 'overview' | 'members' | 'documents' | 'opportunities' | 'my_opps' | 'applicants' | 'credits';
 }
 
 export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'overview' }) => {
@@ -57,11 +59,16 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
   const [org, setOrg] = useState<Organization | null>(null);
   const [members, setMembers] = useState<OrganizationMember[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'members' | 'documents' | 'opportunities' | 'credits' | 'applicants'>(defaultTab as any);
+  const [activeTab, setActiveTab] = useState<'overview' | 'members' | 'documents' | 'opportunities' | 'my_opps' | 'applicants' | 'credits'>(defaultTab as any);
 
   // Applicants State
   const [applicants, setApplicants] = useState<any[]>([]);
   const [loadingApplicants, setLoadingApplicants] = useState(false);
+
+  // Posted Opportunities State
+  const [postedOpps, setPostedOpps] = useState<any[]>([]);
+  const [loadingPostedOpps, setLoadingPostedOpps] = useState(false);
+  const [selectedOppFilter, setSelectedOppFilter] = useState<string>('all');
 
   // Add / Invite Member Modal State
   const [showAddMemberModal, setShowAddMemberModal] = useState(false);
@@ -188,6 +195,62 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
       fetchApplicants();
     }
   }, [activeTab, user]);
+
+  const fetchPostedOpps = async () => {
+    if (!user || !org) return;
+    setLoadingPostedOpps(true);
+    try {
+      const { data: opps, error } = await supabase
+        .from('opportunities')
+        .select('*')
+        .or(`user_id.eq.${user.id},organization_name.eq.${org.name}`)
+        .neq('status', 'Saved')
+        .order('created_at', { ascending: false });
+
+      if (!error && opps) {
+        const oppIds = opps.map(o => o.id);
+        if (oppIds.length > 0) {
+          const { data: apps } = await supabase
+            .from('opportunity_applications')
+            .select('id, opportunity_id, applicant_id, status, created_at')
+            .in('opportunity_id', oppIds);
+
+          const appsMap: Record<string, any[]> = {};
+          (apps || []).forEach(app => {
+            if (!appsMap[app.opportunity_id]) appsMap[app.opportunity_id] = [];
+            appsMap[app.opportunity_id].push(app);
+          });
+
+          opps.forEach(o => {
+            o.applications = appsMap[o.id] || [];
+            o.applicant_count = (appsMap[o.id] || []).length;
+          });
+        }
+        setPostedOpps(opps);
+      }
+    } catch (err) {
+      console.error('Error fetching posted opportunities:', err);
+    } finally {
+      setLoadingPostedOpps(false);
+    }
+  };
+
+  const handleDeleteOpportunity = async (oppId: string) => {
+    if (!confirm('Are you sure you want to delete this posted opportunity?')) return;
+    try {
+      const { error } = await supabase.from('opportunities').delete().eq('id', oppId);
+      if (error) throw error;
+      setPostedOpps(prev => prev.filter(o => o.id !== oppId));
+    } catch (err: any) {
+      alert('Failed to delete opportunity: ' + err.message);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === 'my_opps' || activeTab === 'opportunities' || activeTab === 'applicants') {
+      fetchPostedOpps();
+    }
+  }, [activeTab, user, org]);
 
   const handleUpdateApplicationStatus = async (applicationId: string, status: 'hired' | 'declined') => {
     try {
@@ -387,6 +450,8 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
       setOppSkillsNeeded('');
       setOppLocation('');
       setOppLanguages('');
+
+      fetchPostedOpps();
     } catch (err: any) {
       setOppPostedMsg('Failed to post opportunity: ' + err.message);
     }
@@ -527,14 +592,29 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
         </Card>
       </div>
 
-      {/* Navigation Tabs */}
-      <div style={{ display: 'flex', gap: '8px', borderBottom: '1px solid var(--border-color)', marginBottom: '24px', flexWrap: 'wrap' }}>
+      {/* Navigation Tabs Carousel */}
+      <div 
+        style={{ 
+          display: 'flex', 
+          gap: '8px', 
+          borderBottom: '1px solid var(--border-color)', 
+          marginBottom: '24px', 
+          overflowX: 'auto', 
+          flexWrap: 'nowrap', 
+          whiteSpace: 'nowrap',
+          paddingBottom: '4px',
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch',
+          scrollbarWidth: 'thin'
+        }}
+      >
         {[
           { key: 'overview', label: 'Overview & Profile', icon: Building2 },
           { key: 'members', label: 'Manage Members & Team', icon: Users },
           { key: 'documents', label: 'Member Activities & Outputs', icon: FileText },
-          { key: 'opportunities', label: 'Post Opportunities', icon: Briefcase },
-          { key: 'applicants', label: 'Review Applicants', icon: UserCheck },
+          { key: 'opportunities', label: 'Post Opportunity', icon: Briefcase },
+          { key: 'my_opps', label: `Posted Jobs & Opps ${postedOpps.length > 0 ? `(${postedOpps.length})` : ''}`, icon: ListFilter },
+          { key: 'applicants', label: `Review Applicants ${applicants.length > 0 ? `(${applicants.length})` : ''}`, icon: UserCheck },
           { key: 'credits', label: 'Credits & Wallet', icon: Coins },
         ].map(tab => (
           <button
@@ -552,6 +632,9 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
               display: 'flex',
               alignItems: 'center',
               gap: '8px',
+              transition: 'all 0.2s ease',
+              flexShrink: 0,
+              whiteSpace: 'nowrap'
             }}
           >
             <tab.icon size={16} />
@@ -927,13 +1010,128 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
         </Card>
       )}
 
+      {/* TAB CONTENT: Posted Jobs & Opportunities */}
+      {activeTab === 'my_opps' && (
+        <Card style={{ padding: '28px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '16px' }}>
+            <div>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0 }}>Posted Jobs & Opportunities</h3>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>
+                Manage all opportunities posted by {org?.name} and view candidates who applied.
+              </p>
+            </div>
+            <Button onClick={() => setActiveTab('opportunities')} style={{ gap: '6px' }}>
+              <Briefcase size={16} />
+              + Post New Opportunity
+            </Button>
+          </div>
+
+          {loadingPostedOpps ? (
+            <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Loading posted opportunities...</div>
+          ) : postedOpps.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '40px', backgroundColor: 'var(--bg-secondary)', borderRadius: '12px', color: 'var(--text-muted)' }}>
+              <p style={{ margin: '0 0 16px 0', fontSize: '1rem' }}>No opportunities posted yet by your organization.</p>
+              <Button onClick={() => setActiveTab('opportunities')}>Post Your First Opportunity</Button>
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              {postedOpps.map(opp => (
+                <div key={opp.id} style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '20px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '12px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
+                    <div style={{ flex: 1, minWidth: '240px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
+                        <Badge variant="primary" style={{ textTransform: 'capitalize' }}>{opp.type || 'job'}</Badge>
+                        <Badge variant={opp.status === 'published' || opp.status === 'Active' ? 'success' : 'outline'}>
+                          {opp.status || 'published'}
+                        </Badge>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                          Posted: {new Date(opp.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <h4 style={{ margin: '0 0 6px 0', fontSize: '1.1rem', fontWeight: 700, color: 'var(--text-primary)' }}>
+                        {opp.title}
+                      </h4>
+                      <p style={{ margin: 0, fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                        📍 {opp.location || 'Remote'} {opp.work_mode ? `• ${opp.work_mode}` : ''} {opp.deadline ? `• Deadline: ${new Date(opp.deadline).toLocaleDateString()}` : ''}
+                      </p>
+                    </div>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                      <div style={{ textAlign: 'right', paddingRight: '12px', borderRight: '1px solid var(--border-color)' }}>
+                        <span style={{ fontSize: '1.25rem', fontWeight: 800, color: 'var(--accent-primary)', display: 'block' }}>
+                          {opp.applicant_count || 0}
+                        </span>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Applicants</span>
+                      </div>
+
+                      <Button 
+                        size="sm" 
+                        onClick={() => {
+                          setSelectedOppFilter(opp.id);
+                          setActiveTab('applicants');
+                        }}
+                        style={{ gap: '6px' }}
+                      >
+                        <UserCheck size={14} />
+                        View Applicants ({opp.applicant_count || 0})
+                      </Button>
+                      
+                      <a 
+                        href={`/opportunities/${opp.id}`} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        style={{ textDecoration: 'none' }}
+                      >
+                        <Button size="sm" variant="outline" style={{ gap: '4px' }}>
+                          <ExternalLink size={14} /> View Page
+                        </Button>
+                      </a>
+
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => handleDeleteOpportunity(opp.id)}
+                        style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)' }}
+                      >
+                        <Trash2 size={14} />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
+      )}
+
       {/* TAB CONTENT: Applicants */}
       {activeTab === 'applicants' && (
         <Card style={{ padding: '28px' }}>
-          <h3 style={{ fontSize: '1.15rem', fontWeight: 800, marginBottom: '8px' }}>Review Applicants</h3>
-          <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '24px' }}>
-            Review users who have applied to opportunities posted by your organization.
-          </p>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '16px' }}>
+            <div>
+              <h3 style={{ fontSize: '1.15rem', fontWeight: 800, margin: 0 }}>Review Applicants</h3>
+              <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)', margin: '4px 0 0 0' }}>
+                Review users who have applied to opportunities posted by {org?.name}.
+              </p>
+            </div>
+            {postedOpps.length > 0 && (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <span style={{ fontSize: '0.8125rem', color: 'var(--text-muted)', fontWeight: 600 }}>Filter by Job:</span>
+                <select
+                  value={selectedOppFilter}
+                  onChange={e => setSelectedOppFilter(e.target.value)}
+                  style={{ padding: '8px 12px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '0.875rem' }}
+                >
+                  <option value="all">All Opportunities ({applicants.length})</option>
+                  {postedOpps.map(opp => (
+                    <option key={opp.id} value={opp.id}>
+                      {opp.title} ({opp.applicant_count || 0})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
 
           {loadingApplicants ? (
             <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-muted)' }}>Loading applicants...</div>
@@ -943,7 +1141,9 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              {applicants.map(app => (
+              {applicants
+                .filter(app => selectedOppFilter === 'all' || app.opportunity_id === selectedOppFilter)
+                .map(app => (
                 <div key={app.id} style={{ display: 'flex', flexDirection: 'column', gap: '12px', padding: '16px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '12px' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
