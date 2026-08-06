@@ -191,6 +191,7 @@ export const SignUpPage: React.FC = () => {
     termsAccepted: false,
   });
 
+  const [isCompanyRegistered, setIsCompanyRegistered] = React.useState<'yes' | 'no'>('yes');
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -546,16 +547,36 @@ export const SignUpPage: React.FC = () => {
 
               <div className="auth-grid-2">
                 <div>
-                  <label style={labelStyle}>Registration Number *</label>
-                  <input
-                    type="text"
-                    placeholder="Official company reg #"
+                  <label style={labelStyle}>Is your company registered? *</label>
+                  <select
                     style={baseInputStyle}
-                    value={orgData.regNumber}
-                    onChange={e => setOrgData({ ...orgData, regNumber: e.target.value })}
-                    required
-                  />
+                    value={isCompanyRegistered}
+                    onChange={e => {
+                      const val = e.target.value as 'yes' | 'no';
+                      setIsCompanyRegistered(val);
+                      if (val === 'no') {
+                        setOrgData(prev => ({ ...prev, regNumber: '' }));
+                      }
+                    }}
+                  >
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
                 </div>
+
+                {isCompanyRegistered === 'yes' && (
+                  <div>
+                    <label style={labelStyle}>Registration Number *</label>
+                    <input
+                      type="text"
+                      placeholder="Official company reg #"
+                      style={baseInputStyle}
+                      value={orgData.regNumber}
+                      onChange={e => setOrgData({ ...orgData, regNumber: e.target.value })}
+                      required={isCompanyRegistered === 'yes'}
+                    />
+                  </div>
+                )}
 
                 <div>
                   <label style={labelStyle}>Tax / VAT Number</label>
