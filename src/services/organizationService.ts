@@ -28,6 +28,9 @@ export interface Organization {
   industry_categories?: string[];
   verification_status: VerificationStatus;
   verification_notes?: string;
+  business_registration_doc?: string;
+  proof_of_address_doc?: string;
+  proof_of_identity_doc?: string;
   logo_url?: string;
   credits: number;
   created_at: string;
@@ -311,6 +314,111 @@ export const updateOrganizationVerification = async (
             parsed.organization.verification_status = status;
             if (notes) parsed.organization.verification_notes = notes;
             parsed.organization.updated_at = new Date().toISOString();
+            await saveOrgDocument(ORG_DOC_TYPE, parsed.organization.id, doc.user_id, parsed);
+            return true;
+          }
+        } catch {}
+      }
+    }
+  } catch {}
+
+  return true;
+};
+
+/**
+ * Upload a verification file (Business Reg, Proof of Address, Proof of Identity) to storage or base64 fallback
+ */
+export const uploadVerificationFile = async (file: File, folderName: string): Promise<string> => {
+  try {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `verification/${folderName}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
+    
+    // Attempt Supabase storage upload
+    let { error: uploadErr } = await supabase.storage
+      .from('documents')
+      .upload(fileName, file, { upsert: true });
+
+    if (!uploadErr) {
+      const { data: { publicUrl } } = supabase.storage.from('documents').getPublicUrl(fileName);
+      return publicUrl;
+    }
+  } catch (storageErr) {
+    console.warn('Storage upload notice, falling back to Data URL:', storageErr);
+  }
+
+  // Base64 Data URL Fallback
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (err) => reject(err);
+    reader.readAsDataURL(file);
+  });
+};
+
+/**
+ * Update verification document URLs on Organization
+ */
+export const updateOrganizationVerificationDocs = async (
+  orgId: string,
+  docs: {
+    business_registration_doc?: string;
+    proof_of_address_doc?: string;
+    proof_of_identity_doc?: string;
+  }
+): Promise<boolean> => {
+  try {
+    const { data, error } = await supabase
+      .from('organizations')
+      .update({
+        ...docs,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', orgId)
+      .select();
+
+    if (!error && data && data.length > 0) return true;
+  } catch (err) {
+    console.warn('DB verification docs update warning:', err);
+  }
+
+  // Fallback 1: By title in documents table
+  try {
+    const { data: docsRes } = await supabase
+      .from('documents')
+      .select('id, user_id, content')
+      .eq('type', ORG_DOC_TYPE)
+      .eq('title', orgId)
+      .limit(1);
+
+    if (docsRes && docsRes.length > 0) {
+      const parsed = JSON.parse(docsRes[0].content);
+      parsed.organization = {
+        ...parsed.organization,
+        ...docs,
+        updated_at: new Date().toISOString(),
+      };
+      await saveOrgDocument(ORG_DOC_TYPE, orgId, docsRes[0].user_id, parsed);
+      return true;
+    }
+  } catch {}
+
+  // Fallback 2: Search all documents
+  try {
+    const { data: allDocs } = await supabase
+      .from('documents')
+      .select('id, user_id, content')
+      .eq('type', ORG_DOC_TYPE);
+
+    if (allDocs) {
+      for (const doc of allDocs) {
+        try {
+          const parsed = JSON.parse(doc.content);
+          if (parsed.organization && (parsed.organization.id === orgId || parsed.organization.name === orgId)) {
+            parsed.organization = {
+              ...parsed.organization,
+              ...docs,
+              updated_at: new Date().toISOString(),
+            };
             await saveOrgDocument(ORG_DOC_TYPE, parsed.organization.id, doc.user_id, parsed);
             return true;
           }

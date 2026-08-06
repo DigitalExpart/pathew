@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { Mail, Lock, ArrowLeft, Eye, EyeOff, User, Building2 } from 'lucide-react';
+import { Mail, Lock, ArrowLeft, Eye, EyeOff, User, Building2, ShieldCheck, Upload } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.svg';
 import { supabase } from '../../lib/supabase';
@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../context/AuthContext';
 import { createOrganization, getUserPendingInvites, respondToOrganizationInvite } from '../../services/organizationService';
 import { COUNTRIES } from '../../utils/countries';
+import { BusinessVerificationModal } from '../../components/shared/BusinessVerificationModal';
 
 export const LoginPage: React.FC = () => {
   const { t } = useTranslation();
@@ -192,6 +193,8 @@ export const SignUpPage: React.FC = () => {
   });
 
   const [isCompanyRegistered, setIsCompanyRegistered] = React.useState<'yes' | 'no'>('yes');
+  const [createdOrgId, setCreatedOrgId] = React.useState<string>('');
+  const [showVerifyModal, setShowVerifyModal] = React.useState<boolean>(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [loading, setLoading] = React.useState(false);
@@ -318,8 +321,9 @@ export const SignUpPage: React.FC = () => {
 
         // 2. Create Organization record (pending verification)
         const userId = data.user?.id || 'temp_' + Date.now();
+        let orgId = 'org_' + userId;
         try {
-          await createOrganization(userId, {
+          const created = await createOrganization(userId, {
             name: orgData.orgName,
             type: orgData.orgType,
             registration_number: orgData.regNumber,
@@ -341,15 +345,16 @@ export const SignUpPage: React.FC = () => {
             industry_categories: orgData.industryCategories ? orgData.industryCategories.split(',').map(s => s.trim()) : [],
             verification_notes: orgData.verificationNotes,
           });
+          if (created && created.id) {
+            orgId = created.id;
+          }
         } catch (orgErr) {
           console.warn('Secondary organization creation error:', orgErr);
         }
 
-        if (data.session) {
-          navigate('/org-dashboard', { replace: true });
-        } else {
-          setIsOrgSubmitted(true);
-        }
+        setCreatedOrgId(orgId);
+        setIsOrgSubmitted(true);
+        setShowVerifyModal(true);
       } catch (err: any) {
         setAuthError(err.message || 'Failed to register business account');
       } finally {
@@ -369,7 +374,7 @@ export const SignUpPage: React.FC = () => {
   if (isSubmitted || isOrgSubmitted) {
     return (
       <div className="auth-wrapper">
-        <div style={{ width: '100%', maxWidth: '480px' }}>
+        <div style={{ width: '100%', maxWidth: '520px' }}>
           <Card className="auth-card-padding" style={{ textAlign: 'center' }}>
             <div style={verifyIconStyle}>
               {isOrgSubmitted ? <Building2 size={48} color="var(--accent-primary)" /> : <Mail size={48} color="var(--accent-primary)" />}
@@ -380,7 +385,7 @@ export const SignUpPage: React.FC = () => {
             <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: 1.6 }}>
               {isOrgSubmitted ? (
                 <>
-                  Your registration for <strong>{orgData.orgName}</strong> was submitted successfully! Your account is currently <strong>pending admin verification</strong>. You can view your dashboard, and full business features will unlock once approved.
+                  Your registration for <strong>{orgData.orgName}</strong> was submitted successfully! Please upload your <strong>means of verification</strong> (Business Registration, Proof of Address, Proof of Identity) to complete verification.
                 </>
               ) : (
                 <>
@@ -388,11 +393,43 @@ export const SignUpPage: React.FC = () => {
                 </>
               )}
             </p>
-            <Button onClick={() => navigate(isOrgSubmitted ? '/org-dashboard' : '/login')} style={{ width: '100%' }}>
-              {isOrgSubmitted ? 'Go to Organization Dashboard' : t('auth.backToLogin')}
-            </Button>
+
+            {isOrgSubmitted ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <Button 
+                  onClick={() => setShowVerifyModal(true)} 
+                  style={{ width: '100%', backgroundColor: '#f59e0b', color: '#0f172a', fontWeight: 700 }}
+                >
+                  <ShieldCheck size={18} style={{ marginRight: '8px' }} />
+                  Upload Means of Verification
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={() => navigate('/org-dashboard')} 
+                  style={{ width: '100%' }}
+                >
+                  Go to Organization Dashboard
+                </Button>
+              </div>
+            ) : (
+              <Button onClick={() => navigate('/login')} style={{ width: '100%' }}>
+                {t('auth.backToLogin')}
+              </Button>
+            )}
           </Card>
         </div>
+
+        {isOrgSubmitted && (
+          <BusinessVerificationModal
+            isOpen={showVerifyModal}
+            onClose={() => setShowVerifyModal(false)}
+            orgId={createdOrgId}
+            orgName={orgData.orgName}
+            onComplete={() => {
+              // Documents submitted successfully
+            }}
+          />
+        )}
       </div>
     );
   }

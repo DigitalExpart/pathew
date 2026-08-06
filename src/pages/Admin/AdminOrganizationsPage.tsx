@@ -9,7 +9,10 @@ import {
   Clock,
   Search,
   Eye,
-  RefreshCw
+  RefreshCw,
+  ExternalLink,
+  FileCheck,
+  ShieldCheck
 } from 'lucide-react';
 import { formatCredits } from '../../utils/formatters';
 import {
@@ -284,6 +287,47 @@ export const AdminOrganizationsPage: React.FC = () => {
               <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', lineHeight: 1.5, backgroundColor: 'var(--bg-secondary)', padding: '12px', borderRadius: '8px' }}>
                 {selectedOrg.summary || 'No mission summary provided.'}
               </p>
+            </div>
+
+            {/* Means of Verification Uploads Section */}
+            <div style={{ marginBottom: '20px', backgroundColor: 'var(--bg-secondary)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)' }}>
+              <h4 style={{ fontSize: '0.85rem', color: '#f59e0b', textTransform: 'uppercase', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <ShieldCheck size={18} /> Means of Verification Documents
+              </h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px' }}>
+                <div style={{ padding: '10px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '8px' }}>
+                  <span style={{ fontSize: '0.775rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>1. Business Registration</span>
+                  {selectedOrg.business_registration_doc ? (
+                    <a href={selectedOrg.business_registration_doc} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.85rem', color: '#3b82f6', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}>
+                      <FileCheck size={15} /> View Document ↗
+                    </a>
+                  ) : (
+                    <span style={{ fontSize: '0.825rem', color: '#ef4444', fontWeight: 600 }}>Not Uploaded</span>
+                  )}
+                </div>
+
+                <div style={{ padding: '10px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '8px' }}>
+                  <span style={{ fontSize: '0.775rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>2. Proof of Address</span>
+                  {selectedOrg.proof_of_address_doc ? (
+                    <a href={selectedOrg.proof_of_address_doc} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.85rem', color: '#10b981', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}>
+                      <FileCheck size={15} /> View Document ↗
+                    </a>
+                  ) : (
+                    <span style={{ fontSize: '0.825rem', color: '#ef4444', fontWeight: 600 }}>Not Uploaded</span>
+                  )}
+                </div>
+
+                <div style={{ padding: '10px', backgroundColor: 'var(--bg-tertiary)', borderRadius: '8px' }}>
+                  <span style={{ fontSize: '0.775rem', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>3. Proof of Identity</span>
+                  {selectedOrg.proof_of_identity_doc ? (
+                    <a href={selectedOrg.proof_of_identity_doc} target="_blank" rel="noopener noreferrer" style={{ fontSize: '0.85rem', color: '#f59e0b', fontWeight: 700, display: 'inline-flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}>
+                      <FileCheck size={15} /> View Document ↗
+                    </a>
+                  ) : (
+                    <span style={{ fontSize: '0.825rem', color: '#ef4444', fontWeight: 600 }}>Not Uploaded</span>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Admin Verification Notes Input */}

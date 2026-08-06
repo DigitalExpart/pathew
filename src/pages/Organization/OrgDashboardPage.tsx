@@ -54,6 +54,7 @@ import {
   type MemberRole
 } from '../../services/organizationService';
 import { CheckoutModal } from '../../components/payment/CheckoutModal';
+import { BusinessVerificationModal } from '../../components/shared/BusinessVerificationModal';
 import { supabase } from '../../lib/supabase';
 
 interface OrgDashboardProps {
@@ -66,6 +67,7 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
   const [org, setOrg] = useState<Organization | null>(null);
   const [members, setMembers] = useState<OrganizationMember[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showVerificationModal, setShowVerificationModal] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'members' | 'documents' | 'opportunities' | 'my_opps' | 'applicants' | 'credits'>(defaultTab as any);
 
   // Applicants State
@@ -546,11 +548,20 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
                 Account Verification Pending Admin Review
               </h4>
               <p style={{ margin: '2px 0 0 0', fontSize: '0.875rem', color: 'var(--text-secondary)' }}>
-                Your business registration for <strong>{org.name}</strong> is under review. Team invites, credit spending, and posting privileges will activate upon approval.
+                Your business registration for <strong>{org.name}</strong> is under review. Upload your means of verification (Business Registration, Proof of Address, Proof of Identity) to expedite approval.
               </p>
             </div>
           </div>
-          <Badge variant="warning">Verification Pending</Badge>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Button
+              onClick={() => setShowVerificationModal(true)}
+              style={{ backgroundColor: '#f59e0b', color: '#0f172a', fontWeight: 700, fontSize: '0.85rem' }}
+            >
+              <ShieldCheck size={16} style={{ marginRight: '6px' }} />
+              Upload Means of Verification
+            </Button>
+            <Badge variant="warning">Verification Pending</Badge>
+          </div>
         </div>
       )}
 
@@ -2190,6 +2201,22 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
           onClose={() => setShowCheckout(false)}
           type="credits"
           item={{ name: '100 Organization Credits', price: 49.99 }}
+        />
+      )}
+
+      {/* BUSINESS VERIFICATION MODAL */}
+      {showVerificationModal && org && (
+        <BusinessVerificationModal
+          isOpen={showVerificationModal}
+          onClose={() => setShowVerificationModal(false)}
+          orgId={org.id}
+          orgName={org.name}
+          initialBusinessDoc={org.business_registration_doc || ''}
+          initialAddressDoc={org.proof_of_address_doc || ''}
+          initialIdentityDoc={org.proof_of_identity_doc || ''}
+          onComplete={(updatedDocs) => {
+            setOrg(prev => prev ? { ...prev, ...updatedDocs } : null);
+          }}
         />
       )}
     </div>

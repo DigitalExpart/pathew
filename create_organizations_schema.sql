@@ -29,11 +29,19 @@ CREATE TABLE IF NOT EXISTS public.organizations (
     industry_categories TEXT[],
     verification_status TEXT DEFAULT 'pending',
     verification_notes TEXT,
+    business_registration_doc TEXT,
+    proof_of_address_doc TEXT,
+    proof_of_identity_doc TEXT,
     logo_url TEXT,
     credits NUMERIC DEFAULT 10,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- Ensure Verification Document Columns Exist
+ALTER TABLE public.organizations ADD COLUMN IF NOT EXISTS business_registration_doc TEXT;
+ALTER TABLE public.organizations ADD COLUMN IF NOT EXISTS proof_of_address_doc TEXT;
+ALTER TABLE public.organizations ADD COLUMN IF NOT EXISTS proof_of_identity_doc TEXT;
 
 -- 2. Create Organization Members Table
 CREATE TABLE IF NOT EXISTS public.organization_members (
