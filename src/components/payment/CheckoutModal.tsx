@@ -186,7 +186,10 @@ const CheckoutForm = ({ planTitle, planPrice, planCredits, onSuccess, onCancel }
 };
 
 /* ── Main Modal ────────────────────────────────────────────── */
-export const CheckoutModal = ({ isOpen, onClose, planTitle, planPrice, planCredits }: any) => {
+export const CheckoutModal = ({ isOpen, onClose, planTitle: rawTitle, planPrice: rawPrice, planCredits: rawCredits, item }: any) => {
+  const planTitle = rawTitle || item?.name || 'Growth';
+  const planPrice = rawPrice || (typeof item?.price === 'number' ? `£${item.price}` : item?.price) || '£25.00';
+  const planCredits = rawCredits || item?.credits || 65;
   const [success, setSuccess] = useState(false);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);

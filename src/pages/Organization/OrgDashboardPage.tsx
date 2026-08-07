@@ -582,7 +582,7 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
             <UserPlus size={18} />
             + Add / Invite Member
           </Button>
-          <Button variant="outline" onClick={() => setShowCheckout(true)} style={{ gap: '8px' }}>
+          <Button variant="outline" onClick={() => navigate('/pricing')} style={{ gap: '8px' }}>
             <Coins size={18} />
             Buy Org Credits ({formatCredits(org.credits)})
           </Button>
@@ -1350,7 +1350,7 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
               <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#22c55e', margin: '4px 0 0 0' }}>{formatCredits(org.credits)} Credits</h2>
             </div>
 
-            <Button onClick={() => setShowCheckout(true)} style={{ gap: '8px' }}>
+            <Button onClick={() => navigate('/pricing')} style={{ gap: '8px' }}>
               <Coins size={18} /> Purchase Additional Credits
             </Button>
           </div>
@@ -2199,8 +2199,9 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
         <CheckoutModal
           isOpen={showCheckout}
           onClose={() => setShowCheckout(false)}
-          type="credits"
-          item={{ name: '100 Organization Credits', price: 49.99 }}
+          planTitle="Growth"
+          planPrice="£25.00"
+          planCredits={65}
         />
       )}
 
