@@ -35,7 +35,7 @@ const CheckoutForm = ({ planTitle, planPrice, planCredits, onSuccess, onCancel }
        addedCredits = planCredits;
     }
     if (!addedCredits) {
-       const planCreditsMap: Record<string, number> = { 'Starter': 25, 'Growth': 60, 'Power User': 120 };
+       const planCreditsMap: Record<string, number> = { 'Starter': 25, 'Growth': 65, 'Power User': 160 };
        addedCredits = planCreditsMap[planTitle] || 25;
     }
 
@@ -186,7 +186,7 @@ const CheckoutForm = ({ planTitle, planPrice, planCredits, onSuccess, onCancel }
 };
 
 /* ── Main Modal ────────────────────────────────────────────── */
-export const CheckoutModal = ({ isOpen, onClose, planTitle: rawTitle, planPrice: rawPrice, planCredits: rawCredits, item }: any) => {
+export const CheckoutModal = ({ isOpen, onClose, planTitle: rawTitle, planPrice: rawPrice, planCredits: rawCredits, item, onSuccess: externalOnSuccess }: any) => {
   const planTitle = rawTitle || item?.name || 'Growth';
   const planPrice = rawPrice || (typeof item?.price === 'number' ? `£${item.price}` : item?.price) || '£25.00';
   const planCredits = rawCredits || item?.credits || 65;
@@ -413,7 +413,7 @@ export const CheckoutModal = ({ isOpen, onClose, planTitle: rawTitle, planPrice:
                addedCredits = planCredits;
             }
             if (!addedCredits) {
-               const planCreditsMap: Record<string, number> = { 'Starter': 25, 'Growth': 60, 'Power User': 120 };
+               const planCreditsMap: Record<string, number> = { 'Starter': 25, 'Growth': 65, 'Power User': 160 };
                addedCredits = planCreditsMap[planTitle] || 25;
             }
             
@@ -438,6 +438,7 @@ export const CheckoutModal = ({ isOpen, onClose, planTitle: rawTitle, planPrice:
             }
             
             setSuccess(true);
+            if (externalOnSuccess) externalOnSuccess({ planTitle, planPrice, planCredits });
             setStep('billing');
           } catch (err) {
             console.error('Error applying Paystack credits:', err);
@@ -486,6 +487,7 @@ export const CheckoutModal = ({ isOpen, onClose, planTitle: rawTitle, planPrice:
         });
         if (verifyError) console.error('Verification failed:', verifyError);
         setSuccess(true);
+        if (externalOnSuccess) externalOnSuccess({ planTitle, planPrice, planCredits });
       } else {
         setClientSecret(data.clientSecret);
         setStep('payment');
@@ -876,7 +878,7 @@ export const CheckoutModal = ({ isOpen, onClose, planTitle: rawTitle, planPrice:
             </form>
           ) : clientSecret ? (
             <Elements stripe={stripePromise} options={{ clientSecret, appearance: stripeAppearance }}>
-              <CheckoutForm planTitle={planTitle} planPrice={formattedFinalPrice} planCredits={planCredits} onSuccess={() => setSuccess(true)} onCancel={handleClose} />
+              <CheckoutForm planTitle={planTitle} planPrice={formattedFinalPrice} planCredits={planCredits} onSuccess={() => { setSuccess(true); if (externalOnSuccess) externalOnSuccess({ planTitle, planPrice, planCredits }); }} onCancel={handleClose} />
             </Elements>
           ) : null}
         </motion.div>

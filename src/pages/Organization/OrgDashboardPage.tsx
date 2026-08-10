@@ -49,11 +49,13 @@ import {
   updateMemberRoleInOrg,
   getMemberActivityAndDocuments,
   updateMemberProfileByOrgAdmin,
+  addOrganizationCredits,
   type Organization,
   type OrganizationMember,
   type MemberRole
 } from '../../services/organizationService';
 import { CheckoutModal } from '../../components/payment/CheckoutModal';
+import { OrgPlanSelectionModal } from '../../components/organization/OrgPlanSelectionModal';
 import { BusinessVerificationModal } from '../../components/shared/BusinessVerificationModal';
 import { supabase } from '../../lib/supabase';
 
@@ -126,8 +128,28 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
   const [oppAmount, setOppAmount] = useState('');
   const [oppPostedMsg, setOppPostedMsg] = useState<string | null>(null);
 
-  // Credit Purchase Modal
+  // Credit Purchase & Plan Selection State
+  const [showPlanModal, setShowPlanModal] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<{ title: string; price: string; credits: number } | null>(null);
   const [showCheckout, setShowCheckout] = useState(false);
+
+  const handleSelectPlan = (plan: { title: string; price: string; credits: number }) => {
+    setSelectedPlan(plan);
+    setShowPlanModal(false);
+    setShowCheckout(true);
+  };
+
+  const handleCheckoutSuccess = async (planDetails?: any) => {
+    const creditsToAdd = selectedPlan?.credits || planDetails?.planCredits || 65;
+    if (org) {
+      const updatedBalance = await addOrganizationCredits(
+        org.id,
+        creditsToAdd,
+        `Purchased ${selectedPlan?.title || 'Organization'} Credit Plan (${creditsToAdd} credits)`
+      );
+      setOrg(prev => (prev ? { ...prev, credits: updatedBalance } : null));
+    }
+  };
 
   useEffect(() => {
     if (defaultTab) {
@@ -582,7 +604,7 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
             <UserPlus size={18} />
             + Add / Invite Member
           </Button>
-          <Button variant="outline" onClick={() => navigate('/pricing')} style={{ gap: '8px' }}>
+          <Button variant="outline" onClick={() => setShowPlanModal(true)} style={{ gap: '8px' }}>
             <Coins size={18} />
             Buy Org Credits ({formatCredits(org.credits)})
           </Button>
@@ -1350,7 +1372,7 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
               <h2 style={{ fontSize: '2rem', fontWeight: 800, color: '#22c55e', margin: '4px 0 0 0' }}>{formatCredits(org.credits)} Credits</h2>
             </div>
 
-            <Button onClick={() => navigate('/pricing')} style={{ gap: '8px' }}>
+            <Button onClick={() => setShowPlanModal(true)} style={{ gap: '8px' }}>
               <Coins size={18} /> Purchase Additional Credits
             </Button>
           </div>
@@ -2194,14 +2216,24 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
         </div>
       )}
 
+      {/* PLAN SELECTION MODAL FOR CREDIT PURCHASE */}
+      {showPlanModal && (
+        <OrgPlanSelectionModal
+          isOpen={showPlanModal}
+          onClose={() => setShowPlanModal(false)}
+          onSelectPlan={handleSelectPlan}
+        />
+      )}
+
       {/* CHECKOUT MODAL FOR CREDIT PURCHASE */}
-      {showCheckout && (
+      {showCheckout && selectedPlan && (
         <CheckoutModal
           isOpen={showCheckout}
           onClose={() => setShowCheckout(false)}
-          planTitle="Growth"
-          planPrice="£25.00"
-          planCredits={65}
+          planTitle={selectedPlan.title}
+          planPrice={selectedPlan.price}
+          planCredits={selectedPlan.credits}
+          onSuccess={handleCheckoutSuccess}
         />
       )}
 
