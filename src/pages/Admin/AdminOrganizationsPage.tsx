@@ -10,7 +10,6 @@ import {
   Search,
   Eye,
   RefreshCw,
-  ExternalLink,
   FileCheck,
   ShieldCheck
 } from 'lucide-react';

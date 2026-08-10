@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { Mail, Lock, ArrowLeft, Eye, EyeOff, User, Building2, ShieldCheck, Upload } from 'lucide-react';
+import { Mail, Lock, ArrowLeft, Eye, EyeOff, User, Building2, ShieldCheck } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import logo from '../../assets/images/logo.svg';
 import { supabase } from '../../lib/supabase';

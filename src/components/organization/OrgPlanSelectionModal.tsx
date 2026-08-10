@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, CheckCircle2, Coins, Sparkles, Shield, Building2 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { supabase } from '../../lib/supabase';
-import { useTranslation } from 'react-i18next';
 
 export interface PlanOption {
   title: string;
@@ -88,7 +87,6 @@ export const OrgPlanSelectionModal: React.FC<OrgPlanSelectionModalProps> = ({
   onClose,
   onSelectPlan,
 }) => {
-  const { t } = useTranslation();
   const [plans, setPlans] = useState<PlanOption[]>(DEFAULT_PLANS);
 
   useEffect(() => {
@@ -142,7 +140,7 @@ export const OrgPlanSelectionModal: React.FC<OrgPlanSelectionModalProps> = ({
           zIndex: 9999,
           display: 'flex',
           alignItems: 'center',
-          justify: 'center',
+          justifyContent: 'center',
           padding: '20px',
           overflowY: 'auto',
         }}
@@ -172,7 +170,7 @@ export const OrgPlanSelectionModal: React.FC<OrgPlanSelectionModalProps> = ({
               padding: '24px 32px',
               borderBottom: '1px solid var(--border-color, rgba(255, 255, 255, 0.08))',
               display: 'flex',
-              justify: 'space-between',
+              justifyContent: 'space-between',
               alignItems: 'center',
               backgroundColor: 'var(--bg-secondary, #1e293b)',
             }}
