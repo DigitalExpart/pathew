@@ -28,6 +28,7 @@ import { useTranslation } from 'react-i18next';
 import { addApplicationTrackerEntry } from '../../services/applicationTrackerService';
 import { TrackerCreditModal } from '../../components/shared/TrackerCreditModal';
 import { ApplyModal } from './ApplyModal';
+import { isExternalOpportunity } from '../../utils/opportunityUtils';
 
 export const OpportunityDetail: React.FC = () => {
   const { id } = useParams();
@@ -170,13 +171,15 @@ export const OpportunityDetail: React.FC = () => {
         }
       }
 
-      // 3. Open external link if valid URL provided, or show internal apply modal
-      const hasValidExternalUrl = opp.apply_link && 
-        opp.apply_link.trim().length > 0 && 
-        (opp.apply_link.startsWith('http://') || opp.apply_link.startsWith('https://'));
-
-      if (hasValidExternalUrl) {
-        window.open(opp.apply_link.trim(), '_blank');
+      // 3. Open external link if external, or show internal apply modal if internal
+      const isExternal = isExternalOpportunity(opp);
+      if (isExternal) {
+        const targetUrl = (opp.apply_link || opp.original_url || opp.source_url || '').trim();
+        if (targetUrl.length > 0 && (targetUrl.startsWith('http://') || targetUrl.startsWith('https://'))) {
+          window.open(targetUrl, '_blank');
+        } else {
+          alert("External application link is not available.");
+        }
       } else {
         setShowApplyModal(true);
       }
@@ -249,7 +252,7 @@ export const OpportunityDetail: React.FC = () => {
             onClick={handleApply}
             disabled={applying}
           >
-            {applying ? t('common.loading') : t('opportunities.applyNow', 'Apply Now')} <ExternalLink size={16} />
+            {applying ? t('common.loading') : (isExternalOpportunity(opp) ? (opp.source_name ? `Apply on ${opp.source_name}` : 'Apply External') : t('opportunities.applyNow', 'Apply Now'))} <ExternalLink size={16} />
           </Button>
         </div>
       </div>
@@ -346,46 +349,70 @@ export const OpportunityDetail: React.FC = () => {
             </Card>
           </Card>
 
-          <Card title={t('opportunities.prepareApplication')}>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
-              {t('opportunities.prepareApplicationDesc')}
-            </p>
-            <div style={docGenGridStyle}>
-              {opp.type !== 'grant' && (
-                <DocGenCard 
-                  icon={FileText} 
-                  title={t('builders.cv.title')}
-                  desc={t('builders.cv.desc')}
-                  path={`/cv-builder?oppId=${opp.id}`}
-                />
-              )}
-              <DocGenCard 
-                icon={FileEdit} 
-                title={t('builders.coverLetter.title')}
-                desc={t('builders.coverLetter.desc')}
-                path={`/cover-letter?oppId=${opp.id}`}
-              />
-              {opp.type === 'grant' && (
-                <DocGenCard 
-                  icon={Target} 
-                  title={t('builders.proposal.grantBuilderTitle', 'Grant Builder')}
-                  desc={t('builders.proposal.grantBuilderDesc', 'Build your grant application proposal.')}
-                  path={`/grant-builder?oppId=${opp.id}`}
-                />
-              )}
-            </div>
-          </Card>
+          {/* For internal opportunities, show Prepare Application document tools and inline application flow.
+              For external opportunities, hide PATHEW application workflow completely and show external source apply card. */}
+          {isExternalOpportunity(opp) ? (
+            <Card style={{ textAlign: 'center', padding: '32px 24px', backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)', marginTop: '24px' }}>
+              <Globe size={36} color="var(--accent-primary)" style={{ marginBottom: '16px' }} />
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px', color: 'var(--text-primary)' }}>
+                External Opportunity
+              </h3>
+              <p style={{ fontSize: '0.9375rem', color: 'var(--text-secondary)', marginBottom: '24px', maxWidth: '500px', margin: '0 auto 24px', lineHeight: 1.6 }}>
+                This opportunity is hosted outside PATHEW on {opp.source_name || 'an external platform'}. Applications are submitted directly on the official source website.
+              </p>
+              <Button 
+                size="lg"
+                onClick={handleApply}
+                disabled={applying}
+                style={{ gap: '8px', padding: '12px 32px', margin: '0 auto' }}
+              >
+                Apply on {opp.source_name || 'External Site'} <ExternalLink size={18} />
+              </Button>
+            </Card>
+          ) : (
+            <>
+              <Card title={t('opportunities.prepareApplication')}>
+                <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
+                  {t('opportunities.prepareApplicationDesc')}
+                </p>
+                <div style={docGenGridStyle}>
+                  {opp.type !== 'grant' && (
+                    <DocGenCard 
+                      icon={FileText} 
+                      title={t('builders.cv.title')}
+                      desc={t('builders.cv.desc')}
+                      path={`/cv-builder?oppId=${opp.id}`}
+                    />
+                  )}
+                  <DocGenCard 
+                    icon={FileEdit} 
+                    title={t('builders.coverLetter.title')}
+                    desc={t('builders.coverLetter.desc')}
+                    path={`/cover-letter?oppId=${opp.id}`}
+                  />
+                  {opp.type === 'grant' && (
+                    <DocGenCard 
+                      icon={Target} 
+                      title={t('builders.proposal.grantBuilderTitle', 'Grant Builder')}
+                      desc={t('builders.proposal.grantBuilderDesc', 'Build your grant application proposal.')}
+                      path={`/grant-builder?oppId=${opp.id}`}
+                    />
+                  )}
+                </div>
+              </Card>
 
-          {/* Inline Application Section on Opportunity Page */}
-          <ApplyModal
-            isInline
-            opportunityId={opp.id}
-            opportunityTitle={opp.title}
-            onSuccess={() => {
-              setApplicantCount(prev => prev + 1);
-              alert("Application submitted successfully!");
-            }}
-          />
+              {/* Inline Application Section on Opportunity Page */}
+              <ApplyModal
+                isInline
+                opportunityId={opp.id}
+                opportunityTitle={opp.title}
+                onSuccess={() => {
+                  setApplicantCount(prev => prev + 1);
+                  alert("Application submitted successfully!");
+                }}
+              />
+            </>
+          )}
         </div>
 
         <div style={sidebarColStyle}>
@@ -467,7 +494,7 @@ export const OpportunityDetail: React.FC = () => {
         requiredCredits={0.25}
       />
 
-      {showApplyModal && (
+      {!isExternalOpportunity(opp) && showApplyModal && (
         <ApplyModal
           opportunityId={opp.id}
           opportunityTitle={opp.title}

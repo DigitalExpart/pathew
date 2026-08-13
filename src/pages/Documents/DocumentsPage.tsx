@@ -13,7 +13,8 @@ import ReactMarkdown from 'react-markdown';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const DocumentsPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
+  const isAdminOrSubAdmin = profile?.role === 'admin' || profile?.role === 'sub_admin';
   const [documents, setDocuments] = useState<GeneratedDocument[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDoc, setSelectedDoc] = useState<GeneratedDocument | null>(null);
@@ -41,7 +42,7 @@ export const DocumentsPage: React.FC = () => {
     try {
       let blob: Blob;
       let extension = format;
-      if (format === 'pdf') {
+      if (format === 'pdf' && isAdminOrSubAdmin) {
         blob = await generatePdfBlob(exportDoc.content, 'D69E2E', exportDoc.document_type);
         extension = 'pdf';
       } else {

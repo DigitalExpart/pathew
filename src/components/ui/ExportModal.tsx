@@ -3,6 +3,7 @@ import { Card } from './Card';
 import { Button } from './Button';
 import { X, FileText, Download, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '../../context/AuthContext';
 
 interface ExportModalProps {
   isOpen: boolean;
@@ -11,6 +12,9 @@ interface ExportModalProps {
 }
 
 export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, onDownload }) => {
+  const { profile } = useAuth();
+  const isAdminOrSubAdmin = profile?.role === 'admin' || profile?.role === 'sub_admin';
+
   return (
     <AnimatePresence>
       {isOpen && (
@@ -36,12 +40,14 @@ export const ExportModal: React.FC<ExportModalProps> = ({ isOpen, onClose, onDow
               </p>
               
               <div style={optionsGridStyle}>
-                <FormatOption 
-                  title="PDF Document" 
-                  desc="Best for sharing and printing" 
-                  icon={FileText}
-                  onClick={() => onDownload('pdf')}
-                />
+                {isAdminOrSubAdmin && (
+                  <FormatOption 
+                    title="PDF Document" 
+                    desc="Best for sharing and printing" 
+                    icon={FileText}
+                    onClick={() => onDownload('pdf')}
+                  />
+                )}
                 <FormatOption 
                   title="Word (DOCX)" 
                   desc="Best for further editing" 

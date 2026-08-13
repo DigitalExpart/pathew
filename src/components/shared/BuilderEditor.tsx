@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next';
 import { ExportModal } from '../ui/ExportModal';
 import { generateDocxBlob } from '../../utils/docxExport';
 import { generatePdfBlob } from '../../utils/pdfExport';
+import { useAuth } from '../../context/AuthContext';
 
 interface BuilderEditorProps {
   draftContent: string;
@@ -43,6 +44,8 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
   estimatedPages = 1,
 }) => {
   const { t } = useTranslation();
+  const { profile } = useAuth();
+  const isAdminOrSubAdmin = profile?.role === 'admin' || profile?.role === 'sub_admin';
   const [instruction, setInstruction] = useState('');
   const [copied, setCopied] = useState(false);
   const [isExportOpen, setIsExportOpen] = useState(false);
@@ -115,10 +118,10 @@ export const BuilderEditor: React.FC<BuilderEditorProps> = ({
       let blob: Blob;
       let extension = format;
 
-      if (format === 'pdf') {
+      if (format === 'pdf' && isAdminOrSubAdmin) {
         blob = await generatePdfBlob(draftContent, accentColor.border, documentType);
         extension = 'pdf';
-      } else if (format === 'docx') {
+      } else if (format === 'docx' || format === 'pdf') {
         blob = await generateDocxBlob(draftContent, accentColor.border, documentType);
         extension = 'docx';
       } else {
