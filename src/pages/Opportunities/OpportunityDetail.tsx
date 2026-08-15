@@ -349,9 +349,39 @@ export const OpportunityDetail: React.FC = () => {
             </Card>
           </Card>
 
-          {/* For internal opportunities, show Prepare Application document tools and inline application flow.
-              For external opportunities, hide PATHEW application workflow completely and show external source apply card. */}
-          {isExternalOpportunity(opp) ? (
+          {/* Document Preparation Tools (Tailored CV, Cover Letter, Grant Builder) */}
+          <Card title={t('opportunities.prepareApplication')}>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
+              {t('opportunities.prepareApplicationDesc')}
+            </p>
+            <div style={docGenGridStyle}>
+              {opp.type !== 'grant' && (
+                <DocGenCard 
+                  icon={FileText} 
+                  title={t('builders.cv.title')}
+                  desc={t('builders.cv.desc')}
+                  path={`/cv-builder?oppId=${opp.id}`}
+                />
+              )}
+              <DocGenCard 
+                icon={FileEdit} 
+                title={t('builders.coverLetter.title')}
+                desc={t('builders.coverLetter.desc')}
+                path={`/cover-letter?oppId=${opp.id}`}
+              />
+              {opp.type === 'grant' && (
+                <DocGenCard 
+                  icon={Target} 
+                  title={t('builders.proposal.grantBuilderTitle', 'Grant Builder')}
+                  desc={t('builders.proposal.grantBuilderDesc', 'Build your grant application proposal.')}
+                  path={`/grant-builder?oppId=${opp.id}`}
+                />
+              )}
+            </div>
+          </Card>
+
+          {/* For external opportunities, display external source apply card */}
+          {isExternalOpportunity(opp) && (
             <Card style={{ textAlign: 'center', padding: '32px 24px', backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border-color)', marginTop: '24px' }}>
               <Globe size={36} color="var(--accent-primary)" style={{ marginBottom: '16px' }} />
               <h3 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px', color: 'var(--text-primary)' }}>
@@ -369,49 +399,6 @@ export const OpportunityDetail: React.FC = () => {
                 Apply on {opp.source_name || 'External Site'} <ExternalLink size={18} />
               </Button>
             </Card>
-          ) : (
-            <>
-              <Card title={t('opportunities.prepareApplication')}>
-                <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
-                  {t('opportunities.prepareApplicationDesc')}
-                </p>
-                <div style={docGenGridStyle}>
-                  {opp.type !== 'grant' && (
-                    <DocGenCard 
-                      icon={FileText} 
-                      title={t('builders.cv.title')}
-                      desc={t('builders.cv.desc')}
-                      path={`/cv-builder?oppId=${opp.id}`}
-                    />
-                  )}
-                  <DocGenCard 
-                    icon={FileEdit} 
-                    title={t('builders.coverLetter.title')}
-                    desc={t('builders.coverLetter.desc')}
-                    path={`/cover-letter?oppId=${opp.id}`}
-                  />
-                  {opp.type === 'grant' && (
-                    <DocGenCard 
-                      icon={Target} 
-                      title={t('builders.proposal.grantBuilderTitle', 'Grant Builder')}
-                      desc={t('builders.proposal.grantBuilderDesc', 'Build your grant application proposal.')}
-                      path={`/grant-builder?oppId=${opp.id}`}
-                    />
-                  )}
-                </div>
-              </Card>
-
-              {/* Inline Application Section on Opportunity Page */}
-              <ApplyModal
-                isInline
-                opportunityId={opp.id}
-                opportunityTitle={opp.title}
-                onSuccess={() => {
-                  setApplicantCount(prev => prev + 1);
-                  alert("Application submitted successfully!");
-                }}
-              />
-            </>
           )}
         </div>
 

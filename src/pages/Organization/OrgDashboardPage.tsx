@@ -33,7 +33,8 @@ import {
   Award,
   FolderGit2,
   Calendar,
-  Eye
+  Eye,
+  Save
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
@@ -127,6 +128,26 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
   const [oppPayType, setOppPayType] = useState('hourly');
   const [oppAmount, setOppAmount] = useState('');
   const [oppPostedMsg, setOppPostedMsg] = useState<string | null>(null);
+
+  // Edit Opportunity State for Company Accounts
+  const [editingOpp, setEditingOpp] = useState<any | null>(null);
+  const [showEditOppModal, setShowEditOppModal] = useState(false);
+  const [editOppTitle, setEditOppTitle] = useState('');
+  const [editOppType, setEditOppType] = useState('Job');
+  const [editOppDesc, setEditOppDesc] = useState('');
+  const [editOppLink, setEditOppLink] = useState('');
+  const [editOppDeadline, setEditOppDeadline] = useState('');
+  const [editOppAvailableSpots, setEditOppAvailableSpots] = useState('');
+  const [editOppSkillsNeeded, setEditOppSkillsNeeded] = useState('');
+  const [editOppLocation, setEditOppLocation] = useState('');
+  const [editOppWorkMode, setEditOppWorkMode] = useState('remote');
+  const [editOppLanguages, setEditOppLanguages] = useState('');
+  const [editOppExperienceLevel, setEditOppExperienceLevel] = useState('<5 years');
+  const [editOppPayType, setEditOppPayType] = useState('hourly');
+  const [editOppAmount, setEditOppAmount] = useState('');
+  const [editOppStatus, setEditOppStatus] = useState('published');
+  const [isUpdatingOpp, setIsUpdatingOpp] = useState(false);
+  const [updateOppMsg, setUpdateOppMsg] = useState<string | null>(null);
 
   // Credit Purchase & Plan Selection State
   const [showPlanModal, setShowPlanModal] = useState(false);
@@ -505,6 +526,104 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
       fetchPostedOpps();
     } catch (err: any) {
       setOppPostedMsg('Failed to post opportunity: ' + err.message);
+    }
+  };
+
+  const handleStartEditOpportunity = (opp: any) => {
+    setEditingOpp(opp);
+    setEditOppTitle(opp.title || '');
+    setEditOppType(opp.type ? (opp.type.charAt(0).toUpperCase() + opp.type.slice(1)) : 'Job');
+    setEditOppDesc(opp.description || '');
+    setEditOppLink(opp.apply_link || opp.original_url || '');
+    setEditOppDeadline(opp.deadline ? (opp.deadline.includes('T') ? opp.deadline.split('T')[0] : opp.deadline) : '');
+    setEditOppAvailableSpots(opp.available_spots ? String(opp.available_spots) : '');
+    setEditOppSkillsNeeded(Array.isArray(opp.skills) ? opp.skills.join(', ') : (opp.skills || ''));
+    setEditOppLanguages(Array.isArray(opp.languages) ? opp.languages.join(', ') : (opp.languages || ''));
+    setEditOppLocation(opp.location || '');
+    setEditOppWorkMode((opp.work_mode || 'remote').toLowerCase());
+    setEditOppExperienceLevel(opp.experience_level || '<5 years');
+    setEditOppStatus(opp.status || 'published');
+
+    // Parse pay type & amount
+    const sal = opp.salary || opp.amount || '';
+    if (sal.toLowerCase().includes('/hr') || sal.toLowerCase().includes('/hour')) {
+      setEditOppPayType('hourly');
+      setEditOppAmount(sal.replace(/\/hr|\/hour/gi, '').trim());
+    } else if (sal.toLowerCase().includes('/mo') || sal.toLowerCase().includes('/month')) {
+      setEditOppPayType('monthly');
+      setEditOppAmount(sal.replace(/\/mo|\/month/gi, '').trim());
+    } else if (sal.toLowerCase().includes('/yr') || sal.toLowerCase().includes('/year')) {
+      setEditOppPayType('annual');
+      setEditOppAmount(sal.replace(/\/yr|\/year/gi, '').trim());
+    } else if (sal.toLowerCase().includes('fixed')) {
+      setEditOppPayType('fixed');
+      setEditOppAmount(sal.replace(/\(fixed\)/gi, '').trim());
+    } else {
+      setEditOppPayType('hourly');
+      setEditOppAmount(sal);
+    }
+
+    setUpdateOppMsg(null);
+    setShowEditOppModal(true);
+  };
+
+  const handleSaveEditedOpportunity = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingOpp || !editOppTitle.trim()) return;
+    setIsUpdatingOpp(true);
+    setUpdateOppMsg(null);
+
+    try {
+      const normalizedType = (editOppType || '').toLowerCase().includes('job') ? 'job' : (editOppType || 'grant').toLowerCase();
+      let formattedSalary = editOppAmount.trim();
+      if (formattedSalary) {
+        if (editOppPayType === 'hourly' && !formattedSalary.toLowerCase().includes('/hr') && !formattedSalary.toLowerCase().includes('/hour')) {
+          formattedSalary = `${formattedSalary}/hr`;
+        } else if (editOppPayType === 'fixed' && !formattedSalary.toLowerCase().includes('fixed')) {
+          formattedSalary = `${formattedSalary} (Fixed)`;
+        } else if (editOppPayType === 'monthly' && !formattedSalary.toLowerCase().includes('/month') && !formattedSalary.toLowerCase().includes('/mo')) {
+          formattedSalary = `${formattedSalary}/month`;
+        } else if (editOppPayType === 'annual' && !formattedSalary.toLowerCase().includes('/yr') && !formattedSalary.toLowerCase().includes('/year')) {
+          formattedSalary = `${formattedSalary}/year`;
+        }
+      }
+
+      const payload: any = {
+        title: editOppTitle.trim(),
+        type: normalizedType,
+        description: editOppDesc || null,
+        location: editOppLocation || (org?.city && org?.country ? `${org.city}, ${org.country}` : org?.country || org?.city || 'Remote'),
+        apply_link: editOppLink || '',
+        status: editOppStatus || 'published',
+        deadline: editOppDeadline && editOppDeadline.trim() ? editOppDeadline : null,
+        available_spots: editOppAvailableSpots ? parseInt(editOppAvailableSpots, 10) : null,
+        skills: editOppSkillsNeeded ? editOppSkillsNeeded.split(',').map(s => s.trim()).filter(Boolean) : [],
+        work_mode: (editOppWorkMode || 'remote').toLowerCase().replace('on-site', 'onsite'),
+        languages: editOppLanguages ? editOppLanguages.split(',').map(s => s.trim()).filter(Boolean) : [],
+        experience_level: editOppExperienceLevel || null,
+        salary: formattedSalary || null,
+        amount: formattedSalary || null,
+      };
+
+      const { error } = await supabase
+        .from('opportunities')
+        .update(payload)
+        .eq('id', editingOpp.id);
+
+      if (error) throw error;
+
+      // Update state
+      setPostedOpps(prev => prev.map(o => o.id === editingOpp.id ? { ...o, ...payload } : o));
+      setUpdateOppMsg('Opportunity updated successfully!');
+      setTimeout(() => {
+        setShowEditOppModal(false);
+        setEditingOpp(null);
+      }, 1000);
+    } catch (err: any) {
+      console.error('Error updating opportunity:', err);
+      setUpdateOppMsg('Failed to update opportunity: ' + err.message);
+    } finally {
+      setIsUpdatingOpp(false);
     }
   };
 
@@ -1169,6 +1288,15 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
                         View Applicants ({opp.applicant_count || 0})
                       </Button>
                       
+                      <Button 
+                        size="sm" 
+                        variant="outline" 
+                        onClick={() => handleStartEditOpportunity(opp)}
+                        style={{ gap: '4px', borderColor: 'var(--border-color)', color: 'var(--text-primary)' }}
+                      >
+                        <Edit3 size={14} /> Edit
+                      </Button>
+
                       <a 
                         href={`/opportunities/${opp.id}`} 
                         target="_blank" 
@@ -2251,6 +2379,241 @@ export const OrgDashboardPage: React.FC<OrgDashboardProps> = ({ defaultTab = 'ov
             setOrg(prev => prev ? { ...prev, ...updatedDocs } : null);
           }}
         />
+      )}
+      {/* EDIT OPPORTUNITY MODAL FOR COMPANY ACCOUNTS */}
+      {showEditOppModal && editingOpp && (
+        <div style={modalOverlayStyle} onClick={() => setShowEditOppModal(false)}>
+          <div style={{ ...modalContentStyle, maxWidth: '680px' }} onClick={e => e.stopPropagation()}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2 style={{ fontSize: '1.25rem', fontWeight: 800, margin: 0, display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-primary)' }}>
+                <Edit3 size={20} color="var(--accent-primary)" />
+                Edit Opportunity
+              </h2>
+              <button onClick={() => setShowEditOppModal(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveEditedOpportunity} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+              <div>
+                <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px', color: 'var(--text-primary)' }}>
+                  Opportunity Title *
+                </label>
+                <input
+                  type="text"
+                  value={editOppTitle}
+                  onChange={e => setEditOppTitle(e.target.value)}
+                  required
+                  style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                />
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px', color: 'var(--text-primary)' }}>
+                    Type
+                  </label>
+                  <select
+                    value={editOppType}
+                    onChange={e => setEditOppType(e.target.value)}
+                    style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                  >
+                    <option value="Job">Job</option>
+                    <option value="Grant">Grant</option>
+                    <option value="Fellowship">Fellowship</option>
+                    <option value="Tender / RFP">Tender / RFP</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px', color: 'var(--text-primary)' }}>
+                    Status
+                  </label>
+                  <select
+                    value={editOppStatus}
+                    onChange={e => setEditOppStatus(e.target.value)}
+                    style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                  >
+                    <option value="published">Published (Active)</option>
+                    <option value="closed">Closed</option>
+                    <option value="draft">Draft</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px', color: 'var(--text-primary)' }}>
+                    Application URL (Optional)
+                  </label>
+                  <input
+                    type="url"
+                    placeholder="https://... (Leave blank for in-platform)"
+                    value={editOppLink}
+                    onChange={e => setEditOppLink(e.target.value)}
+                    style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                  />
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px', color: 'var(--text-primary)' }}>
+                    Deadline
+                  </label>
+                  <input
+                    type="date"
+                    value={editOppDeadline}
+                    onChange={e => setEditOppDeadline(e.target.value)}
+                    style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px', color: 'var(--text-primary)' }}>
+                    Pay / Rate Type
+                  </label>
+                  <select
+                    value={editOppPayType}
+                    onChange={e => setEditOppPayType(e.target.value)}
+                    style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                  >
+                    <option value="fixed">Fixed Budget / Amount</option>
+                    <option value="hourly">Hourly Rate ($/hr)</option>
+                    <option value="monthly">Monthly Salary</option>
+                    <option value="annual">Annual Salary</option>
+                    <option value="unpaid">Unpaid / Equity</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px', color: 'var(--text-primary)' }}>
+                    Amount / Compensation Range
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. $30/hr or $5,000/mo"
+                    value={editOppAmount}
+                    onChange={e => setEditOppAmount(e.target.value)}
+                    style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                  />
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px', color: 'var(--text-primary)' }}>
+                    Available Spots
+                  </label>
+                  <input
+                    type="number"
+                    placeholder="e.g. 1"
+                    value={editOppAvailableSpots}
+                    onChange={e => setEditOppAvailableSpots(e.target.value)}
+                    min="1"
+                    style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px', color: 'var(--text-primary)' }}>
+                    Work Arrangement
+                  </label>
+                  <select
+                    value={editOppWorkMode}
+                    onChange={e => setEditOppWorkMode(e.target.value)}
+                    style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                  >
+                    <option value="remote">Remote</option>
+                    <option value="onsite">On-site</option>
+                    <option value="hybrid">Hybrid</option>
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px', color: 'var(--text-primary)' }}>
+                    Experience Level
+                  </label>
+                  <select
+                    value={editOppExperienceLevel}
+                    onChange={e => setEditOppExperienceLevel(e.target.value)}
+                    style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                  >
+                    <option value="<5 years">Less than 5 years</option>
+                    <option value="5+ years">5+ years</option>
+                    <option value="10+ years">10+ years</option>
+                  </select>
+                </div>
+              </div>
+
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                <div>
+                  <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px', color: 'var(--text-primary)' }}>
+                    Skills Needed (comma separated)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. React, Node.js, Python"
+                    value={editOppSkillsNeeded}
+                    onChange={e => setEditOppSkillsNeeded(e.target.value)}
+                    style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                  />
+                </div>
+                <div>
+                  <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px', color: 'var(--text-primary)' }}>
+                    Languages (comma separated)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. English, French"
+                    value={editOppLanguages}
+                    onChange={e => setEditOppLanguages(e.target.value)}
+                    style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px', color: 'var(--text-primary)' }}>
+                  Specific Location
+                </label>
+                <input
+                  type="text"
+                  placeholder="e.g. London, UK or Remote"
+                  value={editOppLocation}
+                  onChange={e => setEditOppLocation(e.target.value)}
+                  style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                />
+              </div>
+
+              <div>
+                <label style={{ fontSize: '0.8125rem', fontWeight: 600, display: 'block', marginBottom: '4px', color: 'var(--text-primary)' }}>
+                  Description & Requirements
+                </label>
+                <textarea
+                  rows={4}
+                  placeholder="Details about the opportunity..."
+                  value={editOppDesc}
+                  onChange={e => setEditOppDesc(e.target.value)}
+                  style={{ width: '100%', padding: '10px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)' }}
+                />
+              </div>
+
+              {updateOppMsg && (
+                <p style={{ margin: 0, fontSize: '0.875rem', fontWeight: 600, color: updateOppMsg.includes('successfully') ? '#22c55e' : '#ef4444' }}>
+                  {updateOppMsg}
+                </p>
+              )}
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '12px', marginTop: '8px' }}>
+                <Button type="button" variant="outline" onClick={() => setShowEditOppModal(false)} disabled={isUpdatingOpp}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isUpdatingOpp} style={{ gap: '6px' }}>
+                  <Save size={16} /> {isUpdatingOpp ? 'Saving Changes...' : 'Save Changes'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );
